@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
+import 'package:shopesapp/presentation/pages/add_store_page.dart';
 import 'package:shopesapp/presentation/pages/porfile.dart';
 import 'package:shopesapp/presentation/pages/privacy%20policies.dart';
+import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/widgets/settings/theme.picker.dart';
 import '../../../constant/enums.dart';
 import '../../pages/edit_store.dart';
@@ -63,6 +65,11 @@ Widget buildPrivacy(BuildContext context) => SimpleSettingsTile(
       child: const PrivacyPlicies(),
     );
 
+Widget buildeAddNewSotre(BuildContext context) => SimpleSettingsTile(
+      title: "Add store",
+      leading: iconWidget(icon: Icons.add, color: AppColors.mainRedColor),
+      child: const AddStorePage(),
+    );
 Widget buildeEdeitMySotre(BuildContext context) => SimpleSettingsTile(
       title: "Edit store informations",
       leading: iconWidget(icon: Icons.edit, color: Colors.orange),

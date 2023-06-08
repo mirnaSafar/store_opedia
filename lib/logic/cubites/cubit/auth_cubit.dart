@@ -3,10 +3,10 @@ import 'dart:core';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/data/models/owner.dart';
 import 'package:shopesapp/data/repositories/auth_repository.dart';
-import 'package:shopesapp/logic/cubites/auth_state.dart';
 import 'package:shopesapp/logic/cubites/cubit/auth_state.dart';
-import '../../data/models/shop.dart';
-import '../../data/models/user.dart';
+
+import '../../../data/models/shop.dart';
+import '../../../data/models/user.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   late Timer _authTimer;
@@ -64,14 +64,13 @@ class AuthCubit extends Cubit<AuthState> {
     Map<String, dynamic>? response =
         await repo.login(email: email, password: password);
     if (response!["statusCode"] == 205 &&
-        response != null &&
         response["message"] == "auth succeded") {
       _expire = DateTime.parse(response["expire"] as String);
       autoLogout(_expire.difference(DateTime.now()).inSeconds);
 
       user = User.fromMap(response["user"]);
       emit(UserLoginedIn(user: user!));
-    } else if (response != null && response["message"] == "auth succeded") {
+    } else if (response["message"] == "auth succeded") {
       _expire = DateTime.parse(response["expire"] as String);
       autoLogout(_expire.difference(DateTime.now()).inSeconds);
       owner = Owner.fromMap(response["owner"]);
