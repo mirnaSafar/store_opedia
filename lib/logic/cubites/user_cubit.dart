@@ -20,7 +20,7 @@ class UserAuthCubit extends Cubit<UserAuthState> {
     emit(UserAuthProgress());
 
     Map<String, dynamic>? response =
-        await repo.signin(userName, email, password, phoneNumber);
+        await repo.userSignUp(userName, email, password, phoneNumber);
 
     if (response == null || response["message"] != "User was Created") {
       emit(UserAuthFailed(response == null
@@ -36,7 +36,8 @@ class UserAuthCubit extends Cubit<UserAuthState> {
   Future login(String email, String password) async {
     emit(UserAuthProgress());
 
-    Map<String, dynamic>? response = await repo.login(email, password);
+    Map<String, dynamic>? response =
+        await repo.login(email: email, password: password);
 
     if (response == null || response["message"] != "auth succeded") {
       emit(UserAuthFailed(response == null

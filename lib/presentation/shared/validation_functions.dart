@@ -20,35 +20,53 @@ String? passValidator(value) {
   }
 }
 
-String? numberValidator(value) {
+String? numberValidator(value, String? warningMessage) {
   if (value!.isNotEmpty) {
     if (!isMobileNumber(value)) {
       return 'invalid number';
     }
     return null;
   } else {
-    return 'enter your number';
+    return warningMessage ?? 'enter your number';
   }
 }
 
-emailValidator(String? value) {
+emailValidator(String? value, String? warningMessage) {
   if (value!.isNotEmpty) {
     if (!isEmail(value)) {
       return 'invalid email';
     }
     return null;
   } else {
-    return 'enter your email';
+    return warningMessage ?? 'enter your email';
   }
 }
 
-nameValidator(String? value) {
+nameValidator(String? value, String? warningMessage) {
   if (value!.isNotEmpty) {
     if (!isName(value)) {
       return 'invalid name';
     }
     return null;
   } else {
-    return 'enter your name';
+    return warningMessage ?? 'enter your name';
   }
+}
+
+editNameValidator(String? value) {
+  if (value!.isNotEmpty) {
+    if (!isName(value)) {
+      return 'invalid name';
+    }
+  }
+  return null;
+}
+
+String? editNumberValidator(value) {
+  if (value!.isNotEmpty) {
+    if (!isMobileNumber(value)) {
+      return 'invalid number';
+    }
+  }
+  return null;
 }

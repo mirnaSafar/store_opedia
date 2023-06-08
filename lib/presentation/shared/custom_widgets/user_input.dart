@@ -9,10 +9,12 @@ class UserInput extends StatefulWidget {
       this.validator,
       this.obscureText = false,
       this.suffixIcon,
-      this.prefixIcon})
+      this.prefixIcon,
+      this.enabled = true})
       : super(key: key);
   bool? obscureText;
-  final Icon? suffixIcon;
+  final Widget? suffixIcon;
+  final bool? enabled;
   final Icon? prefixIcon;
   final String text;
   final TextEditingController? controller;
@@ -30,9 +32,11 @@ class _UserInputState extends State<UserInput> {
       builder: (context, orientation, deviceType) => Padding(
         padding: EdgeInsets.only(top: height * 0.03),
         child: TextFormField(
+          enabled: widget.enabled!,
           obscureText: widget.obscureText!,
-          autovalidateMode: AutovalidateMode.always,
+          // autovalidateMode: AutovalidateMode.always,
           validator: widget.validator,
+          textInputAction: TextInputAction.next,
           controller: widget.controller,
           decoration: InputDecoration(
             suffixIcon: widget.obscureText!

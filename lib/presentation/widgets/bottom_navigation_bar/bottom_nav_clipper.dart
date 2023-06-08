@@ -31,8 +31,8 @@ class BottomNavClipper extends CustomClipper<Path> {
   Path getClip(Size size) {
     Path path = Path()..moveTo(0, 0);
     path.quadraticBezierTo(size.width * 0.0, 0, size.width * 0.35, 0);
-    path.quadraticBezierTo(size.width * 0.40, 0, size.width * 0.40, 20);
-    path.arcToPoint(Offset(size.width * 0.60, 20),
+    path.quadraticBezierTo(size.width * 0.40, 0, size.width * 0.40, 10);
+    path.arcToPoint(Offset(size.width * 0.60, 10),
         radius: const Radius.circular(10.0), clockwise: false);
     path.quadraticBezierTo(size.width * 0.60, 0, size.width * 0.65, 0);
     path.quadraticBezierTo(size.width * 0.80, 0, size.width, 0);

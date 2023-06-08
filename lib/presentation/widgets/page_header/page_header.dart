@@ -145,13 +145,11 @@ class _PageHeaderState extends State<PageHeader> {
 
     TextEditingController searchController = TextEditingController();
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 15,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: w * 0),
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 25),
+            padding: EdgeInsets.only(top: w * 0.05),
             child: Row(
               children: [
                 InkWell(
@@ -161,7 +159,7 @@ class _PageHeaderState extends State<PageHeader> {
                         ),
                     child: Icon(Icons.filter_list_outlined, size: w * 0.07)),
                 Padding(
-                  padding: const EdgeInsets.only(left: 20.0, right: 240),
+                  padding: EdgeInsets.only(left: 20.0, right: w * 0.64),
                   child: InkWell(
                       onTap: () => showDialog(
                             context: context,

@@ -48,7 +48,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
                 child: CircleAvatar(
                   backgroundColor:
                       widget.bottomNavigationEnum == BottomNavigationEnum.HOME
-                          ? AppColors.mainOrangeColor
+                          ? Theme.of(context).colorScheme.primary
                           : AppColors.mainTextColor,
                   radius: size.width * 0.085,
                   child: Icon(
@@ -68,8 +68,8 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
                 // crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   navItem(
-                      text: 'more',
-                      icon: Icons.menu,
+                      text: 'settings',
+                      icon: Icons.settings,
                       isSelected: widget.bottomNavigationEnum ==
                           BottomNavigationEnum.MORE,
                       onTap: () {
@@ -132,7 +132,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
           Icon(
             icon,
             color: isSelected
-                ? AppColors.mainOrangeColor
+                ? Theme.of(context).colorScheme.primary
                 : AppColors.mainTextColor,
           ),
           SizedBox(
@@ -142,7 +142,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
             text,
             style: TextStyle(
               color: isSelected
-                  ? AppColors.mainOrangeColor
+                  ? Theme.of(context).colorScheme.primary
                   : AppColors.mainTextColor,
             ),
           )

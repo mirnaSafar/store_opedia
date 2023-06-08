@@ -13,23 +13,25 @@ class SuggestedStoresView extends StatefulWidget {
 class _SuggestedStoresViewState extends State<SuggestedStoresView> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: ListView(
-        children: [
-          const PageHeader(),
-          ListView.separated(
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: 15,
-            separatorBuilder: (BuildContext context, int index) {
-              return const SuggestedStore();
-            },
-            itemBuilder: (BuildContext context, int index) {
-              return const CustomDivider();
-            },
-          ),
-        ],
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: ListView(
+          children: [
+            const PageHeader(),
+            ListView.separated(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: 15,
+              separatorBuilder: (BuildContext context, int index) {
+                return const SuggestedStore();
+              },
+              itemBuilder: (BuildContext context, int index) {
+                return const CustomDivider();
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

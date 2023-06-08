@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shopesapp/presentation/shared/colors.dart';
 
 class CreatePhoneNumberFormField extends StatelessWidget {
   final Function setPhoneNumber;
@@ -14,14 +15,11 @@ class CreatePhoneNumberFormField extends StatelessWidget {
         keyboardType: TextInputType.phone,
         decoration: InputDecoration(
           labelText: 'Enter your phone number',
-          labelStyle: TextStyle(
-              fontSize: 20, color: Theme.of(context).colorScheme.onSurface),
+          labelStyle: TextStyle(fontSize: 20, color: AppColors.mainTextColor),
           prefixIcon: Icon(
             Icons.phone,
-            color: Theme.of(context).colorScheme.primary,
+            color: AppColors.mainTextColor,
           ),
-          helperText: 'Phone number must start with 09',
-          helperStyle: const TextStyle(fontSize: 15),
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(
                 width: 2, color: Theme.of(context).colorScheme.primary),

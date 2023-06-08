@@ -7,7 +7,6 @@ import 'package:shopesapp/presentation/pages/suggested_stores.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/widgets/bottom_navigation_bar/bottom_navigation_bar.dart';
 import '../../data/enums/bottom_navigation.dart';
-import 'demo_page.dart';
 import 'favourite_page.dart';
 
 class ControlPage extends StatefulWidget {
@@ -16,16 +15,6 @@ class ControlPage extends StatefulWidget {
   @override
   State<ControlPage> createState() => _ControlPageState();
 }
-
-int _selectedindex = 2;
-
-final _screenList = [
-  const SettingsPage(),
-  const StorePage(),
-  const HomePage(),
-  const FavouritePage(),
-  const DemoPage(),
-];
 
 class _ControlPageState extends State<ControlPage> {
   BottomNavigationEnum selected = BottomNavigationEnum.HOME;
@@ -65,105 +54,7 @@ class _ControlPageState extends State<ControlPage> {
         ],
       ),
       // /_screenList[_selectedindex],
-    )
-        // Stack(
-        //   children: [
-        //     Positioned(
-        //         bottom: 0,
-        //         left: 0,
-        //         child: SizedBox(
-        //           width: size.width,
-        //           height: 70.0,
-        //           child: Stack(
-        //             children: [
-        //               CustomPaint(
-        //                 size: Size(size.width, 70),
-        //                 painter: BNBCustomPainter(),
-        //               ),
-        //               Center(
-        //                 heightFactor: 0.5,
-        //                 child: SizedBox(
-        //                   width: 60,
-        //                   height: 60,
-        //                   child: FittedBox(
-        //                     child: FloatingActionButton(
-        //                       backgroundColor:
-        //                           Theme.of(context).colorScheme.primary,
-        //                       onPressed: () {
-        //                         setState(() {
-        //                           _selectedindex = 2;
-        //                         });
-        //                       },
-        //                       child: const Icon(
-        //                         Icons.home,
-        //                         color: Colors.white,
-        //                       ),
-        //                     ),
-        //                   ),
-        //                 ),
-        //               ),
-        //               Row(
-        //                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        //                 children: [
-        //                   IconButton(
-        //                       onPressed: () {
-        //                         setState(() {
-        //                           _selectedindex = 0;
-        //                         });
-        //                       },
-        //                       icon: Icon(
-        //                         Icons.settings,
-        //                         color: _selectedindex == 0
-        //                             ? Colors.black
-        //                             : Colors.grey,
-        //                       )),
-        //                   IconButton(
-        //                       onPressed: () {
-        //                         setState(() {
-        //                           _selectedindex = 1;
-        //                         });
-        //                       },
-        //                       icon: Icon(
-        //                         Icons.store,
-        //                         color: _selectedindex == 1
-        //                             ? Colors.black
-        //                             : Colors.grey,
-        //                       )),
-        //                   Container(
-        //                     width: size.width * 0.20,
-        //                   ),
-        //                   IconButton(
-        //                       onPressed: () {
-        //                         setState(() {
-        //                           _selectedindex = 3;
-        //                         });
-        //                       },
-        //                       icon: Icon(
-        //                         Icons.favorite,
-        //                         color: _selectedindex == 3
-        //                             ? Colors.black
-        //                             : Colors.grey,
-        //                       )),
-        //                   IconButton(
-        //                       onPressed: () {
-        //                         setState(() {
-        //                           _selectedindex = 4;
-        //                         });
-        //                       },
-        //                       icon: Icon(
-        //                         Icons.person,
-        //                         color: _selectedindex == 4
-        //                             ? Colors.black
-        //                             : Colors.grey,
-        //                       )),
-        //                 ],
-        //               )
-        //             ],
-        //           ),
-        //         ))
-        //   ],
-        // )),
-        );
+    ));
   }
 }
 

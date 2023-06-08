@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../colors.dart';
-
 class CustomText extends StatelessWidget {
   final Color? textColor;
   final double? fontSize;
@@ -26,7 +24,7 @@ class CustomText extends StatelessWidget {
           // height: 1.5,
           fontWeight: bold == true ? FontWeight.bold : FontWeight.normal,
           fontSize: fontSize ?? 16,
-          color: textColor ?? AppColors.mainBlackColor,
+          color: textColor ?? Theme.of(context).primaryColorDark,
         ));
   }
 }

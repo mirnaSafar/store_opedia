@@ -1,21 +1,25 @@
 class Post {
+  // String ownerID;
+  String shopeID;
   String id;
   String title;
   String description;
-  List<String> postImages;
+  List<String>? postImages;
   String category;
-  Map<String, dynamic> owner;
+  // Map<String, dynamic> owner;
   String productPrice;
-  String rate;
+  int? rate;
   bool? isFavorit;
 
   Post(
       {required this.title,
       required this.description,
       required this.category,
-      required this.owner,
+      //    required this.owner,
       required this.productPrice,
       required this.postImages,
+      //   required this.ownerID,
+      required this.shopeID,
       this.isFavorit = false,
       required this.rate,
       required this.id});

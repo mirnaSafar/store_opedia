@@ -17,7 +17,7 @@ class _HomePageState extends State<HomePage> {
       body: ListView(
         children: [
           const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 0),
             child: PageHeader(),
           ),
           ListView.separated(

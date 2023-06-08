@@ -1,8 +1,7 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../logic/cubites/user_cubit.dart';
+import 'package:shopesapp/logic/cubites/cubit/auth_cubit.dart';
 
 void showDialogAlert(BuildContext context) {
   AwesomeDialog(
@@ -20,6 +19,6 @@ void showDialogAlert(BuildContext context) {
       btnCancelText: 'Cancel',
       btnOkText: " Countinue",
       btnOkOnPress: () {
-        BlocProvider.of<UserAuthCubit>(context).logOut();
+        BlocProvider.of<AuthCubit>(context).logOut();
       }).show();
 }

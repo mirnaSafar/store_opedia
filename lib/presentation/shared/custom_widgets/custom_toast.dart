@@ -1,6 +1,7 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:shopesapp/data/enums/message_type.dart';
+import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
 
 import '../colors.dart';
 
@@ -19,7 +20,7 @@ class CustomToast {
         break;
       case MessageType.SUCCESS:
         imageName = 'approved1-01';
-        ShadowColor = AppColors.mainBlueColor;
+        ShadowColor = Colors.greenAccent;
         break;
       case MessageType.INFO:
         imageName = 'info';
@@ -54,17 +55,18 @@ class CustomToast {
               mainAxisSize: MainAxisSize.min,
               children: [
                 SizedBox(
-                  height: size.width * 0.1,
+                  height: size.width * 0.06,
                 ),
+
                 // SvgPicture.asset(
                 //   'images/$imageName.svg',
                 //   width: size.width * 0.3,
                 //   height: size.width * 0.3,
                 // ),
-                SizedBox(
-                  height: size.width * 0.06,
-                ),
-                Text(message),
+                // SizedBox(
+                //   height: size.width * 0.06,
+                // ),
+                CustomText(text: message),
                 SizedBox(
                   height: size.width * 0.06,
                 ),

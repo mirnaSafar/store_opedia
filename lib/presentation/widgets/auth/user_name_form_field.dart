@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shopesapp/presentation/shared/colors.dart';
 
 class CreateUserNameFormField extends StatelessWidget {
   const CreateUserNameFormField({Key? key, required this.setUserName})
@@ -9,19 +10,13 @@ class CreateUserNameFormField extends StatelessWidget {
     return TextFormField(
         readOnly: false,
         decoration: InputDecoration(
-          labelText: 'User Name',
-          labelStyle: TextStyle(
-              fontSize: 20, color: Theme.of(context).colorScheme.onSurface),
-          prefixIcon: Icon(
-            Icons.person,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          helperText: 'Name must be +3 characters',
-          helperStyle: const TextStyle(fontSize: 15),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-                width: 2, color: Theme.of(context).colorScheme.primary),
-          ),
+          filled: true,
+          fillColor: const Color.fromRGBO(242, 242, 242, 1),
+          labelText: '   User Name',
+          labelStyle: TextStyle(fontSize: 20, color: AppColors.mainTextColor),
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30),
+              borderSide: BorderSide.none),
         ),
         validator: (String? value) {
           if (value!.isEmpty || value.length < 4 || value.length > 15) {

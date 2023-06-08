@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:shopesapp/data/repositories/post_a_post.dart';
+import 'package:shopesapp/data/repositories/posts_repository.dart';
 
 part 'post_a_post_state.dart';
 

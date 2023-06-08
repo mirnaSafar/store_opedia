@@ -11,7 +11,7 @@ class DeletePostRepository {
       Uri.parse(ENDPOINT + '/$id'),
       body: jsonEncode(requestBody),
       headers: <String, String>{
-        'Content-Type': 'application/json; ',
+        'Content-Type': 'application/json',
       },
     );
     if (response.statusCode == 200) {

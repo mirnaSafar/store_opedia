@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shopesapp/presentation/shared/colors.dart';
 
 class CreateSMSFormField extends StatelessWidget {
   const CreateSMSFormField({Key? key, required this.setSMS}) : super(key: key);
@@ -7,21 +8,16 @@ class CreateSMSFormField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       decoration: InputDecoration(
-        labelText: 'SMS',
-        prefixIcon: Icon(
-          Icons.mail_lock,
-          color: Theme.of(context).colorScheme.primary,
-        ),
+        filled: true,
+        fillColor: const Color.fromRGBO(242, 242, 242, 1),
+        labelText: '   SMS',
         labelStyle: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface,
+          color: AppColors.mainTextColor,
           fontSize: 20,
         ),
-        helperText: 'Check your SMS Inbox  ',
-        helperStyle: const TextStyle(fontSize: 15),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-              width: 2, color: Theme.of(context).colorScheme.primary),
-        ),
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30),
+            borderSide: BorderSide.none),
       ),
       keyboardType: TextInputType.number,
       validator: (String? value) {

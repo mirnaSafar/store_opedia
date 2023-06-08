@@ -2,11 +2,11 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shopesapp/logic/cubites/user_cubit.dart';
+import 'package:shopesapp/logic/cubites/cubit/auth_cubit.dart';
 import 'package:shopesapp/presentation/widgets/auth/confirm_form_field.dart';
 import 'package:shopesapp/presentation/widgets/auth/phoneNumber_form_field.dart';
 import '../../constant/clipper.dart';
-import '../../logic/cubites/user_state.dart';
+import '../../logic/cubites/cubit/auth_state.dart';
 import '../widgets/auth/sms_form_field.dart';
 import '../widgets/auth/email_form_field.dart';
 import '../widgets/auth/password_form_field.dart';
@@ -69,14 +69,14 @@ class _UserSignUpState extends State<UserSignUp> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<UserAuthCubit, UserAuthState>(
+    return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
-        if (state is UserAuthSignedUp) {
+        if (state is OwnerSignedUp) {
           buildAwrsomeDialog(
                   context, "Succeed", "You Signin successfully", "OK",
                   type: DialogType.SUCCES)
               .show();
-        } else if (state is UserAuthFailed) {
+        } else if (state is AuthFailed) {
           buildAwrsomeDialog(
                   context, "Faild", state.message.toUpperCase(), "Cancle",
                   type: DialogType.ERROR)
@@ -151,9 +151,9 @@ class _UserSignUpState extends State<UserSignUp> with TickerProviderStateMixin {
                       decoration: BoxDecoration(
                           color: Theme.of(context).colorScheme.surface,
                           borderRadius: BorderRadius.circular(10.0)),
-                      child: BlocBuilder<UserAuthCubit, UserAuthState>(
+                      child: BlocBuilder<AuthCubit, AuthState>(
                         builder: (context, state) {
-                          if (state is UserAuthProgress) {
+                          if (state is AuthProgress) {
                             return const Center(
                               child: CircularProgressIndicator(),
                             );

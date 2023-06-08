@@ -1,7 +1,6 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shopesapp/data/repositories/delete_user_repository.dart';
 import 'package:shopesapp/data/repositories/update_user_repository.dart';
 import 'package:shopesapp/presentation/widgets/edit_profile/email_form_field.dart';
 import 'package:shopesapp/presentation/widgets/edit_profile/password_form_field.dart';
@@ -12,10 +11,7 @@ import 'package:shopesapp/presentation/widgets/profile/password_form_field.dart'
 import 'package:shopesapp/presentation/widgets/profile/phoneNumber_form_field.dart';
 import '../../data/models/user.dart';
 import '../../logic/cubites/cubit/profile_cubit.dart';
-import '../../logic/cubites/delete_user_cubit.dart';
 import '../../logic/cubites/update_user_cubit.dart';
-import '../../logic/cubites/user_cubit.dart';
-import '../widgets/dialogs/alert_dialog.dart';
 import '../widgets/dialogs/awosem_dialog.dart';
 import '../widgets/profile/email_form_field.dart';
 
@@ -123,26 +119,6 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  void _showDeleteAlert(BuildContext context) {
-    AwesomeDialog(
-        btnOkColor: Colors.green,
-        context: context,
-        animType: AnimType.SCALE,
-        dialogType: DialogType.WARNING,
-        body: const Center(
-          child: Text(
-            'You Will Delete Your Account!',
-            style: TextStyle(fontStyle: FontStyle.italic),
-          ),
-        ),
-        btnCancelOnPress: () {},
-        btnCancelText: 'Cancel',
-        btnOkText: " Countinue",
-        btnOkOnPress: () {
-          BlocProvider.of<DeleteUserCubit>(context).deleteUser(id: _id);
-        }).show();
-  }
-
   Widget _buildUpdatePage(BuildContext context) {
     return Column(
       children: [
@@ -229,7 +205,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
         const SizedBox(
-          height: 5.0,
+          height: 15.0,
         ),
         Container(
             width: 200.0,
@@ -323,68 +299,23 @@ class _ProfilePageState extends State<ProfilePage> {
               child: MaterialButton(
                 elevation: 10.0,
                 child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(
-                        Icons.logout,
-                        color: Colors.white,
-                      ),
-                      Text(
-                        "Log Out",
-                        style: TextStyle(color: Colors.white),
-                      )
-                    ]),
-                onPressed: () => showDialogAlert(context),
-              ),
-            ),
-            const SizedBox(
-              height: 15.0,
-            ),
-            BlocProvider<DeleteUserCubit>(
-              create: (context) => DeleteUserCubit(DeleteUserRepository()),
-              child: BlocConsumer<DeleteUserCubit, DeleteUserState>(
-                listener: (context, state) {
-                  if (state is DeleteUserSucceed) {
-                    buildAwrsomeDialog(context, "Succeed",
-                            "You Delete your account successfully", "OK",
-                            type: DialogType.SUCCES)
-                        .show();
-                    BlocProvider.of<UserAuthCubit>(context).logOut();
-                  } else if (state is DeleteUserFailed) {
-                    buildAwrsomeDialog(context, "Faild",
-                            state.message.toUpperCase(), "Cancle",
-                            type: DialogType.ERROR)
-                        .show();
-                  }
-                },
-                builder: (context, state) {
-                  if (state is DeleteUserProgress) {
-                    return const CircularProgressIndicator();
-                  }
-                  return Container(
-                      width: 200.0,
-                      decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(10.0)),
-                      child: MaterialButton(
-                        onPressed: () => _showDeleteAlert(context),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Icon(
-                              Icons.delete,
-                              color: Colors.white,
-                            ),
-                            Text(
-                              "Delete Account",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ],
-                        ),
-                      ));
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(
+                      Icons.arrow_back,
+                      color: Colors.white,
+                    ),
+                    Text(
+                      "Back",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ],
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
                 },
               ),
-            )
+            ),
           ],
         ));
   }
@@ -392,26 +323,28 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     double pageWidth = MediaQuery.of(context).size.width;
-    return SingleChildScrollView(
-      child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              buildProfileAppBar(context),
-              const SizedBox(
-                height: 10.0,
-              ),
-              BlocBuilder<ProfileCubit, ProfileState>(
-                builder: (context, state) {
-                  if (state is EditProfile) {
-                    return _buildUpdatePage(context);
-                  }
-                  return _buildUserInfoPage(context, pageWidth);
-                },
-              )
-            ],
-          )),
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                buildProfileAppBar(context),
+                const SizedBox(
+                  height: 10.0,
+                ),
+                BlocBuilder<ProfileCubit, ProfileState>(
+                  builder: (context, state) {
+                    if (state is EditProfile) {
+                      return _buildUpdatePage(context);
+                    }
+                    return _buildUserInfoPage(context, pageWidth);
+                  },
+                )
+              ],
+            )),
+      ),
     );
   }
 }

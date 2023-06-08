@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shopesapp/presentation/shared/colors.dart';
 
 // ignore: must_be_immutable
 class CreateConfirmPasswordFormField extends StatefulWidget {
@@ -21,24 +22,18 @@ class _CreateConfirmPasswordFormFieldState
   Widget build(BuildContext context) {
     return TextFormField(
         decoration: InputDecoration(
-            labelText: 'Confirm Password',
-            labelStyle: TextStyle(
-                fontSize: 20, color: Theme.of(context).colorScheme.onSurface),
-            prefixIcon: Icon(
-              Icons.password,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            helperText: 'Password must be More Than 8',
-            helperStyle: const TextStyle(fontSize: 15),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                  width: 2, color: Theme.of(context).colorScheme.primary),
-            ),
+            filled: true,
+            fillColor: const Color.fromRGBO(242, 242, 242, 1),
+            labelText: '   Confirm Password',
+            labelStyle: TextStyle(fontSize: 20, color: AppColors.mainTextColor),
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30),
+                borderSide: BorderSide.none),
             suffixIcon: widget.isConfiermPasswordHidden
                 ? IconButton(
                     icon: Icon(
                       Icons.visibility_off,
-                      color: Theme.of(context).colorScheme.primary,
+                      color: AppColors.mainTextColor,
                     ),
                     onPressed: () {
                       setState(() {

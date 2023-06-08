@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shopesapp/presentation/pages/control_page.dart';
+import 'package:shopesapp/presentation/pages/suggested_stores.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
@@ -60,26 +61,29 @@ class _CategoriesPageState extends State<CategoriesPage> {
                   fontSize: 25,
                   bold: true,
                 ),
-                Row(
-                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    InkWell(
-                      onTap: () => context.push(const ControlPage()),
-                      child: CustomText(
-                        text: 'Done',
-                        textColor: AppColors.mainBlueColor,
-                        bold: true,
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20.0),
+                  child: Row(
+                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      InkWell(
+                        onTap: () => context.push(const ControlPage()),
+                        child: CustomText(
+                          text: 'Done',
+                          textColor: AppColors.secondaryFontColor,
+                          // bold: true,
+                        ),
                       ),
-                    ),
-                    30.px,
-                    InkWell(
-                      child: CustomText(
-                        text: 'Sub-categories',
-                        textColor: AppColors.mainBlueColor,
-                        bold: true,
+                      30.px,
+                      InkWell(
+                        child: CustomText(
+                          text: 'Sub-categories',
+                          textColor: AppColors.secondaryFontColor,
+                          // bold: true,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 )
               ],
             ),
