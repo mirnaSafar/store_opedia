@@ -19,10 +19,11 @@ class _ProductInfoState extends State<ProductInfo> {
     final h = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      //  backgroundColor: AppColors.mainWhiteColor,
+      backgroundColor: AppColors.mainWhiteColor,
       appBar: AppBar(
         elevation: 0,
-        //  backgroundColor: AppColors.mainWhiteColor,
+        leading: const BackButton(color: Colors.black),
+        backgroundColor: Colors.transparent,
       ),
       body: ListView(
         children: [

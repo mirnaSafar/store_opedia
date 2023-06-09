@@ -69,6 +69,7 @@ class _EditStoreState extends State<AddStorePage> {
         child: Scaffold(
       backgroundColor: AppColors.mainWhiteColor,
       appBar: AppBar(
+        leading: const BackButton(color: Colors.black),
         backgroundColor: AppColors.mainWhiteColor,
         title: CustomText(
           text: 'Add Store',

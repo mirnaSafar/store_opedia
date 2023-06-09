@@ -15,10 +15,13 @@ class _SuggestedStoresViewState extends State<SuggestedStoresView> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 0),
         child: ListView(
           children: [
-            const PageHeader(),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+              child: PageHeader(),
+            ),
             ListView.separated(
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,

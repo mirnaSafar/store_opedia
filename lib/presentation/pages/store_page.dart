@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/data/models/post.dart';
 import 'package:shopesapp/logic/cubites/shop/following_cubit.dart';
+import 'package:shopesapp/logic/cubites/shop/work_time_cubit.dart';
 import 'package:shopesapp/presentation/pages/add_post_page.dart';
 import 'package:shopesapp/presentation/pages/edit_store.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
@@ -10,7 +11,6 @@ import 'package:shopesapp/presentation/shared/custom_widgets/custom_icon_text.da
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custoum_rate.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
-import 'package:shopesapp/logic/cubites/shop/work_time_cubit.dart';
 import '../widgets/product/product_post.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 

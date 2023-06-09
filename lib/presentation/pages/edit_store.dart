@@ -67,6 +67,7 @@ class _EditStoreState extends State<EditStore> {
         child: Scaffold(
       backgroundColor: AppColors.mainWhiteColor,
       appBar: AppBar(
+        leading: const BackButton(color: Colors.black),
         backgroundColor: AppColors.mainWhiteColor,
         title: CustomText(
           text: 'Edit Store',

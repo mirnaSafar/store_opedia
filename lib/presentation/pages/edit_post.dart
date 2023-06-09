@@ -60,7 +60,8 @@ class _EditPostPageState extends State<EditPostPage> {
       backgroundColor: AppColors.mainWhiteColor,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: AppColors.mainWhiteColor,
+        leading: const BackButton(color: Colors.black),
+        backgroundColor: Colors.transparent,
         title: const CustomText(text: 'edit product'),
       ),
       body: Padding(
