@@ -1,4 +1,4 @@
-import 'package:flutter/material%20(2).dart';
+import "package:flutter/material.dart";
 import 'package:rating_dialog/rating_dialog.dart';
 import 'package:shopesapp/data/enums/file_type.dart';
 
