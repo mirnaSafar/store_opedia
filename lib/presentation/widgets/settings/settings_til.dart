@@ -1,13 +1,20 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:shopesapp/presentation/pages/add_store_page.dart';
 import 'package:shopesapp/presentation/pages/porfile.dart';
 import 'package:shopesapp/presentation/pages/privacy%20policies.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
+import 'package:shopesapp/presentation/shared/custom_widgets/custom_icon_text.dart';
+import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
 import 'package:shopesapp/presentation/widgets/settings/theme.picker.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../constant/enums.dart';
+import '../../../data/enums/message_type.dart';
 import '../../pages/edit_store.dart';
 import '../../pages/switch_store.dart';
+import '../../shared/custom_widgets/custom_toast.dart';
 import '../dialogs/delete_user_dialog.dart';
 import 'logOut_alert_dialog.dart';
 import 'icon_widget.dart';
@@ -82,10 +89,49 @@ Widget buildSwitchSotre(BuildContext context) => SimpleSettingsTile(
       child: const SwitchStore(),
     );
 
-Widget buildAbout() => ExpandableSettingsTile(
-    title: "About",
-    leading: iconWidget(
-      icon: Icons.info_outline,
-      color: Colors.indigo,
-    ),
-    children: const <Widget>[Text("Version 0.1")]);
+Widget buildAbout(BuildContext context) => ExpandableSettingsTile(
+      title: "About",
+      leading: iconWidget(
+        icon: Icons.info_outline,
+        color: AppColors.mainBlueColor,
+      ),
+      children: <Widget>[
+        CustomText(
+          text: "Version 0.1",
+          textColor: Theme.of(context).primaryColorDark,
+        ),
+      ],
+    );
+
+Widget buildContactUs(BuildContext context, Size size) {
+  return SimpleSettingsTile(
+    title: "Contact Us",
+    leading: iconWidget(icon: Icons.email, color: AppColors.mainOrangeColor),
+    onTap: () async {
+      String? encodeQueryParameters(Map<String, String> params) {
+        return params.entries
+            .map((MapEntry<String, String> e) =>
+                '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+            .join('&');
+      }
+
+      final Uri emailUrl = Uri(
+          scheme: 'malito',
+          //put anas email to add the email to backend
+          path: "AnasAttoum.12321@gmail.com",
+          query: encodeQueryParameters(<String, String>{
+            'subject': 'Store Opedia',
+            'body': "Hello Admin "
+          }));
+
+      if (await canLaunchUrl(emailUrl)) {
+        launchUrl(emailUrl);
+      } else {
+        CustomToast.showMessage(
+            size: size,
+            message: 'Please check the Internet Connection',
+            messageType: MessageType.REJECTED);
+      }
+    },
+  );
+}

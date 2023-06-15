@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 class Shop {
-  String ownerID;
+  Map<String, dynamic> owner;
   String shopName;
   String shopProfileImage;
   String shopCoverImage;
@@ -27,7 +27,7 @@ class Shop {
       required this.rate,
       this.isFollow = false,
       this.isFavorit = false,
-      required this.ownerID,
+      required this.owner,
       required this.shopID});
 
   Map<String, dynamic> toMap() {
@@ -41,7 +41,7 @@ class Shop {
       "timeOfWorking": timeOfWorking,
       "socialUrl": socialUrl,
       "rate": rate,
-      "ownerID": ownerID
+      "owner": owner
     };
   }
 
@@ -57,7 +57,7 @@ class Shop {
         shopID: map["shopID"] as String,
         socialUrl: map["socialUrl"] as List<String>,
         rate: map["rate"] as int,
-        ownerID: map["ownerID"] as String);
+        owner: map["owner"] as Map<String, dynamic>);
   }
 
   String toJson() => json.encode(toMap());

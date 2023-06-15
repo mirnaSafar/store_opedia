@@ -2,13 +2,13 @@ import 'dart:convert';
 
 class User {
   String id;
-  String userName;
+  String name;
   String phoneNumber;
   String email;
   String password;
 
   User({
-    required this.userName,
+    required this.name,
     required this.email,
     required this.phoneNumber,
     required this.password,
@@ -29,7 +29,7 @@ class User {
         id: oldUserObj.id,
         email: oldUserObj.email,
         phoneNumber: oldUserObj.phoneNumber,
-        userName: oldUserObj.userName,
+        name: oldUserObj.name,
         password: oldUserObj.password);
   }
 
@@ -38,7 +38,7 @@ class User {
         id: map['id'] as String,
         email: map['email'] as String,
         phoneNumber: map['phoneNumber'] as String,
-        userName: map["userName"] as String,
+        name: map["userName"] as String,
         password: map['password'] as String);
   }
 

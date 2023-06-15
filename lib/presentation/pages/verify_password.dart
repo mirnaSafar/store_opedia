@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:shopesapp/presentation/shared/colors.dart';
+import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
+import 'package:shopesapp/presentation/shared/extensions.dart';
 
+import '../../data/enums/message_type.dart';
 import '../../data/models/user.dart';
 import '../../logic/cubites/cubit/profile_cubit.dart';
+import '../shared/custom_widgets/custom_toast.dart';
 
 class VerifyPassword extends StatefulWidget {
   const VerifyPassword({Key? key}) : super(key: key);
@@ -28,47 +33,60 @@ class _VerifyPasswordState extends State<VerifyPassword> {
 
   @override
   Widget build(BuildContext context) {
-    double pageHeight = MediaQuery.of(context).size.height;
+    var size = MediaQuery.of(context).size;
     return Scaffold(
       body: Column(
         children: [
           Image.asset('assets/verified.png'),
           SizedBox(
-            height: pageHeight / 12,
+            height: size.height / 20,
           ),
-          const Center(
-            child: Text("Verify Your Password Please"),
+          /*  */
+          /**/
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: size.width * 0.02),
+            child: PinCodeTextField(
+              scrollPadding: const EdgeInsets.all(20),
+              pinTheme: PinTheme(
+                  shape: PinCodeFieldShape.box,
+                  activeColor: Theme.of(context).colorScheme.primary,
+                  borderRadius: BorderRadius.circular(5),
+                  selectedColor: Theme.of(context).colorScheme.secondary,
+                  fieldWidth: _oldPassword.length <= 10 ? 40.0 : 22.0,
+                  fieldHeight: _oldPassword.length <= 10 ? 50.0 : 30.0),
+              onCompleted: (value) {
+                if (value != _oldPassword) {
+                  CustomToast.showMessage(
+                      size: size,
+                      message: "Wrong Password",
+                      messageType: MessageType.REJECTED);
+                } else {
+                  BlocProvider.of<ProfileCubit>(context).setVerifiy(true);
+                  Navigator.pop(context);
+                }
+              },
+              obscureText: true,
+              obscuringCharacter: '*',
+              textStyle:
+                  TextStyle(fontSize: _oldPassword.length <= 10 ? 20 : 16),
+              appContext: context,
+              length: _oldPassword.length,
+              onChanged: (value) {},
+            ),
           ),
-          const SizedBox(
-            height: 10.0,
+          SizedBox(
+            height: size.height * 0.02,
           ),
-          PinCodeTextField(
-            scrollPadding: const EdgeInsets.all(20),
-            pinTheme: PinTheme(
-                shape: PinCodeFieldShape.box,
-                activeColor: Theme.of(context).colorScheme.primary,
-                borderRadius: BorderRadius.circular(5),
-                selectedColor: Theme.of(context).colorScheme.secondary,
-                fieldWidth: _oldPassword.length <= 10 ? 40.0 : 22.0,
-                fieldHeight: _oldPassword.length <= 10 ? 50.0 : 30.0),
-            onCompleted: (value) {
-              if (value != _oldPassword) {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text('You have to Write the Correct Password')));
-              } else {
-                BlocProvider.of<ProfileCubit>(context).setVerifiy(true);
-                Navigator.pop(context);
-              }
-            },
-            obscureText: true,
-            obscuringCharacter: '*',
-            textStyle: TextStyle(fontSize: _oldPassword.length <= 10 ? 20 : 16),
-            appContext: context,
-            length: _oldPassword.length,
-            onChanged: (value) {},
+          Center(
+            child: CustomText(
+              text: "Verify   your   password   pleas",
+              fontSize: 20.0,
+              bold: true,
+              textColor: Theme.of(context).primaryColorDark,
+            ),
           ),
-          const SizedBox(
-            height: 10.0,
+          SizedBox(
+            height: size.height * 0.02,
           ),
           Container(
             width: 200.0,
@@ -76,22 +94,23 @@ class _VerifyPasswordState extends State<VerifyPassword> {
                 color: Colors.grey, borderRadius: BorderRadius.circular(10.0)),
             child: MaterialButton(
                 elevation: 10.0,
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(
-                        Icons.logout,
-                        color: Colors.white,
-                      ),
-                      Text(
-                        "Done",
-                        style: TextStyle(color: Colors.white),
-                      )
-                    ]),
+                child:
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  Icon(
+                    Icons.arrow_back,
+                    color: AppColors.mainWhiteColor,
+                  ),
+                  CustomText(
+                    text: "Cancel",
+                    textColor: AppColors.mainWhiteColor,
+                  )
+                ]),
                 onPressed: () {
                   Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('You have to Verify the Password First')));
+                  CustomToast.showMessage(
+                      size: size,
+                      message: "You Have to write the Password First !",
+                      messageType: MessageType.INFO);
                 }),
           )
         ],

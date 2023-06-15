@@ -1,11 +1,14 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'package:shopesapp/logic/cubites/user_cubit.dart';
+import 'package:shopesapp/presentation/pages/privacy%20policies.dart';
 import 'package:shopesapp/presentation/pages/start_sign_up_page.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
+import 'package:shopesapp/presentation/shared/custom_widgets/custom_toast.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
+import '../../data/enums/message_type.dart';
+import '../../logic/cubites/cubit/auth_cubit.dart';
+import '../../logic/cubites/cubit/auth_state.dart';
 import '../../logic/cubites/user_state.dart';
 import '../widgets/auth/email_form_field.dart';
 import '../widgets/auth/password_form_field.dart';
@@ -42,23 +45,25 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   void _submitForm(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      //   BlocProvider.of<UserAuthCubit>(context).login(_email, _password);
+      //   BlocProvider.of<AuthCubit>(context).login(_email, _password);
       Navigator.pushReplacementNamed(context, '/control');
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     final w = MediaQuery.of(context).size.width;
     final h = MediaQuery.of(context).size.height;
-    return BlocListener<UserAuthCubit, UserAuthState>(
+    return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
-        if (state is UserAuthSignedUp) {
-          buildAwrsomeDialog(context, "Succeed", "You Login successfully", "OK",
-                  type: DialogType.SUCCES)
-              .show();
-        } else if (state is UserAuthFailed) {
-          buildAwrsomeDialog(
+        if (state is UserLoginedIn || state is OwnerLoginedIn) {
+          CustomToast.showMessage(
+              size: size,
+              message: 'Welcome again',
+              messageType: MessageType.SUCCESS);
+        } else if (state is AuthFailed) {
+          buildAwsomeDialog(
                   context, "Faild", state.message.toUpperCase(), "Cancle",
                   type: DialogType.ERROR)
               .show();
@@ -119,7 +124,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                       style: TextStyle(
                                           color: AppColors.mainOrangeColor),
                                     ),
-                                    onTap: () {},
+                                    onTap: () {
+                                      context.push(const PrivacyPlicies());
+                                    },
                                   ),
                                   const SizedBox(
                                     height: 70.0,
@@ -137,12 +144,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   const SizedBox(
                                     height: 60.0,
                                   ),
-                                  Row(
+                                  /*    Row(
                                     children: const [
                                       Text("do you have a store"),
                                       Icon(Icons.check_box)
                                     ],
-                                  ),
+                                  ),*/
                                   const SizedBox(
                                     height: 15.0,
                                   )
@@ -172,8 +179,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                     child: Row(
                                       children: [
                                         Expanded(
-                                          child: BlocBuilder<UserAuthCubit,
-                                              UserAuthState>(
+                                          child:
+                                              BlocBuilder<AuthCubit, AuthState>(
                                             builder: (context, state) {
                                               if (state is UserAuthProgress) {
                                                 return const Center(

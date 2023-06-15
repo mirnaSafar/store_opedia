@@ -28,7 +28,7 @@ class _StorePageState extends State<StorePage> {
     final w = MediaQuery.of(context).size.width;
     final h = MediaQuery.of(context).size.height;
     return Scaffold(
-      backgroundColor: AppColors.mainWhiteColor,
+      //  backgroundColor: AppColors.mainWhiteColor,
       // appBar: AppBar(
       //   elevation: 0,
       //   backgroundColor: Colors.transparent,
@@ -114,7 +114,8 @@ class _StorePageState extends State<StorePage> {
                                       text: 'Store name',
                                       bold: true,
                                       fontSize: w * 0.05,
-                                      textColor: AppColors.mainBlackColor,
+                                      textColor:
+                                          Theme.of(context).primaryColorDark,
                                     ),
                                     10.px,
                                     const CustomRate(),
@@ -168,7 +169,7 @@ class _StorePageState extends State<StorePage> {
                             ),
                             15.ph,
                             CustomText(
-                                textColor: AppColors.primaryFontColor,
+                                textColor: Theme.of(context).primaryColorDark,
                                 fontSize: 15,
                                 text:
                                     'basic description about the \nstore and its major'),
@@ -197,38 +198,46 @@ class _StorePageState extends State<StorePage> {
                               ],
                             ),
                             const CustomDivider(),
-                            const CustomIconTextRow(
+                            CustomIconTextRow(
+                                textColor: Theme.of(context).primaryColorDark,
                                 icon: Icons.alarm,
                                 text: 'Work hours:   8am-2pm'),
                             20.ph,
-                            const CustomIconTextRow(
-                                icon: Icons.phone, text: '0987655432'),
+                            CustomIconTextRow(
+                                textColor: Theme.of(context).primaryColorDark,
+                                icon: Icons.phone,
+                                text: '0987655432'),
                             20.ph,
-                            const CustomIconTextRow(
-                                icon: Icons.email, text: 'name@gmail.com'),
+                            CustomIconTextRow(
+                                textColor: Theme.of(context).primaryColorDark,
+                                icon: Icons.email,
+                                text: 'name@gmail.com'),
                             20.ph,
-                            const CustomIconTextRow(
+                            CustomIconTextRow(
+                                textColor: Theme.of(context).primaryColorDark,
                                 icon: Icons.location_on_outlined,
                                 text: 'Hamah'),
                             const CustomDivider(),
                             CustomText(
                               text: 'Social accounts',
-                              textColor: AppColors.mainBlackColor,
+                              textColor: Theme.of(context).primaryColorDark,
                               fontSize: w * 0.04,
                               bold: true,
                             ),
                             20.ph,
-                            const CustomIconTextRow(
+                            CustomIconTextRow(
+                                textColor: Theme.of(context).primaryColorDark,
                                 icon: Icons.facebook,
                                 text: 'https://instagram.com'),
                             10.ph,
-                            const CustomIconTextRow(
+                            CustomIconTextRow(
+                                textColor: Theme.of(context).primaryColorDark,
                                 icon: Icons.facebook,
                                 text: 'https://instagram.com'),
                             const CustomDivider(),
                             CustomText(
                               text: 'Related Stores',
-                              textColor: AppColors.mainBlackColor,
+                              textColor: Theme.of(context).primaryColorDark,
                               fontSize: w * 0.04,
                               bold: true,
                             ),
@@ -260,7 +269,10 @@ class _StorePageState extends State<StorePage> {
                             backgroundColor: AppColors.mainTextColor,
                           ),
                           5.ph,
-                          const CustomText(text: 'store name')
+                          CustomText(
+                            text: 'store name',
+                            textColor: Theme.of(context).primaryColorDark,
+                          )
                         ],
                       );
                     },

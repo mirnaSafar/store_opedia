@@ -23,7 +23,7 @@ class ShopRepository {
   }
 
   Future<String> addShop(
-      {required String ownerID,
+      {required Map<String, dynamic> owner,
       required String shopName,
       required String shopDescription,
       required String? shopProfileImage,
@@ -33,8 +33,9 @@ class ShopRepository {
       required String timeOfWorking,
       required List<String> socialUrl}) async {
     http.Response response;
+    String ownerID = owner["id"];
     Map<String, dynamic> requestBody = {
-      "ownerID": ownerID,
+      "owner": owner,
       "shopName": shopName,
       "shopDescription": shopDescription,
       "shopProfileImage": shopProfileImage ?? "noImage",
@@ -48,7 +49,8 @@ class ShopRepository {
       "isFollow": false
     };
     try {
-      response = await http.post(Uri.parse(ENDPOINT + "/shops/addShop"),
+      response = await http.post(
+          Uri.parse(ENDPOINT + "/shops/addShop/$ownerID"),
           body: jsonEncode(requestBody),
           headers: {
             'Content-Type': 'application/json',

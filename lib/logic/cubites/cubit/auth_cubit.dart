@@ -135,12 +135,11 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<void> logOut() async {
     if (_mode == "user") {
-      await repo.deleteStoredUser();
       user = null;
     } else {
-      await repo.deleteStoredOwner();
       owner = null;
     }
+    await repo.deleteInfo();
     _authTimer.cancel();
     emit(AuthNoToken());
   }

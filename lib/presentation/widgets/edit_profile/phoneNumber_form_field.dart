@@ -25,6 +25,7 @@ class EditPhoneNumberFormField extends StatelessWidget {
           helperText: 'Phone number must start with 09',
           helperStyle: const TextStyle(fontSize: 15),
           enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide(
                 width: 2, color: Theme.of(context).colorScheme.primary),
           ),

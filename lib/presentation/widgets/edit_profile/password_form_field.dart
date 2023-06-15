@@ -33,6 +33,7 @@ class _EditPasswordFormFieldState extends State<EditPasswordFormField> {
           helperText: 'Password must be More Than 8',
           helperStyle: const TextStyle(fontSize: 15),
           enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide(
                 width: 2, color: Theme.of(context).colorScheme.primary),
           ),

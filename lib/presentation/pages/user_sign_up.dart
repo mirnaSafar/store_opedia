@@ -71,13 +71,12 @@ class _UserSignUpState extends State<UserSignUp> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
-        if (state is OwnerSignedUp) {
-          buildAwrsomeDialog(
-                  context, "Succeed", "You Signin successfully", "OK",
+        if (state is UserSignedUp) {
+          buildAwsomeDialog(context, "Succeed", "You Signin successfully", "OK",
                   type: DialogType.SUCCES)
               .show();
         } else if (state is AuthFailed) {
-          buildAwrsomeDialog(
+          buildAwsomeDialog(
                   context, "Faild", state.message.toUpperCase(), "Cancle",
                   type: DialogType.ERROR)
               .show();

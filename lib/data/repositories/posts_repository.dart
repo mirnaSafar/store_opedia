@@ -67,18 +67,18 @@ class PostsRepository {
   }
 
   Future<String> addPost(
-      {required String shopID,
+      {required Map<String, dynamic> owner,
       required String title,
       required String description,
-      required List<String>? postImages,
+      required String? postImage,
       required String category,
       required String productPrice}) async {
     http.Response response;
     Map<String, dynamic> requestBody = {
-      "shopID": shopID,
+      "owner": owner,
       "title": title,
       "description": description,
-      "postImages": postImages ?? "noProductImage",
+      "postImages": postImage ?? "noProductImage",
       "category": category,
       "productPrice": productPrice,
       "rate": 0,

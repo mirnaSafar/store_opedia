@@ -76,18 +76,18 @@ class PostsCubit extends Cubit<PostsState> {
   }
 
   Future addPost(
-      {required String shopID,
+      {required Map<String, dynamic> owner,
       required String title,
       required String description,
-      required List<String>? postImages,
+      required String? postImage,
       required String category,
       required String productPrice}) async {
     emit(AddPostProgress());
     String response = await _postsRepository.addPost(
-        shopID: shopID,
+        owner: owner,
         title: title,
         description: description,
-        postImages: postImages,
+        postImage: postImage,
         category: category,
         productPrice: productPrice);
     if (response == "Failed") {

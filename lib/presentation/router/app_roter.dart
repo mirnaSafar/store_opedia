@@ -7,9 +7,7 @@ import 'package:shopesapp/presentation/pages/porfile.dart';
 import 'package:shopesapp/presentation/pages/privacy%20policies.dart';
 import 'package:shopesapp/presentation/pages/settings.dart';
 import 'package:shopesapp/presentation/pages/verify_password.dart';
-
 import '../../logic/cubites/cubit/auth_state.dart';
-import '../pages/user_sign_up.dart';
 
 class AppRouter {
   Route? onGeneratedRoutes(RouteSettings routeSettings) {
@@ -17,25 +15,16 @@ class AppRouter {
       case '/':
         return MaterialPageRoute(builder: (context) {
           return BlocBuilder<AuthCubit, AuthState>(builder: ((context, state) {
-            /* if (state is UserAuthLoginedIn) {
+            if (state is UserLoginedIn || state is OwnerLoginedIn) {
               return const ControlPage();
             } else {
-               return const StartPage();           
-            }*/
-            return const ControlPage();
+              return const ControlPage();
+              // return const LoginPage();
+            }
+            //
           }));
         });
-      case '/user':
-        return MaterialPageRoute(builder: (context) {
-          return BlocBuilder<AuthCubit, AuthState>(builder: ((context, state) {
-            /* if (state is UserAuthLoginedIn) {
-              return const HomePage();
-            } else {
-               return const AuthPage(); 
-            }*/
-            return const UserSignUp();
-          }));
-        });
+
       case '/control':
         return MaterialPageRoute(builder: (context) {
           return const ControlPage();

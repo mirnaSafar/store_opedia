@@ -14,17 +14,17 @@ class StartSignupPage extends StatefulWidget {
 class _StartSignupPageState extends State<StartSignupPage> {
   @override
   Widget build(BuildContext context) {
-    final Size = MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
     return SafeArea(
         child: Scaffold(
       body: CustomPaint(
-        painter:
-            MyPainter(clipper: SecondClipper(), shadow: Shadow(blurRadius: 10)),
+        painter: MyPainter(
+            clipper: SecondClipper(), shadow: const Shadow(blurRadius: 10)),
         child: ClipPath(
           clipper: SecondClipper(),
           child: Container(
-            width: Size.width,
-            height: Size.height,
+            width: size.width,
+            height: size.height,
             decoration: BoxDecoration(
               color: AppColors.mainOrangeColor,
             ),
@@ -34,7 +34,8 @@ class _StartSignupPageState extends State<StartSignupPage> {
                 alignment: AlignmentDirectional.topCenter,
                 child: CustomPaint(
                   painter: YourPainter(
-                      shadow: Shadow(blurRadius: 10), clipper: thirdClipper()),
+                      shadow: const Shadow(blurRadius: 10),
+                      clipper: thirdClipper()),
                   child: ClipPath(
                     clipper: thirdClipper(),
                     child: Container(
@@ -44,9 +45,8 @@ class _StartSignupPageState extends State<StartSignupPage> {
                         color: AppColors.mainWhiteColor,
                       ),
                       // padding: EdgeInsets.all(200),
-                      width: Size.width,
-                      height: Size.height * 0.8,
-
+                      width: size.width,
+                      height: size.height * 0.8,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 70),
                         child: Column(
@@ -61,11 +61,11 @@ class _StartSignupPageState extends State<StartSignupPage> {
                             ),
                             30.ph,
                             SizedBox(
-                              width: Size.width * 0.5,
-                              height: Size.height * 0.06,
+                              width: size.width * 0.5,
+                              height: size.height * 0.06,
                               child: ElevatedButton(
                                   onPressed: () {
-                                    context.push(StartSignupPage());
+                                    context.pop();
                                   },
                                   child: Text(
                                     "Client",
@@ -86,7 +86,7 @@ class _StartSignupPageState extends State<StartSignupPage> {
                             20.ph,
                             ElevatedButton(
                                 onPressed: () {
-                                  context.push(StartSignupPage());
+                                  context.push(const StartSignupPage());
                                 },
                                 child: Text(
                                   "Store Owner",
@@ -94,7 +94,7 @@ class _StartSignupPageState extends State<StartSignupPage> {
                                       color: AppColors.mainOrangeColor),
                                 ),
                                 style: ElevatedButton.styleFrom(
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                         vertical: 15, horizontal: 60),
                                     backgroundColor: AppColors.mainWhiteColor,
                                     shape: RoundedRectangleBorder(

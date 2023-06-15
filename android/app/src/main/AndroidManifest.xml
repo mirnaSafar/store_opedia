@@ -30,5 +30,10 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+       
+        <intent>
+          <action android:name="android.intent.action.VIEW"/>
+          <data android:scheme="malito"/>
+        </intent>
     </application>
 </manifest>

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shopesapp/presentation/pages/control_page.dart';
-import 'package:shopesapp/presentation/pages/suggested_stores.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
@@ -67,7 +66,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                     // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       InkWell(
-                        onTap: () => context.push(const ControlPage()),
+                        onTap: () => context.pop(),
                         child: CustomText(
                           text: 'Done',
                           textColor: AppColors.secondaryFontColor,

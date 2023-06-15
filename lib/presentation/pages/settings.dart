@@ -34,31 +34,24 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    var height = MediaQuery.of(context).size.height;
-    var width = MediaQuery.of(context).size.width;
+    var size = MediaQuery.of(context).size;
 
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
         backgroundColor: Colors.transparent,
-        leading: Padding(
-          padding: EdgeInsets.only(left: width * 0.1),
-          child: Icon(
-            Icons.settings,
-            color: Theme.of(context).primaryColorDark,
-          ),
-        ),
         title: Text(
           "Settings",
           style: TextStyle(
               color: Theme.of(context).primaryColorDark,
               fontWeight: FontWeight.w600),
         ),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: SizedBox(
-          height: height,
+          height: size.height,
           child: ListView(
             shrinkWrap: true,
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 5),
@@ -70,7 +63,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   title: "Profile",
                   children: <Widget>[buildProfile(context)]),
               SizedBox(
-                height: height * 0.01,
+                height: size.height * 0.01,
               ),
               SettingsGroup(
                   titleTextStyle: TextStyle(
@@ -83,7 +76,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     buildSwitchSotre(context)
                   ]),
               SizedBox(
-                height: height * 0.01,
+                height: size.height * 0.01,
               ),
               SettingsGroup(
                   titleTextStyle: TextStyle(
@@ -92,7 +85,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   title: "MODE",
                   children: <Widget>[buildLanguage(), buildThemes(context)]),
               SizedBox(
-                height: height * 0.01,
+                height: size.height * 0.01,
               ),
               SettingsGroup(
                   titleTextStyle: TextStyle(
@@ -107,7 +100,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       child: BlocConsumer<DeleteUserCubit, DeleteUserState>(
                         listener: (context, state) {
                           if (state is DeleteUserSucceed) {
-                            buildAwrsomeDialog(
+                            buildAwsomeDialog(
                                     context,
                                     "Succeed",
                                     "You Delete your account successfully",
@@ -116,7 +109,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 .show();
                             BlocProvider.of<AuthCubit>(context).logOut();
                           } else if (state is DeleteUserFailed) {
-                            buildAwrsomeDialog(context, "Faild",
+                            buildAwsomeDialog(context, "Faild",
                                     state.message.toUpperCase(), "Cancle",
                                     type: DialogType.ERROR)
                                 .show();
@@ -132,14 +125,17 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                   ]),
               SizedBox(
-                height: height * 0.01,
+                height: size.height * 0.01,
               ),
               SettingsGroup(
                   titleTextStyle: TextStyle(
                       fontWeight: FontWeight.w600,
                       color: Theme.of(context).colorScheme.secondary),
                   title: "About",
-                  children: <Widget>[buildAbout()]),
+                  children: <Widget>[
+                    buildContactUs(context, size),
+                    buildAbout(context)
+                  ]),
               SettingsGroup(
                   titleTextStyle: TextStyle(
                       fontWeight: FontWeight.w600,

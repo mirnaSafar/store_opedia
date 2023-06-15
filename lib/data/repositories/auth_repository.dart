@@ -141,7 +141,7 @@ class AuthRepository {
             id: id,
             password: password,
             phoneNumber: phoneNumber,
-            userName: userName),
+            name: userName),
         "expire": expire
       };
     }
@@ -183,29 +183,9 @@ class AuthRepository {
     return null;
   }
 
-  Future<void> deleteStoredUser() async {
+  Future<void> deleteInfo() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.clear();
-    /*  await prefs.remove('id');
-    await prefs.remove('email');
-    await prefs.remove('password');
-    await prefs.remove("phoneNumber");
-    await prefs.remove("userName");
-    await prefs.remove("expire");
-    await prefs.remove("mode");*/
-  }
-
-  Future<void> deleteStoredOwner() async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.clear();
-/*    await prefs.remove('id');
-    await prefs.remove('email');
-    await prefs.remove('password');
-    await prefs.remove("phoneNumber");
-    await prefs.remove("ownerName");
-    await prefs.remove("expire");
-    await prefs.remove("mode");
-    await prefs.remove("currentshop");*/
   }
 
   Future<String?> getAuthMode() async {
@@ -227,7 +207,7 @@ class AuthRepository {
         location: owner.currentShop.location,
         timeOfWorking: owner.currentShop.timeOfWorking,
         rate: owner.currentShop.rate,
-        ownerID: owner.id);
+        owner: owner.toMap());
 
     String jsonShop = jsonEncode(shop);
 
@@ -246,7 +226,7 @@ class AuthRepository {
     await prefs.setString("id", user.id);
     await prefs.setString("email", user.email);
     await prefs.setString("phoneNumber", user.phoneNumber);
-    await prefs.setString("userName", user.userName);
+    await prefs.setString("userName", user.name);
     await prefs.setString("password", user.password);
     await prefs.setString("mode", "user");
   }

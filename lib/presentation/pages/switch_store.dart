@@ -1,5 +1,6 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
 
 class SwitchStore extends StatefulWidget {
   const SwitchStore({Key? key}) : super(key: key);
@@ -40,20 +41,20 @@ class _SwitchStoreState extends State<SwitchStore> {
         padding: const EdgeInsets.all(8.0),
         crossAxisCount: 2,
         children: [
-          buidshope(context, height),
-          buidshope(context, height),
-          buidshope(context, height),
-          buidshope(context, height),
-          buidshope(context, height),
-          buidshope(context, height),
-          buidshope(context, height),
+          buildShopItem(context, height),
+          buildShopItem(context, height),
+          buildShopItem(context, height),
+          buildShopItem(context, height),
+          buildShopItem(context, height),
+          buildShopItem(context, height),
+          buildShopItem(context, height),
         ],
       ),
     );
   }
 }
 
-Widget buidshope(BuildContext context, var height) => GestureDetector(
+Widget buildShopItem(BuildContext context, var height) => GestureDetector(
       child: Column(
         children: [
           CircleAvatar(
@@ -63,7 +64,7 @@ Widget buidshope(BuildContext context, var height) => GestureDetector(
           SizedBox(
             height: height * 0.01,
           ),
-          const Text("Shope Name")
+          const CustomText(text: "Shop Name")
         ],
       ),
       onTap: () => _showAlertDialog(context),

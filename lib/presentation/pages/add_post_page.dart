@@ -1,9 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shopesapp/data/enums/file_type.dart';
 import 'package:shopesapp/data/enums/message_type.dart';
+import 'package:shopesapp/logic/cubites/cubit/auth_cubit.dart';
+import 'package:shopesapp/logic/cubites/cubit/posts_cubit.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_button.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
@@ -12,6 +15,7 @@ import 'package:shopesapp/presentation/shared/custom_widgets/user_input.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/presentation/shared/utils.dart';
 
+import '../../data/models/owner.dart';
 import '../shared/validation_functions.dart';
 
 class AddPostPage extends StatefulWidget {
@@ -23,7 +27,14 @@ class AddPostPage extends StatefulWidget {
 
 class _AddPostPageState extends State<AddPostPage> {
   final ImagePicker picker = ImagePicker();
+  late Owner owner;
+  TextEditingController addPostPriceController = TextEditingController();
+  TextEditingController addPostNameController = TextEditingController();
+  TextEditingController addPostDescriptionController = TextEditingController();
+  late String? addPostImage;
   FileTypeModel? selectedFile;
+
+  void getImagePath() {}
   Future<FileTypeModel> pickFile(FileType type) async {
     String? path;
     switch (type) {
@@ -49,6 +60,13 @@ class _AddPostPageState extends State<AddPostPage> {
   }
 
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    //online
+    //  owner = context.read<AuthCubit>().getInfo();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +123,8 @@ class _AddPostPageState extends State<AddPostPage> {
                       },
                       child: CircleAvatar(
                           radius: 15,
-                          backgroundColor: AppColors.mainOrangeColor,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
                           child: const Icon(Icons.edit)),
                     ),
                   ),
@@ -116,11 +135,18 @@ class _AddPostPageState extends State<AddPostPage> {
               height: 10,
             ),
             UserInput(
+              controller: addPostNameController,
               text: 'Product name',
               validator: (name) => nameValidator(name, 'Enter product name'),
             ),
-            UserInput(text: 'Product Description'),
-            UserInput(text: 'Product price'),
+            UserInput(
+              text: 'Product Description',
+              controller: addPostDescriptionController,
+            ),
+            UserInput(
+              text: 'Product price',
+              controller: addPostPriceController,
+            ),
             30.ph,
             Row(children: [
               Expanded(
@@ -130,31 +156,57 @@ class _AddPostPageState extends State<AddPostPage> {
                 },
                 text: 'cancel',
                 color: AppColors.mainWhiteColor,
-                textColor: AppColors.mainOrangeColor,
-                borderColor: AppColors.mainOrangeColor,
+                textColor: Theme.of(context).colorScheme.primary,
+                borderColor: Theme.of(context).colorScheme.primary,
               )),
               70.px,
               Expanded(
-                  child: CustomButton(
-                onPressed: () {
-                  !formKey.currentState!.validate() && selectedFile == null
-                      ? CustomToast.showMessage(
-                          size: size,
-                          message: 'Please check required fields',
-                          messageType: MessageType.REJECTED)
-                      : Future.delayed(
-                          const Duration(milliseconds: 1000),
-                          () {
-                            formKey.currentState!.save();
-                            CustomToast.showMessage(
-                                size: size,
-                                message: 'Posted Successfully',
-                                messageType: MessageType.SUCCESS);
-                          },
-                        ).then((value) => context.pop());
+                  child: BlocConsumer<PostsCubit, PostsState>(
+                listener: (context, state) async {
+                  if (state is AddPostSucceed) {
+                    CustomToast.showMessage(
+                        size: size,
+                        message: "Add Post Successfully",
+                        messageType: MessageType.SUCCESS);
+                    await context.read<PostsCubit>().getPosts();
+                  } else if (state is AddPostFailed) {
+                    CustomToast.showMessage(
+                        size: size,
+                        message: state.message,
+                        messageType: MessageType.REJECTED);
+                  }
                 },
-                text: 'post',
-                textColor: AppColors.mainWhiteColor,
+                builder: (context, state) {
+                  if (state is AddPostProgress) {
+                    return const CircularProgressIndicator();
+                  }
+                  return CustomButton(
+                    onPressed: () {
+                      !formKey.currentState!.validate() && selectedFile == null
+                          ? CustomToast.showMessage(
+                              size: size,
+                              message: 'Please check required fields',
+                              messageType: MessageType.REJECTED)
+                          : Future.delayed(
+                              const Duration(milliseconds: 1000),
+                              () {
+                                formKey.currentState!.save();
+
+                                context.read<PostsCubit>().addPost(
+                                    owner: owner.toMap(),
+                                    title: addPostNameController.text,
+                                    description:
+                                        addPostDescriptionController.text,
+                                    postImage: "",
+                                    category: owner.currentShop.shopCategory,
+                                    productPrice: addPostPriceController.text);
+                              },
+                            ).then((value) => context.pop());
+                    },
+                    text: 'post',
+                    textColor: AppColors.mainWhiteColor,
+                  );
+                },
               )),
             ]),
           ]),
@@ -190,7 +242,7 @@ class _AddPostPageState extends State<AddPostPage> {
                           children: [
                             Icon(
                               Icons.camera_alt_rounded,
-                              color: AppColors.mainOrangeColor,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                             40.px,
                             const CustomText(
