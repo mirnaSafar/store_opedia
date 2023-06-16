@@ -1,12 +1,9 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:shopesapp/presentation/pages/add_store_page.dart';
 import 'package:shopesapp/presentation/pages/porfile.dart';
 import 'package:shopesapp/presentation/pages/privacy%20policies.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
-import 'package:shopesapp/presentation/shared/custom_widgets/custom_icon_text.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
 import 'package:shopesapp/presentation/widgets/settings/theme.picker.dart';
 import 'package:url_launcher/url_launcher.dart';

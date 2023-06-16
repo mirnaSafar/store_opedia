@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
@@ -5,6 +6,7 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shopesapp/data/repositories/posts_repository.dart';
 import 'package:shopesapp/logic/cubites/cubit/auth_cubit.dart';
+import 'package:shopesapp/logic/cubites/cubit/internet_cubit.dart';
 import 'package:shopesapp/logic/cubites/cubit/posts_cubit.dart';
 import 'package:shopesapp/logic/cubites/cubit/profile_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/following_cubit.dart';
@@ -26,23 +28,30 @@ void main() async {
   HydratedBlocOverrides.runZoned(
     () => runApp(MyApp(
       appRouter: appRouter,
+      connectivity: Connectivity(),
     )),
     storage: storage,
   );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key, required this.appRouter}) : super(key: key);
+  const MyApp({Key? key, required this.appRouter, required this.connectivity})
+      : super(key: key);
 
   final AppRouter appRouter;
+  final Connectivity connectivity;
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        //internet cubit
+        BlocProvider<InternetCubit>(
+          create: (context) => InternetCubit(connectivity: connectivity),
+        ),
         BlocProvider(
-          create: (context) => PostsCubit(PostsRepository())..getPosts(),
+          create: (context) => PostsCubit(
+            PostsRepository(),
+          )..getPosts(),
         ),
         BlocProvider(
           create: ((context) => ThemesCubit()),
@@ -58,7 +67,6 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => FollowingCubit(),
         ),
-
         BlocProvider(
           create: (context) => WorkTimeCubit(),
         ),

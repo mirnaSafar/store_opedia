@@ -7,7 +7,6 @@ import 'package:shopesapp/presentation/widgets/auth/confirm_form_field.dart';
 import 'package:shopesapp/presentation/widgets/auth/phoneNumber_form_field.dart';
 import '../../constant/clipper.dart';
 import '../../logic/cubites/cubit/auth_state.dart';
-import '../widgets/auth/sms_form_field.dart';
 import '../widgets/auth/email_form_field.dart';
 import '../widgets/auth/password_form_field.dart';
 import '../widgets/auth/user_name_form_field.dart';
@@ -119,10 +118,10 @@ class _UserSignUpState extends State<UserSignUp> with TickerProviderStateMixin {
                   const SizedBox(
                     height: 20.0,
                   ),
-                  CreateSMSFormField(setSMS: setSMS),
-                  const SizedBox(
-                    height: 20.0,
-                  ),
+                  // CreateSMSFormField(setSMS: setSMS),
+                  // const SizedBox(
+                  //   height: 20.0,
+                  // ),
                   CreatePasswordFormField(
                     isPasswordHidden: isPasswordHidden,
                     setPassword: setPassword,
@@ -172,25 +171,25 @@ class _UserSignUpState extends State<UserSignUp> with TickerProviderStateMixin {
                   const SizedBox(
                     height: 15.0,
                   ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Didn\'t recive the SMS?',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w500, fontSize: 18),
-                      ),
-                      TextButton(
-                        child: const Text(
-                          'Request again',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w500, fontSize: 18),
-                        ),
-                        onPressed: () {},
-                      )
-                    ],
-                  ),
+                  // Row(
+                  //   crossAxisAlignment: CrossAxisAlignment.center,
+                  //   mainAxisAlignment: MainAxisAlignment.center,
+                  //   children: [
+                  //     const Text(
+                  //       'Didn\'t recive the SMS?',
+                  //       style: TextStyle(
+                  //           fontWeight: FontWeight.w500, fontSize: 18),
+                  //     ),
+                  //     TextButton(
+                  //       child: const Text(
+                  //         'Request again',
+                  //         style: TextStyle(
+                  //             fontWeight: FontWeight.w500, fontSize: 18),
+                  //       ),
+                  //       onPressed: () {},
+                  //     )
+                  //   ],
+                  // ),
                 ]),
               )
             ])),

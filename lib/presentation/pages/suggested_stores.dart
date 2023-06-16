@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shopesapp/data/models/shop.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_divider.dart';
 import 'package:shopesapp/presentation/widgets/page_header/page_header.dart';
 import 'package:shopesapp/presentation/widgets/suggested_store/suggested_store.dart';
@@ -11,9 +12,22 @@ class SuggestedStoresView extends StatefulWidget {
 }
 
 class _SuggestedStoresViewState extends State<SuggestedStoresView> {
+  List<Shop> suggestedStoresList = [];
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return
+        //  BlocListener<InternetCubit, InternetState>(
+        //   listener: (context, state) async {
+        //     if (state is InternetConnected) {
+        //       suggestedStoresList
+        //           .addAll(await context.read<ShopCubit>().getStores());
+        //     } else if (state is InternetDisconnected) {
+        //     } else {
+        //       const CircularProgressIndicator();
+        //     }
+        //   },
+        // child:
+        Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 0),
         child: ListView(
@@ -34,6 +48,7 @@ class _SuggestedStoresViewState extends State<SuggestedStoresView> {
               },
             ),
           ],
+          // ),
         ),
       ),
     );

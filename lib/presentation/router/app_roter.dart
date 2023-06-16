@@ -18,8 +18,8 @@ class AppRouter {
             if (state is UserLoginedIn || state is OwnerLoginedIn) {
               return const ControlPage();
             } else {
-              return const ControlPage();
-              // return const LoginPage();
+              // return const ControlPage();
+              return const LoginPage();
             }
             //
           }));

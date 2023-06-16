@@ -31,9 +31,9 @@
             android:name="flutterEmbedding"
             android:value="2" />
        
-        <intent>
+        <!-- <intent>
           <action android:name="android.intent.action.VIEW"/>
           <data android:scheme="malito"/>
-        </intent>
+        </intent> -->
     </application>
 </manifest>

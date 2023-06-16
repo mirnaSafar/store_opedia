@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shopesapp/presentation/pages/owner_signup.dart';
+import 'package:shopesapp/presentation/pages/user_sign_up.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 
@@ -65,7 +67,8 @@ class _StartSignupPageState extends State<StartSignupPage> {
                               height: size.height * 0.06,
                               child: ElevatedButton(
                                   onPressed: () {
-                                    context.pop();
+                                    context.push(const UserSignUp());
+                                    // context.pop();
                                   },
                                   child: Text(
                                     "Client",
@@ -86,7 +89,7 @@ class _StartSignupPageState extends State<StartSignupPage> {
                             20.ph,
                             ElevatedButton(
                                 onPressed: () {
-                                  context.push(const StartSignupPage());
+                                  context.push(const OwnerSignUp());
                                 },
                                 child: Text(
                                   "Store Owner",
@@ -232,7 +235,6 @@ class MyPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 10.0
       ..color = AppColors.mainBlueColor;
-    ;
     var ClipPath = clipper.getClip(size).shift(shadow.offset);
     canvas.drawPath(ClipPath, paint);
   }
@@ -258,7 +260,6 @@ class YourPainter extends CustomPainter {
       ..strokeWidth = 10.0
       ..color = AppColors.mainBlueColor;
 
-    ;
     var ClipPath = clipper.getClip(size).shift(shadow.offset);
     canvas.drawPath(ClipPath, paint);
   }
