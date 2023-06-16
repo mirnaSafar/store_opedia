@@ -63,14 +63,13 @@ class AuthCubit extends Cubit<AuthState> {
 
     Map<String, dynamic>? response =
         await repo.login(email: email, password: password);
-    if (response!["statusCode"] == 205 &&
-        response["message"] == "auth succeded") {
+    if (response!["message"] == "user auth succeded") {
       _expire = DateTime.parse(response["expire"] as String);
       autoLogout(_expire.difference(DateTime.now()).inSeconds);
 
       user = User.fromMap(response["user"]);
       emit(UserLoginedIn(user: user!));
-    } else if (response["message"] == "auth succeded") {
+    } else if (response["message"] == "owner auth succeded") {
       _expire = DateTime.parse(response["expire"] as String);
       autoLogout(_expire.difference(DateTime.now()).inSeconds);
       owner = Owner.fromMap(response["owner"]);

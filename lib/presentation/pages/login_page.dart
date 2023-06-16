@@ -45,8 +45,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   void _submitForm(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      //   BlocProvider.of<AuthCubit>(context).login(_email, _password);
-      Navigator.pushReplacementNamed(context, '/control');
+      BlocProvider.of<AuthCubit>(context).login(_email, _password);
+      // Navigator.pushReplacementNamed(context, '/control');
     }
   }
 
@@ -182,7 +182,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                           child:
                                               BlocBuilder<AuthCubit, AuthState>(
                                             builder: (context, state) {
-                                              if (state is UserAuthProgress) {
+                                              if (state is AuthProgress) {
                                                 return const Center(
                                                   child:
                                                       CircularProgressIndicator(),

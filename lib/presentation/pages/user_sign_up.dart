@@ -59,10 +59,10 @@ class _UserSignUpState extends State<UserSignUp> with TickerProviderStateMixin {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      /* BlocProvider.of<UserAuthCubit>(context)
-            .signin(_userName, _email, _password, _phoneNumber);
-      */
-      Navigator.pushNamed(context, '/control');
+      BlocProvider.of<AuthCubit>(context)
+          .userSignUp(_userName, _email, _password, _phoneNumber);
+
+      //Navigator.pushNamed(context, '/control');
     }
   }
 

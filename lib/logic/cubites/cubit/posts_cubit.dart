@@ -18,7 +18,7 @@ class PostsCubit extends Cubit<PostsState> {
 
   Future getPosts() async {
 //Test the internet Cubit check tht connection
-
+    emit(FeatchingPostsProgress());
     BlocListener<InternetCubit, InternetState>(
       listener: (context, state) async {
         if (state is InternetConnected) {
@@ -43,7 +43,6 @@ class PostsCubit extends Cubit<PostsState> {
         }
       },
     );
-    emit(FeatchingPostsProgress());
   }
 
   Future getOldestPosts() async {

@@ -2,6 +2,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shopesapp/data/models/shop.dart';
 import 'package:shopesapp/logic/cubites/cubit/auth_cubit.dart';
 import 'package:shopesapp/presentation/pages/control_page.dart';
 import 'package:shopesapp/presentation/pages/signup_categories_page.dart';
@@ -32,7 +33,6 @@ class _UserSignUpState extends State<OwnerSignUp>
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final TextEditingController _emailController = TextEditingController();
-  // TextEditingController _sms= TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _storeNumberController = TextEditingController();
@@ -54,6 +54,7 @@ class _UserSignUpState extends State<OwnerSignUp>
   late String storeStartWorkTime;
   late String storeEndWorkTime;
   late String storeCategory;
+  late Shop currentShop;
 
   void setOwnerName(String name) {
     _ownerName = name;
@@ -82,11 +83,17 @@ class _UserSignUpState extends State<OwnerSignUp>
   void _submitForm(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+      currentShop.shopName = _storeNameController.text;
+      currentShop.location = storeLocationController.text;
+      currentShop.timeOfWorking = storeStartWorkTimecontroller.text +
+          "|" +
+          storeEndWorkTimeController.text;
+      currentShop.shopCategory = storeCategoryController.text;
 
-      /* BlocProvider.of<UserAuthCubit>(context)
-            .signin(_userName, _email, _password, _phoneNumber);
-      */
-      Navigator.pushNamed(context, '/control');
+      BlocProvider.of<AuthCubit>(context).ownerSignUp(
+          _ownerName, _email, _password, _phoneNumber, currentShop);
+
+      //  Navigator.pushNamed(context, '/control');
     }
   }
 
@@ -94,7 +101,7 @@ class _UserSignUpState extends State<OwnerSignUp>
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
-        if (state is UserSignedUp) {
+        if (state is OwnerSignedUp) {
           buildAwsomeDialog(context, "Succeed", "You Signin successfully", "OK",
                   type: DialogType.SUCCES)
               .show();
@@ -177,10 +184,10 @@ class _UserSignUpState extends State<OwnerSignUp>
                         text: 'Store Location',
                         controller: storeLocationController,
                       ),
-                      // UserInput(
-                      //   text: 'Store Number',
-                      //   controller: _storeNumberController,
-                      // ),
+                      /*  UserInput(
+                        text: 'Store Number',
+                        controller: _storeNumberController,
+                      ),*/
                       UserInput(
                           text: 'Store Category',
                           controller: storeCategoryController,
@@ -237,35 +244,11 @@ class _UserSignUpState extends State<OwnerSignUp>
                               return CustomButton(
                                 onPressed: () {
                                   _submitForm(context);
-
-                                  context.push(const ControlPage());
                                 },
                                 text: 'Signup',
                               );
                             },
                           )),
-                      const SizedBox(
-                        height: 15.0,
-                      ),
-                      // Row(
-                      //   crossAxisAlignment: CrossAxisAlignment.center,
-                      //   mainAxisAlignment: MainAxisAlignment.center,
-                      //   children: [
-                      //     const Text(
-                      //       'Didn\'t recive the SMS?',
-                      //       style: TextStyle(
-                      //           fontWeight: FontWeight.w500, fontSize: 18),
-                      //     ),
-                      //     TextButton(
-                      //       child: const Text(
-                      //         'Request again',
-                      //         style: TextStyle(
-                      //             fontWeight: FontWeight.w500, fontSize: 18),
-                      //       ),
-                      //       onPressed: () {},
-                      //     )
-                      //   ],
-                      // ),
                     ]),
               )
             ])),

@@ -63,7 +63,7 @@ class AuthRepository {
     } catch (e) {
       return null;
     }
-    if (response.statusCode == 201 || response.statusCode == 2002) {
+    if (response.statusCode == 201 || response.statusCode == 202) {
       Map<String, dynamic> parsedBody = jsonDecode(response.body);
 
       return parsedBody;
