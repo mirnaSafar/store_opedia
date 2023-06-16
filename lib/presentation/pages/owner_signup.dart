@@ -54,7 +54,6 @@ class _UserSignUpState extends State<OwnerSignUp>
   late String storeStartWorkTime;
   late String storeEndWorkTime;
   late String storeCategory;
-  late Shop currentShop;
 
   void setOwnerName(String name) {
     _ownerName = name;
@@ -83,15 +82,19 @@ class _UserSignUpState extends State<OwnerSignUp>
   void _submitForm(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      currentShop.shopName = _storeNameController.text;
-      currentShop.location = storeLocationController.text;
-      currentShop.timeOfWorking = storeStartWorkTimecontroller.text +
-          "|" +
-          storeEndWorkTimeController.text;
-      currentShop.shopCategory = storeCategoryController.text;
 
       BlocProvider.of<AuthCubit>(context).ownerSignUp(
-          _ownerName, _email, _password, _phoneNumber, currentShop);
+        ownerName: _ownerName,
+        password: _password,
+        phoneNumber: _phoneNumber,
+        email: _email,
+        storeName: _storeNameController.text,
+        storeCategory: storeCategoryController.text,
+        storeLocation: storeLocationController.text,
+        startWorkTime: storeStartWorkTimecontroller.text,
+        endWorkTime: storeEndWorkTimeController.text,
+        shopPhoneNumber: _storeNumberController.text,
+      );
 
       //  Navigator.pushNamed(context, '/control');
     }
@@ -184,10 +187,10 @@ class _UserSignUpState extends State<OwnerSignUp>
                         text: 'Store Location',
                         controller: storeLocationController,
                       ),
-                      /*  UserInput(
+                      UserInput(
                         text: 'Store Number',
                         controller: _storeNumberController,
-                      ),*/
+                      ),
                       UserInput(
                           text: 'Store Category',
                           controller: storeCategoryController,

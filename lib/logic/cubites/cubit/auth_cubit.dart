@@ -40,12 +40,32 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
 //Owner signin
-  Future ownerSignUp(String ownerName, String email, String password,
-      String phoneNumber, Shop currentShop) async {
+  Future ownerSignUp({
+    required String ownerName,
+    required String email,
+    required String password,
+    required String phoneNumber,
+    required String storeLocation,
+    required String storeCategory,
+    required String startWorkTime,
+    required String endWorkTime,
+    required String storeName,
+    required String shopPhoneNumber,
+  }) async {
     emit(AuthProgress());
 
     Map<String, dynamic>? response = await repo.ownerSignUp(
-        ownerName, email, password, phoneNumber, currentShop);
+      ownerName: ownerName,
+      password: password,
+      phoneNumber: phoneNumber,
+      email: email,
+      storeName: storeName,
+      storeLocation: storeLocation,
+      storeCategory: storeCategory,
+      startWorkTime: startWorkTime,
+      endWorkTime: endWorkTime,
+      shopPhoneNumber: shopPhoneNumber,
+    );
 
     if (response == null || response["message"] != "Owner was Created") {
       emit(AuthFailed(response == null

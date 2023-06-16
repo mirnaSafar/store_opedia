@@ -22,16 +22,19 @@ class ShopRepository {
     return null;
   }
 
-  Future<String> addShop(
-      {required Map<String, dynamic> owner,
-      required String shopName,
-      required String shopDescription,
-      required String? shopProfileImage,
-      required String? shopCoverImage,
-      required String shopCategory,
-      required String location,
-      required String timeOfWorking,
-      required List<String> socialUrl}) async {
+  Future<String> addShop({
+    required Map<String, dynamic> owner,
+    required String shopName,
+    required String shopDescription,
+    required String? shopProfileImage,
+    required String? shopCoverImage,
+    required String shopCategory,
+    required String location,
+    required String endWorkTime,
+    required String startWorkTime,
+    required List<String> socialUrl,
+    required String shopPhoneNumber,
+  }) async {
     http.Response response;
     String ownerID = owner["id"];
     Map<String, dynamic> requestBody = {
@@ -42,11 +45,13 @@ class ShopRepository {
       "shopCoverImage": shopCoverImage ?? "noImage",
       "shopCategory": shopCategory,
       "location": location,
-      "timeOfWorking": timeOfWorking,
+      "startWorkTime": startWorkTime,
+      "endWorkTime": endWorkTime,
       "socialUrl": socialUrl,
       "rate": 0,
       "isFavorit": false,
-      "isFollow": false
+      "isFollow": false,
+      "shopPhoneNumber": shopPhoneNumber,
     };
     try {
       response = await http.post(
@@ -80,16 +85,19 @@ class ShopRepository {
     return "Faild";
   }
 
-  Future<String> updateShop(
-      {required String shopID,
-      required String shopName,
-      required String shopDescription,
-      required String? shopProfileImage,
-      required String? shopCoverImage,
-      required String shopCategory,
-      required String location,
-      required String timeOfWorking,
-      required List<String> socialUrl}) async {
+  Future<String> updateShop({
+    required String shopID,
+    required String shopName,
+    required String shopDescription,
+    required String? shopProfileImage,
+    required String? shopCoverImage,
+    required String shopCategory,
+    required String location,
+    required String endWorkTime,
+    required String startWorkTime,
+    required List<String> socialUrl,
+    required String shopPhoneNumber,
+  }) async {
     http.Response response;
     Map<String, dynamic> requestBody = {
       "shopName": shopName,
@@ -98,8 +106,10 @@ class ShopRepository {
       "shopCoverImage": shopCoverImage ?? "noImage",
       "shopCategory": shopCategory,
       "location": location,
-      "timeOfWorking": timeOfWorking,
+      "startWorkTime": startWorkTime,
+      "endWorkTime": endWorkTime,
       "socialUrl": socialUrl,
+      "shopPhoneNumber": shopPhoneNumber,
     };
     try {
       response = await http.put(

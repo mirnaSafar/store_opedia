@@ -20,7 +20,7 @@ class AuthRepository {
       "phoneNumber": phoneNumber
     };
     //print(requestBody);
-    var uri = Uri.https(ENDPOINT, "/users/signup");
+    var uri = Uri.http(ENDPOINT, "/users/signup");
 
     try {
       response = await http.post(uri,
@@ -37,13 +37,18 @@ class AuthRepository {
     return null;
   }
 
-  Future<Map<String, dynamic>?> ownerSignUp(
-    String ownerName,
-    String email,
-    String password,
-    String phoneNumber,
-    Shop currentShop,
-  ) async {
+  Future<Map<String, dynamic>?> ownerSignUp({
+    required String ownerName,
+    required String email,
+    required String password,
+    required String phoneNumber,
+    required String storeLocation,
+    required String storeCategory,
+    required String startWorkTime,
+    required String endWorkTime,
+    required String storeName,
+    required String shopPhoneNumber,
+  }) async {
     http.Response response;
     Map<String, dynamic> requestBody;
     requestBody = {
@@ -51,10 +56,15 @@ class AuthRepository {
       "emil": email,
       "password": password,
       "phoneNumber": phoneNumber,
-      "currentShop": currentShop,
+      "storeName": storeName,
+      "storeLocation": storeLocation,
+      "storeCategory": storeCategory,
+      "startWorkTime": startWorkTime,
+      "endWorkTime": endWorkTime,
+      "shopPhoneNumber": shopPhoneNumber
     };
     //print(requestBody);
-    var uri = Uri.https(ENDPOINT, "/owners/signup");
+    var uri = Uri.http(ENDPOINT, "/owners/signup");
 
     try {
       response = await http.post(uri,
@@ -205,7 +215,8 @@ class AuthRepository {
         shopCoverImage: owner.currentShop.shopCoverImage,
         shopProfileImage: owner.currentShop.shopProfileImage,
         location: owner.currentShop.location,
-        timeOfWorking: owner.currentShop.timeOfWorking,
+        startWorkTime: owner.currentShop.startWorkTime,
+        endWorkTime: owner.currentShop.endWorkTime,
         rate: owner.currentShop.rate,
         owner: owner.toMap());
 

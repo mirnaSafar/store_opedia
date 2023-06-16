@@ -3,13 +3,15 @@ import 'dart:convert';
 class Shop {
   Map<String, dynamic> owner;
   String shopName;
-  String shopProfileImage;
-  String shopCoverImage;
-  String shopDescription;
+  String? shopPhoneNumber;
+  String? shopProfileImage;
+  String? shopCoverImage;
+  String? shopDescription;
   String shopCategory;
   String location;
-  String timeOfWorking;
-  List<String> socialUrl;
+  String startWorkTime;
+  String endWorkTime;
+  List<String>? socialUrl;
   int? rate;
   String shopID;
   bool? isFollow;
@@ -17,14 +19,16 @@ class Shop {
 
   Shop(
       {required this.shopName,
-      required this.shopProfileImage,
-      required this.shopCoverImage,
-      required this.shopDescription,
+      this.shopPhoneNumber,
+      this.shopProfileImage,
+      this.shopCoverImage,
+      this.shopDescription,
       required this.shopCategory,
       required this.location,
-      required this.timeOfWorking,
-      required this.socialUrl,
-      required this.rate,
+      required this.startWorkTime,
+      required this.endWorkTime,
+      this.socialUrl,
+      this.rate,
       this.isFollow = false,
       this.isFavorit = false,
       required this.owner,
@@ -34,11 +38,13 @@ class Shop {
     return <String, dynamic>{
       "shopName": shopName,
       "shopID": shopID,
+      "shopPhoneNumber": shopPhoneNumber,
       "shopProfileImage": shopProfileImage,
       "shopCoverImage": shopCoverImage,
       "shopDescription": shopDescription,
       "location": location,
-      "timeOfWorking": timeOfWorking,
+      "startWorkTime": startWorkTime,
+      "endtWorkTime": endWorkTime,
       "socialUrl": socialUrl,
       "rate": rate,
       "owner": owner
@@ -53,10 +59,12 @@ class Shop {
         shopCoverImage: map["shopCoverImage"] as String,
         shopDescription: map["shopDescription"] as String,
         location: map["location"] as String,
-        timeOfWorking: map["timeOfWorking"] as String,
+        startWorkTime: map["startWorkTime"] as String,
+        endWorkTime: map["endWorkTime"] as String,
         shopID: map["shopID"] as String,
         socialUrl: map["socialUrl"] as List<String>,
         rate: map["rate"] as int,
+        shopPhoneNumber: map["shopPhoneNumber"] as String,
         owner: map["owner"] as Map<String, dynamic>);
   }
 
