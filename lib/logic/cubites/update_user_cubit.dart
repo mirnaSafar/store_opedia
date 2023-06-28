@@ -34,7 +34,9 @@ class UpdateUserCubit extends Cubit<UpdateUserState> {
               : response['message']));
     } else {
       saveUpdatedUser(
-          userName: userName, phoneNumber: phoneNumber, password: password);
+          userName: userName,
+          phoneNumber: phoneNumber,
+          passwordLenght: password.length);
       emit(UpdateUserSucceed());
     }
   }
@@ -42,10 +44,10 @@ class UpdateUserCubit extends Cubit<UpdateUserState> {
   void saveUpdatedUser(
       {required String userName,
       required String phoneNumber,
-      required String password}) async {
+      required int passwordLenght}) async {
     SharedPreferences _pref = await SharedPreferences.getInstance();
     _pref.setString("userName", userName);
-    _pref.setString("password", password);
     _pref.setString("phoneNumber", phoneNumber);
+    _pref.setInt("passwordLength", passwordLenght);
   }
 }

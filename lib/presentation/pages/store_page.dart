@@ -22,6 +22,12 @@ class StorePage extends StatefulWidget {
 }
 
 class _StorePageState extends State<StorePage> {
+  @override
+  void initState() {
+    context.read<WorkTimeCubit>().testOpenTime();
+    super.initState();
+  }
+
   List<Post> postList = [];
   @override
   Widget build(BuildContext context) {

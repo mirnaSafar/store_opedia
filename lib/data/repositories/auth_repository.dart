@@ -6,8 +6,6 @@ import 'package:shopesapp/constant/endpoint.dart';
 import 'package:shopesapp/data/models/shop.dart';
 import 'package:shopesapp/data/models/user.dart';
 
-import '../models/owner.dart';
-
 class AuthRepository {
   Future<Map<String, dynamic>?> userSignUp(String userName, String email,
       String password, String phoneNumber) async {
@@ -19,7 +17,6 @@ class AuthRepository {
       "password": password,
       "phoneNumber": phoneNumber
     };
-    //print(requestBody);
     var uri = Uri.http(ENDPOINT, "/users/signup");
 
     try {
@@ -30,9 +27,9 @@ class AuthRepository {
       return null;
     }
     if (response.statusCode == 200 || response.statusCode == 203) {
-      Map<String, dynamic> parsedBody = jsonDecode(response.body);
+      Map<String, dynamic> parsedResult = jsonDecode(response.body);
 
-      return parsedBody;
+      return parsedResult;
     }
     return null;
   }
@@ -63,7 +60,7 @@ class AuthRepository {
       "endWorkTime": endWorkTime,
       "shopPhoneNumber": shopPhoneNumber
     };
-    //print(requestBody);
+
     var uri = Uri.http(ENDPOINT, "/owners/signup");
 
     try {
@@ -74,23 +71,48 @@ class AuthRepository {
       return null;
     }
     if (response.statusCode == 201 || response.statusCode == 202) {
-      Map<String, dynamic> parsedBody = jsonDecode(response.body);
-
-      return parsedBody;
+      Map<String, dynamic> parsedResult = jsonDecode(response.body);
+      return parsedResult;
     }
     return null;
   }
 
   Future<Map<String, dynamic>?> login(
       {required String email, required String password}) async {
-    User user;
-    Owner owner;
     http.Response response;
     Map<String, dynamic> requestBody;
     Map<String, dynamic> parsedResult;
-    requestBody = {"email": email, "password": password};
+    requestBody = {
+      "email": email,
+      "password": password,
+    };
     try {
-      response = await http.post(Uri.parse(ENDPOINT + "/login"),
+      var uri = Uri.http(ENDPOINT, "/login");
+      response = await http.post(
+        uri,
+        body: jsonEncode(requestBody),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+    } catch (e) {
+      return null;
+    }
+    if (response.statusCode == 200) {
+      parsedResult = jsonDecode(response.body);
+      return parsedResult;
+    }
+
+    return null;
+  }
+
+  Future<Map<String, dynamic>?> verifyPassword(
+      {required String password}) async {
+    http.Response response;
+    Map<String, dynamic> parsedResult;
+    Map<String, dynamic> requestBody = {"password": password};
+    try {
+      response = await http.post(Uri.http(ENDPOINT, "/verifyPassword"),
           body: jsonEncode(requestBody),
           headers: {
             'Content-Type': 'application/json',
@@ -98,96 +120,104 @@ class AuthRepository {
     } catch (e) {
       return null;
     }
-    parsedResult = jsonDecode(response.body);
-
-    if (response.statusCode == 205) {
-      //normal user
-      user = User.fromMap(parsedResult['user']);
-      String timeOfExpire =
-          DateTime.now().add(const Duration(days: 2)).toIso8601String();
-
-      parsedResult["expire"] = timeOfExpire;
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString("expire", timeOfExpire);
-
-      saveUser(user: user);
+    if (response.statusCode == 200) {
+      parsedResult = jsonDecode(response.body);
+    } else {
+      return null;
     }
-    // owner and  first shop
-    else {
-      owner = Owner.fromMap(parsedResult['owner']);
-      String timeOfExpire =
-          DateTime.now().add(const Duration(days: 2)).toIso8601String();
-      parsedResult["expire"] = timeOfExpire;
-
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString("expire", timeOfExpire);
-
-      saveOwner(owner: owner);
-    }
-
-    return (parsedResult);
+    return parsedResult;
   }
 
   Future<Map<String, dynamic>?> getStoredUser() async {
     final prefs = await SharedPreferences.getInstance();
-    String? id, userName, email, expire, password, phoneNumber;
+    String? id, userName, email, phoneNumber;
 
     id = prefs.getString("id");
     email = prefs.getString("email");
     phoneNumber = prefs.getString("phoneNumber");
     userName = prefs.getString("userName");
-    password = prefs.getString("password");
-    expire = prefs.getString("expire");
-
     if (id != null &&
         email != null &&
-        expire != null &&
-        password != null &&
         phoneNumber != null &&
         userName != null) {
       return {
         "user": User(
-            email: email,
-            id: id,
-            password: password,
-            phoneNumber: phoneNumber,
-            name: userName),
-        "expire": expire
+          email: email,
+          id: id,
+          phoneNumber: phoneNumber,
+          name: userName,
+        ),
       };
     }
     return null;
   }
 
-  Future<Map<String, dynamic>?> getStoredOwner() async {
+  Future<Map<String, dynamic>?> getStoredOwnerAndShop() async {
     final prefs = await SharedPreferences.getInstance();
-    String? id, ownerName, email, expire, password, phoneNumber, jsonShop;
-    Shop currentShop;
-
-    jsonShop = prefs.getString("currentShope");
-    Map<String, dynamic> map = jsonDecode(jsonShop!);
-    currentShop = Shop.fromMap(map);
-    id = prefs.getString("id");
-    email = prefs.getString("email");
-    phoneNumber = prefs.getString("phoneNumber");
+    String? ownerID,
+        ownerName,
+        ownerEmail,
+        ownerPhoneNumber,
+        shopCategory,
+        shopID,
+        endWorkTime,
+        location,
+        shopName,
+        shopPhoneNumber,
+        shopProfileImage,
+        shopCoverImage,
+        shopDescription,
+        socialUrl,
+        startWorkTime;
+    int? followesNumber, rate;
+    socialUrl = prefs.getString("socialUrl");
+    rate = prefs.getInt("rate");
+    followesNumber = prefs.getInt("followesNumber");
+    shopDescription = prefs.getString("shopDescription");
+    shopCoverImage = prefs.getString("shopCoverImage");
+    shopPhoneNumber = prefs.getString("shopPhoneNumber");
+    shopProfileImage = prefs.getString("shopProfileImage");
+    ownerID = prefs.getString("ID");
+    ownerEmail = prefs.getString("ownerEmail");
+    ownerPhoneNumber = prefs.getString("ownerPhoneNumber");
     ownerName = prefs.getString("ownerName");
-    password = prefs.getString("password");
-    expire = prefs.getString("expire");
+    shopID = prefs.getString("shopID");
+    shopName = prefs.getString("shopName");
+    shopCategory = prefs.getString("shopCategory");
+    endWorkTime = prefs.getString("endWorkTime");
+    startWorkTime = prefs.getString("startWorkTime");
+    location = prefs.getString("location");
 
-    if (id != null &&
-        email != null &&
-        expire != null &&
-        password != null &&
-        phoneNumber != null &&
-        ownerName != null) {
+    if (ownerID != null &&
+        ownerEmail != null &&
+        ownerPhoneNumber != null &&
+        ownerName != null &&
+        shopID != null &&
+        shopCategory != null &&
+        startWorkTime != null &&
+        endWorkTime != null &&
+        location != null &&
+        shopName != null) {
       return {
-        "Owner": Owner(
-            email: email,
-            id: id,
-            password: password,
-            phoneNumber: phoneNumber,
-            name: ownerName,
-            currentShop: currentShop),
-        "expire": expire
+        "shop": Shop(
+          ownerEmail: ownerEmail,
+          ownerID: ownerID,
+          ownerPhoneNumber: ownerPhoneNumber,
+          ownerName: ownerName,
+          shopCategory: shopCategory,
+          shopID: shopID,
+          startWorkTime: startWorkTime,
+          endWorkTime: endWorkTime,
+          location: location,
+          shopName: shopName,
+          shopPhoneNumber: shopPhoneNumber,
+          shopProfileImage: shopProfileImage,
+          shopCoverImage: shopCoverImage,
+          shopDescription: shopDescription,
+          followesNumber: followesNumber,
+          rate: rate,
+          socialUrl: socialUrl,
+        ),
       };
     }
     return null;
@@ -198,47 +228,34 @@ class AuthRepository {
     prefs.clear();
   }
 
-  Future<String?> getAuthMode() async {
+  void saveOwnerAndShop({required Shop shop}) async {
     final prefs = await SharedPreferences.getInstance();
-    String? mode = prefs.getString("mode");
-    return mode;
-  }
-
-  void saveOwner({required Owner owner}) async {
-    Shop shop;
-    shop = Shop(
-        shopID: owner.currentShop.shopID,
-        shopCategory: owner.currentShop.shopCategory,
-        shopName: owner.currentShop.shopName,
-        shopDescription: owner.currentShop.shopDescription,
-        socialUrl: owner.currentShop.socialUrl,
-        shopCoverImage: owner.currentShop.shopCoverImage,
-        shopProfileImage: owner.currentShop.shopProfileImage,
-        location: owner.currentShop.location,
-        startWorkTime: owner.currentShop.startWorkTime,
-        endWorkTime: owner.currentShop.endWorkTime,
-        rate: owner.currentShop.rate,
-        owner: owner.toMap());
-
-    String jsonShop = jsonEncode(shop);
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString("id", owner.id);
-    await prefs.setString("email", owner.email);
-    await prefs.setString("phoneNumber", owner.phoneNumber);
-    await prefs.setString("userName", owner.name);
-    await prefs.setString("password", owner.password);
-    await prefs.setString("currentShop", jsonShop);
+    await prefs.setString("shopPhoneNumber", shop.shopPhoneNumber ?? "null");
+    await prefs.setString("shopProfileImage", shop.shopProfileImage ?? "null");
+    await prefs.setString("shopCoverImage", shop.shopCoverImage ?? "null");
+    await prefs.setString("numberOfFollowers", shop.shopDescription ?? "null");
+    await prefs.setString("socialUrl", shop.socialUrl ?? "null");
+    await prefs.setInt("rate", shop.rate ?? 0);
+    await prefs.setInt("followesNumber", shop.followesNumber ?? 0);
+    await prefs.setString("ID", shop.ownerID);
+    await prefs.setString("ownerEmail", shop.ownerEmail);
+    await prefs.setString("ownerPhoneNumber", shop.ownerPhoneNumber);
+    await prefs.setString("ownerName", shop.ownerName);
+    await prefs.setString("shopName", shop.shopName);
+    await prefs.setString("shopCategory", shop.shopCategory);
+    await prefs.setString("location", shop.location);
+    await prefs.setString("startWorkTime", shop.startWorkTime);
+    await prefs.setString("endWorkTime", shop.endWorkTime);
+    await prefs.setString("shopID", shop.shopID);
     await prefs.setString("mode", "owner");
   }
 
   void saveUser({required User user}) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString("id", user.id);
+    await prefs.setString("ID", user.id);
     await prefs.setString("email", user.email);
     await prefs.setString("phoneNumber", user.phoneNumber);
     await prefs.setString("userName", user.name);
-    await prefs.setString("password", user.password);
     await prefs.setString("mode", "user");
   }
 }

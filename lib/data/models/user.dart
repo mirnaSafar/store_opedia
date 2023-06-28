@@ -5,13 +5,11 @@ class User {
   String name;
   String phoneNumber;
   String email;
-  String password;
 
   User({
     required this.name,
     required this.email,
     required this.phoneNumber,
-    required this.password,
     required this.id,
   });
 
@@ -20,26 +18,26 @@ class User {
       'id': id,
       'email': email,
       'phoneNumber': phoneNumber,
-      'password': password
+      'name': name
     };
   }
 
   factory User.from(User oldUserObj) {
     return User(
-        id: oldUserObj.id,
-        email: oldUserObj.email,
-        phoneNumber: oldUserObj.phoneNumber,
-        name: oldUserObj.name,
-        password: oldUserObj.password);
+      id: oldUserObj.id,
+      email: oldUserObj.email,
+      phoneNumber: oldUserObj.phoneNumber,
+      name: oldUserObj.name,
+    );
   }
 
   factory User.fromMap(Map<String, dynamic> map) {
     return User(
-        id: map['id'] as String,
-        email: map['email'] as String,
-        phoneNumber: map['phoneNumber'] as String,
-        name: map["userName"] as String,
-        password: map['password'] as String);
+      id: map['id'] as String,
+      email: map['email'] as String,
+      phoneNumber: map['phoneNumber'] as String,
+      name: map["userName"] as String,
+    );
   }
 
   String toJson() => json.encode(toMap());

@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../logic/cubites/delete_user_cubit.dart';
 
-void showDeleteAlert(BuildContext context, String id) {
+void showDeleteAlert(BuildContext context) {
   AwesomeDialog(
       btnOkColor: Colors.green,
       context: context,
@@ -20,6 +20,6 @@ void showDeleteAlert(BuildContext context, String id) {
       btnCancelText: 'Cancel',
       btnOkText: " Countinue",
       btnOkOnPress: () {
-        BlocProvider.of<DeleteUserCubit>(context).deleteUser(id: id);
+        BlocProvider.of<DeleteUserCubit>(context).deleteUser();
       }).show();
 }

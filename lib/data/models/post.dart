@@ -1,12 +1,14 @@
 class Post {
   String shopeID;
-  String id;
+  String postID;
   String title;
   String description;
-  String postImages;
+  String postImage;
   String category;
-  Map<String, dynamic> owner;
-  String productPrice;
+  String ownerID;
+  String ownerName;
+  String ownerPhoneNumber;
+  String price;
   int? rate;
   bool? isFavorit;
 
@@ -14,11 +16,13 @@ class Post {
       {required this.title,
       required this.description,
       required this.category,
-      required this.owner,
-      required this.productPrice,
-      required this.postImages,
+      required this.ownerID,
+      required this.ownerName,
+      required this.ownerPhoneNumber,
+      required this.price,
+      required this.postImage,
       required this.shopeID,
       this.isFavorit = false,
-      required this.rate,
-      required this.id});
+      this.rate = 0,
+      required this.postID});
 }

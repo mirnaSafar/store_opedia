@@ -10,7 +10,7 @@ class FilterRepository {
     Map<String, dynamic> parsedResult;
     try {
       response = await http
-          .get(Uri.parse(ENDPOINT + "/posts/categories/$category"), headers: {
+          .get(Uri.http(ENDPOINT, "/posts/categories/$category"), headers: {
         'Content-Type': 'application/json',
       });
     } catch (e) {
@@ -27,8 +27,7 @@ class FilterRepository {
     http.Response response;
     Map<String, dynamic> parsedResult;
     try {
-      response =
-          await http.get(Uri.parse(ENDPOINT + "/posts/ratings"), headers: {
+      response = await http.get(Uri.http(ENDPOINT, "/posts/ratings"), headers: {
         'Content-Type': 'application/json',
       });
     } catch (e) {
@@ -47,7 +46,7 @@ class FilterRepository {
     Map<String, dynamic> parsedResult;
     try {
       response = await http
-          .get(Uri.parse(ENDPOINT + "/posts/location/$location"), headers: {
+          .get(Uri.http(ENDPOINT, "/posts/location/$location"), headers: {
         'Content-Type': 'application/json',
       });
     } catch (e) {

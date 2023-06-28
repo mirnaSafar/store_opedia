@@ -6,7 +6,8 @@ import '../../../logic/cubites/delete_user_cubit.dart';
 
 void showDeleteAlert(BuildContext context, String id) {
   AwesomeDialog(
-      btnOkColor: Colors.green,
+      btnCancelColor: Colors.green,
+      btnOkColor: Colors.red,
       context: context,
       animType: AnimType.SCALE,
       dialogType: DialogType.WARNING,
@@ -20,6 +21,6 @@ void showDeleteAlert(BuildContext context, String id) {
       btnCancelText: 'Cancel',
       btnOkText: " Countinue",
       btnOkOnPress: () {
-        BlocProvider.of<DeleteUserCubit>(context).deleteUser(id: id);
+        BlocProvider.of<DeleteUserCubit>(context).deleteUser();
       }).show();
 }

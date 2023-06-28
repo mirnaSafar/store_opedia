@@ -8,7 +8,7 @@ class DeleteUserRepository {
     http.Response response;
     Map<String, dynamic> requestBody = {"id": id};
     response = await http.delete(
-      Uri.parse(ENDPOINT + '/$id'),
+      Uri.http(ENDPOINT, '/$id'),
       body: jsonEncode(requestBody),
       headers: <String, String>{
         'Content-Type': 'application/json; ',

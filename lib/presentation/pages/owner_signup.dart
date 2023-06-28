@@ -15,6 +15,7 @@ import 'package:shopesapp/presentation/widgets/auth/confirm_form_field.dart';
 import 'package:shopesapp/presentation/widgets/auth/phoneNumber_form_field.dart';
 import '../../constant/clipper.dart';
 import '../../logic/cubites/cubit/auth_state.dart';
+import '../../logic/cubites/cubit/verify_password_cubit.dart';
 import '../widgets/auth/email_form_field.dart';
 import '../widgets/auth/password_form_field.dart';
 import '../widgets/auth/user_name_form_field.dart';
@@ -95,8 +96,6 @@ class _UserSignUpState extends State<OwnerSignUp>
         endWorkTime: storeEndWorkTimeController.text,
         shopPhoneNumber: _storeNumberController.text,
       );
-
-      //  Navigator.pushNamed(context, '/control');
     }
   }
 
@@ -108,6 +107,7 @@ class _UserSignUpState extends State<OwnerSignUp>
           buildAwsomeDialog(context, "Succeed", "You Signin successfully", "OK",
                   type: DialogType.SUCCES)
               .show();
+          context.pushRepalceme(const ControlPage());
         } else if (state is AuthFailed) {
           buildAwsomeDialog(
                   context, "Faild", state.message.toUpperCase(), "Cancle",

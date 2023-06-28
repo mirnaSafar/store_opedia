@@ -17,21 +17,6 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  late User _user;
-  late String _id;
-  // ignore: constant_identifier_names
-
-  @override
-  void initState() {
-    //online
-    /*
-    _user = context.read<UserAuthCubit>().getUser();
-    _id = _user.id;*/
-    //offline
-    _id = "1";
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -117,9 +102,9 @@ class _SettingsPageState extends State<SettingsPage> {
                         },
                         builder: (context, state) {
                           if (state is DeleteUserProgress) {
-                            return const CircularProgressIndicator();
+                            return const LinearProgressIndicator();
                           }
-                          return buildDeleteAccount(context, _id);
+                          return buildDeleteAccount(context);
                         },
                       ),
                     ),

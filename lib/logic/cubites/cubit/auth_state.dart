@@ -1,4 +1,3 @@
-import 'package:shopesapp/data/models/owner.dart';
 import 'package:shopesapp/data/models/user.dart';
 
 abstract class AuthState {}
@@ -7,15 +6,11 @@ class AuthInitialState extends AuthState {}
 
 class AuthProgress extends AuthState {}
 
-class UserLoginedIn extends AuthState {
-  final User user;
-  UserLoginedIn({required this.user});
-}
+class UserLoginedIn extends AuthState {}
 
-class OwnerLoginedIn extends AuthState {
-  final Owner owner;
-  OwnerLoginedIn({required this.owner});
-}
+class OwnerLoginedIn extends AuthState {}
+
+class OwnerLogiedInWithShop extends AuthState {}
 
 class UserSignedUp extends AuthState {}
 
@@ -26,4 +21,4 @@ class AuthFailed extends AuthState {
   AuthFailed(this.message);
 }
 
-class AuthNoToken extends AuthState {}
+class NoAuthentication extends AuthState {}

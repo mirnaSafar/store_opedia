@@ -43,11 +43,10 @@ Widget buildLogout(BuildContext context) => SimpleSettingsTile(
       },
     );
 
-Widget buildDeleteAccount(BuildContext context, String id) =>
-    SimpleSettingsTile(
+Widget buildDeleteAccount(BuildContext context) => SimpleSettingsTile(
       title: "Delete Account",
       leading: iconWidget(icon: Icons.delete, color: Colors.red),
-      onTap: () => showDeleteAlert(context, id),
+      onTap: () => showDeleteAlert(context),
     );
 
 Widget buildLanguage() => SwitchSettingsTile(

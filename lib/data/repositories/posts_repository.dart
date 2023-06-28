@@ -8,7 +8,7 @@ class PostsRepository {
     http.Response response;
     Map<String, dynamic> parsedResult;
     try {
-      response = await http.get(Uri.parse(ENDPOINT + "/posts"), headers: {
+      response = await http.get(Uri.http(ENDPOINT, "/posts"), headers: {
         'Content-Type': 'application/json',
       });
     } catch (e) {
@@ -40,7 +40,7 @@ class PostsRepository {
       required String shopID,
       required String title,
       required String description,
-      required List<String>? postImages,
+      required String? postImages,
       required String category,
       required String productPrice}) async {
     http.Response response;
@@ -67,7 +67,13 @@ class PostsRepository {
   }
 
   Future<String> addPost(
-      {required Map<String, dynamic> owner,
+      {
+      //required String ownerName,
+      required String shopeID,
+      required String ownerPhoneNumber,
+      required String shopeName,
+      //required List<String> socialUrl,
+      required String location,
       required String title,
       required String description,
       required String? postImage,
@@ -75,7 +81,11 @@ class PostsRepository {
       required String productPrice}) async {
     http.Response response;
     Map<String, dynamic> requestBody = {
-      "owner": owner,
+      "ownerPhoneNumber": ownerPhoneNumber,
+      "shopID": shopeID,
+      "shopeName": shopeName,
+      "location": location,
+      //"socialUrls":socialUrls,
       "title": title,
       "description": description,
       "postImages": postImage ?? "noProductImage",

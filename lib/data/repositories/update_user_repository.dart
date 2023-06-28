@@ -20,7 +20,7 @@ class UpdateUserRepository {
     http.Response response;
     try {
       response = await http.put(
-        Uri.parse(ENDPOINT + '/$id'),
+        Uri.http(ENDPOINT, '/$id'),
         body: jsonEncode(requestBody),
         headers: <String, String>{'Content-Type': 'application/json;'},
       );

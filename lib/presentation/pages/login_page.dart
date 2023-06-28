@@ -1,15 +1,15 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shopesapp/presentation/pages/control_page.dart';
 import 'package:shopesapp/presentation/pages/privacy%20policies.dart';
 import 'package:shopesapp/presentation/pages/start_sign_up_page.dart';
+import 'package:shopesapp/presentation/pages/switch_store.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
-import 'package:shopesapp/presentation/shared/custom_widgets/custom_toast.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
-import '../../data/enums/message_type.dart';
 import '../../logic/cubites/cubit/auth_cubit.dart';
 import '../../logic/cubites/cubit/auth_state.dart';
-import '../../logic/cubites/user_state.dart';
+import '../../logic/cubites/shop/cubit/get_owner_shops_cubit.dart';
 import '../widgets/auth/email_form_field.dart';
 import '../widgets/auth/password_form_field.dart';
 import '../widgets/dialogs/awosem_dialog.dart';
@@ -27,12 +27,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
   var isPasswordHidden = true;
   late String _email;
-  late String _sms;
+  //late String _sms;
   late String _password;
 
-  void setSMS(String sms) {
+  /*void setSMS(String sms) {
     _sms = sms;
-  }
+  }*/
 
   void setEmail(String email) {
     _email = email;
@@ -45,23 +45,31 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   void _submitForm(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      BlocProvider.of<AuthCubit>(context).login(_email, _password);
-      // Navigator.pushReplacementNamed(context, '/control');
+
+      //BlocProvider.of<AuthCubit>(context).login(_email, _password);
+
+      context.read<AuthCubit>().saveOwnerID(ownerID: "121");
+
+      context.pushRepalceme(SwitchStore());
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     final w = MediaQuery.of(context).size.width;
     final h = MediaQuery.of(context).size.height;
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
-        if (state is UserLoginedIn || state is OwnerLoginedIn) {
-          CustomToast.showMessage(
-              size: size,
-              message: 'Welcome again',
-              messageType: MessageType.SUCCESS);
+        if (state is UserLoginedIn) {
+          buildAwsomeDialog(context, "SUCCES", "Auth SUCCEDED", "OK",
+                  type: DialogType.SUCCES)
+              .show();
+          context.pushRepalceme(const ControlPage());
+        } else if (state is OwnerLoginedIn) {
+          buildAwsomeDialog(context, "SUCCES", "Auth SUCCEDED", "OK",
+                  type: DialogType.SUCCES)
+              .show();
+          context.pushRepalceme(const SwitchStore());
         } else if (state is AuthFailed) {
           buildAwsomeDialog(
                   context, "Faild", state.message.toUpperCase(), "Cancle",

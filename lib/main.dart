@@ -5,11 +5,14 @@ import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shopesapp/data/repositories/posts_repository.dart';
+import 'package:shopesapp/data/repositories/shop_repository.dart';
 import 'package:shopesapp/logic/cubites/cubit/auth_cubit.dart';
 import 'package:shopesapp/logic/cubites/cubit/internet_cubit.dart';
 import 'package:shopesapp/logic/cubites/cubit/posts_cubit.dart';
 import 'package:shopesapp/logic/cubites/cubit/profile_cubit.dart';
+import 'package:shopesapp/logic/cubites/shop/cubit/get_owner_shops_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/following_cubit.dart';
+import 'package:shopesapp/logic/cubites/shop/switch_shop_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/work_time_cubit.dart';
 import 'package:shopesapp/logic/cubites/themes_cubit.dart';
 import 'package:shopesapp/presentation/router/app_roter.dart';
@@ -54,6 +57,9 @@ class MyApp extends StatelessWidget {
           )..getPosts(),
         ),
         BlocProvider(
+          create: (context) => GetOwnerShopsCubit(ShopRepository()),
+        ),
+        BlocProvider(
           create: ((context) => ThemesCubit()),
           lazy: false,
         ),
@@ -62,13 +68,22 @@ class MyApp extends StatelessWidget {
           lazy: false,
         ),
         BlocProvider(
-          create: ((context) => AuthCubit(AuthRepository())),
+          create: (context) => SwitchShopCubit(AuthRepository()),
+        ),
+        /*  BlocProvider(
+          create: ((context) => VerifyPasswordCubit(AuthRepository())),
+        ),*/
+        BlocProvider(
+          create: ((context) => AuthCubit(
+                AuthRepository(),
+              )..autoLogIn()),
+          lazy: false,
         ),
         BlocProvider(
           create: (context) => FollowingCubit(),
         ),
         BlocProvider(
-          create: (context) => WorkTimeCubit(),
+          create: (context) => WorkTimeCubit()..testOpenTime(),
         ),
       ],
       child: BlocBuilder<ThemesCubit, ThemesState>(

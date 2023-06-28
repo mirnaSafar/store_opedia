@@ -4,22 +4,75 @@ import 'package:http/http.dart' as http;
 import 'package:shopesapp/constant/endpoint.dart';
 
 class ShopRepository {
-  Future<Map<String, dynamic>?> getOwnerShpos({required String ownerID}) async {
+  Future<Map<String, dynamic>?> getOwnerShpos(
+      {required String? ownerID}) async {
     http.Response response;
     Map<String, dynamic> parsedResult;
+    Map<String, dynamic> requestBody = {
+      "ownerID": ownerID,
+    };
     try {
-      response =
-          await http.get(Uri.parse(ENDPOINT + "/shops/$ownerID"), headers: {
-        'Content-Type': 'application/json',
-      });
+      response = await http.post(Uri.http(ENDPOINT, "/shops"),
+          body: jsonEncode(requestBody),
+          headers: {
+            'Content-Type': 'application/json',
+          });
     } catch (e) {
       return null;
     }
-    if (response.statusCode == 205) {
+    if (response.statusCode == 200) {
       parsedResult = jsonDecode(response.body);
       return parsedResult;
     }
+
     return null;
+  }
+
+//Demo test offline
+  Map<String, dynamic>? getOwnerShposTest() {
+    return {
+      "message": "Succeed",
+      "shops": [
+        {
+          "ownerID": "123",
+          "ownerName": "demo",
+          "ownerEmail": "email@gmail.com",
+          "ownerPhoneNumber": "0951931846",
+          "shopID": "2",
+          "shopCategory": "Clothes Categories",
+          "shopName": "Joserf store",
+          "shopPhoneNumber": "0912345678",
+          "location": "Homs",
+          "startWorkTime": "12:00:45.893",
+          "endWorkTime": "12:00:45.893",
+          "shopProfileImage": "url",
+          "shopCoverImage": "url",
+          "shopDescription": "desc",
+          "socialUrl": "test",
+          "rate": 4,
+          "followesNumber": 100,
+        },
+        {
+          "ownerID": "1234",
+          "ownerName": "demo",
+          "ownerEmail": "anas2@gmail.com",
+          "ownerPhoneNumber": "0951931846",
+          "shopID": "1",
+          "shopCategory": "sport Categories",
+          "shopName": "Demo Store",
+          "shopPhoneNumber": "0912345678",
+          "location": "Homs",
+          "startWorkTime": "12:00:45.893",
+          "endWorkTime": "12:00:45.893",
+          "shopProfileImage": "url",
+          "shopCoverImage": "url",
+          "shopDescription": "desc",
+          "socialUrl": "test",
+          "rate": 4,
+          "followesNumber": 100,
+        },
+      ]
+    };
   }
 
   Future<String> addShop({
@@ -54,8 +107,7 @@ class ShopRepository {
       "shopPhoneNumber": shopPhoneNumber,
     };
     try {
-      response = await http.post(
-          Uri.parse(ENDPOINT + "/shops/addShop/$ownerID"),
+      response = await http.post(Uri.http(ENDPOINT, "/shops/addShop/$ownerID"),
           body: jsonEncode(requestBody),
           headers: {
             'Content-Type': 'application/json',
@@ -73,7 +125,7 @@ class ShopRepository {
     http.Response response;
     try {
       response = await http
-          .delete(Uri.parse(ENDPOINT + "/shops/delete/$shopID"), headers: {
+          .delete(Uri.http(ENDPOINT + "/shops/delete/$shopID"), headers: {
         'Content-Type': 'application/json',
       });
     } catch (e) {
@@ -112,8 +164,7 @@ class ShopRepository {
       "shopPhoneNumber": shopPhoneNumber,
     };
     try {
-      response = await http.put(
-          Uri.parse(ENDPOINT + "/shops/updateShop/$shopID"),
+      response = await http.put(Uri.http(ENDPOINT, "/shops/updateShop/$shopID"),
           body: jsonEncode(requestBody),
           headers: {
             'Content-Type': 'application/json',
@@ -133,7 +184,7 @@ class ShopRepository {
     Map<String, dynamic> parsedResult;
     try {
       response = await http
-          .get(Uri.parse(ENDPOINT + "/shops/locations/$location"), headers: {
+          .get(Uri.http(ENDPOINT, "/shops/locations/$location"), headers: {
         'Content-Type': 'application/json',
       });
     } catch (e) {
