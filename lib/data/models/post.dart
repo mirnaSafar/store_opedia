@@ -26,7 +26,7 @@ class Post {
       required this.shopeID,
       this.isFavorit = false,
       this.rate = 0,
-      this.postID = '1'});
+      required this.postID});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{

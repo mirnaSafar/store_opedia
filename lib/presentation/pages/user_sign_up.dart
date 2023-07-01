@@ -9,6 +9,7 @@ import 'package:shopesapp/presentation/widgets/auth/confirm_form_field.dart';
 import 'package:shopesapp/presentation/widgets/auth/phoneNumber_form_field.dart';
 import '../../constant/clipper.dart';
 import '../../logic/cubites/cubit/auth_state.dart';
+import '../../logic/cubites/cubit/verify_password_cubit.dart';
 import '../widgets/auth/email_form_field.dart';
 import '../widgets/auth/password_form_field.dart';
 import '../widgets/auth/user_name_form_field.dart';

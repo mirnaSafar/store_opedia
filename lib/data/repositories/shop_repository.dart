@@ -20,6 +20,7 @@ class ShopRepository {
     if (response.statusCode == 205) {
       return 'Success';
     }
+
     return null;
   }
 

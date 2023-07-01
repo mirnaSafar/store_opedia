@@ -4,6 +4,7 @@ import 'package:shopesapp/presentation/pages/login_page.dart';
 import 'package:shopesapp/presentation/pages/porfile.dart';
 import 'package:shopesapp/presentation/pages/privacy%20policies.dart';
 import 'package:shopesapp/presentation/pages/settings.dart';
+import 'package:shopesapp/presentation/pages/switch_store.dart';
 import 'package:shopesapp/presentation/pages/verify_password.dart';
 
 class AppRouter {

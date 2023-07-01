@@ -56,6 +56,7 @@ class Shop {
       "location": location,
       "startWorkTime": startWorkTime,
       "endWorkTime": endWorkTime,
+      "endtWorkTime": endWorkTime,
       "socialUrl": socialUrl,
       "rate": rate,
       "ownerName": ownerName,
@@ -70,7 +71,7 @@ class Shop {
     return Shop(
       shopName: map["shopName"] as String,
       shopProfileImage: map["shopProfileImage"] as String?,
-      shopCategory: map["shopCategory"],
+      shopCategory: map["shopCategory"] as String,
       shopCoverImage: map["shopCoverImage"] as String?,
       shopDescription: map["shopDescription"] as String?,
       location: map["location"] as String,

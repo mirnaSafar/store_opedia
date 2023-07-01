@@ -60,7 +60,6 @@ class AuthCubit extends Cubit<AuthState> {
       endWorkTime: endWorkTime,
       shopPhoneNumber: shopPhoneNumber,
     );
-
     if (response == null || response["message"] != "Owner was Created") {
       emit(AuthFailed(response == null
           ? "Signup Failed  Check your internet connection"
@@ -68,7 +67,6 @@ class AuthCubit extends Cubit<AuthState> {
     } else {
       shop = Shop.fromMap(response);
       repo.saveOwnerAndShop(shop: shop!);
-
       emit(OwnerSignedUp());
     }
   }
