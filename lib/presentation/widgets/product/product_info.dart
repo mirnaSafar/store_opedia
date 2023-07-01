@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shopesapp/data/models/post.dart';
+import 'package:shopesapp/logic/cubites/post/rate_shop_cubit.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_divider.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
@@ -6,8 +9,8 @@ import 'package:shopesapp/presentation/shared/custom_widgets/custoum_rate.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 
 class ProductInfo extends StatefulWidget {
-  const ProductInfo({Key? key}) : super(key: key);
-
+  const ProductInfo({Key? key, required this.post}) : super(key: key);
+  final Post post;
   @override
   State<ProductInfo> createState() => _ProductInfoState();
 }
@@ -65,8 +68,14 @@ class _ProductInfoState extends State<ProductInfo> {
               ),
               // const CustomText(text: 'product name'),
               15.px,
-              CustomRate(
-                size: w * 0.035,
+              BlocBuilder<RatePostCubit, RatePostState>(
+                builder: (context, state) {
+                  return CustomRate(
+                    enableRate: true,
+                    post: widget.post,
+                    size: w * 0.035,
+                  );
+                },
               ),
             ],
           ),
@@ -79,7 +88,7 @@ class _ProductInfoState extends State<ProductInfo> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 42.0),
                   child: CustomText(
-                    text: 'product name',
+                    text: widget.post.title,
                     fontSize: w * 0.04,
                   ),
                 ),
@@ -92,7 +101,7 @@ class _ProductInfoState extends State<ProductInfo> {
                     ),
                     20.px,
                     CustomText(
-                      text: 'clothes/women',
+                      text: widget.post.category,
                       textColor: AppColors.secondaryFontColor,
                     )
                   ],
@@ -106,7 +115,7 @@ class _ProductInfoState extends State<ProductInfo> {
                     ),
                     20.px,
                     CustomText(
-                      text: 'clothes/women',
+                      text: widget.post.price,
                       textColor: AppColors.secondaryFontColor,
                     )
                   ],
@@ -120,7 +129,7 @@ class _ProductInfoState extends State<ProductInfo> {
                     ),
                     20.px,
                     CustomText(
-                      text: 'details and features',
+                      text: widget.post.description,
                       textColor: AppColors.secondaryFontColor,
                     )
                   ],
@@ -134,7 +143,7 @@ class _ProductInfoState extends State<ProductInfo> {
                     ),
                     20.px,
                     CustomText(
-                      text: 'homs',
+                      text: 'widget.post.location',
                       textColor: AppColors.secondaryFontColor,
                     )
                   ],

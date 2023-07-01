@@ -5,8 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shopesapp/data/enums/file_type.dart';
 import 'package:shopesapp/data/enums/message_type.dart';
-import 'package:shopesapp/logic/cubites/cubit/auth_cubit.dart';
-import 'package:shopesapp/logic/cubites/cubit/posts_cubit.dart';
+import 'package:shopesapp/data/repositories/posts_repository.dart';
+import 'package:shopesapp/logic/cubites/post/add_post_cubit.dart';
+import 'package:shopesapp/logic/cubites/post/posts_cubit.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_button.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
@@ -14,8 +15,7 @@ import 'package:shopesapp/presentation/shared/custom_widgets/custom_toast.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/user_input.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/presentation/shared/utils.dart';
-
-import '../../data/models/owner.dart';
+import '../../data/models/shop.dart';
 import '../shared/validation_functions.dart';
 
 class AddPostPage extends StatefulWidget {
@@ -27,7 +27,7 @@ class AddPostPage extends StatefulWidget {
 
 class _AddPostPageState extends State<AddPostPage> {
   final ImagePicker picker = ImagePicker();
-  late Owner owner;
+  late Shop shop;
   TextEditingController addPostPriceController = TextEditingController();
   TextEditingController addPostNameController = TextEditingController();
   TextEditingController addPostDescriptionController = TextEditingController();
@@ -64,7 +64,7 @@ class _AddPostPageState extends State<AddPostPage> {
   @override
   void initState() {
     //online
-    //  owner = context.read<AuthCubit>().getInfo();
+    //  shop = context.read<AuthCubit>().getOwnerAndShop();
     super.initState();
   }
 
@@ -161,52 +161,59 @@ class _AddPostPageState extends State<AddPostPage> {
               )),
               70.px,
               Expanded(
-                  child: BlocConsumer<PostsCubit, PostsState>(
-                listener: (context, state) async {
-                  if (state is AddPostSucceed) {
-                    CustomToast.showMessage(
-                        size: size,
-                        message: "Add Post Successfully",
-                        messageType: MessageType.SUCCESS);
-                    await context.read<PostsCubit>().getPosts();
-                  } else if (state is AddPostFailed) {
-                    CustomToast.showMessage(
-                        size: size,
-                        message: state.message,
-                        messageType: MessageType.REJECTED);
-                  }
-                },
-                builder: (context, state) {
-                  if (state is AddPostProgress) {
-                    return const CircularProgressIndicator();
-                  }
-                  return CustomButton(
-                    onPressed: () {
-                      !formKey.currentState!.validate() && selectedFile == null
-                          ? CustomToast.showMessage(
-                              size: size,
-                              message: 'Please check required fields',
-                              messageType: MessageType.REJECTED)
-                          : Future.delayed(
-                              const Duration(milliseconds: 1000),
-                              () {
-                                formKey.currentState!.save();
+                  child: BlocProvider(
+                create: (context) => AddPostCubit(PostsRepository()),
+                child: BlocConsumer<AddPostCubit, AddPostState>(
+                  listener: (context, state) async {
+                    if (state is AddPostSucceed) {
+                      CustomToast.showMessage(
+                          size: size,
+                          message: "Add Post Successfully",
+                          messageType: MessageType.SUCCESS);
+                      await context.read<PostsCubit>().getPosts();
+                    } else if (state is AddPostFailed) {
+                      CustomToast.showMessage(
+                          size: size,
+                          message: state.message,
+                          messageType: MessageType.REJECTED);
+                    }
+                  },
+                  builder: (context, state) {
+                    if (state is AddPostProgress) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    return CustomButton(
+                      onPressed: () {
+                        !formKey.currentState!.validate() &&
+                                selectedFile == null
+                            ? CustomToast.showMessage(
+                                size: size,
+                                message: 'Please check required fields',
+                                messageType: MessageType.REJECTED)
+                            : Future.delayed(
+                                const Duration(milliseconds: 1000),
+                                () {
+                                  formKey.currentState!.save();
 
-                                context.read<PostsCubit>().addPost(
-                                    owner: owner.toMap(),
-                                    title: addPostNameController.text,
-                                    description:
-                                        addPostDescriptionController.text,
-                                    postImage: "",
-                                    category: owner.currentShop.shopCategory,
-                                    productPrice: addPostPriceController.text);
-                              },
-                            ).then((value) => context.pop());
-                    },
-                    text: 'post',
-                    textColor: AppColors.mainWhiteColor,
-                  );
-                },
+                                  context.read<AddPostCubit>().addPost(
+                                      title: addPostNameController.text,
+                                      description:
+                                          addPostDescriptionController.text,
+                                      postImage: "",
+                                      category: "",
+                                      productPrice: addPostPriceController.text,
+                                      location: '',
+                                      ownerPhoneNumber: '',
+                                      shopeID: '',
+                                      shopeName: '');
+                                },
+                              ).then((value) => context.pop());
+                      },
+                      text: 'post',
+                      textColor: AppColors.mainWhiteColor,
+                    );
+                  },
+                ),
               )),
             ]),
           ]),

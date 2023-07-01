@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shopesapp/logic/cubites/cubit/auth_cubit.dart';
 import 'package:shopesapp/presentation/pages/control_page.dart';
 import 'package:shopesapp/presentation/pages/login_page.dart';
 import 'package:shopesapp/presentation/pages/porfile.dart';
 import 'package:shopesapp/presentation/pages/privacy%20policies.dart';
 import 'package:shopesapp/presentation/pages/settings.dart';
 import 'package:shopesapp/presentation/pages/verify_password.dart';
-import '../../logic/cubites/cubit/auth_state.dart';
 
 class AppRouter {
   Route? onGeneratedRoutes(RouteSettings routeSettings) {
     switch (routeSettings.name) {
       case '/':
         return MaterialPageRoute(builder: (context) {
-          return BlocBuilder<AuthCubit, AuthState>(builder: ((context, state) {
-            if (state is UserLoginedIn || state is OwnerLoginedIn) {
+          /* return BlocBuilder<AuthCubit, AuthState>(builder: ((context, state) {
+            if (state is UserLoginedIn || state is OwnerLogiedInWithShop) {
               return const ControlPage();
+            } else if (state is OwnerLoginedIn) {
+              return const SwitchStore();
             } else {
-              // return const ControlPage();
+              //return const ControlPage();
               return const LoginPage();
             }
-            //
-          }));
+           
+          }));*/
+          return const ControlPage();
         });
 
       case '/control':
@@ -48,15 +48,6 @@ class AppRouter {
 
       case '/profile':
         return MaterialPageRoute(builder: (context) {
-          /* return BlocBuilder<UserAuthCubit, UserAuthState>(
-              builder: ((context, state) {
-            //if (state is UserAuthLoginedIn) {
-            if (state is UserAuthInitialState) {
-              return const ProfilePage();
-            } else {
-              return const StartPage();
-            }
-          }));*/
           return const ProfilePage();
         });
     }

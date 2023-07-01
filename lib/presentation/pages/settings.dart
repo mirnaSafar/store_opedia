@@ -2,10 +2,9 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
-import '../../data/models/user.dart';
-import '../../data/repositories/delete_user_repository.dart';
+import 'package:shopesapp/data/repositories/user_repository.dart';
+import 'package:shopesapp/logic/cubites/user/delete_user_cubit.dart';
 import '../../logic/cubites/cubit/auth_cubit.dart';
-import '../../logic/cubites/delete_user_cubit.dart';
 import '../widgets/dialogs/awosem_dialog.dart';
 import '../widgets/settings/settings_til.dart';
 
@@ -17,21 +16,6 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  late User _user;
-  late String _id;
-  // ignore: constant_identifier_names
-
-  @override
-  void initState() {
-    //online
-    /*
-    _user = context.read<UserAuthCubit>().getUser();
-    _id = _user.id;*/
-    //offline
-    _id = "1";
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -95,8 +79,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   children: <Widget>[
                     buildLogout(context),
                     BlocProvider<DeleteUserCubit>(
-                      create: (context) =>
-                          DeleteUserCubit(DeleteUserRepository()),
+                      create: (context) => DeleteUserCubit(UserRepository()),
                       child: BlocConsumer<DeleteUserCubit, DeleteUserState>(
                         listener: (context, state) {
                           if (state is DeleteUserSucceed) {
@@ -117,9 +100,11 @@ class _SettingsPageState extends State<SettingsPage> {
                         },
                         builder: (context, state) {
                           if (state is DeleteUserProgress) {
-                            return const CircularProgressIndicator();
+                            return const LinearProgressIndicator();
                           }
-                          return buildDeleteAccount(context, _id);
+                          return buildDeleteAccount(
+                            context,
+                          );
                         },
                       ),
                     ),

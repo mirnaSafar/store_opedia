@@ -1,25 +1,19 @@
-import 'dart:async';
 import 'dart:core';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shopesapp/data/models/owner.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopesapp/data/repositories/auth_repository.dart';
 import 'package:shopesapp/logic/cubites/cubit/auth_state.dart';
-
 import '../../../data/models/shop.dart';
 import '../../../data/models/user.dart';
 
 class AuthCubit extends Cubit<AuthState> {
-  late Timer _authTimer;
-  final AuthRepository repo;
-  late User? user;
-  late Shop? currentShop;
-  late Owner? owner;
-  late DateTime _expire;
-  late String? _mode;
+  AuthCubit(this.repo) : super(AuthInitialState());
 
-  AuthCubit(this.repo) : super(AuthInitialState()) {
-    autoLogin();
-  }
+  final AuthRepository repo;
+  User? user;
+  Shop? shop;
+
 //user signin
   Future userSignUp(String userName, String email, String password,
       String phoneNumber) async {
@@ -32,28 +26,49 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthFailed(response == null
           ? "Signup Failed  Check your internet connection"
           : response["message"]));
-    } else if (response["message"] == "Email Already Exists") {
-      emit(AuthFailed("Email Already Exists"));
     } else {
+      user = User.fromMap(response);
+      repo.saveUser(user: user!);
       emit(UserSignedUp());
     }
   }
 
 //Owner signin
-  Future ownerSignUp(String ownerName, String email, String password,
-      String phoneNumber, Shop currentShop) async {
+  Future ownerSignUp({
+    required String ownerName,
+    required String email,
+    required String password,
+    required String phoneNumber,
+    required String storeLocation,
+    required String storeCategory,
+    required String startWorkTime,
+    required String endWorkTime,
+    required String storeName,
+    required String shopPhoneNumber,
+  }) async {
     emit(AuthProgress());
 
     Map<String, dynamic>? response = await repo.ownerSignUp(
-        ownerName, email, password, phoneNumber, currentShop);
+      ownerName: ownerName,
+      password: password,
+      phoneNumber: phoneNumber,
+      email: email,
+      storeName: storeName,
+      storeLocation: storeLocation,
+      storeCategory: storeCategory,
+      startWorkTime: startWorkTime,
+      endWorkTime: endWorkTime,
+      shopPhoneNumber: shopPhoneNumber,
+    );
 
     if (response == null || response["message"] != "Owner was Created") {
       emit(AuthFailed(response == null
           ? "Signup Failed  Check your internet connection"
           : response["message"]));
-    } else if (response["message"] == "Email Already Exists") {
-      emit(AuthFailed("Email Already Exists"));
     } else {
+      shop = Shop.fromMap(response);
+      repo.saveOwnerAndShop(shop: shop!);
+
       emit(OwnerSignedUp());
     }
   }
@@ -63,19 +78,17 @@ class AuthCubit extends Cubit<AuthState> {
 
     Map<String, dynamic>? response =
         await repo.login(email: email, password: password);
-    if (response!["statusCode"] == 205 &&
-        response["message"] == "auth succeded") {
-      _expire = DateTime.parse(response["expire"] as String);
-      autoLogout(_expire.difference(DateTime.now()).inSeconds);
 
-      user = User.fromMap(response["user"]);
-      emit(UserLoginedIn(user: user!));
-    } else if (response["message"] == "auth succeded") {
-      _expire = DateTime.parse(response["expire"] as String);
-      autoLogout(_expire.difference(DateTime.now()).inSeconds);
-      owner = Owner.fromMap(response["owner"]);
+    if (response!["message"] == "user auth succeded") {
+      user = User.fromMap(response);
+      repo.saveUser(user: user!);
+      emit(UserLoginedIn());
+    } else if (response["message"] == "owner auth succeded") {
+      String ownerID = response["ownerID"];
 
-      emit(OwnerLoginedIn(owner: owner!));
+      saveOwnerID(ownerID: ownerID);
+
+      emit(OwnerLoginedIn());
     } else {
       emit(AuthFailed(response == null
           ? "Login Failed Check your internet connection"
@@ -83,78 +96,47 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  void autoLogout(int time) {
-    _authTimer = Timer(Duration(seconds: time), logOut);
+  Future<void> autoLogIn() async {
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+    String? mode = _pref.getString("mode");
+    String? ownerID = _pref.getString("OwnerID");
+    if (ownerID == null && mode == null) {
+      emit(NoAuthentication());
+    } else if (mode == null && ownerID != null) {
+      emit(OwnerLoginedIn());
+    } else if (mode == "user") {
+      repo.getStoredUser().then((sortedUser) {
+        user = sortedUser!["user"] as User;
+        emit(UserLoginedIn());
+      });
+    } else {
+      repo.getStoredOwnerAndShop().then((sortedShop) {
+        shop = sortedShop!["shop"] as Shop;
+        emit(OwnerLoginedIn());
+      });
+    }
   }
 
-  void autoLogin() {
-    repo.getAuthMode().then((value) {
-      _mode = value;
-      if (_mode == "user") {
-        repo.getStoredUser().then((mapofUserAndExpire) {
-          if (mapofUserAndExpire == null) {
-            emit(AuthNoToken());
-            return;
-          } else {
-            _expire = DateTime.parse(mapofUserAndExpire["expire"] as String);
-          }
-          if (_expire.isBefore(DateTime.now())) {
-            emit(AuthNoToken());
+  void selectedShop() {
+    emit(OwnerLogiedInWithShop());
+  }
 
-            return;
-          }
-          autoLogout(_expire.difference(DateTime.now()).inSeconds);
-
-          user = mapofUserAndExpire["user"] as User;
-
-          emit(UserLoginedIn(user: user!));
-        });
-      } else {
-        repo.getStoredOwner().then((mapofOwnerAndExpire) {
-          if (mapofOwnerAndExpire == null) {
-            emit(AuthNoToken());
-            return;
-          } else {
-            _expire = DateTime.parse(mapofOwnerAndExpire["expire"] as String);
-          }
-          if (_expire.isBefore(DateTime.now())) {
-            emit(AuthNoToken());
-
-            return;
-          }
-          autoLogout(_expire.difference(DateTime.now()).inSeconds);
-
-          owner = mapofOwnerAndExpire["owner"] as Owner;
-          currentShop = owner?.currentShop;
-
-          emit(OwnerLoginedIn(owner: owner!));
-        });
-      }
+  Shop getOwnerAndShop() {
+    repo.getStoredOwnerAndShop().then((value) {
+      shop = value!['owner'] as Shop;
     });
+    return Shop.from(shop!);
+  }
+
+  void saveOwnerID({required String ownerID}) async {
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+    await _pref.setString("ID", ownerID);
   }
 
   Future<void> logOut() async {
-    if (_mode == "user") {
-      user = null;
-    } else {
-      owner = null;
-    }
+    user = null;
+    shop = null;
     await repo.deleteInfo();
-    _authTimer.cancel();
-    emit(AuthNoToken());
-  }
-
-  dynamic getInfo() {
-    if (_mode == "user") {
-      repo.getStoredUser().then((value) {
-        user = value!['user'] as User;
-        return User.from(user!);
-      });
-    } else {
-      repo.getStoredOwner().then((value) {
-        owner = value!['owner'] as Owner;
-        return Owner.from(owner!);
-      });
-    }
+    emit(NoAuthentication());
   }
 }

@@ -1,8 +1,11 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shopesapp/data/repositories/update_user_repository.dart';
+import 'package:shopesapp/data/models/user.dart';
+import 'package:shopesapp/logic/cubites/user/update_user_cubit.dart';
+import 'package:shopesapp/presentation/pages/control_page.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
+import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/presentation/widgets/edit_profile/email_form_field.dart';
 import 'package:shopesapp/presentation/widgets/edit_profile/password_form_field.dart';
 import 'package:shopesapp/presentation/widgets/edit_profile/phoneNumber_form_field.dart';
@@ -10,10 +13,7 @@ import 'package:shopesapp/presentation/widgets/edit_profile/user_name_form_field
 import 'package:shopesapp/presentation/widgets/profile/appBar.dart';
 import 'package:shopesapp/presentation/widgets/profile/password_form_field.dart';
 import 'package:shopesapp/presentation/widgets/profile/phoneNumber_form_field.dart';
-import '../../data/models/owner.dart';
-import '../../data/models/user.dart';
 import '../../logic/cubites/cubit/profile_cubit.dart';
-import '../../logic/cubites/update_user_cubit.dart';
 import '../shared/custom_widgets/custom_text.dart';
 import '../widgets/dialogs/awosem_dialog.dart';
 import '../widgets/profile/email_form_field.dart';
@@ -32,8 +32,6 @@ late String _id;
 
 late String _oldPassword;
 late String _oldPhoneNumber;
-late User _user;
-late Owner _owner;
 late String _oldName;
 late String _newName;
 late String _newPassword;
@@ -42,32 +40,12 @@ late String _newPhoneNumber;
 class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
-    //online
-    /* 
-    String mode =context.read<AuthCubit>().mode
-    if(mode=="user"){
-      _user = context.read<AuthCubit>().getInfo();
-       _id = _user.id;
-    _oldUserName = _user.name;
-    _oldPassword = _user.password;
-    _oldPhoneNumber = _user.phoneNumber;
-    _email = _user.email;
-    }
-    else{
-owner=context.read<AuthCubit>().getInfo();
-  _id = _owner.id;
-    _oldUserName = _owner.name;
-    _oldPassword = _owner.password;
-    _oldPhoneNumber = _owner.phoneNumber;
-    _email = _owner.email;
-    }*/
+    // _oldPassword = context.read<VerifyPasswordCubit>().oldPassword;
 
-//offline
+    //offline
     _oldName = "test";
-    _oldPassword = "123456789";
     _oldPhoneNumber = "0999999999";
     _email = "example@gmail.com";
-
     _newPassword = _oldPassword;
     _newPhoneNumber = _oldPhoneNumber;
     _newName = _oldName;
@@ -110,12 +88,12 @@ owner=context.read<AuthCubit>().getInfo();
         btnCancelText: 'Cancel',
         btnOkText: " Countinue",
         btnOkOnPress: () {
-          BlocProvider.of<UpdateUserCubit>(context).updateUser(
+          BlocProvider.of<UpdateUserCubit>(context).updateUser(User(
               id: _id,
-              userName: getUserName(),
+              name: getUserName(),
               email: _email,
-              password: getPassword(),
-              phoneNumber: getPhoneNumber());
+              // password: getPassword(),
+              phoneNumber: getPhoneNumber()));
           print('After update' +
               _email +
               ' ' +
@@ -159,7 +137,7 @@ owner=context.read<AuthCubit>().getInfo();
           height: 15.0,
         ),
         BlocProvider<UpdateUserCubit>(
-          create: (context) => UpdateUserCubit(UpdateUserRepository()),
+          create: (context) => UpdateUserCubit(),
           child: BlocConsumer<UpdateUserCubit, UpdateUserState>(
             listener: (context, state) {
               if (state is UpdateUserSucceed) {
@@ -168,7 +146,7 @@ owner=context.read<AuthCubit>().getInfo();
                         type: DialogType.SUCCES)
                     .show();
 
-                Navigator.pushReplacementNamed(context, 'home');
+                context.pushRepalceme(const ControlPage());
               } else if (state is UpdateUserFailed) {
                 buildAwsomeDialog(
                         context, "Faild", state.message.toUpperCase(), "Cancle",
@@ -268,7 +246,7 @@ owner=context.read<AuthCubit>().getInfo();
             const SizedBox(
               height: 30.0,
             ),
-            ProfilePasswordFormField(password: _oldPassword),
+            const ProfilePasswordFormField(password: "123456789"),
             const SizedBox(
               height: 30.0,
             ),

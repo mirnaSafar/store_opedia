@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shopesapp/logic/cubites/cubit/auth_cubit.dart';
+import 'package:shopesapp/presentation/pages/control_page.dart';
+import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/presentation/widgets/auth/confirm_form_field.dart';
 import 'package:shopesapp/presentation/widgets/auth/phoneNumber_form_field.dart';
 import '../../constant/clipper.dart';
@@ -59,10 +61,8 @@ class _UserSignUpState extends State<UserSignUp> with TickerProviderStateMixin {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      /* BlocProvider.of<UserAuthCubit>(context)
-            .signin(_userName, _email, _password, _phoneNumber);
-      */
-      Navigator.pushNamed(context, '/control');
+      BlocProvider.of<AuthCubit>(context)
+          .userSignUp(_userName, _email, _password, _phoneNumber);
     }
   }
 
@@ -74,6 +74,7 @@ class _UserSignUpState extends State<UserSignUp> with TickerProviderStateMixin {
           buildAwsomeDialog(context, "Succeed", "You Signin successfully", "OK",
                   type: DialogType.SUCCES)
               .show();
+          context.pushRepalceme(const ControlPage());
         } else if (state is AuthFailed) {
           buildAwsomeDialog(
                   context, "Faild", state.message.toUpperCase(), "Cancle",

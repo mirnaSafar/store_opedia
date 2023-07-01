@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/data/models/post.dart';
+import 'package:shopesapp/data/models/shop.dart';
+import 'package:shopesapp/data/repositories/shared_preferences_repository.dart';
 import 'package:shopesapp/logic/cubites/shop/following_cubit.dart';
+import 'package:shopesapp/logic/cubites/shop/rate_shop_cubit.dart';
+import 'package:shopesapp/logic/cubites/shop/shop_follwers_counter_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/work_time_cubit.dart';
 import 'package:shopesapp/presentation/pages/add_post_page.dart';
 import 'package:shopesapp/presentation/pages/edit_store.dart';
@@ -11,289 +15,384 @@ import 'package:shopesapp/presentation/shared/custom_widgets/custom_icon_text.da
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custoum_rate.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
-import '../widgets/product/product_post.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:shopesapp/presentation/widgets/product/product_post.dart';
 
+// ignore: must_be_immutable
 class StorePage extends StatefulWidget {
-  const StorePage({Key? key}) : super(key: key);
-
+  StorePage({Key? key, required this.shop, this.profileDisplay = false})
+      : super(key: key);
+  Shop shop;
+  bool? profileDisplay;
   @override
   State<StorePage> createState() => _StorePageState();
 }
 
 class _StorePageState extends State<StorePage> {
-  List<Post> postList = [];
+  @override
+  void initState() {
+    context.read<WorkTimeCubit>().testOpenTime();
+    super.initState();
+  }
+
+  List<Post> postsList = [
+    Post(
+        title: ' headline6',
+        description: 'description',
+        category: 'category',
+        ownerID: 'ownerID',
+        ownerName: 'ownerName',
+        ownerPhoneNumber: 'ownerPhoneNumber',
+        price: 'price',
+        postImage: 'postImage',
+        shopeID: 'shopeID',
+        postID: 'postID'),
+    Post(
+        title: ' headline6',
+        description: 'description',
+        category: 'category',
+        ownerID: 'ownerID',
+        ownerName: 'ownerName',
+        ownerPhoneNumber: 'ownerPhoneNumber',
+        price: 'price',
+        postImage: 'postImage',
+        shopeID: 'shopeID',
+        postID: 'postID'),
+  ];
+  // late UserOwnerCubit userOwnerCubit = context.read<UserOwnerCubit>();
+
   @override
   Widget build(BuildContext context) {
+    List<Post> postsList = [
+      Post(
+          title: ' headline6',
+          description: 'description',
+          category: 'category',
+          ownerID: 'ownerID',
+          ownerName: 'ownerName',
+          ownerPhoneNumber: 'ownerPhoneNumber',
+          price: 'price',
+          postImage: 'postImage',
+          shopeID: 'shopeID',
+          postID: 'postID'),
+      Post(
+          title: ' post2',
+          description: 'description',
+          category: 'category',
+          ownerID: 'ownerID',
+          ownerName: 'ownerName',
+          ownerPhoneNumber: 'ownerPhoneNumber',
+          price: 'price',
+          postImage: 'postImage',
+          shopeID: 'shopeID',
+          postID: 'postID'),
+    ];
     final w = MediaQuery.of(context).size.width;
     final h = MediaQuery.of(context).size.height;
     return Scaffold(
-      //  backgroundColor: AppColors.mainWhiteColor,
-      // appBar: AppBar(
-      //   elevation: 0,
-      //   backgroundColor: Colors.transparent,
-      // ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding:
-                  EdgeInsetsDirectional.only(start: w * 0.06, end: w * 0.01),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Stack(
-                      // alignment: AlignmentDirectional.topCenter,
+        //  backgroundColor: AppColors.mainWhiteColor,
+        // appBar: AppBar(
+        //   elevation: 0,
+        //   backgroundColor: Colors.transparent,
+        // ),
+        body:
+            //  !userOwnerCubit.isUserOwner(widget.user)
+            //  const Center(
+            //     child: CustomText(text: 'you dont have any stores yet'),
+            //   )
+            SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsetsDirectional.only(start: w * 0.06, end: w * 0.01),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Stack(
+                // alignment: AlignmentDirectional.topCenter,
+                children: [
+                  SizedBox(
+                    child: Image.asset(
+                      'assets/verified.png',
+                      fit: BoxFit.fitWidth,
+                    ),
+                    height: h / 5,
+                    width: w,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                      top: h * 0.15,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(
-                          child: Image.asset(
-                            'assets/verified.png',
-                            fit: BoxFit.fitWidth,
-                          ),
-                          height: h / 5,
-                          width: w,
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                            top: h * 0.15,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Stack(
-                                children: [
-                                  CircleAvatar(
-                                    backgroundColor: AppColors.mainWhiteColor,
-                                    radius: w * 0.12,
-                                    child: CircleAvatar(
-                                      radius: w * 0.11,
-                                      backgroundColor: AppColors.mainTextColor,
-                                      // child: Image.asset('assets/verified.png', fit: BoxFit.cover),
-                                    ),
-                                  ),
-                                  BlocBuilder<WorkTimeCubit, WorkTimeState>(
-                                    builder: (context, state) {
-                                      return Visibility(
-                                        visible: state.isOpen == true,
-                                        child: Padding(
-                                          padding: EdgeInsetsDirectional.only(
-                                              start: w * 0.2, top: w * 0.16),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              CircleAvatar(
-                                                radius: w * 0.025,
-                                                backgroundColor:
-                                                    AppColors.mainWhiteColor,
-                                                child: CircleAvatar(
-                                                  radius: w * 0.02,
-                                                  backgroundColor: Colors.green,
-                                                ),
-                                              ),
-                                              2.px,
-                                              CustomText(
-                                                text: 'Open now',
-                                                textColor: Colors.green,
-                                                fontSize: w * 0.03,
-                                              )
-                                            ],
+                        Stack(
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: AppColors.mainWhiteColor,
+                              radius: w * 0.12,
+                              child: CircleAvatar(
+                                radius: w * 0.11,
+                                backgroundColor: AppColors.mainTextColor,
+                                // child: Image.asset('assets/verified.png', fit: BoxFit.cover),
+                              ),
+                            ),
+                            BlocBuilder<WorkTimeCubit, WorkTimeState>(
+                              builder: (context, state) {
+                                return Visibility(
+                                  visible: state.isOpen == true,
+                                  child: Padding(
+                                    padding: EdgeInsetsDirectional.only(
+                                        start: w * 0.2, top: w * 0.16),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        CircleAvatar(
+                                          radius: w * 0.025,
+                                          backgroundColor:
+                                              AppColors.mainWhiteColor,
+                                          child: CircleAvatar(
+                                            radius: w * 0.02,
+                                            backgroundColor: Colors.green,
                                           ),
                                         ),
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
-                              Padding(
-                                padding:
-                                    EdgeInsetsDirectional.only(start: w * 0.01),
-                                child: Row(
-                                  children: [
-                                    CustomText(
-                                      text: 'Store name',
-                                      bold: true,
-                                      fontSize: w * 0.05,
-                                      textColor:
-                                          Theme.of(context).primaryColorDark,
+                                        2.px,
+                                        CustomText(
+                                          text: 'Open now',
+                                          textColor: Colors.green,
+                                          fontSize: w * 0.03,
+                                        )
+                                      ],
                                     ),
-                                    10.px,
-                                    const CustomRate(),
-                                  ],
-                                ),
-                              )
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: EdgeInsetsDirectional.only(start: w * 0.01),
+                          child: Row(
+                            children: [
+                              CustomText(
+                                text: widget.shop.shopName,
+                                bold: true,
+                                fontSize: w * 0.05,
+                                textColor: Theme.of(context).primaryColorDark,
+                              ),
+                              10.px,
+                              BlocBuilder<RateShopCubit, RateShopState>(
+                                builder: (context, state) {
+                                  return CustomRate(
+                                    store: widget.shop,
+                                    enableRate: true,
+                                  );
+                                },
+                              ),
                             ],
                           ),
                         )
                       ],
                     ),
-                    10.ph,
-                    Stack(
-                      alignment: AlignmentDirectional.bottomEnd,
-                      children: [
-                        CustomPaint(
-                            painter: profilePainter(),
-                            child: Padding(
-                              padding: EdgeInsetsDirectional.only(
-                                start: w,
-                              ),
-                              child: SizedBox(
-                                width: w / 4,
-                                height: h * 0.67,
-                              ),
-                            )),
-                        // FloatingActionButton(
-                        //     onPressed: () {
-                        //       context.push(const EditStore());
-                        //     },
-                        //     backgroundColor: AppColors.mainOrangeColor,
-                        //     child: const Icon(Icons.edit)),
-                        Positioned(right: w * 0.06, child: _getFAB()),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            0.ph,
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.tag,
-                                  color: Colors.grey.shade300,
-                                ),
-                                10.px,
-                                CustomText(
-                                  text: 'clothes',
-                                  // fontSize: 18,
-                                  textColor: AppColors.secondaryFontColor,
-                                ),
-                              ],
-                            ),
-                            15.ph,
-                            CustomText(
-                                textColor: Theme.of(context).primaryColorDark,
-                                fontSize: 15,
+                  )
+                ],
+              ),
+              10.ph,
+              Stack(
+                alignment: AlignmentDirectional.bottomEnd,
+                children: [
+                  CustomPaint(
+                      painter: profilePainter(),
+                      child: Padding(
+                        padding: EdgeInsetsDirectional.only(
+                          start: w,
+                        ),
+                        child: SizedBox(
+                          width: w / 4,
+                          height: h * 0.67,
+                        ),
+                      )),
+                  // FloatingActionButton(
+                  //     onPressed: () {
+                  //       context.push(const EditStore());
+                  //     },
+                  //     backgroundColor: AppColors.mainOrangeColor,
+                  //     child: const Icon(Icons.edit)),
+                  Positioned(right: w * 0.06, child: _getFAB()),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      0.ph,
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.tag,
+                            color: Colors.grey.shade300,
+                          ),
+                          10.px,
+                          CustomText(
+                            text: widget.shop.shopCategory,
+                            // fontSize: 18,
+                            textColor: AppColors.secondaryFontColor,
+                          ),
+                        ],
+                      ),
+                      15.ph,
+                      CustomText(
+                          textColor: Theme.of(context).primaryColorDark,
+                          fontSize: 15,
+                          text: widget.shop.shopDescription ??
+                              'basic description about the \nstore and its major'),
+                      20.ph,
+                      Row(
+                        children: [
+                          BlocBuilder<ShopFollwersCounterCubit,
+                              ShopFollwersCounterState>(
+                            builder: (context, state) {
+                              return CustomText(
                                 text:
-                                    'basic description about the \nstore and its major'),
-                            20.ph,
-                            Row(
-                              children: [
-                                CustomText(
-                                  text: '1k Followers',
+                                    '${context.read<ShopFollwersCounterCubit>().getShopFollwersCount(widget.shop)} Followers',
+                                textColor: AppColors.mainBlueColor,
+                              );
+                            },
+                          ),
+                          70.px,
+                          BlocBuilder<FollowingCubit, FollowingState>(
+                            builder: (context, state) {
+                              var followingCubit =
+                                  context.read<FollowingCubit>();
+                              var shop =
+                                  SharedPreferencesRepository.getSavedShop(
+                                          widget.shop) ??
+                                      widget.shop;
+                              return InkWell(
+                                onTap: () {
+                                  followingCubit.getShopFollowingState(shop)
+                                      ? {
+                                          context
+                                              .read<ShopFollwersCounterCubit>()
+                                              .decrementFollowers(shop),
+                                          followingCubit.unFollow(shop),
+                                        }
+                                      : {
+                                          context
+                                              .read<ShopFollwersCounterCubit>()
+                                              .incrementFollowers(shop),
+                                          followingCubit.follow(shop),
+                                        };
+                                },
+                                child: CustomText(
+                                  text:
+                                      followingCubit.getShopFollowingState(shop)
+                                          ? 'Following'
+                                          : 'Follow',
                                   textColor: AppColors.mainBlueColor,
                                 ),
-                                70.px,
-                                BlocBuilder<FollowingCubit, FollowingState>(
-                                  builder: (context, state) {
-                                    return InkWell(
-                                      onTap: () =>
-                                          state.followed = !state.followed,
-                                      child: CustomText(
-                                        text: state.followed
-                                            ? 'Following'
-                                            : 'Follow',
-                                        textColor: AppColors.mainBlueColor,
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                            const CustomDivider(),
-                            CustomIconTextRow(
-                                textColor: Theme.of(context).primaryColorDark,
-                                icon: Icons.alarm,
-                                text: 'Work hours:   8am-2pm'),
-                            20.ph,
-                            CustomIconTextRow(
-                                textColor: Theme.of(context).primaryColorDark,
-                                icon: Icons.phone,
-                                text: '0987655432'),
-                            20.ph,
-                            CustomIconTextRow(
-                                textColor: Theme.of(context).primaryColorDark,
-                                icon: Icons.email,
-                                text: 'name@gmail.com'),
-                            20.ph,
-                            CustomIconTextRow(
-                                textColor: Theme.of(context).primaryColorDark,
-                                icon: Icons.location_on_outlined,
-                                text: 'Hamah'),
-                            const CustomDivider(),
-                            CustomText(
-                              text: 'Social accounts',
-                              textColor: Theme.of(context).primaryColorDark,
-                              fontSize: w * 0.04,
-                              bold: true,
-                            ),
-                            20.ph,
-                            CustomIconTextRow(
-                                textColor: Theme.of(context).primaryColorDark,
-                                icon: Icons.facebook,
-                                text: 'https://instagram.com'),
-                            10.ph,
-                            CustomIconTextRow(
-                                textColor: Theme.of(context).primaryColorDark,
-                                icon: Icons.facebook,
-                                text: 'https://instagram.com'),
-                            const CustomDivider(),
-                            CustomText(
-                              text: 'Related Stores',
-                              textColor: Theme.of(context).primaryColorDark,
-                              fontSize: w * 0.04,
-                              bold: true,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ]),
-            ),
-            20.ph,
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(
-                  height: h / 7,
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    // physics: const NeverScrollableScrollPhysics(),
-                    scrollDirection: Axis.horizontal,
-                    itemCount: 10,
-                    separatorBuilder: (BuildContext context, int index) {
-                      return 20.px;
-                    },
-                    itemBuilder: (BuildContext context, int index) {
-                      return Column(
-                        children: [
-                          CircleAvatar(
-                            radius: w * 0.11,
-                            backgroundColor: AppColors.mainTextColor,
+                              );
+                            },
                           ),
-                          5.ph,
-                          CustomText(
-                            text: 'store name',
-                            textColor: Theme.of(context).primaryColorDark,
-                          )
                         ],
-                      );
-                    },
+                      ),
+                      const CustomDivider(),
+                      CustomIconTextRow(
+                          textColor: Theme.of(context).primaryColorDark,
+                          icon: Icons.alarm,
+                          text:
+                              'Work hours: ${widget.shop.startWorkTime}-${widget.shop.endWorkTime}'),
+                      20.ph,
+                      CustomIconTextRow(
+                          textColor: Theme.of(context).primaryColorDark,
+                          icon: Icons.phone,
+                          text: '0987655432'),
+                      20.ph,
+                      CustomIconTextRow(
+                          textColor: Theme.of(context).primaryColorDark,
+                          icon: Icons.email,
+                          text: widget.shop.ownerEmail),
+                      20.ph,
+                      CustomIconTextRow(
+                          textColor: Theme.of(context).primaryColorDark,
+                          icon: Icons.location_on_outlined,
+                          text: widget.shop.location),
+                      const CustomDivider(),
+                      CustomText(
+                        text: 'Social accounts',
+                        textColor: Theme.of(context).primaryColorDark,
+                        fontSize: w * 0.04,
+                        bold: true,
+                      ),
+                      20.ph,
+                      CustomIconTextRow(
+                          textColor: Theme.of(context).primaryColorDark,
+                          icon: Icons.facebook,
+                          text: 'https://instagram.com'),
+                      10.ph,
+                      CustomIconTextRow(
+                          textColor: Theme.of(context).primaryColorDark,
+                          icon: Icons.facebook,
+                          text: 'https://instagram.com'),
+                      const CustomDivider(),
+                      CustomText(
+                        text: 'Related Stores',
+                        textColor: Theme.of(context).primaryColorDark,
+                        fontSize: w * 0.04,
+                        bold: true,
+                      ),
+                    ],
                   ),
+                ],
+              ),
+            ]),
+          ),
+          20.ph,
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                height: h / 7,
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  // physics: const NeverScrollableScrollPhysics(),
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 10,
+                  separatorBuilder: (BuildContext context, int index) {
+                    return 20.px;
+                  },
+                  itemBuilder: (BuildContext context, int index) {
+                    return Column(
+                      children: [
+                        CircleAvatar(
+                          radius: w * 0.11,
+                          backgroundColor: AppColors.mainTextColor,
+                        ),
+                        5.ph,
+                        CustomText(
+                          text: 'store name',
+                          textColor: Theme.of(context).primaryColorDark,
+                        )
+                      ],
+                    );
+                  },
                 ),
-              ],
-            ),
-            const CustomDivider(),
-            ListView.separated(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: 5,
-              separatorBuilder: (context, index) => const CustomDivider(),
-              itemBuilder: (BuildContext context, int index) {
-                return const ProductPost();
-              },
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+          const CustomDivider(),
+          ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: postsList.length,
+            separatorBuilder: (context, index) => const CustomDivider(),
+            itemBuilder: (BuildContext context, int index) {
+              return ProductPost(
+                post: postsList[index],
+                profileDisplay: widget.profileDisplay,
+              );
+            },
+          ),
+        ],
       ),
-    );
+    ));
   }
 
   Widget _getFAB() {

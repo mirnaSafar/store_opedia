@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/data/models/post.dart';
-import 'package:shopesapp/logic/cubites/cubit/posts_cubit.dart';
+import 'package:shopesapp/logic/cubites/post/posts_cubit.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_divider.dart';
 import 'package:shopesapp/presentation/widgets/page_header/page_header.dart';
 import 'package:shopesapp/presentation/widgets/product/product_post.dart';
@@ -14,7 +14,30 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<Post> postsList = [];
+  List<dynamic> postsList = [
+    Post(
+        title: "headline6",
+        description: "description",
+        category: "category",
+        ownerID: "ownerID1",
+        ownerName: "ownerName",
+        ownerPhoneNumber: "ownerPhoneNumber",
+        price: "price",
+        postImage: "postImage",
+        shopeID: "shopeID1",
+        postID: "postID1"),
+    Post(
+        title: "post4",
+        description: "description",
+        category: "category",
+        ownerID: "ownerID2",
+        ownerName: "ownerName",
+        ownerPhoneNumber: "ownerPhoneNumber",
+        price: "price",
+        postImage: "postImage",
+        shopeID: "shopeID2",
+        postID: "postID1")
+  ];
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
@@ -35,7 +58,7 @@ class _HomePageState extends State<HomePage> {
         body: ListView(
           children: [
             const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+              padding: EdgeInsets.only(left: 20, right: 20, bottom: 30),
               child: PageHeader(),
             ),
             BlocBuilder<PostsCubit, PostsState>(builder: (context, state) {
@@ -46,12 +69,14 @@ class _HomePageState extends State<HomePage> {
               return ListView.separated(
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
-                itemCount: 15,
+                itemCount: postsList.length,
                 separatorBuilder: (BuildContext context, int index) {
-                  return const ProductPost();
+                  return const CustomDivider();
                 },
                 itemBuilder: (BuildContext context, int index) {
-                  return const CustomDivider();
+                  return ProductPost(
+                    post: postsList[index],
+                  );
                 },
               );
             }

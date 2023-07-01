@@ -1,8 +1,8 @@
 part of 'following_cubit.dart';
 
 class FollowingState {
-  bool followed;
+  List<dynamic> followedShops;
   FollowingState({
-    required this.followed,
+    required this.followedShops,
   });
 }

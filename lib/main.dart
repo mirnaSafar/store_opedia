@@ -1,15 +1,25 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopesapp/data/repositories/posts_repository.dart';
+import 'package:shopesapp/data/repositories/shop_repository.dart';
 import 'package:shopesapp/logic/cubites/cubit/auth_cubit.dart';
 import 'package:shopesapp/logic/cubites/cubit/internet_cubit.dart';
-import 'package:shopesapp/logic/cubites/cubit/posts_cubit.dart';
 import 'package:shopesapp/logic/cubites/cubit/profile_cubit.dart';
+import 'package:shopesapp/logic/cubites/post/post_favorite_cubit.dart';
+import 'package:shopesapp/logic/cubites/post/posts_cubit.dart';
+import 'package:shopesapp/logic/cubites/post/rate_shop_cubit.dart';
+import 'package:shopesapp/logic/cubites/shop/favorite_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/following_cubit.dart';
+import 'package:shopesapp/logic/cubites/shop/get_owner_shops_cubit.dart';
+import 'package:shopesapp/logic/cubites/shop/rate_shop_cubit.dart';
+import 'package:shopesapp/logic/cubites/shop/shop_follwers_counter_cubit.dart';
+import 'package:shopesapp/logic/cubites/shop/switch_shop_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/work_time_cubit.dart';
 import 'package:shopesapp/logic/cubites/themes_cubit.dart';
 import 'package:shopesapp/presentation/router/app_roter.dart';
@@ -17,8 +27,11 @@ import 'package:flutter/material.dart';
 import 'constant/themes.dart';
 import 'data/repositories/auth_repository.dart';
 
+late SharedPreferences globalSharedPreference;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  globalSharedPreference = await SharedPreferences.getInstance();
+  globalSharedPreference.clear();
   await Settings.init(cacheProvider: SharePreferenceCache());
   final storage = await HydratedStorage.build(
       storageDirectory: kIsWeb
@@ -54,26 +67,70 @@ class MyApp extends StatelessWidget {
           )..getPosts(),
         ),
         BlocProvider(
+          create: (context) => GetOwnerShopsCubit(ShopRepository()),
+        ),
+        BlocProvider(
           create: ((context) => ThemesCubit()),
           lazy: false,
+        ),
+        // BlocProvider(
+        //   create: ((context) => UserOwnerCubit()),
+        //   lazy: false,
+        // ),
+
+        // BlocProvider(
+        //   create: ((context) => StoreCubit()),
+        //   lazy: false,
+        // ),
+        BlocProvider(
+          create: (context) => PostFavoriteCubit(),
+        ),
+        BlocProvider(
+          create: (context) => FavoriteCubit(),
         ),
         BlocProvider(
           create: ((context) => ProfileCubit()..initVerified()),
           lazy: false,
         ),
         BlocProvider(
-          create: ((context) => AuthCubit(AuthRepository())),
+          create: (context) => SwitchShopCubit(AuthRepository()),
         ),
+        /*  BlocProvider(
+          create: ((context) => VerifyPasswordCubit(AuthRepository())),
+        ),*/
+        BlocProvider(
+          create: ((context) => AuthCubit(
+                AuthRepository(),
+              )..autoLogIn()),
+          lazy: false,
+        ),
+
         BlocProvider(
           create: (context) => FollowingCubit(),
+          lazy: false,
         ),
         BlocProvider(
-          create: (context) => WorkTimeCubit(),
+          create: (context) => RateShopCubit(),
+          lazy: false,
+        ),
+        BlocProvider(
+          create: (context) => RatePostCubit(),
+          lazy: false,
+        ),
+        BlocProvider(
+          create: (context) => ShopFollwersCounterCubit(),
+          lazy: false,
+        ),
+
+        BlocProvider(
+          create: (context) => WorkTimeCubit()..testOpenTime(),
         ),
       ],
       child: BlocBuilder<ThemesCubit, ThemesState>(
         builder: (context, state) {
           return MaterialApp(
+            builder: BotToastInit(),
+            navigatorObservers: [BotToastNavigatorObserver()],
             title: 'ShopsApp',
             debugShowCheckedModeBanner: false,
             theme: themeArray[state.themeIndex],

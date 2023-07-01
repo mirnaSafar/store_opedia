@@ -32,7 +32,6 @@ class _UserSignUpState extends State<OwnerSignUp>
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final TextEditingController _emailController = TextEditingController();
-  // TextEditingController _sms= TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _storeNumberController = TextEditingController();
@@ -83,10 +82,18 @@ class _UserSignUpState extends State<OwnerSignUp>
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      /* BlocProvider.of<UserAuthCubit>(context)
-            .signin(_userName, _email, _password, _phoneNumber);
-      */
-      Navigator.pushNamed(context, '/control');
+      BlocProvider.of<AuthCubit>(context).ownerSignUp(
+        ownerName: _ownerName,
+        password: _password,
+        phoneNumber: _phoneNumber,
+        email: _email,
+        storeName: _storeNameController.text,
+        storeCategory: storeCategoryController.text,
+        storeLocation: storeLocationController.text,
+        startWorkTime: storeStartWorkTimecontroller.text,
+        endWorkTime: storeEndWorkTimeController.text,
+        shopPhoneNumber: _storeNumberController.text,
+      );
     }
   }
 
@@ -94,10 +101,11 @@ class _UserSignUpState extends State<OwnerSignUp>
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
-        if (state is UserSignedUp) {
+        if (state is OwnerSignedUp) {
           buildAwsomeDialog(context, "Succeed", "You Signin successfully", "OK",
                   type: DialogType.SUCCES)
               .show();
+          context.pushRepalceme(const ControlPage());
         } else if (state is AuthFailed) {
           buildAwsomeDialog(
                   context, "Faild", state.message.toUpperCase(), "Cancle",
@@ -177,10 +185,10 @@ class _UserSignUpState extends State<OwnerSignUp>
                         text: 'Store Location',
                         controller: storeLocationController,
                       ),
-                      // UserInput(
-                      //   text: 'Store Number',
-                      //   controller: _storeNumberController,
-                      // ),
+                      UserInput(
+                        text: 'Store Number',
+                        controller: _storeNumberController,
+                      ),
                       UserInput(
                           text: 'Store Category',
                           controller: storeCategoryController,
@@ -237,35 +245,11 @@ class _UserSignUpState extends State<OwnerSignUp>
                               return CustomButton(
                                 onPressed: () {
                                   _submitForm(context);
-
-                                  context.push(const ControlPage());
                                 },
                                 text: 'Signup',
                               );
                             },
                           )),
-                      const SizedBox(
-                        height: 15.0,
-                      ),
-                      // Row(
-                      //   crossAxisAlignment: CrossAxisAlignment.center,
-                      //   mainAxisAlignment: MainAxisAlignment.center,
-                      //   children: [
-                      //     const Text(
-                      //       'Didn\'t recive the SMS?',
-                      //       style: TextStyle(
-                      //           fontWeight: FontWeight.w500, fontSize: 18),
-                      //     ),
-                      //     TextButton(
-                      //       child: const Text(
-                      //         'Request again',
-                      //         style: TextStyle(
-                      //             fontWeight: FontWeight.w500, fontSize: 18),
-                      //       ),
-                      //       onPressed: () {},
-                      //     )
-                      //   ],
-                      // ),
                     ]),
               )
             ])),

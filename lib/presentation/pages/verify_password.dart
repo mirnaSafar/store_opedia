@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:shopesapp/logic/cubites/cubit/verify_password_cubit.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 
 import '../../data/enums/message_type.dart';
-import '../../data/models/user.dart';
 import '../../logic/cubites/cubit/profile_cubit.dart';
 import '../shared/custom_widgets/custom_toast.dart';
 
@@ -19,16 +19,13 @@ class VerifyPassword extends StatefulWidget {
 }
 
 class _VerifyPasswordState extends State<VerifyPassword> {
-  late String _oldPassword;
-  late User _user;
+  late int? _oldPasswordLength;
   @override
   void initState() {
+    // context.read<VerifyPasswordCubit>().getOldPasswordLength();
+    // _oldPasswordLength = context.read<VerifyPasswordCubit>().oldPasswordLength;
+    _oldPasswordLength = 10;
     super.initState();
-    // online
-    /* _user = context.read<UserAuthCubit>().getUser();
-    _oldPassword = _user.password;*/
-    //offline
-    _oldPassword = "123456789";
   }
 
   @override
@@ -41,36 +38,29 @@ class _VerifyPasswordState extends State<VerifyPassword> {
           SizedBox(
             height: size.height / 20,
           ),
-          /*  */
-          /**/
           Padding(
             padding: EdgeInsets.symmetric(horizontal: size.width * 0.02),
             child: PinCodeTextField(
+              cursorColor: AppColors.mainBlackColor,
               scrollPadding: const EdgeInsets.all(20),
               pinTheme: PinTheme(
                   shape: PinCodeFieldShape.box,
                   activeColor: Theme.of(context).colorScheme.primary,
                   borderRadius: BorderRadius.circular(5),
                   selectedColor: Theme.of(context).colorScheme.secondary,
-                  fieldWidth: _oldPassword.length <= 10 ? 40.0 : 22.0,
-                  fieldHeight: _oldPassword.length <= 10 ? 50.0 : 30.0),
+                  fieldWidth: _oldPasswordLength! <= 10 ? 40.0 : 22.0,
+                  fieldHeight: _oldPasswordLength! <= 10 ? 50.0 : 30.0),
               onCompleted: (value) {
-                if (value != _oldPassword) {
-                  CustomToast.showMessage(
-                      size: size,
-                      message: "Wrong Password",
-                      messageType: MessageType.REJECTED);
-                } else {
-                  BlocProvider.of<ProfileCubit>(context).setVerifiy(true);
-                  Navigator.pop(context);
-                }
+                /*   context
+                    .read<VerifyPasswordCubit>()
+                    .verifyPassword(password: value);*/
               },
               obscureText: true,
               obscuringCharacter: '*',
               textStyle:
-                  TextStyle(fontSize: _oldPassword.length <= 10 ? 20 : 16),
+                  TextStyle(fontSize: _oldPasswordLength! <= 10 ? 20 : 16),
               appContext: context,
-              length: _oldPassword.length,
+              length: _oldPasswordLength!,
               onChanged: (value) {},
             ),
           ),
@@ -79,7 +69,7 @@ class _VerifyPasswordState extends State<VerifyPassword> {
           ),
           Center(
             child: CustomText(
-              text: "Verify   your   password   pleas",
+              text: "Verify   your   password   please",
               fontSize: 20.0,
               bold: true,
               textColor: Theme.of(context).primaryColorDark,
@@ -92,26 +82,48 @@ class _VerifyPasswordState extends State<VerifyPassword> {
             width: 200.0,
             decoration: BoxDecoration(
                 color: Colors.grey, borderRadius: BorderRadius.circular(10.0)),
-            child: MaterialButton(
-                elevation: 10.0,
-                child:
-                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  Icon(
-                    Icons.arrow_back,
-                    color: AppColors.mainWhiteColor,
-                  ),
-                  CustomText(
-                    text: "Cancel",
-                    textColor: AppColors.mainWhiteColor,
-                  )
-                ]),
-                onPressed: () {
-                  Navigator.pop(context);
+            child: BlocConsumer<VerifyPasswordCubit, VerifyPasswordState>(
+              listener: (context, state) {
+                if (state is VerifyPasswordFailed) {
                   CustomToast.showMessage(
                       size: size,
-                      message: "You Have to write the Password First !",
-                      messageType: MessageType.INFO);
-                }),
+                      message: state.message,
+                      messageType: MessageType.REJECTED);
+                } else if (state is VerifyPasswordSucceed) {
+                  CustomToast.showMessage(
+                      size: size,
+                      message: "Verify Password Succeed",
+                      messageType: MessageType.REJECTED);
+                  BlocProvider.of<ProfileCubit>(context).setVerifiy(true);
+                  context.pop();
+                }
+              },
+              builder: (context, state) {
+                if (state is VerifyPasswordProgress) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                return ElevatedButton(
+                    onPressed: () {
+                      context.pop();
+                      CustomToast.showMessage(
+                          size: size,
+                          message: "You Have to write the Password First !",
+                          messageType: MessageType.INFO);
+                    },
+                    child: Text(
+                      "Cancle",
+                      style: TextStyle(color: AppColors.mainOrangeColor),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 15,
+                        ),
+                        backgroundColor: AppColors.mainWhiteColor,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30)),
+                        side: BorderSide(color: AppColors.mainOrangeColor)));
+              },
+            ),
           )
         ],
       ),

@@ -1,6 +1,6 @@
 enum DataType {
   INT,
-  BOUBLE,
+  DOUBLE,
   STRING,
   STRINGLIST,
   BOOLEAN,

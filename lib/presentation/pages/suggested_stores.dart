@@ -12,7 +12,41 @@ class SuggestedStoresView extends StatefulWidget {
 }
 
 class _SuggestedStoresViewState extends State<SuggestedStoresView> {
-  List<Shop> suggestedStoresList = [];
+  List<Shop> suggestedStoresList = [
+    Shop(
+        shopCategory: 'shopCategory',
+        location: 'homs',
+        startWorkTime: '9am',
+        endWorkTime: '2pm',
+        ownerID: '3',
+        ownerEmail: 'ownerEmail@gmail.com',
+        ownerPhoneNumber: '0987655432',
+        shopID: '1',
+        shopName: 'josef',
+        ownerName: 'jack'),
+    Shop(
+        shopCategory: 'shopCategory',
+        location: 'hama',
+        startWorkTime: '9am',
+        endWorkTime: '2pm',
+        ownerID: '1',
+        ownerEmail: 'ownerEmail@gmail.com',
+        ownerPhoneNumber: '0987655432',
+        shopID: '1',
+        shopName: 'xo',
+        ownerName: 'ali'),
+    Shop(
+        shopCategory: 'shopCategory',
+        location: 'slamiah',
+        startWorkTime: '9am',
+        endWorkTime: '2pm',
+        ownerID: '2',
+        ownerEmail: 'ownerEmail@gmail.com',
+        ownerPhoneNumber: '0987655432',
+        shopID: '4',
+        shopName: 'stones',
+        ownerName: 'jack')
+  ];
   @override
   Widget build(BuildContext context) {
     return
@@ -28,29 +62,32 @@ class _SuggestedStoresViewState extends State<SuggestedStoresView> {
         //   },
         // child:
         Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 0),
-        child: ListView(
-          children: [
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-              child: PageHeader(),
-            ),
-            ListView.separated(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: 15,
-              separatorBuilder: (BuildContext context, int index) {
-                return const SuggestedStore();
-              },
-              itemBuilder: (BuildContext context, int index) {
-                return const CustomDivider();
-              },
-            ),
-          ],
-          // ),
-        ),
-      ),
-    );
+            body: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 0),
+                child: ListView(
+                  children: [
+                    const Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+                      child: PageHeader(),
+                    ),
+                    ListView.separated(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: suggestedStoresList.length,
+                      separatorBuilder: (BuildContext context, int index) {
+                        return SuggestedStore(
+                          shop: suggestedStoresList[index],
+                        );
+                      },
+                      itemBuilder: (BuildContext context, int index) {
+                        return const CustomDivider();
+                      },
+                    ),
+                  ],
+                ))
+            // ),
+            // );
+            );
   }
 }

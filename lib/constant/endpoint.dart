@@ -1,1 +1,1 @@
-const ENDPOINT = '';
+const ENDPOINT = 'localhost:8000';

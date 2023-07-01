@@ -240,10 +240,10 @@ class MyPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(MyPainter oldDelegate) => true;
+  bool shouldRepaint(MyPainter oldDelegate) => false;
 
   @override
-  bool shouldRebuildSemantics(MyPainter oldDelegate) => true;
+  bool shouldRebuildSemantics(MyPainter oldDelegate) => false;
 }
 
 class YourPainter extends CustomPainter {
@@ -265,8 +265,8 @@ class YourPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(MyPainter oldDelegate) => true;
+  bool shouldRepaint(YourPainter oldDelegate) => false;
 
   @override
-  bool shouldRebuildSemantics(MyPainter oldDelegate) => true;
+  bool shouldRebuildSemantics(YourPainter oldDelegate) => false;
 }

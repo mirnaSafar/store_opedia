@@ -1,6 +1,7 @@
 part of 'favorite_cubit.dart';
 
 class FavoriteState {
-  bool isFavorite;
-  FavoriteState({required this.isFavorite});
+  late List<dynamic> favoriteShops;
+
+  FavoriteState(this.favoriteShops);
 }

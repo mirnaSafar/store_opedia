@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shopesapp/data/models/owner.dart';
+import 'package:shopesapp/data/models/shop.dart';
 
 import 'package:shopesapp/presentation/pages/settings.dart';
 import 'package:shopesapp/presentation/pages/store_page.dart';
@@ -22,7 +24,23 @@ class _ControlPageState extends State<ControlPage> {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-
+    Owner user = Owner(
+        name: 'name',
+        email: 'email',
+        phoneNumber: 'phoneNumber',
+        id: '123',
+        currentShop: Shop(
+            shopCategory: 'shopCategory',
+            location: 'location',
+            startWorkTime: 'startWorkTime',
+            endWorkTime: 'endWorkTime',
+            ownerID: 'ownerID',
+            ownerEmail: 'ownerEmail',
+            ownerPhoneNumber: 'ownerPhoneNumber',
+            shopID: 'shopID',
+            shopName: 'shopName',
+            ownerName: 'ownerName'),
+        password: '');
     return SafeArea(
         // top: false,
         child: Scaffold(
@@ -45,12 +63,25 @@ class _ControlPageState extends State<ControlPage> {
         controller: controller,
         physics: const NeverScrollableScrollPhysics(),
         onPageChanged: (value) {},
-        children: const [
-          SettingsPage(),
-          SuggestedStoresView(),
-          HomePage(),
-          FavouritePage(),
-          StorePage(),
+        children: [
+          const SettingsPage(),
+          const SuggestedStoresView(),
+          const HomePage(),
+          const FavouritePage(),
+          StorePage(
+              shop: Shop(
+                shopCategory: 'clothes',
+                location: 'aleppo',
+                startWorkTime: '7 am',
+                endWorkTime: ' 7 pm',
+                ownerID: '4',
+                ownerEmail: 'email@gmail.com',
+                ownerPhoneNumber: '0987344563',
+                shopID: '4',
+                shopName: 'talis',
+                ownerName: 'ahmad',
+              ),
+              profileDisplay: true),
         ],
       ),
       // /_screenList[_selectedindex],
