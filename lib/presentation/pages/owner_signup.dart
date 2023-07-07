@@ -2,8 +2,8 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shopesapp/data/models/shop.dart';
 import 'package:shopesapp/logic/cubites/cubit/auth_cubit.dart';
+import 'package:shopesapp/main.dart';
 import 'package:shopesapp/presentation/pages/control_page.dart';
 import 'package:shopesapp/presentation/pages/signup_categories_page.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
@@ -15,7 +15,6 @@ import 'package:shopesapp/presentation/widgets/auth/confirm_form_field.dart';
 import 'package:shopesapp/presentation/widgets/auth/phoneNumber_form_field.dart';
 import '../../constant/clipper.dart';
 import '../../logic/cubites/cubit/auth_state.dart';
-import '../../logic/cubites/cubit/verify_password_cubit.dart';
 import '../widgets/auth/email_form_field.dart';
 import '../widgets/auth/password_form_field.dart';
 import '../widgets/auth/user_name_form_field.dart';
@@ -45,23 +44,27 @@ class _UserSignUpState extends State<OwnerSignUp>
   TextEditingController storeCategoryController = TextEditingController();
   var isPasswordHidden = true;
   var isConfiermPasswordHidden = true;
-  late String _email;
-  late String _sms;
-  late String _password;
-  late String _phoneNumber;
-  late String _ownerName;
-  late String _storeName;
-  late String storeLocation;
-  late String storeStartWorkTime;
-  late String storeEndWorkTime;
-  late String storeCategory;
+  String? _email;
+  TimeOfDay initTime = TimeOfDay.now().replacing(hour: 00, minute: 00);
+  String? _password;
+  String? _phoneNumber;
+  String? _ownerName;
+  String? storeLocation;
+  String? storeStartWorkTime;
+  String? storeEndWorkTime;
+  String? storeCategory;
+
+  @override
+  void initState() {
+    _email = globalSharedPreference.getString("email") ?? "";
+
+    _phoneNumber = globalSharedPreference.getString("phoneNumber") ?? "";
+    _ownerName = globalSharedPreference.getString("name") ?? "";
+    super.initState();
+  }
 
   void setOwnerName(String name) {
     _ownerName = name;
-  }
-
-  void setSMS(String sms) {
-    _sms = sms;
   }
 
   void setPhoneNumber(String phoneNumber) {
@@ -77,7 +80,7 @@ class _UserSignUpState extends State<OwnerSignUp>
   }
 
   String getPassword() {
-    return _password;
+    return _password!;
   }
 
   void _submitForm(BuildContext context) async {
@@ -85,10 +88,10 @@ class _UserSignUpState extends State<OwnerSignUp>
       _formKey.currentState!.save();
 
       BlocProvider.of<AuthCubit>(context).ownerSignUp(
-        ownerName: _ownerName,
-        password: _password,
-        phoneNumber: _phoneNumber,
-        email: _email,
+        ownerName: _ownerName!,
+        password: _password!,
+        phoneNumber: _phoneNumber!,
+        email: _email!,
         storeName: _storeNameController.text,
         storeCategory: storeCategoryController.text,
         storeLocation: storeLocationController.text,
@@ -102,14 +105,15 @@ class _UserSignUpState extends State<OwnerSignUp>
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state is OwnerSignedUp) {
-          buildAwsomeDialog(context, "Succeed", "You Signin successfully", "OK",
+          context.pushRepalceme(const ControlPage());
+          await buildAwsomeDialog(
+                  context, "Succeed", "You Signin successfully", "OK",
                   type: DialogType.SUCCES)
               .show();
-          context.pushRepalceme(const ControlPage());
         } else if (state is AuthFailed) {
-          buildAwsomeDialog(
+          await buildAwsomeDialog(
                   context, "Faild", state.message.toUpperCase(), "Cancle",
                   type: DialogType.ERROR)
               .show();
@@ -154,10 +158,6 @@ class _UserSignUpState extends State<OwnerSignUp>
                       const SizedBox(
                         height: 20.0,
                       ),
-                      // CreateSMSFormField(setSMS: setSMS),
-                      // const SizedBox(
-                      //   height: 20.0,
-                      // ),
                       CreatePasswordFormField(
                         isPasswordHidden: isPasswordHidden,
                         setPassword: setPassword,
@@ -178,7 +178,6 @@ class _UserSignUpState extends State<OwnerSignUp>
                       ),
                       CreatePhoneNumberFormField(
                           setPhoneNumber: setPhoneNumber),
-
                       UserInput(
                         text: 'Store Name',
                         controller: _storeNameController,
@@ -203,7 +202,6 @@ class _UserSignUpState extends State<OwnerSignUp>
                         text: 'Store Work Time',
                         textColor: AppColors.secondaryFontColor,
                       ),
-
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 30.0),
                         child: Row(
@@ -211,9 +209,24 @@ class _UserSignUpState extends State<OwnerSignUp>
                           children: [
                             SizedBox(
                                 width: 80,
-                                child: UserInput(
-                                  text: '7 am',
-                                  controller: storeStartWorkTimecontroller,
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    await showTimePicker(
+                                            context: context,
+                                            initialTime: TimeOfDay.now())
+                                        .then((value) {
+                                      setState(() {
+                                        storeStartWorkTimecontroller.text =
+                                            value!.format(context);
+                                      });
+                                    });
+                                  },
+                                  child: CustomText(
+                                    text:
+                                        storeStartWorkTimecontroller.text == ""
+                                            ? initTime.format(context)
+                                            : storeStartWorkTimecontroller.text,
+                                  ),
                                 )),
                             Padding(
                               padding: const EdgeInsets.only(top: 15.0),
@@ -224,9 +237,23 @@ class _UserSignUpState extends State<OwnerSignUp>
                             ),
                             SizedBox(
                                 width: 80,
-                                child: UserInput(
-                                  text: '9 pm',
-                                  controller: storeEndWorkTimeController,
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    await showTimePicker(
+                                            context: context,
+                                            initialTime: TimeOfDay.now())
+                                        .then((value) {
+                                      setState(() {
+                                        storeEndWorkTimeController.text =
+                                            value!.format(context);
+                                      });
+                                    });
+                                  },
+                                  child: CustomText(
+                                    text: storeEndWorkTimeController.text == ""
+                                        ? initTime.format(context)
+                                        : storeEndWorkTimeController.text,
+                                  ),
                                 )),
                           ],
                         ),

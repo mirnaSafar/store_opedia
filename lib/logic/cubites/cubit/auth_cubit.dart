@@ -4,13 +4,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopesapp/data/repositories/auth_repository.dart';
 import 'package:shopesapp/logic/cubites/cubit/auth_state.dart';
+import 'package:shopesapp/main.dart';
 import '../../../data/models/shop.dart';
 import '../../../data/models/user.dart';
 
 class AuthCubit extends Cubit<AuthState> {
-  AuthCubit(this.repo) : super(AuthInitialState());
+  AuthCubit() : super(AuthInitialState());
 
-  final AuthRepository repo;
   User? user;
   Shop? shop;
 
@@ -19,8 +19,8 @@ class AuthCubit extends Cubit<AuthState> {
       String phoneNumber) async {
     emit(AuthProgress());
 
-    Map<String, dynamic>? response =
-        await repo.userSignUp(userName, email, password, phoneNumber);
+    Map<String, dynamic>? response = await AuthRepository()
+        .userSignUp(userName, email, password, phoneNumber);
 
     if (response == null || response["message"] != "User was Created") {
       emit(AuthFailed(response == null
@@ -28,7 +28,8 @@ class AuthCubit extends Cubit<AuthState> {
           : response["message"]));
     } else {
       user = User.fromMap(response);
-      repo.saveUser(user: user!);
+
+      AuthRepository().saveUser(user: user!);
       emit(UserSignedUp());
     }
   }
@@ -48,7 +49,7 @@ class AuthCubit extends Cubit<AuthState> {
   }) async {
     emit(AuthProgress());
 
-    Map<String, dynamic>? response = await repo.ownerSignUp(
+    Map<String, dynamic>? response = await AuthRepository().ownerSignUp(
       ownerName: ownerName,
       password: password,
       phoneNumber: phoneNumber,
@@ -66,7 +67,7 @@ class AuthCubit extends Cubit<AuthState> {
           : response["message"]));
     } else {
       shop = Shop.fromMap(response);
-      repo.saveOwnerAndShop(shop: shop!);
+      AuthRepository().saveOwnerAndShop(shop: shop!);
       emit(OwnerSignedUp());
     }
   }
@@ -75,18 +76,19 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthProgress());
 
     Map<String, dynamic>? response =
-        await repo.login(email: email, password: password);
+        await AuthRepository().login(email: email, password: password);
 
     if (response!["message"] == "user auth succeded") {
       user = User.fromMap(response);
-      repo.saveUser(user: user!);
+
+      AuthRepository().saveUser(user: user!);
       emit(UserLoginedIn());
     } else if (response["message"] == "owner auth succeded") {
       String ownerID = response["ownerID"];
 
       saveOwnerID(ownerID: ownerID);
 
-      emit(OwnerLoginedIn());
+      emit(OwnerWillSelectStore());
     } else {
       emit(AuthFailed(response == null
           ? "Login Failed Check your internet connection"
@@ -94,36 +96,62 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  Future<void> autoLogIn() async {
-    SharedPreferences _pref = await SharedPreferences.getInstance();
-    String? mode = _pref.getString("mode");
-    String? ownerID = _pref.getString("OwnerID");
-    if (ownerID == null && mode == null) {
-      emit(NoAuthentication());
-    } else if (mode == null && ownerID != null) {
+  void ownerBecomeUser() {
+    emit(AuthProgress());
+
+    globalSharedPreference.setString("mode", "user");
+    globalSharedPreference.remove("shopPhoneNumber");
+    globalSharedPreference.remove("shopProfileImage");
+    globalSharedPreference.remove("shopCoverImage");
+    globalSharedPreference.remove("numberOfFollowers");
+    globalSharedPreference.remove("socialUrl");
+    globalSharedPreference.remove("rate");
+    globalSharedPreference.remove("shopDescription");
+    globalSharedPreference.remove("shopCategory");
+    globalSharedPreference.remove("location");
+    globalSharedPreference.remove("startWorkTime");
+    globalSharedPreference.remove("endWorkTime");
+    globalSharedPreference.remove("shopID");
+
+    emit(UserLoginedIn());
+  }
+
+  void deleteCurrentShop() {
+    globalSharedPreference.remove("shopPhoneNumber");
+    globalSharedPreference.remove("shopProfileImage");
+    globalSharedPreference.remove("shopCoverImage");
+    globalSharedPreference.remove("numberOfFollowers");
+    globalSharedPreference.remove("socialUrl");
+    globalSharedPreference.remove("rate");
+    globalSharedPreference.remove("shopDescription");
+    globalSharedPreference.remove("shopCategory");
+    globalSharedPreference.remove("location");
+    globalSharedPreference.remove("startWorkTime");
+    globalSharedPreference.remove("endWorkTime");
+    globalSharedPreference.remove("shopID");
+    // emit(OwnerWithoutShop());
+  }
+
+  void userBecomeOwner() {
+    if (globalSharedPreference.getString("mode") == "user") {
       emit(OwnerLoginedIn());
+    }
+  }
+
+  Future<void> autoLogIn() async {
+    String? mode = globalSharedPreference.getString("mode");
+
+    if (mode == null) {
+      emit(NoAuthentication());
     } else if (mode == "user") {
-      repo.getStoredUser().then((sortedUser) {
-        user = sortedUser!["user"] as User;
-        emit(UserLoginedIn());
-      });
+      emit(UserLoginedIn());
     } else {
-      repo.getStoredOwnerAndShop().then((sortedShop) {
-        shop = sortedShop!["shop"] as Shop;
-        emit(OwnerLoginedIn());
-      });
+      emit(OwnerLoginedIn());
     }
   }
 
   void selectedShop() {
-    emit(OwnerLogiedInWithShop());
-  }
-
-  Shop getOwnerAndShop() {
-    repo.getStoredOwnerAndShop().then((value) {
-      shop = value!['owner'] as Shop;
-    });
-    return Shop.from(shop!);
+    emit(OwnerLoginedIn());
   }
 
   void saveOwnerID({required String ownerID}) async {
@@ -134,7 +162,7 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> logOut() async {
     user = null;
     shop = null;
-    await repo.deleteInfo();
+    await AuthRepository().deleteInfo();
     emit(NoAuthentication());
   }
 }

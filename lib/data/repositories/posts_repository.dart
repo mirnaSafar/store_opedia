@@ -18,7 +18,7 @@ class PostsRepository {
     } catch (e) {
       return null;
     }
-    if (response.statusCode == 205) {
+    if (response.statusCode == 200) {
       return 'Success';
     }
     return null;
@@ -34,7 +34,7 @@ class PostsRepository {
     } catch (e) {
       return null;
     }
-    if (response.statusCode == 205) {
+    if (response.statusCode == 200) {
       parsedResult = jsonDecode(response.body);
       return parsedResult;
     }
@@ -80,7 +80,7 @@ class PostsRepository {
         'Content-Type': 'application/json; ',
       },
     );
-    if (response.statusCode == 205) {
+    if (response.statusCode == 200) {
       return "Success";
     }
     return "Failed";

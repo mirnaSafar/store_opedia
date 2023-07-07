@@ -12,7 +12,7 @@ class OwnerCubit extends Cubit<OwnerState> {
   Owner owner;
   OwnerCubit({required this.owner}) : super(OwnerInitial({} as Owner));
 
-  Future updateOwner(
+  /*Future updateOwner(
       {required String id,
       required String userName,
       required String email,
@@ -40,7 +40,7 @@ class OwnerCubit extends Cubit<OwnerState> {
 
       emit(UpdateOwnerSucceed());
     }
-  }
+  }*/
 
   Future deleteOwner({required String id}) async {
     emit(DeleteOwnerProgress());

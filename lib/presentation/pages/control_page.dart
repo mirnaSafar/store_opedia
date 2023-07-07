@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/data/models/owner.dart';
 import 'package:shopesapp/data/models/shop.dart';
+import 'package:shopesapp/logic/cubites/cubit/auth_cubit.dart';
+import 'package:shopesapp/logic/cubites/cubit/auth_state.dart';
+import 'package:shopesapp/logic/cubites/cubit/profile_cubit.dart';
+import 'package:shopesapp/main.dart';
 
 import 'package:shopesapp/presentation/pages/settings.dart';
 import 'package:shopesapp/presentation/pages/store_page.dart';
 import 'package:shopesapp/presentation/pages/home_page.dart';
 import 'package:shopesapp/presentation/pages/suggested_stores.dart';
+import 'package:shopesapp/presentation/pages/user_store.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/widgets/bottom_navigation_bar/bottom_navigation_bar.dart';
 import '../../data/enums/bottom_navigation.dart';
+import '../../logic/cubites/shop/work_time_cubit.dart';
+import '../widgets/switch_shop/no_selected_store.dart';
 import 'favourite_page.dart';
 
 class ControlPage extends StatefulWidget {
@@ -54,8 +62,6 @@ class _ControlPageState extends State<ControlPage> {
                 duration: const Duration(milliseconds: 100));
             setState(() {
               selected = selectedEnum;
-              print(selected);
-              print(pageNumber);
             });
           }),
 
@@ -68,20 +74,49 @@ class _ControlPageState extends State<ControlPage> {
           const SuggestedStoresView(),
           const HomePage(),
           const FavouritePage(),
-          StorePage(
-              shop: Shop(
-                shopCategory: 'clothes',
-                location: 'aleppo',
-                startWorkTime: '7 am',
-                endWorkTime: ' 7 pm',
-                ownerID: '4',
-                ownerEmail: 'email@gmail.com',
-                ownerPhoneNumber: '0987344563',
-                shopID: '4',
-                shopName: 'talis',
-                ownerName: 'ahmad',
-              ),
-              profileDisplay: true),
+          BlocBuilder<AuthCubit, AuthState>(
+            builder: (context, state) {
+              if (state is UserLoginedIn) {
+                return const UserStore();
+              }
+              {
+                context.read<WorkTimeCubit>().testOpenTime(
+                    openTime:
+                        globalSharedPreference.getString("startWorkTime")!,
+                    closeTime:
+                        globalSharedPreference.getString("endWorkTime")!);
+                return StorePage(
+                    shop: Shop(
+                      shopCategory:
+                          globalSharedPreference.getString("shopCategory")!,
+                      location: globalSharedPreference.getString("location")!,
+                      startWorkTime:
+                          globalSharedPreference.getString("startWorkTime")!,
+                      endWorkTime:
+                          globalSharedPreference.getString("endWorkTime")!,
+                      ownerID: globalSharedPreference.getString("ID")!,
+                      ownerEmail: globalSharedPreference.getString("email")!,
+                      ownerPhoneNumber:
+                          globalSharedPreference.getString("phoneNumber")!,
+                      shopID: globalSharedPreference.getString("shopID")!,
+                      shopName: globalSharedPreference.getString("shopName")!,
+                      ownerName: globalSharedPreference.getString("name")!,
+                      followesNumber:
+                          globalSharedPreference.getInt("followesNumber")!,
+                      rate: globalSharedPreference.getInt("rate"),
+                      shopCoverImage:
+                          globalSharedPreference.getString("shopCoverImage"),
+                      shopDescription:
+                          globalSharedPreference.getString("shopDescription"),
+                      shopPhoneNumber:
+                          globalSharedPreference.getString("shopPhoneNumber"),
+                      shopProfileImage:
+                          globalSharedPreference.getString("shopProfileImage"),
+                    ),
+                    profileDisplay: true);
+              }
+            },
+          ),
         ],
       ),
       // /_screenList[_selectedindex],

@@ -14,7 +14,6 @@ class AddPostCubit extends Cubit<AddPostState> {
       required String shopeID,
       required String ownerPhoneNumber,
       required String shopeName,
-      //required List<String> socialUrls,
       required String location,
       required String title,
       required String description,

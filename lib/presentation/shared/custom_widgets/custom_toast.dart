@@ -9,7 +9,8 @@ class CustomToast {
   static showMessage(
       {required Size size,
       required String message,
-      MessageType? messageType = MessageType.INFO}) {
+      MessageType? messageType = MessageType.INFO,
+      required BuildContext context}) {
     String imageName = 'info';
     Color ShadowColor = AppColors.mainBlueColor;
 
@@ -40,7 +41,7 @@ class CustomToast {
         return Container(
             width: size.width * 0.75,
             decoration: BoxDecoration(
-                color: AppColors.mainWhiteColor,
+                color: Theme.of(context).colorScheme.onBackground,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
@@ -66,7 +67,10 @@ class CustomToast {
                 // SizedBox(
                 //   height: size.width * 0.06,
                 // ),
-                CustomText(text: message),
+                CustomText(
+                  text: message,
+                  textColor: Theme.of(context).primaryColorDark,
+                ),
                 SizedBox(
                   height: size.width * 0.06,
                 ),

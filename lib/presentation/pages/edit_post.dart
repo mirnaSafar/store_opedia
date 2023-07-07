@@ -153,6 +153,7 @@ class _EditPostPageState extends State<EditPostPage> {
                 onPressed: () {
                   !formKey.currentState!.validate() || selectedFile == null
                       ? CustomToast.showMessage(
+                          context: context,
                           size: size,
                           message: 'Please check required fields',
                           messageType: MessageType.REJECTED)
@@ -161,6 +162,7 @@ class _EditPostPageState extends State<EditPostPage> {
                           () {
                             formKey.currentState!.save();
                             CustomToast.showMessage(
+                                context: context,
                                 size: size,
                                 message: 'Edited Successfully',
                                 messageType: MessageType.SUCCESS);

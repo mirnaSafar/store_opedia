@@ -7,8 +7,10 @@ import 'package:shopesapp/presentation/pages/start_sign_up_page.dart';
 import 'package:shopesapp/presentation/pages/switch_store.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
+import '../../data/enums/message_type.dart';
 import '../../logic/cubites/cubit/auth_cubit.dart';
 import '../../logic/cubites/cubit/auth_state.dart';
+import '../shared/custom_widgets/custom_toast.dart';
 import '../widgets/auth/email_form_field.dart';
 import '../widgets/auth/password_form_field.dart';
 import '../widgets/dialogs/awosem_dialog.dart';
@@ -26,12 +28,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
   var isPasswordHidden = true;
   late String _email;
-  //late String _sms;
-  late String _password;
 
-  /*void setSMS(String sms) {
-    _sms = sms;
-  }*/
+  late String _password;
 
   void setEmail(String email) {
     _email = email;
@@ -45,11 +43,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      //BlocProvider.of<AuthCubit>(context).login(_email, _password);
-
-      context.read<AuthCubit>().saveOwnerID(ownerID: "121");
-
-      context.pushRepalceme(const SwitchStore());
+      BlocProvider.of<AuthCubit>(context).login(_email, _password);
     }
   }
 
@@ -57,18 +51,22 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final w = MediaQuery.of(context).size.width;
     final h = MediaQuery.of(context).size.height;
+    final size = MediaQuery.of(context).size;
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is UserLoginedIn) {
-          buildAwsomeDialog(context, "SUCCES", "Auth SUCCEDED", "OK",
-                  type: DialogType.SUCCES)
-              .show();
           context.pushRepalceme(const ControlPage());
-        } else if (state is OwnerLoginedIn) {
+
+          /*    CustomToast.showMessage(
+              context: context,
+              size: size,
+              message: "AUTH SUCCEDED",
+              messageType: MessageType.S);*/
+        } else if (state is OwnerWillSelectStore) {
+          context.push(const SwitchStore());
           buildAwsomeDialog(context, "SUCCES", "Auth SUCCEDED", "OK",
                   type: DialogType.SUCCES)
               .show();
-          context.pushRepalceme(const SwitchStore());
         } else if (state is AuthFailed) {
           buildAwsomeDialog(
                   context, "Faild", state.message.toUpperCase(), "Cancle",

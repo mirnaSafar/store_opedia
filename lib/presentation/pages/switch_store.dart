@@ -1,8 +1,9 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shopesapp/logic/cubites/shop/get_owner_shops_cubit.dart';
+import 'package:shopesapp/logic/cubites/shop/switch_shop_cubit.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_divider.dart';
+import '../../logic/cubites/shop/get_owner_shops_cubit.dart';
 import '../widgets/dialogs/awosem_dialog.dart';
 import '../widgets/switch_shop/error.dart';
 import '../widgets/switch_shop/shop_item.dart';
@@ -16,11 +17,15 @@ class SwitchStore extends StatefulWidget {
 
 class _SwitchStoreState extends State<SwitchStore> {
   List<dynamic> ownerShpos = [];
+  String? currentID;
+  bool isLastShop = false;
   @override
   void initState() {
     if (ownerShpos.isEmpty) {
       context.read<GetOwnerShopsCubit>().getOwnerShopsRequest();
     }
+    currentID = context.read<SwitchShopCubit>().getStoredShopID();
+
     super.initState();
   }
 
@@ -49,18 +54,14 @@ class _SwitchStoreState extends State<SwitchStore> {
             } else if (state is GetOwnerShopsSucceed) {
               ownerShpos =
                   BlocProvider.of<GetOwnerShopsCubit>(context).ownerShops;
-              //delete the current shop from the list
-              /*  ownerShpos.removeWhere((element) =>
-                  element is Map &&
-                  element["shopID"] ==
-                      context.read<SwitchShopCubit>().idofSelectedShop);
-              if (ownerShpos.isEmpty) {
-                return buildNoShopItems(size);
-              }*/
+              if (ownerShpos.length == 1) {
+                isLastShop = true;
+              }
+
               return ListView.separated(
                   itemBuilder: (context, index) {
                     return buildShopItem(
-                        context, size.height, ownerShpos[index]);
+                        context, size, ownerShpos[index], isLastShop);
                   },
                   separatorBuilder: (context, index) => const CustomDivider(),
                   itemCount: ownerShpos.length);

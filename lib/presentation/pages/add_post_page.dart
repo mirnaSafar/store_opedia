@@ -167,12 +167,14 @@ class _AddPostPageState extends State<AddPostPage> {
                   listener: (context, state) async {
                     if (state is AddPostSucceed) {
                       CustomToast.showMessage(
+                          context: context,
                           size: size,
                           message: "Add Post Successfully",
                           messageType: MessageType.SUCCESS);
                       await context.read<PostsCubit>().getPosts();
                     } else if (state is AddPostFailed) {
                       CustomToast.showMessage(
+                          context: context,
                           size: size,
                           message: state.message,
                           messageType: MessageType.REJECTED);
@@ -187,6 +189,7 @@ class _AddPostPageState extends State<AddPostPage> {
                         !formKey.currentState!.validate() &&
                                 selectedFile == null
                             ? CustomToast.showMessage(
+                                context: context,
                                 size: size,
                                 message: 'Please check required fields',
                                 messageType: MessageType.REJECTED)

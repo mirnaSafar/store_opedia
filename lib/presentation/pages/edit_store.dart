@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shopesapp/data/enums/message_type.dart';
+import 'package:shopesapp/main.dart';
 import 'package:shopesapp/presentation/pages/signup_categories_page.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_button.dart';
@@ -10,6 +12,7 @@ import 'package:shopesapp/presentation/shared/custom_widgets/user_input.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 
 import '../../data/enums/file_type.dart';
+import '../../logic/cubites/shop/edit_shop_cubit.dart';
 import '../shared/custom_widgets/custom_text.dart';
 import '../shared/custom_widgets/custom_toast.dart';
 import '../shared/utils.dart';
@@ -27,11 +30,33 @@ class _EditStoreState extends State<EditStore> {
   TextEditingController storeNameController = TextEditingController();
   TextEditingController storeNumberController = TextEditingController();
   TextEditingController storeCategoryController = TextEditingController();
-  TextEditingController storeWorkHoursController = TextEditingController();
+  TextEditingController storeStartWorkTimecontroller = TextEditingController();
+  TextEditingController storeEndWorkTimeController = TextEditingController();
   TextEditingController storeDescriptionController = TextEditingController();
   TextEditingController storeInstagramController = TextEditingController();
   TextEditingController storeFacebookController = TextEditingController();
   TextEditingController storeLocationController = TextEditingController();
+
+  @override
+  void initState() {
+    storeNameController.text =
+        globalSharedPreference.getString("shopName") ?? 'Store name';
+    storeNumberController.text =
+        globalSharedPreference.getString("shopPhoneNumber") ?? 'Store number';
+    storeCategoryController.text =
+        globalSharedPreference.getString("shopCategory") ?? "store Category ";
+    storeDescriptionController.text =
+        globalSharedPreference.getString("shopDescription") ??
+            'Store description';
+    storeLocationController.text =
+        globalSharedPreference.getString("location") ?? "'store location'";
+    storeStartWorkTimecontroller.text =
+        globalSharedPreference.getString("startWorkTime") ?? "startWorkTime ";
+    storeEndWorkTimeController.text =
+        globalSharedPreference.getString("endWorkTime") ?? "endWorkTime ";
+
+    super.initState();
+  }
 
   final ImagePicker picker = ImagePicker();
   FileTypeModel? selectedFile;
@@ -139,9 +164,60 @@ class _EditStoreState extends State<EditStore> {
                       numberValidator(number, 'enter store number')
                   // return null;
                   ),
-              UserInput(
-                text: 'Store work hours',
-                controller: storeWorkHoursController,
+              CustomText(
+                text: 'Store Work Time',
+                textColor: AppColors.secondaryFontColor,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                        width: 80,
+                        child: GestureDetector(
+                          onTap: () async {
+                            await showTimePicker(
+                                    context: context,
+                                    initialTime: TimeOfDay.now())
+                                .then((value) {
+                              setState(() {
+                                storeStartWorkTimecontroller.text =
+                                    value!.format(context);
+                              });
+                            });
+                          },
+                          child: CustomText(
+                            text: storeStartWorkTimecontroller.text,
+                          ),
+                        )),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 15.0),
+                      child: CustomText(
+                        text: 'to',
+                        textColor: AppColors.secondaryFontColor,
+                      ),
+                    ),
+                    SizedBox(
+                        width: 80,
+                        child: GestureDetector(
+                          onTap: () async {
+                            await showTimePicker(
+                                    context: context,
+                                    initialTime: TimeOfDay.now())
+                                .then((value) {
+                              setState(() {
+                                storeEndWorkTimeController.text =
+                                    value!.format(context);
+                              });
+                            });
+                          },
+                          child: CustomText(
+                            text: storeEndWorkTimeController.text,
+                          ),
+                        )),
+                  ],
+                ),
               ),
               UserInput(
                 text: 'instagram account',
@@ -178,28 +254,62 @@ class _EditStoreState extends State<EditStore> {
                   borderColor: AppColors.mainOrangeColor,
                 )),
                 70.px,
-                Expanded(
-                  child: CustomButton(
-                    text: 'Submit',
-                    textColor: AppColors.mainWhiteColor,
-                    onPressed: () {
-                      !formKey.currentState!.validate()
-                          ? CustomToast.showMessage(
+                BlocProvider(
+                  create: (context) => EditShopCubit(),
+                  child: Expanded(
+                    child: BlocConsumer<EditShopCubit, EditShopState>(
+                      listener: (context, state) {
+                        if (state is EditShopSucceed) {
+                          CustomToast.showMessage(
+                              context: context,
                               size: size,
-                              message: 'invalid information',
-                              messageType: MessageType.WARNING)
-                          : {
-                              formKey.currentState!.save(),
-                              Future.delayed(
-                                      const Duration(milliseconds: 1000),
-                                      CustomToast.showMessage(
-                                          size: size,
-                                          messageType: MessageType.SUCCESS,
-                                          message:
-                                              'information updated successfully!'))
-                                  .then((value) => context.pop())
-                            };
-                    },
+                              message: "information  update Successfully",
+                              messageType: MessageType.SUCCESS);
+                        } else if (state is EditShopFailed) {
+                          CustomToast.showMessage(
+                              context: context,
+                              size: size,
+                              message: state.message,
+                              messageType: MessageType.REJECTED);
+                        }
+                      },
+                      builder: (context, state) {
+                        if (state is EditShopProgress) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+                        return CustomButton(
+                          text: 'Submit',
+                          textColor: AppColors.mainWhiteColor,
+                          onPressed: () {
+                            !formKey.currentState!.validate()
+                                ? CustomToast.showMessage(
+                                    context: context,
+                                    size: size,
+                                    message: 'invalid information',
+                                    messageType: MessageType.WARNING)
+                                : {
+                                    formKey.currentState!.save(),
+                                    context.read<EditShopCubit>().editShop(
+                                        shopName: storeNameController.text,
+                                        shopDescription:
+                                            storeDescriptionController.text,
+                                        shopProfileImage: "noImage",
+                                        shopCoverImage: "noImage",
+                                        shopCategory:
+                                            storeCategoryController.text,
+                                        location: storeLocationController.text,
+                                        closing:
+                                            storeStartWorkTimecontroller.text,
+                                        opening:
+                                            storeEndWorkTimeController.text,
+                                        shopPhoneNumber:
+                                            storeNumberController.text)
+                                  };
+                          },
+                        );
+                      },
+                    ),
                   ),
                 ),
               ]),

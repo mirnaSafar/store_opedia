@@ -6,6 +6,7 @@ import 'package:shopesapp/logic/cubites/shop/favorite_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/following_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/rate_shop_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/shop_follwers_counter_cubit.dart';
+import 'package:shopesapp/logic/cubites/shop/work_time_cubit.dart';
 import 'package:shopesapp/presentation/pages/store_page.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_icon_text.dart';
@@ -83,9 +84,18 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                           MainAxisAlignment.center,
                                       children: [
                                         InkWell(
-                                          onTap: () => context.push(StorePage(
-                                            shop: shop,
-                                          )),
+                                          onTap: () {
+                                            context
+                                                .read<WorkTimeCubit>()
+                                                .testOpenTime(
+                                                    openTime:
+                                                        shop.startWorkTime,
+                                                    closeTime:
+                                                        shop.endWorkTime);
+                                            context.push(StorePage(
+                                              shop: shop,
+                                            ));
+                                          },
                                           child: CustomIconTextRow(
                                               fontSize: w * 0.04,
                                               iconColor:

@@ -1,15 +1,21 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shopesapp/data/enums/message_type.dart';
+import 'package:shopesapp/logic/cubites/cubit/auth_cubit.dart';
 import 'package:shopesapp/presentation/pages/signup_categories_page.dart';
+import 'package:shopesapp/presentation/pages/switch_store.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_button.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/user_input.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 
 import '../../data/enums/file_type.dart';
+import '../../logic/cubites/shop/add_shop_cubit.dart';
+
+import '../../main.dart';
 import '../shared/custom_widgets/custom_text.dart';
 import '../shared/custom_widgets/custom_toast.dart';
 import '../shared/utils.dart';
@@ -33,7 +39,9 @@ class _EditStoreState extends State<AddStorePage> {
   TextEditingController storeFacebookController = TextEditingController();
   TextEditingController storeLocationController = TextEditingController();
   TextEditingController storeEmailController = TextEditingController();
-
+  TextEditingController storeStartWorkTimecontroller = TextEditingController();
+  TextEditingController storeEndWorkTimeController = TextEditingController();
+  TimeOfDay initTime = TimeOfDay.now();
   final ImagePicker picker = ImagePicker();
   FileTypeModel? selectedFile;
 
@@ -140,13 +148,13 @@ class _EditStoreState extends State<AddStorePage> {
                   validator: (name) => nameValidator(name, 'enter store name')
                   // return null;
                   ),
-              UserInput(
+              /*    UserInput(
                   text: 'Email',
                   controller: storeEmailController,
                   validator: (email) =>
                       emailValidator(email, 'email is required')
                   // return null;
-                  ),
+                  ),*/
               UserInput(
                 text: 'Store description',
                 controller: storeDescriptionController,
@@ -158,9 +166,64 @@ class _EditStoreState extends State<AddStorePage> {
                       numberValidator(number, 'enter store number')
                   // return null;
                   ),
-              UserInput(
-                text: 'Store work hours',
-                controller: storeWorkHoursController,
+              CustomText(
+                text: 'Store Work Time',
+                textColor: AppColors.secondaryFontColor,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                        width: 80,
+                        child: GestureDetector(
+                          onTap: () async {
+                            await showTimePicker(
+                                    context: context,
+                                    initialTime: TimeOfDay.now())
+                                .then((value) {
+                              setState(() {
+                                storeStartWorkTimecontroller.text =
+                                    value!.format(context);
+                              });
+                            });
+                          },
+                          child: CustomText(
+                            text: storeStartWorkTimecontroller.text == ""
+                                ? initTime.format(context)
+                                : storeStartWorkTimecontroller.text,
+                          ),
+                        )),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 15.0),
+                      child: CustomText(
+                        text: 'to',
+                        textColor: AppColors.secondaryFontColor,
+                      ),
+                    ),
+                    SizedBox(
+                        width: 80,
+                        child: GestureDetector(
+                          onTap: () async {
+                            await showTimePicker(
+                                    context: context,
+                                    initialTime: TimeOfDay.now())
+                                .then((value) {
+                              setState(() {
+                                storeEndWorkTimeController.text =
+                                    value!.format(context);
+                              });
+                            });
+                          },
+                          child: CustomText(
+                            text: storeEndWorkTimeController.text == ""
+                                ? initTime.format(context)
+                                : storeEndWorkTimeController.text,
+                          ),
+                        )),
+                  ],
+                ),
               ),
               UserInput(
                 text: 'store location',
@@ -188,27 +251,61 @@ class _EditStoreState extends State<AddStorePage> {
                 )),
                 70.px,
                 Expanded(
-                  child: CustomButton(
-                    text: 'Create',
-                    textColor: AppColors.mainWhiteColor,
-                    onPressed: () {
-                      !formKey.currentState!.validate()
-                          ? CustomToast.showMessage(
+                  child: BlocProvider(
+                    create: (context) => AddShopCubit(),
+                    child: BlocConsumer<AddShopCubit, AddShopState>(
+                      listener: (context, state) {
+                        if (state is AddShopSucceed) {
+                          CustomToast.showMessage(
+                              context: context,
                               size: size,
-                              message: 'invalid information',
-                              messageType: MessageType.WARNING)
-                          : {
-                              formKey.currentState!.save(),
-                              Future.delayed(
-                                      const Duration(milliseconds: 1000),
-                                      CustomToast.showMessage(
-                                          size: size,
-                                          messageType: MessageType.SUCCESS,
-                                          message:
-                                              'Store created successfully!'))
-                                  .then((value) => context.pop())
-                            };
-                    },
+                              message: 'Store created successfully!',
+                              messageType: MessageType.SUCCESS);
+
+                          //  context.read<AuthCubit>().userBecomeOwner();
+
+                          context.pushRepalceme(const SwitchStore());
+                        } else if (state is AddShopFailed) {
+                          CustomToast.showMessage(
+                              context: context,
+                              size: size,
+                              message: state.message,
+                              messageType: MessageType.REJECTED);
+                        }
+                      },
+                      builder: (context, state) {
+                        if (state is AddShopProgress) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        return CustomButton(
+                          text: 'Create',
+                          textColor: AppColors.mainWhiteColor,
+                          onPressed: () {
+                            /*  !formKey.currentState!.validate()
+                                ? CustomToast.showMessage(
+                                    context: context,
+                                    size: size,
+                                    message: 'invalid information',
+                                    messageType: MessageType.WARNING)
+                                : {*/
+                            formKey.currentState!.save();
+                            context.read<AddShopCubit>().addShop(
+                                shopName: storeNameController.text,
+                                shopDescription:
+                                    storeDescriptionController.text,
+                                shopProfileImage: "noImage",
+                                shopCoverImage: "noImage",
+                                shopCategory: "shop",
+                                location: storeLocationController.text,
+                                closing: storeEndWorkTimeController.text,
+                                opening: storeStartWorkTimecontroller.text,
+                                shopPhoneNumber: storeNumberController.text);
+                          },
+                        );
+                      },
+                    ),
                   ),
                 ),
               ]),

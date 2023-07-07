@@ -172,16 +172,6 @@ class SharedPreferencesRepository {
     }
   }
 
-  static void saveUpdatedUser(
-      {required String userName,
-      required String phoneNumber,
-      required String password}) async {
-    setPreference(dataType: DataType.STRING, key: "userName", value: userName);
-    setPreference(dataType: DataType.STRING, key: "password", value: password);
-    setPreference(
-        dataType: DataType.STRING, key: "phoneNumber", value: phoneNumber);
-  }
-
   static setPreference({
     required DataType dataType,
     required String key,

@@ -2,6 +2,10 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/logic/cubites/cubit/auth_cubit.dart';
+import 'package:shopesapp/presentation/pages/login_page.dart';
+import 'package:shopesapp/presentation/shared/extensions.dart';
+
+import '../../../logic/cubites/mode/themes_cubit.dart';
 
 void showDialogAlert(BuildContext context) {
   AwesomeDialog(
@@ -20,5 +24,7 @@ void showDialogAlert(BuildContext context) {
       btnOkText: " Countinue",
       btnOkOnPress: () {
         BlocProvider.of<AuthCubit>(context).logOut();
+        context.read<ThemesCubit>().changeTheme(0);
+        context.pushRepalceme(const LoginPage());
       }).show();
 }

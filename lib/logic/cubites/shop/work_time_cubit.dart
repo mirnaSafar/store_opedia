@@ -1,26 +1,60 @@
 import 'package:bloc/bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/material.dart';
+import 'package:shopesapp/main.dart';
 
 part 'work_time_state.dart';
 
 class WorkTimeCubit extends Cubit<WorkTimeState> {
   WorkTimeCubit() : super(WorkTimeState(isOpen: false));
 
-  void switchToOpenStatus() => emit(WorkTimeState(isOpen: true));
-  void switchToCloseStatus() => emit(WorkTimeState(isOpen: false));
-
-  void testOpenTime({DateTime? openTime, DateTime? closeTime}) async {
-    SharedPreferences _pref = await SharedPreferences.getInstance();
-    DateTime? _openTime = openTime ?? _pref.get("startWorkTime") as DateTime?;
-    DateTime? _closeTime = closeTime ?? _pref.get("endWorkTime") as DateTime?;
-    DateTime? now = DateTime.now();
-    if (_openTime != null && _closeTime != null) {
-      if (now.isAfter(_openTime) && now.isBefore(_closeTime)) {
-        switchToOpenStatus();
-      } else {
-        switchToCloseStatus();
+  TimeOfDay timeConvert(String normTime) {
+    int hour;
+    int minute;
+    String ampm = normTime.substring(normTime.length - 2);
+    String result = normTime.substring(0, normTime.indexOf(' '));
+    if (ampm == 'AM' && int.parse(result.split(":")[1]) != 12) {
+      hour = int.parse(result.split(':')[0]);
+      if (hour == 12) hour = 0;
+      minute = int.parse(result.split(":")[1]);
+    } else {
+      hour = int.parse(result.split(':')[0]) - 12;
+      if (hour <= 0) {
+        hour = 24 + hour;
       }
+      minute = int.parse(result.split(":")[1]);
     }
-    switchToCloseStatus();
+    return TimeOfDay(hour: hour, minute: minute);
+  }
+
+  void testOpenTime(
+      {required String? openTime, required String? closeTime}) async {
+    String? _openTime =
+        openTime ?? globalSharedPreference.getString("startWorkTime");
+//print(_openTime);
+    String? _closeTime =
+        closeTime ?? globalSharedPreference.getString("endWorkTime");
+    //  print(_closeTime);
+    if (_openTime != null && _closeTime != null) {
+      TimeOfDay _startTime = timeConvert(_openTime);
+
+      TimeOfDay _endTime = timeConvert(_closeTime);
+
+      DateTime now = DateTime.now();
+      DateTime _startDateTime = DateTime(
+          now.year, now.month, now.day, _startTime.hour, _startTime.minute);
+
+      DateTime _endDateTime = DateTime(
+          now.year, now.month, now.day, _endTime.hour, _endTime.minute);
+      if (now.isAfter(_startDateTime) && now.isBefore(_endDateTime)) {
+        //    print("open");
+        emit(WorkTimeState(isOpen: true));
+      } else {
+        //    print("close");
+        emit(WorkTimeState(isOpen: false));
+      }
+    } else {
+      // print("close outside the if");
+      emit(WorkTimeState(isOpen: false));
+    }
   }
 }

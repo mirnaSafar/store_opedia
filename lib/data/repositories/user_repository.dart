@@ -3,41 +3,42 @@ import 'package:http/http.dart' as http;
 import 'package:shopesapp/constant/endpoint.dart';
 
 class UserRepository {
-  Future<Map<String, dynamic>?> updateUser(
+  Future<String?> updateUser(
       {required String id,
-      required String userName,
-      required String email,
+      required String name,
+      required String password,
       required String phoneNumber}) async {
-    Map<String, dynamic> parsedResult;
     Map<String, dynamic> requestBody = {
       "id": id,
-      "userName": userName,
-      "email": email,
+      "userName": name,
+      "password": password,
       "phoneNumber": phoneNumber
     };
     http.Response response;
     try {
       response = await http.put(
-        Uri.http(ENDPOINT, '/$id'),
+        Uri.http(ENDPOINT, '/profile/$id'),
         body: jsonEncode(requestBody),
-        headers: <String, String>{'Content-Type': 'application/json;'},
+        headers: <String, String>{'Content-Type': 'application/json'},
       );
-      parsedResult = jsonDecode(response.body);
-      return (parsedResult);
+      if (response.statusCode == 200) {
+        return "Success";
+      }
     } catch (e) {
       print(e);
+      return "Failed";
     }
-    return null;
+    return "Failed";
   }
 
   Future<String> deleteUser({required String id}) async {
     http.Response response;
     Map<String, dynamic> requestBody = {"id": id};
     response = await http.delete(
-      Uri.http(ENDPOINT, '/$id'),
+      Uri.http(ENDPOINT, '/delete/$id'),
       body: jsonEncode(requestBody),
       headers: <String, String>{
-        'Content-Type': 'application/json; ',
+        'Content-Type': 'application/json',
       },
     );
     if (response.statusCode == 200) {
