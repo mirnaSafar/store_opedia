@@ -9,7 +9,6 @@ import 'package:shopesapp/presentation/widgets/auth/confirm_form_field.dart';
 import 'package:shopesapp/presentation/widgets/auth/phoneNumber_form_field.dart';
 import '../../constant/clipper.dart';
 import '../../logic/cubites/cubit/auth_state.dart';
-import '../../logic/cubites/cubit/verify_password_cubit.dart';
 import '../widgets/auth/email_form_field.dart';
 import '../widgets/auth/password_form_field.dart';
 import '../widgets/auth/user_name_form_field.dart';
@@ -28,18 +27,13 @@ class _UserSignUpState extends State<UserSignUp> with TickerProviderStateMixin {
 
   var isPasswordHidden = true;
   var isConfiermPasswordHidden = true;
-  late String _email;
-  late String _sms;
-  late String _password;
-  late String _phoneNumber;
-  late String _userName;
+  String? _email;
+  String? _password;
+  String? _phoneNumber;
+  String? _userName;
 
   void setUserName(String name) {
     _userName = name;
-  }
-
-  void setSMS(String sms) {
-    _sms = sms;
   }
 
   void setPhoneNumber(String phoneNumber) {
@@ -55,7 +49,7 @@ class _UserSignUpState extends State<UserSignUp> with TickerProviderStateMixin {
   }
 
   String getPassword() {
-    return _password;
+    return _password!;
   }
 
   void _submitForm(BuildContext context) async {
@@ -63,7 +57,7 @@ class _UserSignUpState extends State<UserSignUp> with TickerProviderStateMixin {
       _formKey.currentState!.save();
 
       BlocProvider.of<AuthCubit>(context)
-          .userSignUp(_userName, _email, _password, _phoneNumber);
+          .userSignUp(_userName!, _email!, _password!, _phoneNumber!);
     }
   }
 
@@ -72,10 +66,10 @@ class _UserSignUpState extends State<UserSignUp> with TickerProviderStateMixin {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is UserSignedUp) {
+          context.pushRepalceme(const ControlPage());
           buildAwsomeDialog(context, "Succeed", "You Signin successfully", "OK",
                   type: DialogType.SUCCES)
               .show();
-          context.pushRepalceme(const ControlPage());
         } else if (state is AuthFailed) {
           buildAwsomeDialog(
                   context, "Faild", state.message.toUpperCase(), "Cancle",
@@ -120,10 +114,6 @@ class _UserSignUpState extends State<UserSignUp> with TickerProviderStateMixin {
                   const SizedBox(
                     height: 20.0,
                   ),
-                  // CreateSMSFormField(setSMS: setSMS),
-                  // const SizedBox(
-                  //   height: 20.0,
-                  // ),
                   CreatePasswordFormField(
                     isPasswordHidden: isPasswordHidden,
                     setPassword: setPassword,
@@ -173,25 +163,6 @@ class _UserSignUpState extends State<UserSignUp> with TickerProviderStateMixin {
                   const SizedBox(
                     height: 15.0,
                   ),
-                  // Row(
-                  //   crossAxisAlignment: CrossAxisAlignment.center,
-                  //   mainAxisAlignment: MainAxisAlignment.center,
-                  //   children: [
-                  //     const Text(
-                  //       'Didn\'t recive the SMS?',
-                  //       style: TextStyle(
-                  //           fontWeight: FontWeight.w500, fontSize: 18),
-                  //     ),
-                  //     TextButton(
-                  //       child: const Text(
-                  //         'Request again',
-                  //         style: TextStyle(
-                  //             fontWeight: FontWeight.w500, fontSize: 18),
-                  //       ),
-                  //       onPressed: () {},
-                  //     )
-                  //   ],
-                  // ),
                 ]),
               )
             ])),

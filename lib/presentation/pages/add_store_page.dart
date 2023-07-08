@@ -1,8 +1,12 @@
 import 'dart:io';
 
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shopesapp/data/enums/message_type.dart';
+import 'package:shopesapp/logic/cubites/shop/store_cubit.dart';
 import 'package:shopesapp/presentation/pages/signup_categories_page.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_button.dart';
@@ -27,7 +31,8 @@ class _EditStoreState extends State<AddStorePage> {
   TextEditingController storeNameController = TextEditingController();
   TextEditingController storeNumberController = TextEditingController();
   TextEditingController storeCategoryController = TextEditingController();
-  TextEditingController storeWorkHoursController = TextEditingController();
+  TextEditingController startHourController = TextEditingController();
+  TextEditingController endWorkHourController = TextEditingController();
   TextEditingController storeDescriptionController = TextEditingController();
   TextEditingController storeInstagramController = TextEditingController();
   TextEditingController storeFacebookController = TextEditingController();
@@ -43,7 +48,7 @@ class _EditStoreState extends State<AddStorePage> {
       case FileType.GALLERY:
         await picker
             .pickImage(source: ImageSource.gallery)
-            .then((value) => path = value?.path ?? '');
+            .then((value) => path = value?.path ?? selectedFile?.path ?? '');
         context.pop();
 
         setState(() {});
@@ -51,7 +56,7 @@ class _EditStoreState extends State<AddStorePage> {
       case FileType.CAMERA:
         await picker
             .pickImage(source: ImageSource.camera)
-            .then((value) => path = value?.path ?? '');
+            .then((value) => path = value?.path ?? selectedFile?.path ?? '');
         context.pop();
 
         setState(() {});
@@ -84,20 +89,21 @@ class _EditStoreState extends State<AddStorePage> {
           child: Form(
             key: formKey,
             child: Column(children: [
-              20.ph,
+              (w * 0.05).ph,
               Center(
                 child: Stack(
                   alignment: AlignmentDirectional.bottomEnd,
                   children: [
                     InkWell(
-                        onTap: selectedFile == null
-                            ? () {
-                                pickImageDialg();
-                                setState(() {});
-                              }
-                            : null,
+                        onTap:
+                            selectedFile == null || selectedFile!.path.isEmpty
+                                ? () {
+                                    pickImageDialg();
+                                    setState(() {});
+                                  }
+                                : null,
                         child: CircleAvatar(
-                          radius: 60,
+                          radius: w * 0.15,
                           backgroundImage: selectedFile != null
                               ? FileImage(File(selectedFile!.path))
                               : null,
@@ -107,14 +113,15 @@ class _EditStoreState extends State<AddStorePage> {
                                   : null,
                         )),
                     Visibility(
-                      visible: selectedFile != null,
+                      visible:
+                          selectedFile != null && selectedFile!.path.isNotEmpty,
                       child: InkWell(
                         onTap: () {
                           pickImageDialg();
                           setState(() {});
                         },
                         child: CircleAvatar(
-                            radius: 15,
+                            radius: w * 0.04,
                             backgroundColor: AppColors.mainOrangeColor,
                             child: const Icon(Icons.edit)),
                       ),
@@ -122,9 +129,9 @@ class _EditStoreState extends State<AddStorePage> {
                   ],
                 ),
               ),
-              20.ph,
+              (w * 0.04).ph,
               const CustomText(text: 'store profile'),
-              60.ph,
+              (w * 0.08).ph,
               CustomButton(
                 text: 'Select Store category',
                 borderColor: AppColors.mainTextColor,
@@ -158,9 +165,21 @@ class _EditStoreState extends State<AddStorePage> {
                       numberValidator(number, 'enter store number')
                   // return null;
                   ),
-              UserInput(
-                text: 'Store work hours',
-                controller: storeWorkHoursController,
+              Row(
+                children: [
+                  Expanded(
+                    child: UserInput(
+                      text: 'Start Work hour',
+                      controller: startHourController,
+                    ),
+                  ),
+                  Expanded(
+                    child: UserInput(
+                      text: 'End work hour',
+                      controller: endWorkHourController,
+                    ),
+                  ),
+                ],
               ),
               UserInput(
                 text: 'store location',
@@ -174,7 +193,7 @@ class _EditStoreState extends State<AddStorePage> {
                 text: 'facebook account',
                 controller: storeFacebookController,
               ),
-              30.ph,
+              (w * 0.08).ph,
               Row(children: [
                 Expanded(
                     child: CustomButton(
@@ -186,31 +205,79 @@ class _EditStoreState extends State<AddStorePage> {
                   textColor: AppColors.mainOrangeColor,
                   borderColor: AppColors.mainOrangeColor,
                 )),
-                70.px,
+                (w * 0.09).px,
                 Expanded(
-                  child: CustomButton(
-                    text: 'Create',
-                    textColor: AppColors.mainWhiteColor,
-                    onPressed: () {
-                      !formKey.currentState!.validate()
-                          ? CustomToast.showMessage(
-                              size: size,
-                              message: 'invalid information',
-                              messageType: MessageType.WARNING)
-                          : {
-                              formKey.currentState!.save(),
-                              Future.delayed(
+                    child: BlocProvider(
+                  create: (context) => StoreCubit(),
+                  child: BlocConsumer<StoreCubit, StoreState>(
+                    listener: (context, state) {
+                      state is AddShopProgress
+                          ? BotToast.showCustomLoading(toastBuilder: (context) {
+                              return SizedBox(
+                                width: w / 4,
+                                height: w / 4,
+                                child: SpinKitCircle(
+                                  color: AppColors.mainOrangeColor,
+                                  size: w / 8,
+                                ),
+                              );
+                            })
+                          : state is AddShopSucceed
+                              ? {
+                                  BotToast.closeAllLoading(),
+                                  Future.delayed(
+                                          const Duration(milliseconds: 1000),
+                                          CustomToast.showMessage(
+                                              size: size,
+                                              messageType: MessageType.SUCCESS,
+                                              message:
+                                                  'Store created successfully!'))
+                                      .then((value) => context.pop()),
+                                }
+                              : {
+                                  BotToast.closeAllLoading(),
+                                  Future.delayed(
                                       const Duration(milliseconds: 1000),
                                       CustomToast.showMessage(
                                           size: size,
-                                          messageType: MessageType.SUCCESS,
-                                          message:
-                                              'Store created successfully!'))
-                                  .then((value) => context.pop())
-                            };
+                                          messageType: MessageType.REJECTED,
+                                          message: 'Failed to create Store !'))
+                                };
+                    },
+                    builder: (context, state) {
+                      return CustomButton(
+                          text: 'Create',
+                          textColor: AppColors.mainWhiteColor,
+                          onPressed: () {
+                            !formKey.currentState!.validate() &&
+                                    (selectedFile == null ||
+                                        selectedFile!.path.isEmpty)
+                                ? CustomToast.showMessage(
+                                    size: size,
+                                    message: 'invalid information',
+                                    messageType: MessageType.WARNING)
+                                : {
+                                    formKey.currentState!.save(),
+                                    context.read<StoreCubit>().addShop(
+                                        owner: {'id': '1'},
+                                        shopName: storeNameController.text,
+                                        shopDescription:
+                                            storeDescriptionController.text,
+                                        shopProfileImage: selectedFile!.path,
+                                        shopCoverImage: null,
+                                        shopCategory:
+                                            storeCategoryController.text,
+                                        location: storeLocationController.text,
+                                        endWorkTime: endWorkHourController.text,
+                                        startWorkTime: startHourController.text,
+                                        socialUrl: [''],
+                                        shopPhoneNumber:
+                                            storeNumberController.text),
+                                  };
+                          });
                     },
                   ),
-                ),
+                )),
               ]),
             ]),
           ),
@@ -222,65 +289,73 @@ class _EditStoreState extends State<AddStorePage> {
   Future pickImageDialg() {
     return showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+              top: Radius.circular(MediaQuery.of(context).size.width * 0.08))),
       builder: (context) => Wrap(
         children: [
-          Container(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      pickFile(FileType.CAMERA)
-                          .then((value) => selectedFile = value);
-                      setState(() {});
-                    },
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent, elevation: 0),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.camera_alt_rounded,
-                          color: AppColors.mainOrangeColor,
+          Column(
+            children: [
+              Container(
+                padding:
+                    EdgeInsets.all(MediaQuery.of(context).size.width * 0.06),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          pickFile(FileType.CAMERA)
+                              .then((value) => selectedFile = value);
+                          setState(() {});
+                        },
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent, elevation: 0),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.camera_alt_rounded,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                            (MediaQuery.of(context).size.width * 0.08).px,
+                            CustomText(
+                              text: 'Camera',
+                              fontSize:
+                                  (MediaQuery.of(context).size.width * 0.04),
+                            )
+                          ],
                         ),
-                        40.px,
-                        const CustomText(
-                          text: 'Camera',
-                          fontSize: 20,
-                        )
-                      ],
+                      ),
                     ),
-                  ),
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          pickFile(FileType.GALLERY)
+                              .then((value) => selectedFile = value);
+                          setState(() {});
+                        },
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent, elevation: 0),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.image,
+                              color: AppColors.mainOrangeColor,
+                            ),
+                            (MediaQuery.of(context).size.width * 0.08).px,
+                            CustomText(
+                              text: 'Gallery',
+                              fontSize:
+                                  (MediaQuery.of(context).size.width * 0.04),
+                            )
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
                 ),
-                Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      pickFile(FileType.GALLERY)
-                          .then((value) => selectedFile = value);
-                      setState(() {});
-                    },
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent, elevation: 0),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.image,
-                          color: AppColors.mainOrangeColor,
-                        ),
-                        40.px,
-                        const CustomText(
-                          text: 'Gallery',
-                          fontSize: 20,
-                        )
-                      ],
-                    ),
-                  ),
-                )
-              ],
-            ),
+              ),
+            ],
           ),
         ],
       ),

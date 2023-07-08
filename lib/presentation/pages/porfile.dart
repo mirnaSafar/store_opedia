@@ -1,8 +1,8 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shopesapp/data/models/user.dart';
 import 'package:shopesapp/logic/cubites/user/update_user_cubit.dart';
+import 'package:shopesapp/main.dart';
 import 'package:shopesapp/presentation/pages/control_page.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
@@ -13,8 +13,10 @@ import 'package:shopesapp/presentation/widgets/edit_profile/user_name_form_field
 import 'package:shopesapp/presentation/widgets/profile/appBar.dart';
 import 'package:shopesapp/presentation/widgets/profile/password_form_field.dart';
 import 'package:shopesapp/presentation/widgets/profile/phoneNumber_form_field.dart';
+import '../../data/enums/message_type.dart';
 import '../../logic/cubites/cubit/profile_cubit.dart';
 import '../shared/custom_widgets/custom_text.dart';
+import '../shared/custom_widgets/custom_toast.dart';
 import '../widgets/dialogs/awosem_dialog.dart';
 import '../widgets/profile/email_form_field.dart';
 
@@ -26,29 +28,25 @@ class ProfilePage extends StatefulWidget {
 }
 
 bool isPasswordHidden = false;
-late String _email;
-final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-late String _id;
 
-late String _oldPassword;
-late String _oldPhoneNumber;
-late String _oldName;
-late String _newName;
-late String _newPassword;
-late String _newPhoneNumber;
+final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+String? _email;
+String? _oldPhoneNumber;
+String? _oldName;
+String? _newName;
+String _newPassword = "";
+String? _newPhoneNumber;
 
 class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
-    // _oldPassword = context.read<VerifyPasswordCubit>().oldPassword;
-
-    //offline
-    _oldName = "test";
-    _oldPhoneNumber = "0999999999";
-    _email = "example@gmail.com";
-    _newPassword = _oldPassword;
+    _email = globalSharedPreference.getString("email");
+    _oldName = globalSharedPreference.getString("name");
+    _oldPhoneNumber = globalSharedPreference.getString("phoneNumber");
     _newPhoneNumber = _oldPhoneNumber;
     _newName = _oldName;
+
     super.initState();
   }
 
@@ -64,11 +62,11 @@ class _ProfilePageState extends State<ProfilePage> {
     _newPassword = password;
   }
 
-  String getUserName() => _newName;
+  String getUserName() => _newName!;
 
   String getPassword() => _newPassword;
 
-  String getPhoneNumber() => _newPhoneNumber;
+  String getPhoneNumber() => _newPhoneNumber!;
 
   void _showUpdateAlert(BuildContext context) {
     AwesomeDialog(
@@ -82,27 +80,15 @@ class _ProfilePageState extends State<ProfilePage> {
             style: TextStyle(fontStyle: FontStyle.italic),
           ),
         ),
-        btnCancelOnPress: () {
-          BlocProvider.of<ProfileCubit>(context).setVerifiy(false);
-        },
+        btnCancelOnPress: () {},
         btnCancelText: 'Cancel',
         btnOkText: " Countinue",
         btnOkOnPress: () {
-          BlocProvider.of<UpdateUserCubit>(context).updateUser(User(
-              id: _id,
+          BlocProvider.of<UpdateUserCubit>(context).updateUser(
+              id: globalSharedPreference.getString("ID")!,
               name: getUserName(),
-              email: _email,
-              // password: getPassword(),
-              phoneNumber: getPhoneNumber()));
-          print('After update' +
-              _email +
-              ' ' +
-              _newPassword +
-              " " +
-              _newPhoneNumber +
-              " " +
-              _newName);
-          BlocProvider.of<ProfileCubit>(context).setVerifiy(false);
+              password: getPassword(),
+              phoneNumber: getPhoneNumber());
         }).show();
   }
 
@@ -113,26 +99,26 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  Widget _buildUpdatePage(BuildContext context) {
+  Widget _buildUpdatePage(BuildContext context, Size size) {
     return Column(
       children: [
-        EditUserNameFormField(setUserName: setUserName, userName: _oldName),
+        EditUserNameFormField(setUserName: setUserName, userName: _oldName!),
         const SizedBox(
           height: 20.0,
         ),
-        EditEmailFormField(email: _email),
+        EditEmailFormField(email: _email!),
         const SizedBox(
           height: 30.0,
         ),
         EditPasswordFormField(
             setPassword: setPassword,
             isPasswordHidden: isPasswordHidden,
-            password: _oldPassword),
+            password: _newPassword),
         const SizedBox(
           height: 30.0,
         ),
         EditPhoneNumberFormField(
-            setPhoneNumber: setPhoneNumber, phoneNmber: _oldPhoneNumber),
+            setPhoneNumber: setPhoneNumber, phoneNmber: _oldPhoneNumber!),
         const SizedBox(
           height: 15.0,
         ),
@@ -141,17 +127,19 @@ class _ProfilePageState extends State<ProfilePage> {
           child: BlocConsumer<UpdateUserCubit, UpdateUserState>(
             listener: (context, state) {
               if (state is UpdateUserSucceed) {
-                buildAwsomeDialog(context, "Succeed",
-                        "You Update your account successfully", "OK",
-                        type: DialogType.SUCCES)
-                    .show();
+                CustomToast.showMessage(
+                    context: context,
+                    size: size,
+                    message: "Updates User Info Successfully",
+                    messageType: MessageType.SUCCESS);
 
                 context.pushRepalceme(const ControlPage());
               } else if (state is UpdateUserFailed) {
-                buildAwsomeDialog(
-                        context, "Faild", state.message.toUpperCase(), "Cancle",
-                        type: DialogType.ERROR)
-                    .show();
+                CustomToast.showMessage(
+                    context: context,
+                    size: size,
+                    message: state.message,
+                    messageType: MessageType.REJECTED);
               }
             },
             builder: (context, state) {
@@ -179,12 +167,10 @@ class _ProfilePageState extends State<ProfilePage> {
                     ],
                   ),
                   onPressed: () {
-                    if (((_oldPassword == getPassword()) &&
-                            (_oldName == getUserName()) &&
+                    if (((_oldName == getUserName()) &&
+                            getPassword() == "" &&
                             (getPhoneNumber() == _oldPhoneNumber)) ||
-                        (_newPassword.isEmpty &&
-                            _newName.isEmpty &&
-                            _newPhoneNumber.isEmpty)) {
+                        (_newName!.isEmpty && _newPhoneNumber!.isEmpty)) {
                       buildAwsomeDialog(context, "Field",
                               "You Already use the Same information", "OK",
                               type: DialogType.INFO)
@@ -217,7 +203,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     color: Colors.white,
                   ),
                   CustomText(
-                    text: "Back",
+                    text: "Show Profle Mode",
                     textColor: AppColors.mainWhiteColor,
                   )
                 ],
@@ -234,14 +220,14 @@ class _ProfilePageState extends State<ProfilePage> {
           children: [
             Center(
                 child: CustomText(
-              text: _oldName,
+              text: _oldName!,
               fontSize: 25,
             )),
             const SizedBox(
               height: 20.0,
             ),
             ProfileEmailFormField(
-              email: _email,
+              email: _email!,
             ),
             const SizedBox(
               height: 30.0,
@@ -250,7 +236,7 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(
               height: 30.0,
             ),
-            ProfilePhoneNumberFormField(phoneNmber: _oldPhoneNumber),
+            ProfilePhoneNumberFormField(phoneNmber: _oldPhoneNumber!),
             const SizedBox(
               height: 15.0,
             ),
@@ -331,7 +317,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       return Padding(
                           padding: EdgeInsets.symmetric(
                               horizontal: size.height * 0.05),
-                          child: _buildUpdatePage(context));
+                          child: _buildUpdatePage(context, size));
                     }
                     return _buildUserInfoPage(context, size.width);
                   },

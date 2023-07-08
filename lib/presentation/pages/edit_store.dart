@@ -1,8 +1,11 @@
 import 'dart:io';
 
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shopesapp/data/enums/message_type.dart';
+import 'package:shopesapp/logic/cubites/shop/store_cubit.dart';
 import 'package:shopesapp/presentation/pages/signup_categories_page.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_button.dart';
@@ -27,29 +30,33 @@ class _EditStoreState extends State<EditStore> {
   TextEditingController storeNameController = TextEditingController();
   TextEditingController storeNumberController = TextEditingController();
   TextEditingController storeCategoryController = TextEditingController();
-  TextEditingController storeWorkHoursController = TextEditingController();
+  TextEditingController startWorkHoursController = TextEditingController();
+  TextEditingController endWorkHoursController = TextEditingController();
   TextEditingController storeDescriptionController = TextEditingController();
   TextEditingController storeInstagramController = TextEditingController();
   TextEditingController storeFacebookController = TextEditingController();
   TextEditingController storeLocationController = TextEditingController();
 
   final ImagePicker picker = ImagePicker();
-  FileTypeModel? selectedFile;
-  Future<FileTypeModel> pickFile(FileType type) async {
+  FileTypeModel? coverSelectedFile;
+  FileTypeModel? profileSelectedFile;
+  Future<FileTypeModel> pickFile(FileType type, bool profile) async {
     String? path;
     switch (type) {
       case FileType.GALLERY:
-        await picker
-            .pickImage(source: ImageSource.gallery)
-            .then((value) => path = value?.path ?? '');
+        await picker.pickImage(source: ImageSource.gallery).then((value) =>
+            path = profile
+                ? value?.path ?? profileSelectedFile?.path ?? ''
+                : value?.path ?? coverSelectedFile?.path ?? '');
         context.pop();
 
         setState(() {});
         break;
       case FileType.CAMERA:
-        await picker
-            .pickImage(source: ImageSource.camera)
-            .then((value) => path = value?.path ?? '');
+        await picker.pickImage(source: ImageSource.camera).then((value) =>
+            path = profile
+                ? value?.path ?? profileSelectedFile?.path ?? ''
+                : value?.path ?? coverSelectedFile?.path ?? '');
         context.pop();
 
         setState(() {});
@@ -62,6 +69,7 @@ class _EditStoreState extends State<EditStore> {
   @override
   Widget build(BuildContext context) {
     final w = MediaQuery.of(context).size.width;
+    final h = MediaQuery.of(context).size.height;
     final size = MediaQuery.of(context).size;
     return SafeArea(
         child: Scaffold(
@@ -82,46 +90,108 @@ class _EditStoreState extends State<EditStore> {
           child: Form(
             key: formKey,
             child: Column(children: [
-              20.ph,
-              Center(
-                child: Stack(
-                  alignment: AlignmentDirectional.bottomEnd,
-                  children: [
-                    InkWell(
-                        onTap: selectedFile == null
-                            ? () {
-                                pickImageDialg();
-                                setState(() {});
-                              }
-                            : null,
+              (w * 0.02).ph,
+              Stack(
+                // fit: StackFit.expand,
+                // alignment: AlignmentDirectional.bottomEnd,
+                children: [
+                  Wrap(
+                    children: [
+                      Container(
+                          height: h / 4,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(w * 0.05),
+                            color: AppColors.mainOrangeColor,
+                          ),
+                          width: w,
+                          child: coverSelectedFile != null
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(w * 0.05),
+                                  child: Image.file(
+                                    File(coverSelectedFile!.path),
+                                    fit: BoxFit.fill,
+                                  ),
+                                )
+                              : const Icon(Icons.image)),
+                    ],
+                  ),
+                  Padding(
+                    padding: EdgeInsetsDirectional.only(
+                        top: h / 4.5, start: w / 1.17),
+                    child: InkWell(
+                      onTap: () {
+                        pickImageDialg(false);
+                        setState(() {});
+                      },
+                      child: CircleAvatar(
+                        radius: w * 0.036,
+                        backgroundColor: AppColors.mainWhiteColor,
                         child: CircleAvatar(
-                          radius: 60,
-                          backgroundImage: selectedFile != null
-                              ? FileImage(File(selectedFile!.path))
-                              : null,
-                          child:
-                              selectedFile == null || selectedFile!.path.isEmpty
-                                  ? const Icon(Icons.image)
-                                  : null,
-                        )),
-                    Visibility(
-                      visible: selectedFile != null,
-                      child: InkWell(
-                        onTap: () {
-                          pickImageDialg();
-                          setState(() {});
-                        },
-                        child: CircleAvatar(
-                            radius: 15,
-                            backgroundColor: AppColors.mainOrangeColor,
-                            child: const Icon(Icons.edit)),
+                            radius: w * 0.026,
+                            backgroundColor: AppColors.mainBlueColor,
+                            child: Icon(
+                              Icons.edit,
+                              size: w * 0.03,
+                            )),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  Padding(
+                    padding: EdgeInsetsDirectional.only(
+                        top: w * 0.3, start: w * 0.005),
+                    child: Stack(
+                      children: [
+                        InkWell(
+                            onTap: profileSelectedFile == null
+                                ? () {
+                                    pickImageDialg(true);
+                                    setState(() {});
+                                  }
+                                : null,
+                            child: CircleAvatar(
+                              radius: w * 0.155,
+                              backgroundColor: AppColors.mainWhiteColor,
+                              child: CircleAvatar(
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.primary,
+                                radius: w * 0.15,
+                                backgroundImage: profileSelectedFile != null
+                                    ? FileImage(File(profileSelectedFile!.path))
+                                    : null,
+                                child: profileSelectedFile == null ||
+                                        profileSelectedFile!.path.isEmpty
+                                    ? const Icon(Icons.image)
+                                    : null,
+                              ),
+                            )),
+                        Padding(
+                          padding: EdgeInsetsDirectional.only(
+                              top: w * 0.22, start: w * 0.23),
+                          child: InkWell(
+                            onTap: () {
+                              pickImageDialg(true);
+                              setState(() {});
+                            },
+                            child: CircleAvatar(
+                              radius: w * 0.036,
+                              backgroundColor: AppColors.mainWhiteColor,
+                              child: CircleAvatar(
+                                  radius: w * 0.026,
+                                  backgroundColor: AppColors.mainBlueColor,
+                                  child: Icon(
+                                    Icons.edit,
+                                    size: w * 0.03,
+                                  )),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
               20.ph,
-              const CustomText(text: 'store profile'),
+              // const CustomText(text: 'store profile'),
               UserInput(
                   text: 'Store name',
                   controller: storeNameController,
@@ -139,9 +209,21 @@ class _EditStoreState extends State<EditStore> {
                       numberValidator(number, 'enter store number')
                   // return null;
                   ),
-              UserInput(
-                text: 'Store work hours',
-                controller: storeWorkHoursController,
+              Row(
+                children: [
+                  Expanded(
+                    child: UserInput(
+                      text: 'Start Work hour',
+                      controller: startWorkHoursController,
+                    ),
+                  ),
+                  Expanded(
+                    child: UserInput(
+                      text: 'End work hour',
+                      controller: endWorkHoursController,
+                    ),
+                  ),
+                ],
               ),
               UserInput(
                 text: 'instagram account',
@@ -174,31 +256,90 @@ class _EditStoreState extends State<EditStore> {
                   },
                   text: 'cancel',
                   color: AppColors.mainWhiteColor,
-                  textColor: AppColors.mainOrangeColor,
-                  borderColor: AppColors.mainOrangeColor,
+                  textColor: Theme.of(context).colorScheme.primary,
+                  borderColor: Theme.of(context).colorScheme.primary,
                 )),
                 70.px,
                 Expanded(
-                  child: CustomButton(
-                    text: 'Submit',
-                    textColor: AppColors.mainWhiteColor,
-                    onPressed: () {
-                      !formKey.currentState!.validate()
-                          ? CustomToast.showMessage(
-                              size: size,
-                              message: 'invalid information',
-                              messageType: MessageType.WARNING)
-                          : {
-                              formKey.currentState!.save(),
-                              Future.delayed(
-                                      const Duration(milliseconds: 1000),
-                                      CustomToast.showMessage(
-                                          size: size,
-                                          messageType: MessageType.SUCCESS,
-                                          message:
-                                              'information updated successfully!'))
-                                  .then((value) => context.pop())
-                            };
+                  child: BlocConsumer<StoreCubit, StoreState>(
+                    listener: (context, state) async {
+                      if (state is UpdateShopSucceed) {
+                        CustomToast.showMessage(
+                            size: size,
+                            message: "store edited Successfully",
+                            messageType: MessageType.SUCCESS);
+                        // await context.read<PostsCubit>().getPosts();
+                      } else if (state is UpdateShopFailed) {
+                        CustomToast.showMessage(
+                            size: size,
+                            message: state.message,
+                            messageType: MessageType.REJECTED);
+                      }
+                    },
+                    builder: (context, state) {
+                      if (state is UpdateShopProgress) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      return CustomButton(
+                        text: 'Submit',
+                        textColor: AppColors.mainWhiteColor,
+                        onPressed: () {
+                          !formKey.currentState!.validate()
+                              ? CustomToast.showMessage(
+                                  size: size,
+                                  message: 'invalid information',
+                                  messageType: MessageType.WARNING)
+                              : {
+                                  Future.delayed(
+                                          const Duration(milliseconds: 1000))
+                                      .then((value) => {
+                                            // BotToast.showCustomLoading(
+                                            //     toastBuilder: (context) {
+                                            //   return SizedBox(
+                                            //     width: w / 4,
+                                            //     height: w / 4,
+                                            //     child: SpinKitCircle(
+                                            //       color:
+                                            //           AppColors.mainOrangeColor,
+                                            //       size: w / 8,
+                                            //     ),
+                                            //   );
+                                            // }),
+                                            formKey.currentState!.save(),
+                                            context
+                                                .read<StoreCubit>()
+                                                .updateShop(
+                                              shopID: '1',
+                                              shopName:
+                                                  storeNameController.text,
+                                              shopDescription:
+                                                  storeDescriptionController
+                                                      .text,
+                                              shopProfileImage:
+                                                  profileSelectedFile!.path,
+                                              shopCoverImage:
+                                                  coverSelectedFile!.path,
+                                              shopCategory:
+                                                  storeCategoryController.text,
+                                              location:
+                                                  storeLocationController.text,
+                                              startWorkTime:
+                                                  startWorkHoursController.text,
+                                              shopPhoneNumber:
+                                                  storeNumberController.text,
+                                              endWorkTime:
+                                                  endWorkHoursController.text,
+                                              socialUrl: [
+                                                storeInstagramController.text,
+                                                storeFacebookController.text
+                                              ],
+                                            ),
+                                            BotToast.closeAllLoading(),
+                                            context.pop()
+                                          })
+                                };
+                        },
+                      );
                     },
                   ),
                 ),
@@ -210,7 +351,7 @@ class _EditStoreState extends State<EditStore> {
     ));
   }
 
-  Future pickImageDialg() {
+  Future pickImageDialg(bool profile) {
     return showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -225,8 +366,9 @@ class _EditStoreState extends State<EditStore> {
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      pickFile(FileType.CAMERA)
-                          .then((value) => selectedFile = value);
+                      pickFile(FileType.CAMERA, profile).then((value) => profile
+                          ? profileSelectedFile = value
+                          : coverSelectedFile = value);
                       setState(() {});
                     },
                     style: ElevatedButton.styleFrom(
@@ -249,8 +391,10 @@ class _EditStoreState extends State<EditStore> {
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      pickFile(FileType.GALLERY)
-                          .then((value) => selectedFile = value);
+                      pickFile(FileType.GALLERY, profile).then((value) =>
+                          profile
+                              ? profileSelectedFile = value
+                              : coverSelectedFile = value);
                       setState(() {});
                     },
                     style: ElevatedButton.styleFrom(

@@ -31,7 +31,7 @@ class _AddPostPageState extends State<AddPostPage> {
   TextEditingController addPostPriceController = TextEditingController();
   TextEditingController addPostNameController = TextEditingController();
   TextEditingController addPostDescriptionController = TextEditingController();
-  late String? addPostImage;
+  // late String? addPostImage;
   FileTypeModel? selectedFile;
 
   void getImagePath() {}
@@ -41,7 +41,7 @@ class _AddPostPageState extends State<AddPostPage> {
       case FileType.GALLERY:
         await picker
             .pickImage(source: ImageSource.gallery)
-            .then((value) => path = value?.path ?? '');
+            .then((value) => path = value?.path ?? selectedFile?.path ?? '');
         context.pop();
 
         setState(() {});
@@ -50,7 +50,7 @@ class _AddPostPageState extends State<AddPostPage> {
       case FileType.CAMERA:
         await picker
             .pickImage(source: ImageSource.camera)
-            .then((value) => path = value?.path ?? '');
+            .then((value) => path = value?.path ?? selectedFile?.path ?? '');
         context.pop();
         setState(() {});
 
@@ -75,7 +75,7 @@ class _AddPostPageState extends State<AddPostPage> {
     return SafeArea(
         child: Scaffold(
       body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 30),
+        padding: EdgeInsets.symmetric(vertical: w * 0.06, horizontal: w * 0.06),
         child: Form(
           key: formKey,
           autovalidateMode: AutovalidateMode.disabled,
@@ -83,12 +83,12 @@ class _AddPostPageState extends State<AddPostPage> {
             Center(
                 child: CustomText(
               text: 'Add Post',
-              fontSize: 28,
+              fontSize: w * 0.07,
               textColor: AppColors.primaryFontColor,
             )),
-            10.ph,
+            (w * 0.04).ph,
             const Center(child: CustomText(text: 'Add your post details')),
-            30.ph,
+            (w * 0.06).ph,
             Center(
               child: Stack(
                 alignment: AlignmentDirectional.bottomEnd,
@@ -101,7 +101,7 @@ class _AddPostPageState extends State<AddPostPage> {
                           }
                         : null,
                     child: Container(
-                        height: 200,
+                        height: w / 2.3,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
                           color: AppColors.mainOrangeColor,
@@ -115,24 +115,31 @@ class _AddPostPageState extends State<AddPostPage> {
                                 child: Image.file(File(selectedFile!.path)))),
                   ),
                   Visibility(
-                    visible: selectedFile != null,
+                    visible:
+                        selectedFile != null && selectedFile!.path.isNotEmpty,
                     child: InkWell(
                       onTap: () {
                         pickImageDialg();
                         setState(() {});
                       },
                       child: CircleAvatar(
-                          radius: 15,
-                          backgroundColor:
-                              Theme.of(context).colorScheme.primary,
-                          child: const Icon(Icons.edit)),
+                        radius: w * 0.036,
+                        backgroundColor: AppColors.mainWhiteColor,
+                        child: CircleAvatar(
+                            radius: w * 0.026,
+                            backgroundColor: AppColors.mainBlueColor,
+                            child: Icon(
+                              Icons.edit,
+                              size: w * 0.03,
+                            )),
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(
-              height: 10,
+            SizedBox(
+              height: w * 0.04,
             ),
             UserInput(
               controller: addPostNameController,
@@ -147,7 +154,7 @@ class _AddPostPageState extends State<AddPostPage> {
               text: 'Product price',
               controller: addPostPriceController,
             ),
-            30.ph,
+            (w * 0.1).ph,
             Row(children: [
               Expanded(
                   child: CustomButton(
@@ -159,7 +166,7 @@ class _AddPostPageState extends State<AddPostPage> {
                 textColor: Theme.of(context).colorScheme.primary,
                 borderColor: Theme.of(context).colorScheme.primary,
               )),
-              70.px,
+              (w * 0.08).px,
               Expanded(
                   child: BlocProvider(
                 create: (context) => AddPostCubit(PostsRepository()),
@@ -185,7 +192,8 @@ class _AddPostPageState extends State<AddPostPage> {
                     return CustomButton(
                       onPressed: () {
                         !formKey.currentState!.validate() &&
-                                selectedFile == null
+                                (selectedFile == null ||
+                                    selectedFile!.path.isEmpty)
                             ? CustomToast.showMessage(
                                 size: size,
                                 message: 'Please check required fields',
@@ -199,7 +207,7 @@ class _AddPostPageState extends State<AddPostPage> {
                                       title: addPostNameController.text,
                                       description:
                                           addPostDescriptionController.text,
-                                      postImage: "",
+                                      postImage: selectedFile?.path ?? '',
                                       category: "",
                                       productPrice: addPostPriceController.text,
                                       location: '',
@@ -225,14 +233,16 @@ class _AddPostPageState extends State<AddPostPage> {
   Future pickImageDialg() {
     return showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+              top: Radius.circular(MediaQuery.of(context).size.width * 0.08))),
       builder: (context) => Wrap(
         children: [
           Column(
             children: [
               Container(
-                padding: const EdgeInsets.all(20),
+                padding:
+                    EdgeInsets.all(MediaQuery.of(context).size.width * 0.06),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -251,10 +261,11 @@ class _AddPostPageState extends State<AddPostPage> {
                               Icons.camera_alt_rounded,
                               color: Theme.of(context).colorScheme.primary,
                             ),
-                            40.px,
-                            const CustomText(
+                            (MediaQuery.of(context).size.width * 0.08).px,
+                            CustomText(
                               text: 'Camera',
-                              fontSize: 20,
+                              fontSize:
+                                  (MediaQuery.of(context).size.width * 0.04),
                             )
                           ],
                         ),
@@ -275,10 +286,11 @@ class _AddPostPageState extends State<AddPostPage> {
                               Icons.image,
                               color: AppColors.mainOrangeColor,
                             ),
-                            40.px,
-                            const CustomText(
+                            (MediaQuery.of(context).size.width * 0.08).px,
+                            CustomText(
                               text: 'Gallery',
-                              fontSize: 20,
+                              fontSize:
+                                  (MediaQuery.of(context).size.width * 0.04),
                             )
                           ],
                         ),

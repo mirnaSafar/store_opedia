@@ -16,7 +16,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<dynamic> postsList = [
     Post(
-        title: "headline6",
+        title: "headline1",
         description: "description",
         category: "category",
         ownerID: "ownerID1",

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shopesapp/data/models/owner.dart';
 import 'package:shopesapp/data/models/shop.dart';
 
 import 'package:shopesapp/presentation/pages/settings.dart';
@@ -24,68 +23,68 @@ class _ControlPageState extends State<ControlPage> {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    Owner user = Owner(
-        name: 'name',
-        email: 'email',
-        phoneNumber: 'phoneNumber',
-        id: '123',
-        currentShop: Shop(
-            shopCategory: 'shopCategory',
-            location: 'location',
-            startWorkTime: 'startWorkTime',
-            endWorkTime: 'endWorkTime',
-            ownerID: 'ownerID',
-            ownerEmail: 'ownerEmail',
-            ownerPhoneNumber: 'ownerPhoneNumber',
-            shopID: 'shopID',
-            shopName: 'shopName',
-            ownerName: 'ownerName'),
-        password: '');
+    // Owner user = Owner(
+    //     name: 'name',
+    //     email: 'email',
+    //     phoneNumber: 'phoneNumber',
+    //     id: '123',
+    //     currentShop: Shop(
+    //         shopCategory: 'shopCategory',
+    //         location: 'location',
+    //         startWorkTime: 'startWorkTime',
+    //         endWorkTime: 'endWorkTime',
+    //         ownerID: 'ownerID',
+    //         ownerEmail: 'ownerEmail',
+    //         ownerPhoneNumber: 'ownerPhoneNumber',
+    //         shopID: 'shopID',
+    //         shopName: 'shopName',
+    //         ownerName: 'ownerName'),
+    //     password: '');
     return SafeArea(
-        // top: false,
+        top: false,
         child: Scaffold(
-      backgroundColor: AppColors.mainWhiteColor,
-      extendBody: true,
-      bottomNavigationBar: BottomNavigationBarWidget(
-          bottomNavigationEnum: selected,
-          onTap: (selectedEnum, pageNumber) {
-            controller.animateToPage(pageNumber,
-                curve: Curves.easeInCirc,
-                duration: const Duration(milliseconds: 100));
-            setState(() {
-              selected = selectedEnum;
-              print(selected);
-              print(pageNumber);
-            });
-          }),
+          backgroundColor: AppColors.mainWhiteColor,
+          extendBody: true,
+          bottomNavigationBar: BottomNavigationBarWidget(
+              bottomNavigationEnum: selected,
+              onTap: (selectedEnum, pageNumber) {
+                controller.animateToPage(pageNumber,
+                    curve: Curves.easeInCirc,
+                    duration: const Duration(milliseconds: 100));
+                setState(() {
+                  selected = selectedEnum;
+                  print(selected);
+                  print(pageNumber);
+                });
+              }),
 
-      body: PageView(
-        controller: controller,
-        physics: const NeverScrollableScrollPhysics(),
-        onPageChanged: (value) {},
-        children: [
-          const SettingsPage(),
-          const SuggestedStoresView(),
-          const HomePage(),
-          const FavouritePage(),
-          StorePage(
-              shop: Shop(
-                shopCategory: 'clothes',
-                location: 'aleppo',
-                startWorkTime: '7 am',
-                endWorkTime: ' 7 pm',
-                ownerID: '4',
-                ownerEmail: 'email@gmail.com',
-                ownerPhoneNumber: '0987344563',
-                shopID: '4',
-                shopName: 'talis',
-                ownerName: 'ahmad',
-              ),
-              profileDisplay: true),
-        ],
-      ),
-      // /_screenList[_selectedindex],
-    ));
+          body: PageView(
+            controller: controller,
+            physics: const NeverScrollableScrollPhysics(),
+            onPageChanged: (value) {},
+            children: [
+              const SettingsPage(),
+              const SuggestedStoresView(),
+              const HomePage(),
+              const FavouritePage(),
+              StorePage(
+                  shop: Shop(
+                    shopCategory: 'clothes',
+                    location: 'aleppo',
+                    startWorkTime: '7 am',
+                    endWorkTime: ' 7 pm',
+                    ownerID: '4',
+                    ownerEmail: 'email@gmail.com',
+                    ownerPhoneNumber: '0987344563',
+                    shopID: '4',
+                    shopName: 'talis',
+                    ownerName: 'ahmad',
+                  ),
+                  profileDisplay: true),
+            ],
+          ),
+          // /_screenList[_selectedindex],
+        ));
   }
 }
 

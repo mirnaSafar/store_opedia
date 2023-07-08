@@ -28,7 +28,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
         children: [
           CustomPaint(
             painter: BottomNavShadowPainter(
-                shadow: Shadow(blurRadius: 12, color: AppColors.mainTextColor),
+                shadow: Shadow(blurRadius: 5, color: AppColors.mainTextColor),
                 clipper: BottomNavClipper()),
             child: ClipPath(
               clipper: BottomNavClipper(),
@@ -133,7 +133,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
             icon,
             color: isSelected
                 ? Theme.of(context).colorScheme.primary
-                : AppColors.mainTextColor,
+                : AppColors.secondaryFontColor,
           ),
           SizedBox(
             height: size.width * 0.02,
@@ -143,7 +143,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
             style: TextStyle(
               color: isSelected
                   ? Theme.of(context).colorScheme.primary
-                  : AppColors.mainTextColor,
+                  : AppColors.secondaryFontColor,
             ),
           )
         ],

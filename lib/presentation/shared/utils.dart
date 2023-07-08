@@ -28,6 +28,3 @@ class FileTypeModel {
 
   FileTypeModel(this.path, this.type);
 }
-
-    // show the dialog
-    

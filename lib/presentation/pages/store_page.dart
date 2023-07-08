@@ -20,8 +20,11 @@ import 'package:shopesapp/presentation/widgets/product/product_post.dart';
 
 // ignore: must_be_immutable
 class StorePage extends StatefulWidget {
-  StorePage({Key? key, required this.shop, this.profileDisplay = false})
-      : super(key: key);
+  StorePage({
+    Key? key,
+    required this.shop,
+    bool? profileDisplay,
+  }) : super(key: key);
   Shop shop;
   bool? profileDisplay;
   @override
@@ -29,12 +32,6 @@ class StorePage extends StatefulWidget {
 }
 
 class _StorePageState extends State<StorePage> {
-  @override
-  void initState() {
-    context.read<WorkTimeCubit>().testOpenTime();
-    super.initState();
-  }
-
   List<Post> postsList = [
     Post(
         title: ' headline6',
@@ -63,6 +60,10 @@ class _StorePageState extends State<StorePage> {
 
   @override
   Widget build(BuildContext context) {
+    List<String> splitStartTime = widget.shop.startWorkTime.split(":");
+    String startWorkTime = splitStartTime[0] + ":" + splitStartTime[1];
+    List<String> splitEndWorkTime = widget.shop.endWorkTime.split(":");
+    String endtWorkTime = splitEndWorkTime[0] + ":" + splitEndWorkTime[1];
     List<Post> postsList = [
       Post(
           title: ' headline6',
@@ -90,17 +91,7 @@ class _StorePageState extends State<StorePage> {
     final w = MediaQuery.of(context).size.width;
     final h = MediaQuery.of(context).size.height;
     return Scaffold(
-        //  backgroundColor: AppColors.mainWhiteColor,
-        // appBar: AppBar(
-        //   elevation: 0,
-        //   backgroundColor: Colors.transparent,
-        // ),
-        body:
-            //  !userOwnerCubit.isUserOwner(widget.user)
-            //  const Center(
-            //     child: CustomText(text: 'you dont have any stores yet'),
-            //   )
-            SingleChildScrollView(
+        body: SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -297,14 +288,27 @@ class _StorePageState extends State<StorePage> {
                       CustomIconTextRow(
                           textColor: Theme.of(context).primaryColorDark,
                           icon: Icons.alarm,
-                          text:
-                              'Work hours: ${widget.shop.startWorkTime}-${widget.shop.endWorkTime}'),
+                          text: 'Work hours: $startWorkTime - $endtWorkTime'),
                       20.ph,
                       CustomIconTextRow(
                           textColor: Theme.of(context).primaryColorDark,
                           icon: Icons.phone,
-                          text: '0987655432'),
+                          text:
+                              "Owner PhoneNumber : ${widget.shop.ownerPhoneNumber}"),
                       20.ph,
+                      Visibility(
+                        visible: widget.shop.shopPhoneNumber != null,
+                        child: Column(
+                          children: [
+                            CustomIconTextRow(
+                                textColor: Theme.of(context).primaryColorDark,
+                                icon: Icons.phone,
+                                text:
+                                    "Store PhoneNumber  ${widget.shop.shopPhoneNumber}"),
+                            20.ph,
+                          ],
+                        ),
+                      ),
                       CustomIconTextRow(
                           textColor: Theme.of(context).primaryColorDark,
                           icon: Icons.email,
@@ -437,6 +441,7 @@ class _StorePageState extends State<StorePage> {
   }
 }
 
+// ignore: camel_case_types
 class profilePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {

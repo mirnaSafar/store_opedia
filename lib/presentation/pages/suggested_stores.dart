@@ -16,8 +16,8 @@ class _SuggestedStoresViewState extends State<SuggestedStoresView> {
     Shop(
         shopCategory: 'shopCategory',
         location: 'homs',
-        startWorkTime: '9am',
-        endWorkTime: '2pm',
+        startWorkTime: '12:00 AM',
+        endWorkTime: '02:00 PM',
         ownerID: '3',
         ownerEmail: 'ownerEmail@gmail.com',
         ownerPhoneNumber: '0987655432',
@@ -27,8 +27,8 @@ class _SuggestedStoresViewState extends State<SuggestedStoresView> {
     Shop(
         shopCategory: 'shopCategory',
         location: 'hama',
-        startWorkTime: '9am',
-        endWorkTime: '2pm',
+        startWorkTime: '09:00 AM',
+        endWorkTime: '02:00 PM',
         ownerID: '1',
         ownerEmail: 'ownerEmail@gmail.com',
         ownerPhoneNumber: '0987655432',
@@ -38,8 +38,8 @@ class _SuggestedStoresViewState extends State<SuggestedStoresView> {
     Shop(
         shopCategory: 'shopCategory',
         location: 'slamiah',
-        startWorkTime: '9am',
-        endWorkTime: '2pm',
+        startWorkTime: '09:00 AM',
+        endWorkTime: '02:00 PM',
         ownerID: '2',
         ownerEmail: 'ownerEmail@gmail.com',
         ownerPhoneNumber: '0987655432',

@@ -32,7 +32,30 @@ class ShopRepository {
       "ownerID": ownerID,
     };
     try {
-      response = await http.post(Uri.http(ENDPOINT, "/shops"),
+      response = await http.post(Uri.http(ENDPOINT, "/shops/$ownerID"),
+          body: jsonEncode(requestBody),
+          headers: {
+            'Content-Type': 'application/json',
+          });
+    } catch (e) {
+      return null;
+    }
+    if (response.statusCode == 200) {
+      parsedResult = jsonDecode(response.body);
+      return parsedResult;
+    }
+
+    return null;
+  }
+
+  Future<Map<String, dynamic>?> getShops({required String? ownerID}) async {
+    http.Response response;
+    Map<String, dynamic> parsedResult;
+    Map<String, dynamic> requestBody = {
+      "ownerID": ownerID,
+    };
+    try {
+      response = await http.post(Uri.http(ENDPOINT, "/show/stores/$ownerID"),
           body: jsonEncode(requestBody),
           headers: {
             'Content-Type': 'application/json',
@@ -49,7 +72,7 @@ class ShopRepository {
   }
 
 //Demo test offline
-  Map<String, dynamic>? getOwnerShposTest() {
+  /* Map<String, dynamic>? getOwnerShposTest() {
     return {
       "message": "Succeed",
       "shops": [
@@ -93,41 +116,38 @@ class ShopRepository {
         },
       ]
     };
-  }
+  }*/
 
   Future<String> addShop({
-    required Map<String, dynamic> owner,
+    required String ownerID,
     required String shopName,
     required String shopDescription,
     required String? shopProfileImage,
     required String? shopCoverImage,
     required String shopCategory,
     required String location,
-    required String endWorkTime,
-    required String startWorkTime,
-    required List<String> socialUrl,
+    required String closing,
+    required String opening,
     required String shopPhoneNumber,
   }) async {
     http.Response response;
-    String ownerID = owner["id"];
     Map<String, dynamic> requestBody = {
-      "owner": owner,
-      "shopName": shopName,
-      "shopDescription": shopDescription,
-      "shopProfileImage": shopProfileImage ?? "noImage",
-      "shopCoverImage": shopCoverImage ?? "noImage",
-      "shopCategory": shopCategory,
-      "location": location,
-      "startWorkTime": startWorkTime,
-      "endWorkTime": endWorkTime,
-      "socialUrl": socialUrl,
+      "id": ownerID,
+      "name": shopName,
+      "description": shopDescription,
+      "profile_photo": shopProfileImage ?? "noImage",
+      "cover_photo": shopCoverImage ?? "noImage",
+      "category": shopCategory,
+      "address": location,
+      "facebook": "www.facebook.com",
+      "insta": "www.insta.com",
+      "opening": opening,
+      "closing": closing,
       "rate": 0,
-      "isFavorit": false,
-      "isFollow": false,
-      "shopPhoneNumber": shopPhoneNumber,
+      "phone": shopPhoneNumber,
     };
     try {
-      response = await http.post(Uri.http(ENDPOINT, "/shops/addShop/$ownerID"),
+      response = await http.post(Uri.http(ENDPOINT, "/AddStore/$ownerID"),
           body: jsonEncode(requestBody),
           headers: {
             'Content-Type': 'application/json',
@@ -141,23 +161,31 @@ class ShopRepository {
     return "Faild";
   }
 
-  Future<String> deleteShop({required String shopID}) async {
+  Future<String> deleteShop(
+      {required String shopID, required String ownerID}) async {
     http.Response response;
+    Map<String, dynamic> requestBody = {
+      "id": ownerID,
+      "shopID": shopID,
+    };
+
     try {
-      response = await http
-          .delete(Uri.http(ENDPOINT + "/shops/delete/$shopID"), headers: {
-        'Content-Type': 'application/json',
-      });
+      response = await http.delete(Uri.http(ENDPOINT, "/delete/store/$ownerID"),
+          body: jsonEncode(requestBody),
+          headers: {
+            'Content-Type': 'application/json',
+          });
     } catch (e) {
-      return "Faild";
+      return "Failed";
     }
     if (response.statusCode == 200) {
       return "Success";
     }
-    return "Faild";
+    return "Failed";
   }
 
-  Future<String> updateShop({
+  Future<String> editShop({
+    required String ownerID,
     required String shopID,
     required String shopName,
     required String shopDescription,
@@ -167,7 +195,7 @@ class ShopRepository {
     required String location,
     required String endWorkTime,
     required String startWorkTime,
-    required List<String> socialUrl,
+    // required List<String> socialUrl,
     required String shopPhoneNumber,
   }) async {
     http.Response response;
@@ -180,11 +208,14 @@ class ShopRepository {
       "location": location,
       "startWorkTime": startWorkTime,
       "endWorkTime": endWorkTime,
-      "socialUrl": socialUrl,
+      "insta": "insta",
+      "facebook": "facebook",
       "shopPhoneNumber": shopPhoneNumber,
+      "id": ownerID,
+      "shopID": shopID,
     };
     try {
-      response = await http.put(Uri.http(ENDPOINT, "/shops/updateShop/$shopID"),
+      response = await http.put(Uri.http(ENDPOINT, "/profile/store/$ownerID"),
           body: jsonEncode(requestBody),
           headers: {
             'Content-Type': 'application/json',
@@ -192,7 +223,7 @@ class ShopRepository {
     } catch (e) {
       return "Faild";
     }
-    if (response.statusCode == 205) {
+    if (response.statusCode == 200) {
       return "Success";
     }
     return "Faild";

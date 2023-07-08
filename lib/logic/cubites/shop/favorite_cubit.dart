@@ -24,8 +24,12 @@ class FavoriteCubit extends Cubit<FavoriteState> {
   }
 
   void removeFromFavorites(Shop shop) {
-    updatedFavoriteShops = state.favoriteShops..remove(shop.toJson());
     shop.isFavorit = false;
+    updatedFavoriteShops = state.favoriteShops
+      ..removeWhere((jsonshop) =>
+          shop.ownerID == Shop.fromJson(jsonshop).ownerID &&
+          shop.shopID == Shop.fromJson(jsonshop).shopID);
+
     SharedPreferencesRepository.setFavoriteStores(
         favoriteShopsList: updatedFavoriteShops);
     emit(FavoriteState(updatedFavoriteShops));
@@ -33,5 +37,15 @@ class FavoriteCubit extends Cubit<FavoriteState> {
 
   List<dynamic> getFavoriteShops() => state.favoriteShops;
 
-  bool isShopFavorite(Shop shop) => state.favoriteShops.contains(shop.toJson());
+  bool isShopFavorite(Shop shop) {
+    print(shop.toJson());
+    return state.favoriteShops.isNotEmpty
+        ? state.favoriteShops.firstWhere(
+                (element) =>
+                    shop.ownerID == Shop.fromJson(element).ownerID &&
+                    shop.shopID == Shop.fromJson(element).shopID,
+                orElse: () => null) !=
+            null
+        : false;
+  }
 }

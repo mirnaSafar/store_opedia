@@ -36,6 +36,7 @@ dependencies:
   flutter_bloc: ^8.0.1
   flutter_settings_screens: ^0.3.3-null-safety+2
   flutter_speed_dial: ^7.0.0
+  flutter_svg:
   font_awesome_flutter: ^10.1.0
   google_fonts: ^4.0.3
   http: ^0.13.4
@@ -47,6 +48,7 @@ dependencies:
   rating_dialog: ^2.0.4
   shared_preferences: ^2.0.15
   sizer: ^2.0.15
+  flutter_spinkit: ^5.1.0
   url_launcher: ^6.1.4
 
 dev_dependencies:

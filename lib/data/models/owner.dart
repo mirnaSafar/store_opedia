@@ -1,18 +1,21 @@
 import 'dart:convert';
 
+import 'package:shopesapp/data/models/shop.dart';
+
 class Owner {
   String id;
   String name;
   String email;
   String password;
   String phoneNumber;
-  // Shop? currentShop;
+  dynamic? currentShop;
   Owner({
     required this.name,
     required this.password,
     required this.email,
     required this.phoneNumber,
     required this.id,
+    required Shop currentShop,
   });
 
   Map<String, dynamic> toMap(Owner owner) {
@@ -31,18 +34,30 @@ class Owner {
         name: oldOnwerObject.name,
         email: oldOnwerObject.email,
         phoneNumber: oldOnwerObject.phoneNumber,
-        //    currentShop: oldOnwerObject.currentShop,
+        currentShop: oldOnwerObject.currentShop,
         password: oldOnwerObject.password);
   }
 
   factory Owner.fromMap(Map<String, dynamic> map) {
     return Owner(
-        id: map['ownerID'] as String,
-        email: map['email'] as String,
-        //  currentShop: map['currentShope'] as Shop,
-        phoneNumber: map['ownerPhoneNumber'] as String,
-        name: map["ownerName"] as String,
-        password: map['password'] as String);
+      id: map['ownerID'] as String,
+      email: map['email'] as String,
+      //  currentShop: map['currentShope'] as Shop,
+      phoneNumber: map['ownerPhoneNumber'] as String,
+      name: map["ownerName"] as String,
+      password: map['password'] as String,
+      currentShop: Shop(
+          shopCategory: 'shopCategory',
+          location: 'location',
+          startWorkTime: 'startWorkTime',
+          endWorkTime: 'endWorkTime',
+          ownerID: 'ownerID',
+          ownerEmail: 'ownerEmail',
+          ownerPhoneNumber: 'ownerPhoneNumber',
+          shopID: 'shopID',
+          shopName: 'shopName',
+          ownerName: 'ownerName'),
+    );
   }
 
   // String toJson() => json.encode(toMap());

@@ -2,21 +2,22 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopesapp/data/models/shop.dart';
 import 'package:shopesapp/data/repositories/auth_repository.dart';
+import 'package:shopesapp/logic/cubites/shop/work_time_cubit.dart';
+import 'package:shopesapp/main.dart';
 part 'switch_shop_state.dart';
 
 class SwitchShopCubit extends Cubit<SwitchShopState> {
-  SwitchShopCubit(this._authRepository) : super(SwitchShopInitial());
+  SwitchShopCubit() : super(SwitchShopInitial());
+
   String? idofSelectedShop;
-  final AuthRepository _authRepository;
   void setIDOfSelectedShop({required String? id}) {
-    idofSelectedShop = id;
+    globalSharedPreference.setString("shopID", id!);
   }
 
-  void getStoredShopID() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    idofSelectedShop = prefs.getString("shopID") ?? "noID";
+  String? getStoredShopID() {
+    idofSelectedShop = globalSharedPreference.getString("shopID") ?? "noID";
     setIDOfSelectedShop(id: idofSelectedShop);
-    print("sotred one " + idofSelectedShop!);
+    return idofSelectedShop;
   }
 
   Future swithShop({required var shop}) async {
@@ -26,8 +27,7 @@ class SwitchShopCubit extends Cubit<SwitchShopState> {
     if (_shop == null) {
       emit(SwithShopFiled());
     } else {
-      _authRepository.saveOwnerAndShop(shop: _shop);
-
+      AuthRepository().saveOwnerAndShop(shop: _shop);
       emit(SwithShopSucceded());
     }
   }

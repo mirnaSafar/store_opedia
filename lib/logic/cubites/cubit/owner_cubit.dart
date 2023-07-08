@@ -2,9 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:shopesapp/data/models/owner.dart';
-import 'package:shopesapp/data/models/shop.dart';
 import 'package:shopesapp/data/repositories/owner_repository.dart';
-import 'package:shopesapp/data/repositories/shared_preferences_repository.dart';
 
 part 'owner_state.dart';
 
@@ -12,7 +10,7 @@ class OwnerCubit extends Cubit<OwnerState> {
   Owner owner;
   OwnerCubit({required this.owner}) : super(OwnerInitial({} as Owner));
 
-  Future updateOwner(
+  /*Future updateOwner(
       {required String id,
       required String userName,
       required String email,
@@ -40,7 +38,7 @@ class OwnerCubit extends Cubit<OwnerState> {
 
       emit(UpdateOwnerSucceed());
     }
-  }
+  }*/
 
   Future deleteOwner({required String id}) async {
     emit(DeleteOwnerProgress());

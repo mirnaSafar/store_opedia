@@ -8,9 +8,11 @@ class UserLoginedIn extends AuthState {}
 
 class OwnerLoginedIn extends AuthState {}
 
-class OwnerLogiedInWithShop extends AuthState {}
+class OwnerWillSelectStore extends AuthState {}
 
 class UserSignedUp extends AuthState {}
+
+//class OwnerWithoutShop extends AuthState {}
 
 class OwnerSignedUp extends AuthState {}
 

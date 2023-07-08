@@ -1,5 +1,6 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shopesapp/data/enums/message_type.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
 
@@ -7,7 +8,8 @@ import '../colors.dart';
 
 class CustomToast {
   static showMessage(
-      {required Size size,
+      {required BuildContext context,
+      required Size size,
       required String message,
       MessageType? messageType = MessageType.INFO}) {
     String imageName = 'info';
@@ -28,7 +30,7 @@ class CustomToast {
         break;
       case MessageType.WARNING:
         imageName = 'warning';
-        ShadowColor = AppColors.mainOrangeColor;
+        ShadowColor = Colors.amber;
         break;
 
       case null:
@@ -57,15 +59,14 @@ class CustomToast {
                 SizedBox(
                   height: size.width * 0.06,
                 ),
-
-                // SvgPicture.asset(
-                //   'images/$imageName.svg',
-                //   width: size.width * 0.3,
-                //   height: size.width * 0.3,
-                // ),
-                // SizedBox(
-                //   height: size.width * 0.06,
-                // ),
+                SvgPicture.asset(
+                  'assets/$imageName.svg',
+                  width: size.width * 0.3,
+                  height: size.width * 0.3,
+                ),
+                SizedBox(
+                  height: size.width * 0.06,
+                ),
                 CustomText(text: message),
                 SizedBox(
                   height: size.width * 0.06,

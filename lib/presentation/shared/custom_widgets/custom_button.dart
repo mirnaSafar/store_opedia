@@ -15,7 +15,7 @@ class CustomButton extends StatelessWidget {
   const CustomButton({
     Key? key,
     required this.text,
-    this.color = const Color.fromRGBO(252, 96, 17, 1),
+    this.color,
     this.textColor,
     this.borderColor,
     this.onPressed,
@@ -36,11 +36,12 @@ class CustomButton extends StatelessWidget {
                 15.w,
               ),
               shape: const StadiumBorder(),
-              backgroundColor: color,
+              backgroundColor: color ?? Theme.of(context).colorScheme.primary,
               side: borderColor != null
                   ? BorderSide(
                       width: 1,
-                      color: borderColor!,
+                      color:
+                          borderColor ?? Theme.of(context).colorScheme.primary,
                     )
                   : null),
           child: Row(

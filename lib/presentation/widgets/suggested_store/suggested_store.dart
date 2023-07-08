@@ -23,18 +23,21 @@ class SuggestedStore extends StatefulWidget {
 class _SuggestedStoreState extends State<SuggestedStore> {
   late FavoriteCubit read;
   late FollowingCubit followingCubit;
-  late Shop shop;
+  // late Shop shop;
   @override
   void initState() {
     read = context.read<FavoriteCubit>();
     followingCubit = context.read<FollowingCubit>();
-    shop = SharedPreferencesRepository.getSavedShop(widget.shop) ?? widget.shop;
+    // shop = SharedPreferencesRepository.getSavedShop(widget.shop) ?? widget.shop;
 
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    var shop =
+        SharedPreferencesRepository.getSavedShop(widget.shop) ?? widget.shop;
+
     final w = MediaQuery.of(context).size.width;
     final h = MediaQuery.of(context).size.height;
     return Padding(

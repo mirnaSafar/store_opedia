@@ -1,13 +1,12 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopesapp/data/repositories/shop_repository.dart';
+import 'package:shopesapp/main.dart';
 part 'get_owner_shops_state.dart';
 
 class GetOwnerShopsCubit extends Cubit<GetOwnerShopsState> {
-  GetOwnerShopsCubit(this._shopRepository) : super(GetOwnerShopsInitial());
-  final ShopRepository _shopRepository;
-  String? ownerID = "";
+  GetOwnerShopsCubit() : super(GetOwnerShopsInitial());
+
   List<dynamic> ownerShops = [];
 
   void setOwnerShop({required List<dynamic> shops}) {
@@ -16,12 +15,10 @@ class GetOwnerShopsCubit extends Cubit<GetOwnerShopsState> {
 
   Future getOwnerShopsRequest() async {
     emit(GetOwnerShopsProgress());
-    SharedPreferences _pref = await SharedPreferences.getInstance();
-    ownerID = _pref.getString("ID");
-    print(ownerID);
-    Map<String, dynamic>? response = _shopRepository.getOwnerShposTest();
-    //online
-    /*await _shopRepository.getOwnerShpos(ownerID: ownerID);*/
+
+    Map<String, dynamic>? response = /*_shopRepository.getOwnerShposTest();*/
+        await ShopRepository()
+            .getOwnerShpos(ownerID: globalSharedPreference.getString("ID"));
     if (response!["message"] == "Succeed") {
       setOwnerShop(shops: response["shops"]);
 

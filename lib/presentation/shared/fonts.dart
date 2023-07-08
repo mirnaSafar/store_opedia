@@ -1,6 +1,4 @@
-import 'package:sizer/sizer.dart';
-
 class AppFonts {
-  static double primaryFontSize = 22.sp;
-  static double secondaryFontSize = 12.sp;
+  static double primaryFontSize = 28;
+  static double secondaryFontSize = 14;
 }
