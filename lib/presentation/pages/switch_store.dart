@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/logic/cubites/shop/switch_shop_cubit.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_divider.dart';
+import '../../data/enums/message_type.dart';
 import '../../logic/cubites/shop/get_owner_shops_cubit.dart';
+import '../shared/custom_widgets/custom_toast.dart';
 import '../widgets/dialogs/awosem_dialog.dart';
 import '../widgets/switch_shop/error.dart';
 import '../widgets/switch_shop/shop_item.dart';
@@ -52,8 +54,10 @@ class _SwitchStoreState extends State<SwitchStore> {
                 child: CircularProgressIndicator(),
               );
             } else if (state is GetOwnerShopsSucceed) {
+              print("start");
               ownerShpos =
                   BlocProvider.of<GetOwnerShopsCubit>(context).ownerShops;
+              print(ownerShpos);
               if (ownerShpos.length == 1) {
                 isLastShop = true;
               }

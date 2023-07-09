@@ -8,6 +8,7 @@ import 'package:shopesapp/data/enums/message_type.dart';
 import 'package:shopesapp/data/repositories/posts_repository.dart';
 import 'package:shopesapp/logic/cubites/post/add_post_cubit.dart';
 import 'package:shopesapp/logic/cubites/post/posts_cubit.dart';
+import 'package:shopesapp/main.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_button.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
@@ -171,7 +172,10 @@ class _AddPostPageState extends State<AddPostPage> {
                           size: size,
                           message: "Add Post Successfully",
                           messageType: MessageType.SUCCESS);
-                      await context.read<PostsCubit>().getPosts();
+                      context.read<PostsCubit>().getOwnerPosts(
+                            ownerID: globalSharedPreference.getString("ID")!,
+                            shopID: globalSharedPreference.getString("shopID")!,
+                          );
                     } else if (state is AddPostFailed) {
                       CustomToast.showMessage(
                           context: context,
@@ -199,16 +203,15 @@ class _AddPostPageState extends State<AddPostPage> {
                                   formKey.currentState!.save();
 
                                   context.read<AddPostCubit>().addPost(
-                                      title: addPostNameController.text,
-                                      description:
-                                          addPostDescriptionController.text,
-                                      postImage: "",
-                                      category: "",
-                                      productPrice: addPostPriceController.text,
-                                      location: '',
-                                      ownerPhoneNumber: '',
-                                      shopeID: '',
-                                      shopeName: '');
+                                        title: addPostNameController.text,
+                                        description:
+                                            addPostDescriptionController.text,
+                                        postImage: "",
+                                        category: "",
+                                        price: addPostPriceController.text,
+                                        shopeID: globalSharedPreference
+                                            .getString("shopID")!,
+                                      );
                                 },
                               ).then((value) => context.pop());
                       },

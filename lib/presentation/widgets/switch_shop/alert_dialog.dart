@@ -41,7 +41,7 @@ void deleteShopAlert(BuildContext context, var shopID, bool isLastShop) {
             child: isLastShop == false
                 ? const CustomText(
                     text:
-                        "You Will Delete This Shop  and It's Posts You Can't Restore itRestore it !")
+                        "You Will Delete This Shop  and It's Posts You Can't Restore  it !")
                 : const CustomText(
                     text:
                         "You Will Delete This Shop  and It's Posts You Can't Restore  Any Thing ,  You Will Lose Owner power And become Normal User !")),

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:shopesapp/constant/endpoint.dart';
+import 'package:shopesapp/data/models/shop.dart';
 
 class PostsRepository {
   Future<String?> sendPostRating(
@@ -24,13 +25,23 @@ class PostsRepository {
     return null;
   }
 
-  Future<Map<String, dynamic>?> getPosts() async {
+  Future<Map<String, dynamic>?> getShopPosts({
+    required String shopID,
+    required String ownerID,
+  }) async {
     http.Response response;
     Map<String, dynamic> parsedResult;
+    Map<String, dynamic> requestBody = {
+      "id": ownerID,
+      "shopID": shopID,
+    };
     try {
-      response = await http.get(Uri.http(ENDPOINT, "/posts"), headers: {
-        'Content-Type': 'application/json',
-      });
+      response = await http.post(
+          Uri.http(ENDPOINT, "/show/posts/owner/$shopID"),
+          body: jsonEncode(requestBody),
+          headers: {
+            'Content-Type': 'application/json',
+          });
     } catch (e) {
       return null;
     }
@@ -41,10 +52,19 @@ class PostsRepository {
     return null;
   }
 
-  Future<String> deletePost({required String postID}) async {
+  Future<String> deletePost(
+      {required String postID,
+      required String shopID,
+      required String ownerID}) async {
     http.Response response;
+    Map<String, dynamic> requestBody = {
+      "id": ownerID,
+      "shopID": shopID,
+      "postID": postID,
+    };
     response = await http.delete(
-      Uri.parse(ENDPOINT + '/delete/$postID'),
+      Uri.http(ENDPOINT, '/delete/post/$postID'),
+      body: jsonEncode(requestBody),
       headers: <String, String>{
         'Content-Type': 'application/json; ',
       },
@@ -57,24 +77,22 @@ class PostsRepository {
 
   Future<String> updatePost(
       {required String postID,
+      required String ownerID,
       required String shopID,
-      required String title,
+      required String name,
       required String description,
-      required String? postImages,
-      required String category,
-      required String productPrice}) async {
+      required String? photos,
+      required String price}) async {
     http.Response response;
     Map<String, dynamic> requestBody = {
-      "postID": postID,
-      "shopID": shopID,
-      "title": title,
+      "id": ownerID, //ownerID
+      "name": name,
       "description": description,
-      "postImages": postImages ?? "noProductImage",
-      "category": category,
-      "productPrice": productPrice
+      "photos": photos ?? "noProductImage",
+      "price": price
     };
     response = await http.put(
-      Uri.parse(ENDPOINT + '/posts/updatePosts'),
+      Uri.http(ENDPOINT, '/profile/post/$postID'),
       body: jsonEncode(requestBody),
       headers: <String, String>{
         'Content-Type': 'application/json; ',
@@ -87,35 +105,25 @@ class PostsRepository {
   }
 
   Future<String> addPost(
-      {
-      //required String ownerName,
-      required String shopeID,
-      required String ownerPhoneNumber,
-      required String shopeName,
-      //required List<String> socialUrl,
-      required String location,
-      required String title,
+      {required String shopeID,
+      required String ownerID,
+      required String name,
       required String description,
-      required String? postImage,
+      required String? photos,
       required String category,
-      required String productPrice}) async {
+      required String price}) async {
     http.Response response;
     Map<String, dynamic> requestBody = {
-      "ownerPhoneNumber": ownerPhoneNumber,
+      "id": ownerID, //ownerID
       "shopID": shopeID,
-      "shopeName": shopeName,
-      "location": location,
-      //"socialUrls":socialUrls,
-      "title": title,
+      "name": name,
       "description": description,
-      "postImages": postImage ?? "noProductImage",
-      "category": category,
-      "productPrice": productPrice,
-      "rate": 0,
-      "isFavorit": false
+      "photos": photos ?? "noProductImage",
+      //    "category": category,
+      "price": price,
     };
     response = await http.post(
-      Uri.parse(ENDPOINT + '/posts/addPost'),
+      Uri.http(ENDPOINT, '/AddPost/$ownerID'),
       body: jsonEncode(requestBody),
       headers: <String, String>{
         'Content-Type': 'application/json; ',

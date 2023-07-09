@@ -28,16 +28,10 @@ class WorkTimeCubit extends Cubit<WorkTimeState> {
 
   void testOpenTime(
       {required String? openTime, required String? closeTime}) async {
-    String? _openTime =
-        openTime ?? globalSharedPreference.getString("startWorkTime");
-//print(_openTime);
-    String? _closeTime =
-        closeTime ?? globalSharedPreference.getString("endWorkTime");
-    //  print(_closeTime);
-    if (_openTime != null && _closeTime != null) {
-      TimeOfDay _startTime = timeConvert(_openTime);
+    if (openTime != null && closeTime != null) {
+      TimeOfDay _startTime = timeConvert(openTime);
 
-      TimeOfDay _endTime = timeConvert(_closeTime);
+      TimeOfDay _endTime = timeConvert(closeTime);
 
       DateTime now = DateTime.now();
       DateTime _startDateTime = DateTime(

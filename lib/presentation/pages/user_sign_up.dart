@@ -8,7 +8,9 @@ import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/presentation/widgets/auth/confirm_form_field.dart';
 import 'package:shopesapp/presentation/widgets/auth/phoneNumber_form_field.dart';
 import '../../constant/clipper.dart';
+import '../../data/enums/message_type.dart';
 import '../../logic/cubites/cubit/auth_state.dart';
+import '../shared/custom_widgets/custom_toast.dart';
 import '../widgets/auth/email_form_field.dart';
 import '../widgets/auth/password_form_field.dart';
 import '../widgets/auth/user_name_form_field.dart';
@@ -63,13 +65,16 @@ class _UserSignUpState extends State<UserSignUp> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is UserSignedUp) {
+          CustomToast.showMessage(
+              context: context,
+              size: size,
+              message: "Sign UP Successfuly",
+              messageType: MessageType.SUCCESS);
           context.pushRepalceme(const ControlPage());
-          buildAwsomeDialog(context, "Succeed", "You Signin successfully", "OK",
-                  type: DialogType.SUCCES)
-              .show();
         } else if (state is AuthFailed) {
           buildAwsomeDialog(
                   context, "Faild", state.message.toUpperCase(), "Cancle",

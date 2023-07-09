@@ -4,6 +4,7 @@ import 'package:shopesapp/data/models/post.dart';
 import 'package:shopesapp/logic/cubites/post/delete_post_cubit.dart';
 import 'package:shopesapp/logic/cubites/post/post_favorite_cubit.dart';
 import 'package:shopesapp/logic/cubites/post/rate_shop_cubit.dart';
+import 'package:shopesapp/main.dart';
 import 'package:shopesapp/presentation/pages/edit_post.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_icon_text.dart';
@@ -53,7 +54,11 @@ class _ProductPostState extends State<ProductPost> {
                         30.ph,
                         InkWell(
                           onTap: () => BlocProvider.of<DeletePostCubit>(context)
-                              .deletePost(postID: widget.post.postID),
+                              .deletePost(
+                            postID: widget.post.postID,
+                            ownerID: globalSharedPreference.getString("ID")!,
+                            shopID: globalSharedPreference.getString("shopID")!,
+                          ),
                           child: CustomIconTextRow(
                               fontSize: w * 0.04,
                               iconColor: AppColors.mainBlackColor,

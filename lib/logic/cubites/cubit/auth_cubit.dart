@@ -96,10 +96,16 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
+  void userBecomeOwner() {
+    globalSharedPreference.setString("mode", "owner");
+    emit(OwnerLoginedIn());
+  }
+
   void ownerBecomeUser() {
     emit(AuthProgress());
 
     globalSharedPreference.setString("mode", "user");
+    globalSharedPreference.setString("currentShop", "noShop");
     globalSharedPreference.remove("shopPhoneNumber");
     globalSharedPreference.remove("shopProfileImage");
     globalSharedPreference.remove("shopCoverImage");
@@ -111,7 +117,6 @@ class AuthCubit extends Cubit<AuthState> {
     globalSharedPreference.remove("location");
     globalSharedPreference.remove("startWorkTime");
     globalSharedPreference.remove("endWorkTime");
-    globalSharedPreference.remove("shopID");
 
     emit(UserLoginedIn());
   }
@@ -126,16 +131,6 @@ class AuthCubit extends Cubit<AuthState> {
     globalSharedPreference.remove("shopDescription");
     globalSharedPreference.remove("shopCategory");
     globalSharedPreference.remove("location");
-    globalSharedPreference.remove("startWorkTime");
-    globalSharedPreference.remove("endWorkTime");
-    globalSharedPreference.remove("shopID");
-    // emit(OwnerWithoutShop());
-  }
-
-  void userBecomeOwner() {
-    if (globalSharedPreference.getString("mode") == "user") {
-      emit(OwnerLoginedIn());
-    }
   }
 
   Future<void> autoLogIn() async {

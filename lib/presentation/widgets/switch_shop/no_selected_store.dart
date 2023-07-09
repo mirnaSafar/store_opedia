@@ -7,40 +7,42 @@ import '../../shared/colors.dart';
 import '../../shared/custom_widgets/custom_text.dart';
 
 Widget noSelectedShop(var size, BuildContext context) {
-  return Column(
-    children: [
-      SizedBox(
-        height: size.height / 3,
-      ),
-      Center(
-        child: Column(
-          children: [
-            Icon(
-              Icons.info_outline_rounded,
-              color: AppColors.mainBlueColor,
-              size: 75,
-            ),
-            SizedBox(
-              height: size.height * 0.02,
-            ),
-            const CustomText(
-              text: "You Don't Selected Any Shop Yet ",
-              bold: true,
-              fontSize: 20,
-            ),
-            SizedBox(
-              height: size.height * 0.02,
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: size.height * 0.2),
-              child: CustomButton(
-                text: "Go To Switch Store To Select One",
-                onPressed: () => context.pushRepalceme(const SwitchStore()),
-              ),
-            )
-          ],
+  return Scaffold(
+    body: Column(
+      children: [
+        SizedBox(
+          height: size.height / 3,
         ),
-      ),
-    ],
+        Center(
+          child: Column(
+            children: [
+              Icon(
+                Icons.info_outline_rounded,
+                color: AppColors.mainBlueColor,
+                size: 75,
+              ),
+              SizedBox(
+                height: size.height * 0.02,
+              ),
+              const CustomText(
+                text: "You Don't Selected Any Shop Yet ",
+                bold: true,
+                fontSize: 20,
+              ),
+              SizedBox(
+                height: size.height * 0.02,
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: size.height * 0.2),
+                child: CustomButton(
+                  text: "Select Store",
+                  onPressed: () => context.pushRepalceme(const SwitchStore()),
+                ),
+              )
+            ],
+          ),
+        ),
+      ],
+    ),
   );
 }

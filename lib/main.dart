@@ -6,7 +6,6 @@ import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shopesapp/data/repositories/posts_repository.dart';
 import 'package:shopesapp/logic/cubites/cubit/auth_cubit.dart';
 import 'package:shopesapp/logic/cubites/cubit/internet_cubit.dart';
 import 'package:shopesapp/logic/cubites/cubit/profile_cubit.dart';
@@ -61,9 +60,7 @@ class MyApp extends StatelessWidget {
           create: (context) => InternetCubit(connectivity: connectivity),
         ),
         BlocProvider(
-          create: (context) => PostsCubit(
-            PostsRepository(),
-          )..getPosts(),
+          create: (context) => PostsCubit(),
         ),
         BlocProvider(
           create: (context) => GetOwnerShopsCubit(),

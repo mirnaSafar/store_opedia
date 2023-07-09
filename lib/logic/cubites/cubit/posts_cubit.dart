@@ -8,15 +8,15 @@ import '../../../data/repositories/posts_repository.dart';
 import 'internet_cubit.dart';
 
 part 'posts_state.dart';
-
-class PostsCubit extends Cubit<PostsState> {
+//Duplicated
+/*class PostsCubit extends Cubit<PostsState> {
   final PostsRepository _postsRepository;
   late List _newestPosts = [];
   late List _oldestPosts = [];
 
   PostsCubit(this._postsRepository) : super(PostsInitial());
 
-  Future getPosts() async {
+  /* Future getPosts() async {
 //Test the internet Cubit check tht connection
     emit(FeatchingPostsProgress());
     BlocListener<InternetCubit, InternetState>(
@@ -43,7 +43,7 @@ class PostsCubit extends Cubit<PostsState> {
         }
       },
     );
-  }
+  }*/
 
   Future getOldestPosts() async {
     emit(FeatchingPostsProgress());
@@ -54,4 +54,4 @@ class PostsCubit extends Cubit<PostsState> {
       emit(OldestPostsFiltered());
     }
   }
-}
+}*/

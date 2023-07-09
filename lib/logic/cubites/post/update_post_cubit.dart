@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:shopesapp/data/repositories/posts_repository.dart';
+import 'package:shopesapp/main.dart';
 
 part 'update_post_state.dart';
 
@@ -10,19 +11,20 @@ class UpdatePostCubit extends Cubit<UpdatePostState> {
   Future updatePost(
       {required String postID,
       required String shopID,
-      required String title,
+      required String name,
       required String description,
-      required String? postImages,
+      required String? photos,
       required String category,
-      required String productPrice}) async {
+      required String price}) async {
     String response = await _postsRepository.updatePost(
         postID: postID,
         shopID: shopID,
-        title: title,
+        name: name,
         description: description,
-        postImages: postImages,
-        category: category,
-        productPrice: productPrice);
+        photos: photos,
+        // category: category,
+        price: price,
+        ownerID: globalSharedPreference.getString("ID")!);
     if (response == "Failed") {
       emit(UpdatePostFailed(
           message:

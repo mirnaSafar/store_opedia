@@ -10,22 +10,27 @@ import '../../../data/repositories/posts_repository.dart';
 part 'posts_state.dart';
 
 class PostsCubit extends Cubit<PostsState> {
-  final PostsRepository _postsRepository;
-  late List _newestPosts = [];
-  late List _oldestPosts = [];
+  List<dynamic> newestPosts = [];
+  List<dynamic> oldestPosts = [];
 
-  PostsCubit(this._postsRepository) : super(PostsInitial());
+  List<dynamic> ownerPosts = [];
 
-  Future getPosts() async {
+  void setOwnerPost({required var posts}) {
+    ownerPosts = posts;
+  }
+
+  PostsCubit() : super(PostsInitial());
+
+/*  Future getPosts() async {
 //Test the internet Cubit check tht connection
     emit(FeatchingPostsProgress());
     BlocListener<InternetCubit, InternetState>(
       listener: (context, state) async {
         if (state is InternetConnected) {
-          Map<String, dynamic>? response = await _postsRepository.getPosts();
+          Map<String, dynamic>? response = await PostsRepository().getPosts();
           if (response!["message"] == "Success") {
-            _newestPosts = response["posts"] as List;
-            if (_newestPosts.isEmpty) {
+            newestPosts = response["posts"] as List;
+            if (newestPosts.isEmpty) {
               emit(NoPostYet());
             } else {
               emit(PostsFetchedSuccessfully());
@@ -43,14 +48,36 @@ class PostsCubit extends Cubit<PostsState> {
         }
       },
     );
+  }*/
+
+  Future getOwnerPosts({
+    required String ownerID,
+    required String shopID,
+  }) async {
+    emit(FeatchingPostsProgress());
+    Map<String, dynamic>? response = await PostsRepository().getShopPosts(
+      ownerID: ownerID,
+      shopID: shopID,
+    );
+    if (response!["message"] == "Success") {
+      newestPosts = response["posts"] as List;
+      if (newestPosts.isEmpty) {
+        emit(NoPostYet());
+      } else {
+        setOwnerPost(posts: response["posts"]);
+        emit(PostsFetchedSuccessfully());
+      }
+    } else {
+      emit(ErrorFetchingPosts(message: response["message"]));
+    }
   }
 
   Future getOldestPosts() async {
     emit(FeatchingPostsProgress());
-    if (_newestPosts.isEmpty) {
+    if (newestPosts.isEmpty) {
       emit(NoPostYet());
     } else {
-      _oldestPosts = List.from(_newestPosts.reversed);
+      oldestPosts = List.from(newestPosts.reversed);
       emit(OldestPostsFiltered());
     }
   }

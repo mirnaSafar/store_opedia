@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:shopesapp/main.dart';
 
 import '../../../data/repositories/posts_repository.dart';
 
@@ -12,26 +13,20 @@ class AddPostCubit extends Cubit<AddPostState> {
       {
       //required String ownerName,
       required String shopeID,
-      required String ownerPhoneNumber,
-      required String shopeName,
-      required String location,
       required String title,
       required String description,
       required String? postImage,
       required String category,
-      required String productPrice}) async {
+      required String price}) async {
     emit(AddPostProgress());
     String response = await _postsRepository.addPost(
-        location: location,
-        //socialUrls:socialUrls,
-        ownerPhoneNumber: ownerPhoneNumber,
         shopeID: shopeID,
-        shopeName: shopeName,
-        title: title,
+        ownerID: globalSharedPreference.getString("ID")!,
+        name: title,
         description: description,
-        postImage: postImage,
+        photos: postImage,
         category: category,
-        productPrice: productPrice);
+        price: price);
     if (response == "Failed") {
       emit(AddPostFailed(
           message: "Failed to Add the Post , Check your internet connection"));
