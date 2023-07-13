@@ -1,19 +1,19 @@
 import 'dart:io';
 
-import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shopesapp/data/enums/message_type.dart';
-import 'package:shopesapp/logic/cubites/shop/store_cubit.dart';
 import 'package:shopesapp/presentation/pages/signup_categories_page.dart';
+import 'package:shopesapp/presentation/pages/switch_store.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_button.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/user_input.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 
 import '../../data/enums/file_type.dart';
+import '../../logic/cubites/shop/add_shop_cubit.dart';
+
 import '../shared/custom_widgets/custom_text.dart';
 import '../shared/custom_widgets/custom_toast.dart';
 import '../shared/utils.dart';
@@ -38,7 +38,9 @@ class _EditStoreState extends State<AddStorePage> {
   TextEditingController storeFacebookController = TextEditingController();
   TextEditingController storeLocationController = TextEditingController();
   TextEditingController storeEmailController = TextEditingController();
-
+  TextEditingController storeStartWorkTimecontroller = TextEditingController();
+  TextEditingController storeEndWorkTimeController = TextEditingController();
+  TimeOfDay initTime = TimeOfDay.now();
   final ImagePicker picker = ImagePicker();
   FileTypeModel? selectedFile;
 
@@ -71,219 +73,250 @@ class _EditStoreState extends State<AddStorePage> {
     final w = MediaQuery.of(context).size.width;
     final size = MediaQuery.of(context).size;
     return SafeArea(
-        child: Scaffold(
-      backgroundColor: AppColors.mainWhiteColor,
-      appBar: AppBar(
-        leading: const BackButton(color: Colors.black),
+      child: Scaffold(
         backgroundColor: AppColors.mainWhiteColor,
-        title: CustomText(
-          text: 'Add Store',
-          fontSize: w * 0.05,
-          // textColor: AppColors.mainWhiteColor,
+        appBar: AppBar(
+          leading: const BackButton(color: Colors.black),
+          backgroundColor: AppColors.mainWhiteColor,
+          title: CustomText(
+            text: 'Add Store',
+            fontSize: w * 0.05,
+            // textColor: AppColors.mainWhiteColor,
+          ),
+          elevation: 0,
         ),
-        elevation: 0,
-      ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: w * 0.04, vertical: w * 0.04),
-        child: SingleChildScrollView(
-          child: Form(
-            key: formKey,
-            child: Column(children: [
-              (w * 0.05).ph,
-              Center(
-                child: Stack(
-                  alignment: AlignmentDirectional.bottomEnd,
-                  children: [
-                    InkWell(
-                        onTap:
-                            selectedFile == null || selectedFile!.path.isEmpty
-                                ? () {
-                                    pickImageDialg();
-                                    setState(() {});
-                                  }
-                                : null,
-                        child: CircleAvatar(
-                          radius: w * 0.15,
-                          backgroundImage: selectedFile != null
-                              ? FileImage(File(selectedFile!.path))
-                              : null,
-                          child:
+        body: Padding(
+          padding:
+              EdgeInsets.symmetric(horizontal: w * 0.04, vertical: w * 0.04),
+          child: SingleChildScrollView(
+            child: Form(
+              key: formKey,
+              child: Column(children: [
+                (w * 0.05).ph,
+                Center(
+                  child: Stack(
+                    alignment: AlignmentDirectional.bottomEnd,
+                    children: [
+                      InkWell(
+                          onTap:
                               selectedFile == null || selectedFile!.path.isEmpty
-                                  ? const Icon(Icons.image)
+                                  ? () {
+                                      pickImageDialg();
+                                      setState(() {});
+                                    }
                                   : null,
-                        )),
-                    Visibility(
-                      visible:
-                          selectedFile != null && selectedFile!.path.isNotEmpty,
-                      child: InkWell(
-                        onTap: () {
-                          pickImageDialg();
-                          setState(() {});
-                        },
-                        child: CircleAvatar(
-                            radius: w * 0.04,
-                            backgroundColor: AppColors.mainOrangeColor,
-                            child: const Icon(Icons.edit)),
+                          child: CircleAvatar(
+                            radius: w * 0.15,
+                            backgroundImage: selectedFile != null
+                                ? FileImage(File(selectedFile!.path))
+                                : null,
+                            child: selectedFile == null ||
+                                    selectedFile!.path.isEmpty
+                                ? const Icon(Icons.image)
+                                : null,
+                          )),
+                      Visibility(
+                        visible: selectedFile != null &&
+                            selectedFile!.path.isNotEmpty,
+                        child: InkWell(
+                          onTap: () {
+                            pickImageDialg();
+                            setState(() {});
+                          },
+                          child: CircleAvatar(
+                              radius: w * 0.04,
+                              backgroundColor: AppColors.mainOrangeColor,
+                              child: const Icon(Icons.edit)),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              (w * 0.04).ph,
-              const CustomText(text: 'store profile'),
-              (w * 0.08).ph,
-              CustomButton(
-                text: 'Select Store category',
-                borderColor: AppColors.mainTextColor,
-                textColor: AppColors.secondaryFontColor,
-                color: const Color.fromRGBO(242, 242, 242, 1),
-                onPressed: () {
-                  context.push(const SignUpCategoriesPage());
-                },
-              ),
-              UserInput(
-                  text: 'Store name',
-                  controller: storeNameController,
-                  validator: (name) => nameValidator(name, 'enter store name')
-                  // return null;
+                    ],
                   ),
-              UserInput(
+                ),
+                (w * 0.04).ph,
+                const CustomText(text: 'store profile'),
+                (w * 0.08).ph,
+                CustomButton(
+                  text: 'Select Store category',
+                  borderColor: AppColors.mainTextColor,
+                  textColor: AppColors.secondaryFontColor,
+                  color: const Color.fromRGBO(242, 242, 242, 1),
+                  onPressed: () {
+                    context.push(const SignUpCategoriesPage());
+                  },
+                ),
+                UserInput(
+                    text: 'Store name',
+                    controller: storeNameController,
+                    validator: (name) => nameValidator(name, 'enter store name')
+                    // return null;
+                    ),
+                /*    UserInput(
                   text: 'Email',
                   controller: storeEmailController,
                   validator: (email) =>
                       emailValidator(email, 'email is required')
                   // return null;
-                  ),
-              UserInput(
-                text: 'Store description',
-                controller: storeDescriptionController,
-              ),
-              UserInput(
-                  text: 'Store number',
-                  controller: storeNumberController,
-                  validator: (number) =>
-                      numberValidator(number, 'enter store number')
-                  // return null;
-                  ),
-              Row(
-                children: [
-                  Expanded(
-                    child: UserInput(
-                      text: 'Start Work hour',
-                      controller: startHourController,
+                  ),*/
+                UserInput(
+                  text: 'Store description',
+                  controller: storeDescriptionController,
+                ),
+                UserInput(
+                    text: 'Store number',
+                    controller: storeNumberController,
+                    validator: (number) =>
+                        numberValidator(number, 'enter store number')
+                    // return null;
                     ),
+                CustomText(
+                  text: 'Store Work Time',
+                  textColor: AppColors.secondaryFontColor,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(
+                          width: 80,
+                          child: GestureDetector(
+                            onTap: () async {
+                              await showTimePicker(
+                                      context: context,
+                                      initialTime: TimeOfDay.now())
+                                  .then((value) {
+                                setState(() {
+                                  storeStartWorkTimecontroller.text =
+                                      value!.format(context);
+                                });
+                              });
+                            },
+                            child: CustomText(
+                              text: storeStartWorkTimecontroller.text == ""
+                                  ? initTime.format(context)
+                                  : storeStartWorkTimecontroller.text,
+                            ),
+                          )),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 15.0),
+                        child: CustomText(
+                          text: 'to',
+                          textColor: AppColors.secondaryFontColor,
+                        ),
+                      ),
+                      SizedBox(
+                          width: 80,
+                          child: GestureDetector(
+                            onTap: () async {
+                              await showTimePicker(
+                                      context: context,
+                                      initialTime: TimeOfDay.now())
+                                  .then((value) {
+                                setState(() {
+                                  storeEndWorkTimeController.text =
+                                      value!.format(context);
+                                });
+                              });
+                            },
+                            child: CustomText(
+                              text: storeEndWorkTimeController.text == ""
+                                  ? initTime.format(context)
+                                  : storeEndWorkTimeController.text,
+                            ),
+                          )),
+                    ],
                   ),
+                ),
+                UserInput(
+                  text: 'store location',
+                  controller: storeLocationController,
+                ),
+                UserInput(
+                  text: 'instagram account',
+                  controller: storeInstagramController,
+                ),
+                UserInput(
+                  text: 'facebook account',
+                  controller: storeFacebookController,
+                ),
+                (w * 0.08).ph,
+                Row(children: [
                   Expanded(
-                    child: UserInput(
-                      text: 'End work hour',
-                      controller: endWorkHourController,
-                    ),
-                  ),
-                ],
-              ),
-              UserInput(
-                text: 'store location',
-                controller: storeLocationController,
-              ),
-              UserInput(
-                text: 'instagram account',
-                controller: storeInstagramController,
-              ),
-              UserInput(
-                text: 'facebook account',
-                controller: storeFacebookController,
-              ),
-              (w * 0.08).ph,
-              Row(children: [
-                Expanded(
-                    child: CustomButton(
-                  onPressed: () {
-                    context.pop();
-                  },
-                  text: 'cancel',
-                  color: AppColors.mainWhiteColor,
-                  textColor: AppColors.mainOrangeColor,
-                  borderColor: AppColors.mainOrangeColor,
-                )),
-                (w * 0.09).px,
-                Expanded(
-                    child: BlocProvider(
-                  create: (context) => StoreCubit(),
-                  child: BlocConsumer<StoreCubit, StoreState>(
-                    listener: (context, state) {
-                      state is AddShopProgress
-                          ? BotToast.showCustomLoading(toastBuilder: (context) {
-                              return SizedBox(
-                                width: w / 4,
-                                height: w / 4,
-                                child: SpinKitCircle(
-                                  color: AppColors.mainOrangeColor,
-                                  size: w / 8,
-                                ),
-                              );
-                            })
-                          : state is AddShopSucceed
-                              ? {
-                                  BotToast.closeAllLoading(),
-                                  Future.delayed(
-                                          const Duration(milliseconds: 1000),
-                                          CustomToast.showMessage(
-                                              size: size,
-                                              messageType: MessageType.SUCCESS,
-                                              message:
-                                                  'Store created successfully!'))
-                                      .then((value) => context.pop()),
-                                }
-                              : {
-                                  BotToast.closeAllLoading(),
-                                  Future.delayed(
-                                      const Duration(milliseconds: 1000),
-                                      CustomToast.showMessage(
-                                          size: size,
-                                          messageType: MessageType.REJECTED,
-                                          message: 'Failed to create Store !'))
-                                };
+                      child: CustomButton(
+                    onPressed: () {
+                      context.pop();
                     },
-                    builder: (context, state) {
-                      return CustomButton(
-                          text: 'Create',
-                          textColor: AppColors.mainWhiteColor,
-                          onPressed: () {
-                            !formKey.currentState!.validate() &&
-                                    (selectedFile == null ||
-                                        selectedFile!.path.isEmpty)
+                    text: 'cancel',
+                    color: AppColors.mainWhiteColor,
+                    textColor: AppColors.mainOrangeColor,
+                    borderColor: AppColors.mainOrangeColor,
+                  )),
+                  (w * 0.09).px,
+                  Expanded(
+                    child: BlocProvider(
+                      create: (context) => AddShopCubit(),
+                      child: BlocConsumer<AddShopCubit, AddShopState>(
+                        listener: (context, state) {
+                          if (state is AddShopSucceed) {
+                            CustomToast.showMessage(
+                                context: context,
+                                size: size,
+                                message: 'Store created successfully!',
+                                messageType: MessageType.SUCCESS);
+
+                            //  context.read<AuthCubit>().userBecomeOwner();
+
+                            context.pushRepalceme(const SwitchStore());
+                          } else if (state is AddShopFailed) {
+                            CustomToast.showMessage(
+                                context: context,
+                                size: size,
+                                message: state.message,
+                                messageType: MessageType.REJECTED);
+                          }
+                        },
+                        builder: (context, state) {
+                          if (state is AddShopProgress) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                          return CustomButton(
+                            text: 'Create',
+                            textColor: AppColors.mainWhiteColor,
+                            onPressed: () {
+                              /*  !formKey.currentState!.validate()
                                 ? CustomToast.showMessage(
+                                    context: context,
                                     size: size,
                                     message: 'invalid information',
                                     messageType: MessageType.WARNING)
-                                : {
-                                    formKey.currentState!.save(),
-                                    context.read<StoreCubit>().addShop(
-                                        owner: {'id': '1'},
-                                        shopName: storeNameController.text,
-                                        shopDescription:
-                                            storeDescriptionController.text,
-                                        shopProfileImage: selectedFile!.path,
-                                        shopCoverImage: null,
-                                        shopCategory:
-                                            storeCategoryController.text,
-                                        location: storeLocationController.text,
-                                        endWorkTime: endWorkHourController.text,
-                                        startWorkTime: startHourController.text,
-                                        socialUrl: [''],
-                                        shopPhoneNumber:
-                                            storeNumberController.text),
-                                  };
-                          });
-                    },
-                  ),
-                )),
+                                : {*/
+                              formKey.currentState!.save();
+                              context.read<AddShopCubit>().addShop(
+                                  shopName: storeNameController.text,
+                                  shopDescription:
+                                      storeDescriptionController.text,
+                                  shopProfileImage: selectedFile!.path,
+                                  shopCoverImage: "noImage",
+                                  shopCategory: "shop",
+                                  location: storeLocationController.text,
+                                  closing: storeEndWorkTimeController.text,
+                                  opening: storeStartWorkTimecontroller.text,
+                                  shopPhoneNumber: storeNumberController.text);
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  )
+                ]),
               ]),
-            ]),
+            ),
           ),
         ),
       ),
-    ));
+    );
   }
 
   Future pickImageDialg() {

@@ -1,11 +1,10 @@
 import 'dart:io';
 
-import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shopesapp/data/enums/message_type.dart';
-import 'package:shopesapp/logic/cubites/shop/store_cubit.dart';
+import 'package:shopesapp/main.dart';
 import 'package:shopesapp/presentation/pages/signup_categories_page.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_button.dart';
@@ -13,6 +12,7 @@ import 'package:shopesapp/presentation/shared/custom_widgets/user_input.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 
 import '../../data/enums/file_type.dart';
+import '../../logic/cubites/shop/edit_shop_cubit.dart';
 import '../shared/custom_widgets/custom_text.dart';
 import '../shared/custom_widgets/custom_toast.dart';
 import '../shared/utils.dart';
@@ -30,12 +30,33 @@ class _EditStoreState extends State<EditStore> {
   TextEditingController storeNameController = TextEditingController();
   TextEditingController storeNumberController = TextEditingController();
   TextEditingController storeCategoryController = TextEditingController();
-  TextEditingController startWorkHoursController = TextEditingController();
-  TextEditingController endWorkHoursController = TextEditingController();
+  TextEditingController storeStartWorkTimecontroller = TextEditingController();
+  TextEditingController storeEndWorkTimeController = TextEditingController();
   TextEditingController storeDescriptionController = TextEditingController();
   TextEditingController storeInstagramController = TextEditingController();
   TextEditingController storeFacebookController = TextEditingController();
   TextEditingController storeLocationController = TextEditingController();
+
+  @override
+  void initState() {
+    storeNameController.text =
+        globalSharedPreference.getString("shopName") ?? 'Store name';
+    storeNumberController.text =
+        globalSharedPreference.getString("shopPhoneNumber") ?? 'Store number';
+    storeCategoryController.text =
+        globalSharedPreference.getString("shopCategory") ?? "store Category ";
+    storeDescriptionController.text =
+        globalSharedPreference.getString("shopDescription") ??
+            'Store description';
+    storeLocationController.text =
+        globalSharedPreference.getString("location") ?? "'store location'";
+    storeStartWorkTimecontroller.text =
+        globalSharedPreference.getString("startWorkTime") ?? "startWorkTime ";
+    storeEndWorkTimeController.text =
+        globalSharedPreference.getString("endWorkTime") ?? "endWorkTime ";
+
+    super.initState();
+  }
 
   final ImagePicker picker = ImagePicker();
   FileTypeModel? coverSelectedFile;
@@ -209,21 +230,60 @@ class _EditStoreState extends State<EditStore> {
                       numberValidator(number, 'enter store number')
                   // return null;
                   ),
-              Row(
-                children: [
-                  Expanded(
-                    child: UserInput(
-                      text: 'Start Work hour',
-                      controller: startWorkHoursController,
+              CustomText(
+                text: 'Store Work Time',
+                textColor: AppColors.secondaryFontColor,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                        width: 80,
+                        child: GestureDetector(
+                          onTap: () async {
+                            await showTimePicker(
+                                    context: context,
+                                    initialTime: TimeOfDay.now())
+                                .then((value) {
+                              setState(() {
+                                storeStartWorkTimecontroller.text =
+                                    value!.format(context);
+                              });
+                            });
+                          },
+                          child: CustomText(
+                            text: storeStartWorkTimecontroller.text,
+                          ),
+                        )),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 15.0),
+                      child: CustomText(
+                        text: 'to',
+                        textColor: AppColors.secondaryFontColor,
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: UserInput(
-                      text: 'End work hour',
-                      controller: endWorkHoursController,
-                    ),
-                  ),
-                ],
+                    SizedBox(
+                        width: 80,
+                        child: GestureDetector(
+                          onTap: () async {
+                            await showTimePicker(
+                                    context: context,
+                                    initialTime: TimeOfDay.now())
+                                .then((value) {
+                              setState(() {
+                                storeEndWorkTimeController.text =
+                                    value!.format(context);
+                              });
+                            });
+                          },
+                          child: CustomText(
+                            text: storeEndWorkTimeController.text,
+                          ),
+                        )),
+                  ],
+                ),
               ),
               UserInput(
                 text: 'instagram account',
@@ -260,87 +320,64 @@ class _EditStoreState extends State<EditStore> {
                   borderColor: Theme.of(context).colorScheme.primary,
                 )),
                 70.px,
-                Expanded(
-                  child: BlocConsumer<StoreCubit, StoreState>(
-                    listener: (context, state) async {
-                      if (state is UpdateShopSucceed) {
-                        CustomToast.showMessage(
-                            size: size,
-                            message: "store edited Successfully",
-                            messageType: MessageType.SUCCESS);
-                        // await context.read<PostsCubit>().getPosts();
-                      } else if (state is UpdateShopFailed) {
-                        CustomToast.showMessage(
-                            size: size,
-                            message: state.message,
-                            messageType: MessageType.REJECTED);
-                      }
-                    },
-                    builder: (context, state) {
-                      if (state is UpdateShopProgress) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      return CustomButton(
-                        text: 'Submit',
-                        textColor: AppColors.mainWhiteColor,
-                        onPressed: () {
-                          !formKey.currentState!.validate()
-                              ? CustomToast.showMessage(
-                                  size: size,
-                                  message: 'invalid information',
-                                  messageType: MessageType.WARNING)
-                              : {
-                                  Future.delayed(
-                                          const Duration(milliseconds: 1000))
-                                      .then((value) => {
-                                            // BotToast.showCustomLoading(
-                                            //     toastBuilder: (context) {
-                                            //   return SizedBox(
-                                            //     width: w / 4,
-                                            //     height: w / 4,
-                                            //     child: SpinKitCircle(
-                                            //       color:
-                                            //           AppColors.mainOrangeColor,
-                                            //       size: w / 8,
-                                            //     ),
-                                            //   );
-                                            // }),
-                                            formKey.currentState!.save(),
-                                            context
-                                                .read<StoreCubit>()
-                                                .updateShop(
-                                              shopID: '1',
-                                              shopName:
-                                                  storeNameController.text,
-                                              shopDescription:
-                                                  storeDescriptionController
-                                                      .text,
-                                              shopProfileImage:
-                                                  profileSelectedFile!.path,
-                                              shopCoverImage:
-                                                  coverSelectedFile!.path,
-                                              shopCategory:
-                                                  storeCategoryController.text,
-                                              location:
-                                                  storeLocationController.text,
-                                              startWorkTime:
-                                                  startWorkHoursController.text,
-                                              shopPhoneNumber:
-                                                  storeNumberController.text,
-                                              endWorkTime:
-                                                  endWorkHoursController.text,
-                                              socialUrl: [
-                                                storeInstagramController.text,
-                                                storeFacebookController.text
-                                              ],
-                                            ),
-                                            BotToast.closeAllLoading(),
-                                            context.pop()
-                                          })
-                                };
-                        },
-                      );
-                    },
+                BlocProvider(
+                  create: (context) => EditShopCubit(),
+                  child: Expanded(
+                    child: BlocConsumer<EditShopCubit, EditShopState>(
+                      listener: (context, state) {
+                        if (state is EditShopSucceed) {
+                          CustomToast.showMessage(
+                              context: context,
+                              size: size,
+                              message: "information  update Successfully",
+                              messageType: MessageType.SUCCESS);
+                        } else if (state is EditShopFailed) {
+                          CustomToast.showMessage(
+                              context: context,
+                              size: size,
+                              message: state.message,
+                              messageType: MessageType.REJECTED);
+                        }
+                      },
+                      builder: (context, state) {
+                        if (state is EditShopProgress) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+                        return CustomButton(
+                          text: 'Submit',
+                          textColor: AppColors.mainWhiteColor,
+                          onPressed: () {
+                            !formKey.currentState!.validate()
+                                ? CustomToast.showMessage(
+                                    context: context,
+                                    size: size,
+                                    message: 'invalid information',
+                                    messageType: MessageType.WARNING)
+                                : {
+                                    formKey.currentState!.save(),
+                                    context.read<EditShopCubit>().editShop(
+                                        shopName: storeNameController.text,
+                                        shopDescription:
+                                            storeDescriptionController.text,
+                                        shopProfileImage:
+                                            profileSelectedFile?.path ?? '',
+                                        shopCoverImage:
+                                            coverSelectedFile?.path ?? '',
+                                        shopCategory:
+                                            storeCategoryController.text,
+                                        location: storeLocationController.text,
+                                        closing:
+                                            storeStartWorkTimecontroller.text,
+                                        opening:
+                                            storeEndWorkTimeController.text,
+                                        shopPhoneNumber:
+                                            storeNumberController.text)
+                                  };
+                          },
+                        );
+                      },
+                    ),
                   ),
                 ),
               ]),

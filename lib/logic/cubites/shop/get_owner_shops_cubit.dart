@@ -23,7 +23,7 @@ class GetOwnerShopsCubit extends Cubit<GetOwnerShopsState> {
       setOwnerShop(shops: response["shops"]);
 
       emit(GetOwnerShopsSucceed());
-    } else if (response["message"] != "Succeed") {
+    } else if (response == null || response["message"] != "Succeed") {
       emit(GetOwnerShopsFiled(
           message: response == null
               ? "Filed to delet the user , Check your internet connection"

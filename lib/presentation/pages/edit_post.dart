@@ -9,7 +9,6 @@ import 'package:shopesapp/data/enums/file_type.dart';
 import 'package:shopesapp/data/enums/message_type.dart';
 import 'package:shopesapp/data/repositories/posts_repository.dart';
 import 'package:shopesapp/logic/cubites/cubit/posts_cubit.dart';
-import 'package:shopesapp/logic/cubites/cubit/update_post_cubit.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_button.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
@@ -19,6 +18,7 @@ import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/presentation/shared/fonts.dart';
 import 'package:shopesapp/presentation/shared/utils.dart';
 
+import '../../logic/cubites/post/update_post_cubit.dart';
 import '../shared/validation_functions.dart';
 
 class EditPostPage extends StatefulWidget {
@@ -169,13 +169,15 @@ class _EditPostPageState extends State<EditPostPage> {
                       CustomToast.showMessage(
                           size: size,
                           message: " Post edited Successfully",
-                          messageType: MessageType.SUCCESS);
+                          messageType: MessageType.SUCCESS,
+                          context: context);
                       await context.read<PostsCubit>().getPosts();
                     } else if (state is UpdatePostFailed) {
                       CustomToast.showMessage(
                           size: size,
                           message: state.message,
-                          messageType: MessageType.REJECTED);
+                          messageType: MessageType.REJECTED,
+                          context: context);
                     }
                   },
                   builder: (context, state) {
@@ -190,7 +192,8 @@ class _EditPostPageState extends State<EditPostPage> {
                             ? CustomToast.showMessage(
                                 size: size,
                                 message: 'Please check required fields',
-                                messageType: MessageType.REJECTED)
+                                messageType: MessageType.REJECTED,
+                                context: context)
                             : Future.delayed(
                                 const Duration(milliseconds: 1000),
                                 () {

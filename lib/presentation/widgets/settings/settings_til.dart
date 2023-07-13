@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:shopesapp/presentation/pages/add_store_page.dart';
+import 'package:shopesapp/presentation/pages/owner_signup.dart';
 import 'package:shopesapp/presentation/pages/porfile.dart';
 import 'package:shopesapp/presentation/pages/privacy%20policies.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
@@ -64,7 +65,6 @@ Widget buildThemes(BuildContext context) => SimpleSettingsTile(
 Widget buildPrivacy(BuildContext context) => SimpleSettingsTile(
       title: "Privacy & Policies",
       leading: iconWidget(icon: Icons.lock, color: Colors.amber),
-      // onTap: () => Navigator.pushNamed(context, '/privacy&policies'),
       child: const PrivacyPlicies(),
     );
 
@@ -83,6 +83,12 @@ Widget buildSwitchSotre(BuildContext context) => SimpleSettingsTile(
       leading:
           iconWidget(icon: Icons.compare_arrows_rounded, color: Colors.green),
       child: const SwitchStore(),
+    );
+
+Widget buildSwitchUserAccount(BuildContext context) => SimpleSettingsTile(
+      title: "Add Stroe and Switch to Owner Account",
+      leading: iconWidget(icon: Icons.add, color: Colors.green),
+      child: const OwnerSignUp(),
     );
 
 Widget buildAbout(BuildContext context) => ExpandableSettingsTile(
@@ -113,8 +119,7 @@ Widget buildContactUs(BuildContext context, Size size) {
 
       final Uri emailUrl = Uri(
           scheme: 'malito',
-          //put anas email to add the email to backend
-          path: "AnasAttoum.12321@gmail.com",
+          path: "email.com",
           query: encodeQueryParameters(<String, String>{
             'subject': 'Store Opedia',
             'body': "Hello Admin "
@@ -124,6 +129,7 @@ Widget buildContactUs(BuildContext context, Size size) {
         launchUrl(emailUrl);
       } else {
         CustomToast.showMessage(
+            context: context,
             size: size,
             message: 'Please check the Internet Connection',
             messageType: MessageType.REJECTED);

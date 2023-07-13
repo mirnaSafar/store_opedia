@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../shared/utils.dart';
+
 // ignore: must_be_immutable
 class EditPasswordFormField extends StatefulWidget {
   EditPasswordFormField(
@@ -62,8 +64,8 @@ class _EditPasswordFormFieldState extends State<EditPasswordFormField> {
                 )),
       obscureText: widget.isPasswordHidden,
       validator: (String? value) {
-        if (value!.isEmpty || value.length < 5) {
-          return 'Password  must be +5 chars';
+        if (validPassword(value!)) {
+          return 'Password  must be +8 Chars and include Uppare and Lower Chars ';
         }
         return null;
       },

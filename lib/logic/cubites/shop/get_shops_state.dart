@@ -1,5 +1,6 @@
 part of 'get_shops_cubit.dart';
 
+@immutable
 abstract class GetShopsState {}
 
 class GetShopsInitial extends GetShopsState {}

@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
-import 'package:flutter/material.dart';
+import 'package:meta/meta.dart';
+import 'package:shopesapp/logic/cubites/shop/get_owner_shops_cubit.dart';
 import 'package:shopesapp/main.dart';
 
 import '../../../../data/repositories/shop_repository.dart';

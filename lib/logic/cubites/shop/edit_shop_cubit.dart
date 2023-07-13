@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:flutter/material.dart';
+import 'package:meta/meta.dart';
 import 'package:shopesapp/data/models/shop.dart';
 import 'package:shopesapp/data/repositories/auth_repository.dart';
 

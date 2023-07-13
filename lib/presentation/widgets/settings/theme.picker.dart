@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../constant/themes.dart';
-import '../../../logic/cubites/themes_cubit.dart';
+import '../../../logic/cubites/mode/themes_cubit.dart';
 
 void showThemePicker(BuildContext context) async {
   return await showDialog(
