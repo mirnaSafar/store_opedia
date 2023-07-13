@@ -37,37 +37,40 @@ class _SwitchStoreState extends State<SwitchStore> {
           title: const Text("My Shops"),
           centerTitle: true,
         ),
-        body: BlocConsumer<GetOwnerShopsCubit, GetOwnerShopsState>(
-          listener: (context, state) {
-            if (state is GetOwnerShopsFiled) {
-              buildAwsomeDialog(
-                      context, "Filed", state.message.toUpperCase(), "OK",
-                      type: DialogType.ERROR)
-                  .show();
-            } else if (state is GetOwnerShopsSucceed) {}
-          },
-          builder: (context, state) {
-            if (state is GetOwnerShopsProgress) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (state is GetOwnerShopsSucceed) {
-              ownerShpos =
-                  BlocProvider.of<GetOwnerShopsCubit>(context).ownerShops;
-              if (ownerShpos.length == 1) {
-                isLastShop = true;
-              }
+        body: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 30.0),
+          child: BlocConsumer<GetOwnerShopsCubit, GetOwnerShopsState>(
+            listener: (context, state) {
+              if (state is GetOwnerShopsFiled) {
+                buildAwsomeDialog(
+                        context, "Filed", state.message.toUpperCase(), "OK",
+                        type: DialogType.ERROR)
+                    .show();
+              } else if (state is GetOwnerShopsSucceed) {}
+            },
+            builder: (context, state) {
+              if (state is GetOwnerShopsProgress) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (state is GetOwnerShopsSucceed) {
+                ownerShpos =
+                    BlocProvider.of<GetOwnerShopsCubit>(context).ownerShops;
+                if (ownerShpos.length == 1) {
+                  isLastShop = true;
+                }
 
-              return ListView.separated(
-                  itemBuilder: (context, index) {
-                    return buildShopItem(
-                        context, size, ownerShpos[index], isLastShop);
-                  },
-                  separatorBuilder: (context, index) => const CustomDivider(),
-                  itemCount: ownerShpos.length);
-            }
-            return buildError(size);
-          },
+                return ListView.separated(
+                    itemBuilder: (context, index) {
+                      return buildShopItem(
+                          context, size, ownerShpos[index], isLastShop);
+                    },
+                    separatorBuilder: (context, index) => const CustomDivider(),
+                    itemCount: ownerShpos.length);
+              }
+              return buildError(size);
+            },
+          ),
         ));
   }
 }

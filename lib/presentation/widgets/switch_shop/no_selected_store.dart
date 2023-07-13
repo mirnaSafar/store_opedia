@@ -24,7 +24,7 @@ Widget noSelectedShop(var size, BuildContext context) {
               height: size.height * 0.02,
             ),
             const CustomText(
-              text: "You Don't Selected Any Shop Yet ",
+              text: "You didn't Select Any Shop Yet ",
               bold: true,
               fontSize: 20,
             ),

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/data/models/post.dart';
@@ -23,7 +25,7 @@ class StorePage extends StatefulWidget {
   StorePage({
     Key? key,
     required this.shop,
-    bool? profileDisplay,
+    this.profileDisplay,
   }) : super(key: key);
   Shop shop;
   bool? profileDisplay;
@@ -32,6 +34,12 @@ class StorePage extends StatefulWidget {
 }
 
 class _StorePageState extends State<StorePage> {
+  @override
+  void initState() {
+    super.initState();
+    setState(() {});
+  }
+
   List<Post> postsList = [
     Post(
         title: ' headline6',
@@ -103,9 +111,12 @@ class _StorePageState extends State<StorePage> {
                 // alignment: AlignmentDirectional.topCenter,
                 children: [
                   SizedBox(
-                    child: Image.asset(
-                      'assets/verified.png',
-                      fit: BoxFit.fitWidth,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(w * 0.05),
+                      child: Image.file(
+                        File(widget.shop.shopCoverImage ?? ''),
+                        fit: BoxFit.fill,
+                      ),
                     ),
                     height: h / 5,
                     width: w,
@@ -125,7 +136,8 @@ class _StorePageState extends State<StorePage> {
                               child: CircleAvatar(
                                 radius: w * 0.11,
                                 backgroundColor: AppColors.mainTextColor,
-                                // child: Image.asset('assets/verified.png', fit: BoxFit.cover),
+                                backgroundImage: FileImage(
+                                    File(widget.shop.shopProfileImage ?? '')),
                               ),
                             ),
                             BlocBuilder<WorkTimeCubit, WorkTimeState>(
@@ -151,6 +163,37 @@ class _StorePageState extends State<StorePage> {
                                         CustomText(
                                           text: 'Open now',
                                           textColor: Colors.green,
+                                          fontSize: w * 0.03,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            BlocBuilder<WorkTimeCubit, WorkTimeState>(
+                              builder: (context, state) {
+                                return Visibility(
+                                  visible: state.isOpen != true,
+                                  child: Padding(
+                                    padding: EdgeInsetsDirectional.only(
+                                        start: w * 0.2, top: w * 0.16),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        CircleAvatar(
+                                          radius: w * 0.025,
+                                          backgroundColor:
+                                              AppColors.mainWhiteColor,
+                                          child: CircleAvatar(
+                                            radius: w * 0.02,
+                                            backgroundColor: Colors.red,
+                                          ),
+                                        ),
+                                        2.px,
+                                        CustomText(
+                                          text: 'Close now',
+                                          textColor: Colors.red,
                                           fontSize: w * 0.03,
                                         )
                                       ],
@@ -209,7 +252,9 @@ class _StorePageState extends State<StorePage> {
                   //     },
                   //     backgroundColor: AppColors.mainOrangeColor,
                   //     child: const Icon(Icons.edit)),
-                  Positioned(right: w * 0.06, child: _getFAB()),
+                  Visibility(
+                      visible: widget.profileDisplay ?? false,
+                      child: Positioned(right: w * 0.06, child: _getFAB())),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -390,7 +435,7 @@ class _StorePageState extends State<StorePage> {
             itemBuilder: (BuildContext context, int index) {
               return ProductPost(
                 post: postsList[index],
-                profileDisplay: widget.profileDisplay,
+                profileDisplay: widget.profileDisplay ?? false,
               );
             },
           ),
@@ -427,6 +472,7 @@ class _StorePageState extends State<StorePage> {
           child: const Icon(Icons.edit),
           onTap: () {
             context.push(const EditStore());
+            setState(() {});
           },
           label: 'Edit store information',
           labelStyle: TextStyle(

@@ -1,15 +1,15 @@
+import 'dart:io';
+
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/logic/cubites/cubit/auth_cubit.dart';
-import 'package:shopesapp/main.dart';
 import 'package:shopesapp/presentation/pages/login_page.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/presentation/widgets/switch_shop/alert_dialog.dart';
 import '../../../data/enums/message_type.dart';
 import '../../../logic/cubites/shop/delete_shop_cubit.dart';
-import '../../../logic/cubites/shop/get_owner_shops_cubit.dart';
 import '../../../logic/cubites/shop/switch_shop_cubit.dart';
 import '../../pages/control_page.dart';
 import '../../pages/switch_store.dart';
@@ -27,7 +27,8 @@ Widget buildShopItem(
         children: [
           CircleAvatar(
             maxRadius: 60,
-            child: Image.asset('assets/verified.png'),
+            // backgroundColor: AppColors.mainTextColor,
+            backgroundImage: FileImage(File(shop['shopProfileImage'])),
           ),
           40.px,
           Expanded(

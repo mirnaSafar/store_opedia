@@ -54,31 +54,42 @@ class _EditStoreState extends State<EditStore> {
         globalSharedPreference.getString("startWorkTime") ?? "startWorkTime ";
     storeEndWorkTimeController.text =
         globalSharedPreference.getString("endWorkTime") ?? "endWorkTime ";
+    profilePath = globalSharedPreference.getString("shopProfileImage") ?? '';
+    coverPath = globalSharedPreference.getString("shopCoverImage") ?? '';
 
     super.initState();
   }
 
   final ImagePicker picker = ImagePicker();
+  String? coverPath;
+  String? profilePath;
   FileTypeModel? coverSelectedFile;
   FileTypeModel? profileSelectedFile;
   Future<FileTypeModel> pickFile(FileType type, bool profile) async {
     String? path;
+    // coverSelectedFile?.path = coverPath!;
+    // profileSelectedFile?.path = profilePath!;
     switch (type) {
       case FileType.GALLERY:
         await picker.pickImage(source: ImageSource.gallery).then((value) =>
             path = profile
-                ? value?.path ?? profileSelectedFile?.path ?? ''
-                : value?.path ?? coverSelectedFile?.path ?? '');
+                ? value?.path ?? profileSelectedFile?.path ?? profilePath ?? ''
+                : value?.path ?? coverSelectedFile?.path ?? coverPath ?? '');
         context.pop();
+
+        globalSharedPreference.setString(
+            profile ? "shopProfileImage" : "shopCoverImage", path!);
 
         setState(() {});
         break;
       case FileType.CAMERA:
         await picker.pickImage(source: ImageSource.camera).then((value) =>
             path = profile
-                ? value?.path ?? profileSelectedFile?.path ?? ''
-                : value?.path ?? coverSelectedFile?.path ?? '');
+                ? value?.path ?? profileSelectedFile?.path ?? profilePath ?? ''
+                : value?.path ?? coverSelectedFile?.path ?? coverPath ?? '');
         context.pop();
+        globalSharedPreference.setString(
+            profile ? "shopProfileImage" : "shopCoverImage", path!);
 
         setState(() {});
 
@@ -125,11 +136,15 @@ class _EditStoreState extends State<EditStore> {
                             color: AppColors.mainOrangeColor,
                           ),
                           width: w,
-                          child: coverSelectedFile != null
+                          child: (coverSelectedFile != null) ||
+                                  (coverSelectedFile == null &&
+                                      coverPath != null)
                               ? ClipRRect(
                                   borderRadius: BorderRadius.circular(w * 0.05),
                                   child: Image.file(
-                                    File(coverSelectedFile!.path),
+                                    coverSelectedFile != null
+                                        ? File(coverSelectedFile!.path)
+                                        : File(coverPath!),
                                     fit: BoxFit.fill,
                                   ),
                                 )
@@ -159,35 +174,36 @@ class _EditStoreState extends State<EditStore> {
                   ),
                   Padding(
                     padding: EdgeInsetsDirectional.only(
-                        top: w * 0.3, start: w * 0.005),
+                        top: w * 0.35, start: w * 0.005),
                     child: Stack(
                       children: [
-                        InkWell(
-                            onTap: profileSelectedFile == null
-                                ? () {
-                                    pickImageDialg(true);
-                                    setState(() {});
-                                  }
-                                : null,
+                        CircleAvatar(
+                          radius: w * 0.12,
+                          backgroundColor: AppColors.mainWhiteColor,
+                          child: CircleAvatar(
+                            radius: w * 0.11,
+                            backgroundColor: AppColors.mainWhiteColor,
                             child: CircleAvatar(
-                              radius: w * 0.155,
-                              backgroundColor: AppColors.mainWhiteColor,
-                              child: CircleAvatar(
-                                backgroundColor:
-                                    Theme.of(context).colorScheme.primary,
-                                radius: w * 0.15,
-                                backgroundImage: profileSelectedFile != null
-                                    ? FileImage(File(profileSelectedFile!.path))
-                                    : null,
-                                child: profileSelectedFile == null ||
-                                        profileSelectedFile!.path.isEmpty
-                                    ? const Icon(Icons.image)
-                                    : null,
-                              ),
-                            )),
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.primary,
+                              radius: w * 0.12,
+                              backgroundImage: (profileSelectedFile != null) ||
+                                      (profileSelectedFile == null &&
+                                          profilePath != null)
+                                  ? FileImage(profileSelectedFile != null
+                                      ? File(profileSelectedFile!.path)
+                                      : File(profilePath!))
+                                  : null,
+                              child: profileSelectedFile == null &&
+                                      (profilePath == null)
+                                  ? const Icon(Icons.store)
+                                  : null,
+                            ),
+                          ),
+                        ),
                         Padding(
                           padding: EdgeInsetsDirectional.only(
-                              top: w * 0.22, start: w * 0.23),
+                              top: w * 0.17, start: w * 0.17),
                           child: InkWell(
                             onTap: () {
                               pickImageDialg(true);
@@ -230,19 +246,21 @@ class _EditStoreState extends State<EditStore> {
                       numberValidator(number, 'enter store number')
                   // return null;
                   ),
+              30.ph,
               CustomText(
                 text: 'Store Work Time',
                 textColor: AppColors.secondaryFontColor,
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 30.0, vertical: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     SizedBox(
-                        width: 80,
-                        child: GestureDetector(
-                          onTap: () async {
+                        width: 100,
+                        child: ElevatedButton(
+                          onPressed: () async {
                             await showTimePicker(
                                     context: context,
                                     initialTime: TimeOfDay.now())
@@ -265,9 +283,9 @@ class _EditStoreState extends State<EditStore> {
                       ),
                     ),
                     SizedBox(
-                        width: 80,
-                        child: GestureDetector(
-                          onTap: () async {
+                        width: 100,
+                        child: ElevatedButton(
+                          onPressed: () async {
                             await showTimePicker(
                                     context: context,
                                     initialTime: TimeOfDay.now())
@@ -329,7 +347,7 @@ class _EditStoreState extends State<EditStore> {
                           CustomToast.showMessage(
                               context: context,
                               size: size,
-                              message: "information  update Successfully",
+                              message: "information updated Successfully",
                               messageType: MessageType.SUCCESS);
                         } else if (state is EditShopFailed) {
                           CustomToast.showMessage(
@@ -372,7 +390,8 @@ class _EditStoreState extends State<EditStore> {
                                         opening:
                                             storeEndWorkTimeController.text,
                                         shopPhoneNumber:
-                                            storeNumberController.text)
+                                            storeNumberController.text),
+                                    setState(() {})
                                   };
                           },
                         );

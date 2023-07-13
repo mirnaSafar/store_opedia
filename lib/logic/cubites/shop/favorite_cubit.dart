@@ -25,6 +25,7 @@ class FavoriteCubit extends Cubit<FavoriteState> {
 
   void removeFromFavorites(Shop shop) {
     shop.isFavorit = false;
+    // globalSharedPreference.getString('')
     updatedFavoriteShops = state.favoriteShops
       ..removeWhere((jsonshop) =>
           shop.ownerID == Shop.fromJson(jsonshop).ownerID &&

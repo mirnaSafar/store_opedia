@@ -118,7 +118,7 @@ class PostsRepository {
       Uri.parse(ENDPOINT + '/posts/addPost'),
       body: jsonEncode(requestBody),
       headers: <String, String>{
-        'Content-Type': 'application/json; ',
+        'Content-Type': 'application/json',
       },
     );
     if (response.statusCode == 200) {

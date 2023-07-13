@@ -11,7 +11,7 @@ part 'posts_state.dart';
 
 class PostsCubit extends Cubit<PostsState> {
   final PostsRepository _postsRepository;
-  late List _newestPosts = [];
+  late List newestPosts = [];
   late List _oldestPosts = [];
 
   PostsCubit(this._postsRepository) : super(PostsInitial());
@@ -24,8 +24,8 @@ class PostsCubit extends Cubit<PostsState> {
         if (state is InternetConnected) {
           Map<String, dynamic>? response = await _postsRepository.getPosts();
           if (response!["message"] == "Success") {
-            _newestPosts = response["posts"] as List;
-            if (_newestPosts.isEmpty) {
+            newestPosts = response["posts"] as List;
+            if (newestPosts.isEmpty) {
               emit(NoPostYet());
             } else {
               emit(PostsFetchedSuccessfully());
@@ -47,10 +47,10 @@ class PostsCubit extends Cubit<PostsState> {
 
   Future getOldestPosts() async {
     emit(FeatchingPostsProgress());
-    if (_newestPosts.isEmpty) {
+    if (newestPosts.isEmpty) {
       emit(NoPostYet());
     } else {
-      _oldestPosts = List.from(_newestPosts.reversed);
+      _oldestPosts = List.from(newestPosts.reversed);
       emit(OldestPostsFiltered());
     }
   }
