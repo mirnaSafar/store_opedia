@@ -129,8 +129,9 @@ Widget buildShopItem(
                                         .read<SwitchShopCubit>()
                                         .idofSelectedShop ==
                                     shop["shopID"]) {
-                                  //    AuthCubit().deleteCurrentShop();
-                                  context.pushRepalceme(const LoginPage());
+                                  AuthCubit().deleteCurrentShop();
+                                  globalSharedPreference.setString(
+                                      "currentShop", "notSelected");
                                 }
                                 isLastShop == false
                                     ? {

@@ -6,9 +6,13 @@ part 'delete_post_state.dart';
 
 class DeletePostCubit extends Cubit<DeletePostState> {
   DeletePostCubit() : super(DeletePostInitial());
-  Future deletePost({required String postID}) async {
+  Future deletePost(
+      {required String postID,
+      required String shopID,
+      required String ownerID}) async {
     emit(DeletePostProgress());
-    String response = await PostsRepository().deletePost(postID: postID);
+    String response = await PostsRepository()
+        .deletePost(postID: postID, shopID: shopID, ownerID: ownerID);
     if (response == "Failed") {
       emit(DeletePostFailed(
           message:

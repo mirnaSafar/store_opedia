@@ -27,6 +27,17 @@ class ControlPage extends StatefulWidget {
 }
 
 class _ControlPageState extends State<ControlPage> {
+  @override
+  void initState() {
+    context.read<WorkTimeCubit>().testOpenTime(
+        openTime:
+            globalSharedPreference.getString("startWorkTime") ?? "00:00 AM",
+        closeTime:
+            globalSharedPreference.getString("endWorkTime") ?? "00:00 PM");
+    //TODO  get current owner Posts After Add Post
+    super.initState();
+  }
+
   BottomNavigationEnum selected = BottomNavigationEnum.HOME;
   PageController controller = PageController(initialPage: 2);
   @override
@@ -76,45 +87,43 @@ class _ControlPageState extends State<ControlPage> {
           const FavouritePage(),
           BlocBuilder<AuthCubit, AuthState>(
             builder: (context, state) {
-              if (state is UserLoginedIn) {
-                return const UserStore();
+              if (state is UserLoginedIn ||
+                  globalSharedPreference.getString("currentShop") ==
+                      "notSelected") {
+                return globalSharedPreference.getString("currentShop") ==
+                        "notSelected"
+                    ? noSelectedShop(size, context)
+                    : const UserStore();
               }
-              {
-                context.read<WorkTimeCubit>().testOpenTime(
-                    openTime:
+              return StorePage(
+                  shop: Shop(
+                    shopCategory:
+                        globalSharedPreference.getString("shopCategory")!,
+                    location: globalSharedPreference.getString("location")!,
+                    startWorkTime:
                         globalSharedPreference.getString("startWorkTime")!,
-                    closeTime:
-                        globalSharedPreference.getString("endWorkTime")!);
-                return StorePage(
-                    shop: Shop(
-                      shopCategory:
-                          globalSharedPreference.getString("shopCategory")!,
-                      location: globalSharedPreference.getString("location")!,
-                      startWorkTime:
-                          globalSharedPreference.getString("startWorkTime")!,
-                      endWorkTime:
-                          globalSharedPreference.getString("endWorkTime")!,
-                      ownerID: globalSharedPreference.getString("ID")!,
-                      ownerEmail: globalSharedPreference.getString("email")!,
-                      ownerPhoneNumber:
-                          globalSharedPreference.getString("phoneNumber")!,
-                      shopID: globalSharedPreference.getString("shopID")!,
-                      shopName: globalSharedPreference.getString("shopName")!,
-                      ownerName: globalSharedPreference.getString("name")!,
-                      followesNumber:
-                          globalSharedPreference.getInt("followesNumber")!,
-                      rate: globalSharedPreference.getInt("rate"),
-                      shopCoverImage:
-                          globalSharedPreference.getString("shopCoverImage"),
-                      shopDescription:
-                          globalSharedPreference.getString("shopDescription"),
-                      shopPhoneNumber:
-                          globalSharedPreference.getString("shopPhoneNumber"),
-                      shopProfileImage:
-                          globalSharedPreference.getString("shopProfileImage"),
-                    ),
-                    profileDisplay: true);
-              }
+                    endWorkTime:
+                        globalSharedPreference.getString("endWorkTime")!,
+                    ownerID: globalSharedPreference.getString("ID")!,
+                    ownerEmail: globalSharedPreference.getString("email")!,
+                    ownerPhoneNumber:
+                        globalSharedPreference.getString("phoneNumber")!,
+                    shopID: globalSharedPreference.getString("shopID")!,
+                    shopName: globalSharedPreference.getString("shopName")!,
+                    ownerName: globalSharedPreference.getString("name")!,
+                    followesNumber:
+                        globalSharedPreference.getInt("followesNumber")!,
+                    rate: globalSharedPreference.getInt("rate"),
+                    shopCoverImage:
+                        globalSharedPreference.getString("shopCoverImage"),
+                    shopDescription:
+                        globalSharedPreference.getString("shopDescription"),
+                    shopPhoneNumber:
+                        globalSharedPreference.getString("shopPhoneNumber"),
+                    shopProfileImage:
+                        globalSharedPreference.getString("shopProfileImage"),
+                  ),
+                  profileDisplay: true);
             },
           ),
         ],

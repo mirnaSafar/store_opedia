@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:shopesapp/presentation/pages/add_store_page.dart';
-import 'package:shopesapp/presentation/pages/owner_signup.dart';
 import 'package:shopesapp/presentation/pages/porfile.dart';
 import 'package:shopesapp/presentation/pages/privacy%20policies.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
@@ -10,10 +9,12 @@ import 'package:shopesapp/presentation/widgets/settings/theme.picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../constant/enums.dart';
 import '../../../data/enums/message_type.dart';
+import '../../../main.dart';
 import '../../pages/edit_store.dart';
 import '../../pages/switch_store.dart';
 import '../../shared/custom_widgets/custom_toast.dart';
 import '../dialogs/delete_user_dialog.dart';
+import '../switch_shop/no_selected_store.dart';
 import 'logOut_alert_dialog.dart';
 import 'icon_widget.dart';
 
@@ -73,10 +74,12 @@ Widget buildeAddNewSotre(BuildContext context) => SimpleSettingsTile(
       leading: iconWidget(icon: Icons.add, color: AppColors.mainRedColor),
       child: const AddStorePage(),
     );
-Widget buildeEdeitMySotre(BuildContext context) => SimpleSettingsTile(
+Widget buildeEdeitMySotre(BuildContext context, var size) => SimpleSettingsTile(
       title: "Edit store informations",
       leading: iconWidget(icon: Icons.edit, color: Colors.orange),
-      child: const EditStore(),
+      child: globalSharedPreference.getString("currentShop") == "notSelected"
+          ? noSelectedShop(size, context)
+          : const EditStore(),
     );
 Widget buildSwitchSotre(BuildContext context) => SimpleSettingsTile(
       title: "Switch to another Store",
@@ -88,7 +91,7 @@ Widget buildSwitchSotre(BuildContext context) => SimpleSettingsTile(
 Widget buildSwitchUserAccount(BuildContext context) => SimpleSettingsTile(
       title: "Add Stroe and Switch to Owner Account",
       leading: iconWidget(icon: Icons.add, color: Colors.green),
-      child: const OwnerSignUp(),
+      child: const AddStorePage(),
     );
 
 Widget buildAbout(BuildContext context) => ExpandableSettingsTile(

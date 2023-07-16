@@ -12,8 +12,6 @@ class OwnerWillSelectStore extends AuthState {}
 
 class UserSignedUp extends AuthState {}
 
-//class OwnerWithoutShop extends AuthState {}
-
 class OwnerSignedUp extends AuthState {}
 
 class AuthFailed extends AuthState {

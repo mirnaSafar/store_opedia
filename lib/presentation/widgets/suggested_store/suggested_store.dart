@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/data/models/shop.dart';
 import 'package:shopesapp/data/repositories/shared_preferences_repository.dart';
+import 'package:shopesapp/logic/cubites/post/posts_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/favorite_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/following_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/rate_shop_cubit.dart';
@@ -88,6 +89,11 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                       children: [
                                         InkWell(
                                           onTap: () {
+                                            context
+                                                .read<PostsCubit>()
+                                                .getOwnerPosts(
+                                                    ownerID: shop.ownerID,
+                                                    shopID: shop.shopID);
                                             context
                                                 .read<WorkTimeCubit>()
                                                 .testOpenTime(

@@ -39,7 +39,14 @@ class _EditStoreState extends State<AddStorePage> {
   TextEditingController storeEmailController = TextEditingController();
   TextEditingController storeStartWorkTimecontroller = TextEditingController();
   TextEditingController storeEndWorkTimeController = TextEditingController();
-  TimeOfDay initTime = TimeOfDay.now();
+
+  @override
+  void initState() {
+    storeStartWorkTimecontroller.text = "08:00 AM";
+    storeEndWorkTimeController.text = "08:00 PM";
+    super.initState();
+  }
+
   final ImagePicker picker = ImagePicker();
   FileTypeModel? coverSelectedFile;
   FileTypeModel? profileSelectedFile;
@@ -262,9 +269,7 @@ class _EditStoreState extends State<AddStorePage> {
                             });
                           },
                           child: CustomText(
-                            text: storeStartWorkTimecontroller.text == ""
-                                ? initTime.format(context)
-                                : storeStartWorkTimecontroller.text,
+                            text: storeStartWorkTimecontroller.text,
                           ),
                         )),
                     Padding(
@@ -289,9 +294,7 @@ class _EditStoreState extends State<AddStorePage> {
                             });
                           },
                           child: CustomText(
-                            text: storeEndWorkTimeController.text == ""
-                                ? initTime.format(context)
-                                : storeEndWorkTimeController.text,
+                            text: storeEndWorkTimeController.text,
                           ),
                         )),
                   ],
@@ -333,9 +336,12 @@ class _EditStoreState extends State<AddStorePage> {
                               size: size,
                               message: 'Store created successfully!',
                               messageType: MessageType.SUCCESS);
-
-                          //  context.read<AuthCubit>().userBecomeOwner();
-
+                          if (globalSharedPreference.getString("mode") ==
+                              "user") {
+                            globalSharedPreference.setString(
+                                "currentShop", "notSelected");
+                            context.read<AuthCubit>().userBecomeOwner();
+                          }
                           context.pushRepalceme(const SwitchStore());
                         } else if (state is AddShopFailed) {
                           CustomToast.showMessage(

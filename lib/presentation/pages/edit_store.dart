@@ -36,9 +36,26 @@ class _EditStoreState extends State<EditStore> {
   TextEditingController storeInstagramController = TextEditingController();
   TextEditingController storeFacebookController = TextEditingController();
   TextEditingController storeLocationController = TextEditingController();
-
+  String? timeString;
+  List<String>? timeParts;
+  List<String>? timeDigetes;
+  int? startTimeHour;
+  int? startTimeMinute;
+  int? endTimeHour;
+  int? endTimeMinute;
   @override
   void initState() {
+    timeString = globalSharedPreference.getString("startWorkTime");
+    timeParts = timeString?.split(" ");
+    timeDigetes = timeParts![0].split(":");
+    startTimeHour = int.parse(timeDigetes![0]);
+    startTimeMinute = int.parse(timeDigetes![1]);
+    timeString = globalSharedPreference.getString("endWorkTime");
+    timeParts = timeString?.split(" ");
+    timeDigetes = timeParts![0].split(":");
+    endTimeHour = int.parse(timeDigetes![0]);
+    endTimeMinute = int.parse(timeDigetes![1]);
+
     storeNameController.text =
         globalSharedPreference.getString("shopName") ?? 'Store name';
     storeNumberController.text =
@@ -51,9 +68,9 @@ class _EditStoreState extends State<EditStore> {
     storeLocationController.text =
         globalSharedPreference.getString("location") ?? "'store location'";
     storeStartWorkTimecontroller.text =
-        globalSharedPreference.getString("startWorkTime") ?? "startWorkTime ";
+        globalSharedPreference.getString("startWorkTime")!;
     storeEndWorkTimeController.text =
-        globalSharedPreference.getString("endWorkTime") ?? "endWorkTime ";
+        globalSharedPreference.getString("endWorkTime")!;
     profilePath = globalSharedPreference.getString("shopProfileImage") ?? '';
     coverPath = globalSharedPreference.getString("shopCoverImage") ?? '';
 
@@ -103,6 +120,7 @@ class _EditStoreState extends State<EditStore> {
     final w = MediaQuery.of(context).size.width;
     final h = MediaQuery.of(context).size.height;
     final size = MediaQuery.of(context).size;
+
     return SafeArea(
         child: Scaffold(
       backgroundColor: AppColors.mainWhiteColor,
@@ -263,7 +281,9 @@ class _EditStoreState extends State<EditStore> {
                           onPressed: () async {
                             await showTimePicker(
                                     context: context,
-                                    initialTime: TimeOfDay.now())
+                                    initialTime: TimeOfDay(
+                                        hour: startTimeHour!,
+                                        minute: startTimeMinute!))
                                 .then((value) {
                               setState(() {
                                 storeStartWorkTimecontroller.text =
@@ -288,7 +308,9 @@ class _EditStoreState extends State<EditStore> {
                           onPressed: () async {
                             await showTimePicker(
                                     context: context,
-                                    initialTime: TimeOfDay.now())
+                                    initialTime: TimeOfDay(
+                                        hour: endTimeHour!,
+                                        minute: endTimeMinute!))
                                 .then((value) {
                               setState(() {
                                 storeEndWorkTimeController.text =

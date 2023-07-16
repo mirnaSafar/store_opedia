@@ -4,7 +4,6 @@ import 'package:meta/meta.dart';
 import 'package:shopesapp/main.dart';
 
 import '../../../../data/repositories/shop_repository.dart';
-import 'get_owner_shops_cubit.dart';
 
 part 'add_shop_state.dart';
 
@@ -40,10 +39,7 @@ class AddShopCubit extends Cubit<AddShopState> {
       emit(AddShopFailed(
           message: "Failed to Add the Shop , Check your internet connection"));
     } else {
-      if (globalSharedPreference.getString("mode") == "user") {
-        GetOwnerShopsCubit().getOwnerShopsRequest();
-        emit(AddShopSucceed());
-      }
+      emit(AddShopSucceed());
     }
   }
 }

@@ -71,7 +71,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       title: "MY STORE",
                       children: <Widget>[
                         buildeAddNewSotre(context),
-                        buildeEdeitMySotre(context),
+                        buildeEdeitMySotre(context, size),
                         buildSwitchSotre(context)
                       ]);
                 },

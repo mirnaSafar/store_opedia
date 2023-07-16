@@ -55,18 +55,20 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is UserLoginedIn) {
+          //Error from Toast
+          /*CustomToast.showMessage(
+              context: context,
+              size: size,
+              message: "Login Successfuly",
+              messageType: MessageType.SUCCESS);*/
           context.pushRepalceme(const ControlPage());
-
-          /*    CustomToast.showMessage(
+        } else if (state is OwnerWillSelectStore) {
+          CustomToast.showMessage(
               context: context,
               size: size,
               message: "AUTH SUCCEDED",
-              messageType: MessageType.S);*/
-        } else if (state is OwnerWillSelectStore) {
+              messageType: MessageType.SUCCESS);
           context.push(const SwitchStore());
-          buildAwsomeDialog(context, "SUCCES", "Auth SUCCEDED", "OK",
-                  type: DialogType.SUCCES)
-              .show();
         } else if (state is AuthFailed) {
           buildAwsomeDialog(
                   context, "Faild", state.message.toUpperCase(), "Cancle",
