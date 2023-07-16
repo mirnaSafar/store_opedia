@@ -33,10 +33,10 @@ Widget noSelectedShop(var size, BuildContext context) {
                 height: size.height * 0.02,
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: size.height * 0.2),
+                padding: EdgeInsets.symmetric(horizontal: size.height * 0.1),
                 child: CustomButton(
                   text: "Select Store",
-                  onPressed: () => context.pushRepalceme(const SwitchStore()),
+                  onPressed: () => context.push(const SwitchStore()),
                 ),
               )
             ],

@@ -1,0 +1,16 @@
+final List<String> categories = [
+  'Estates',
+  'Vehicles',
+  'Fashion & Beauty',
+  'Mobiles',
+  'Furniturs',
+  'Computers',
+  'Gifts',
+  'Babies stuff',
+  'Motorcycles',
+  'Sport',
+  'Pharmacies',
+  'Services',
+  'Variants',
+  'Malls',
+];

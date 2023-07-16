@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:shopesapp/data/models/shop.dart';
 import 'package:shopesapp/data/repositories/shared_preferences_repository.dart';
+import 'package:shopesapp/main.dart';
 
 part 'shop_follwers_counter_state.dart';
 
@@ -15,6 +16,8 @@ class ShopFollwersCounterCubit extends Cubit<ShopFollwersCounterState> {
       shop.followesNumber!,
       shop,
     );
+    globalSharedPreference.setInt('followesNumber', shop.followesNumber!);
+
     // shop.followesNumber = shop.followesNumber!;
     emit(ShopFollwersCounterState(shop.followesNumber!, shop));
   }
@@ -28,12 +31,16 @@ class ShopFollwersCounterCubit extends Cubit<ShopFollwersCounterState> {
       shop.followesNumber!,
       shop,
     );
+    globalSharedPreference.setInt('followesNumber', shop.followesNumber!);
+
     // shop.followesNumber = shop.followesNumber!;
 
     emit(ShopFollwersCounterState(shop.followesNumber!, shop));
   }
 
   int getShopFollwersCount(Shop shop) {
-    return SharedPreferencesRepository.getStoreFollowers(shop);
+    return
+        // globalSharedPreference.getInt('followesNumber')!;
+        SharedPreferencesRepository.getStoreFollowers(shop);
   }
 }

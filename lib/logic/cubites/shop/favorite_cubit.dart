@@ -2,6 +2,8 @@ import 'package:bloc/bloc.dart';
 import 'package:shopesapp/data/models/shop.dart';
 import 'package:shopesapp/data/repositories/shared_preferences_repository.dart';
 
+import '../../../main.dart';
+
 part 'favorite_state.dart';
 
 class FavoriteCubit extends Cubit<FavoriteState> {
@@ -17,6 +19,8 @@ class FavoriteCubit extends Cubit<FavoriteState> {
       updatedFavoriteShops = state.favoriteShops..add(shop.toJson());
     }
 
+    globalSharedPreference.setBool('isShopFavorite', true);
+
     SharedPreferencesRepository.setFavoriteStores(
         favoriteShopsList: updatedFavoriteShops);
 
@@ -30,6 +34,7 @@ class FavoriteCubit extends Cubit<FavoriteState> {
       ..removeWhere((jsonshop) =>
           shop.ownerID == Shop.fromJson(jsonshop).ownerID &&
           shop.shopID == Shop.fromJson(jsonshop).shopID);
+    globalSharedPreference.setBool('isShopFavorite', false);
 
     SharedPreferencesRepository.setFavoriteStores(
         favoriteShopsList: updatedFavoriteShops);

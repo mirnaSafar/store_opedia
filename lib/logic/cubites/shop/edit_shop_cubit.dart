@@ -22,25 +22,28 @@ class EditShopCubit extends Cubit<EditShopState> {
     required String closing,
     required String opening,
     required String shopPhoneNumber,
+    String? insta,
+    String? facebook,
   }) async {
     emit(EditShopProgress());
     String response = await ShopRepository().editShop(
-      ownerID: globalSharedPreference.getString("ID")!,
-      shopID: globalSharedPreference.getString("shopID")!,
-      shopName: shopName,
-      shopDescription: shopDescription,
-      shopProfileImage: shopProfileImage,
-      shopCoverImage: shopCoverImage,
-      shopCategory: shopCategory,
-      location: location,
-      startWorkTime: opening,
-      endWorkTime: closing,
-      shopPhoneNumber: shopPhoneNumber,
-    );
+        ownerID: globalSharedPreference.getString("ID")!,
+        shopID: globalSharedPreference.getString("shopID")!,
+        shopName: shopName,
+        shopDescription: shopDescription,
+        shopProfileImage: shopProfileImage,
+        shopCoverImage: shopCoverImage,
+        shopCategory: shopCategory,
+        location: location,
+        startWorkTime: opening,
+        endWorkTime: closing,
+        shopPhoneNumber: shopPhoneNumber,
+        facebook: facebook,
+        insta: insta);
 
     if (response == "Failed") {
       emit(EditShopFailed(
-          message: "Failed to Add the Shop , Check your internet connection"));
+          message: "Failed to edit the Shop , Check your internet connection"));
     } else {
       AuthRepository().saveOwnerAndShop(
           shop: Shop(
@@ -48,7 +51,7 @@ class EditShopCubit extends Cubit<EditShopState> {
               shopDescription: shopDescription,
               shopPhoneNumber: shopPhoneNumber,
               shopProfileImage: shopProfileImage,
-              socialUrl: "",
+              socialUrl: [insta ?? '', facebook ?? ''],
               shopCategory: shopCategory,
               location: location,
               startWorkTime: opening,

@@ -63,7 +63,7 @@ class AuthCubit extends Cubit<AuthState> {
     );
     if (response == null || response["message"] != "Owner was Created") {
       emit(AuthFailed(response == null
-          ? "Signup Failed  Check your internet connection"
+          ? "Signup Failed Check your internet connection"
           : response["message"]));
     } else {
       shop = Shop.fromMap(response);
@@ -98,6 +98,7 @@ class AuthCubit extends Cubit<AuthState> {
 
   void userBecomeOwner() {
     globalSharedPreference.setString("mode", "owner");
+    globalSharedPreference.setString("currentShop", "noShop");
     emit(OwnerLoginedIn());
   }
 

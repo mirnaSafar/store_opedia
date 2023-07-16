@@ -1,30 +1,51 @@
 import 'package:bloc/bloc.dart';
 import 'package:shopesapp/data/repositories/filter_repository.dart';
+import 'package:shopesapp/data/repositories/posts_repository.dart';
 
 part 'filter_state.dart';
 
 class FilterCubit extends Cubit<FilterState> {
-  FilterRepository filterRepository;
-  late List _postsFilterdWithLocation = [];
-  late List _postsFilterdWithRatings = [];
-  late List _postsFilterdWithCategory = [];
-  FilterCubit(this.filterRepository) : super(FilterInitial());
+  List<dynamic> filteredPosts = [];
+  FilterCubit() : super(FilterInitial());
 
-  Future filterPostsWithCategory({required String category}) async {
+  Future filterPostsWithCategory(
+      {required String category, bool onlyShowSubcategories = false}) async {
     //check the internetCubit
-    _postsFilterdWithCategory.clear();
+    // postsFilterdWithCategory.clear();
+
+    Map<String, dynamic>? response;
     emit(FilterProgress());
-    Map<String, dynamic>? response =
-        await filterRepository.getPostsFilteredWithCategory(category: category);
-    if (response!["message"] == "Success") {
-      _postsFilterdWithCategory = response["posts"] as List;
-      if (_postsFilterdWithCategory.isEmpty) {
+    try {
+      response = await FilterRepository()
+          .getPostsFilteredWithCategory(category: category);
+    } catch (e) {
+      emit(FilterFailed(
+          message: response == null
+              ? "Faild Filter , Check your internet connection"
+              : response["message"]));
+    }
+    // if (response == null) emit(FilterFailed(message: 'Failed'));
+    if (response != null && response["message"] == "Success") {
+      filteredPosts = response["posts"] as List;
+      List<String> subCategries = response["subCategories"] as List<String>;
+      if (filteredPosts.isEmpty) {
         emit(NoPostYet());
+      }
+      if (subCategries.isEmpty && onlyShowSubcategories) {
+        emit(NoSubCategories());
       } else {
-        emit(CategoriesFilteredSuccessfully());
+        emit(FilterState(filteredPosts: filteredPosts));
+
+        emit(FilteredSuccessfully());
+        if (subCategries.isNotEmpty && onlyShowSubcategories) {
+          emit(CategoriesFilteredSuccessfully(subCategories: subCategries));
+        }
       }
     } else {
-      emit(FilterFailed(message: response["message"]));
+      emit(FilterFailed(
+          message: response == null
+              ? "Faild Filter , Check your internet connection"
+              : response["message"]));
     }
   }
 
@@ -32,35 +53,97 @@ class FilterCubit extends Cubit<FilterState> {
     //check the internetCubit
     emit(FilterProgress());
     Map<String, dynamic>? response =
-        await filterRepository.getPostsFilteredWithRatings();
-    if (response!["message"] == "Success") {
-      _postsFilterdWithRatings = response["posts"] as List;
-      if (_postsFilterdWithRatings.isEmpty) {
+        await FilterRepository().getPostsFilteredWithRatings();
+    try {
+      response = await FilterRepository().getPostsFilteredWithRatings();
+    } catch (e) {
+      emit(FilterFailed(
+          message: response == null
+              ? "Faild Filter , Check your internet connection"
+              : response["message"]));
+    }
+    if (response != null && response["message"] == "Success") {
+      filteredPosts = response["posts"] as List<dynamic>;
+      if (filteredPosts.isEmpty) {
         emit(NoPostYet());
       } else {
-        emit(RatingsFilteredSuccessfully());
+        emit(FilterState(filteredPosts: filteredPosts));
+        emit(FilteredSuccessfully());
       }
     } else {
-      emit(FilterFailed(message: response["message"]));
+      emit(FilterFailed(
+          message: response == null
+              ? "Faild Filter , Check your internet connection"
+              : response["message"]));
     }
   }
 
   Future filterPostsWithLocation({required String location}) async {
     //check the internetCubit
-    _postsFilterdWithLocation.clear();
+    // filteredPosts.clear();
+    Map<String, dynamic>? response;
     emit(FilterProgress());
-    Map<String, dynamic>? response =
-        await filterRepository.getPostsFilteredWithLocation(location: location);
-    if (response!["message"] == "Success") {
-      _postsFilterdWithLocation = response["posts"] as List;
-      if (_postsFilterdWithLocation.isEmpty) {
+    try {
+      response = await FilterRepository()
+          .getPostsFilteredWithLocation(location: location);
+    } catch (e) {
+      emit(FilterFailed(
+          message: response == null
+              ? "Faild Filter , Check your internet connection"
+              : response["message"]));
+    }
+    // if (response == null) emit(FilterFailed(message: 'Failed'));
+    if (response != null && response["message"] == "Success") {
+      filteredPosts = response["posts"] as List;
+      if (filteredPosts.isEmpty) {
         emit(NoPostYet());
       } else {
-        emit(LocationsFilteredSuccessfully());
+        emit(FilterState(filteredPosts: filteredPosts));
+        emit(FilteredSuccessfully());
       }
     } else {
       emit(FilterFailed(
-          // ignore: unnecessary_null_comparison
+          message: response == null
+              ? "Faild Filter , Check your internet connection"
+              : response["message"]));
+    }
+  }
+
+  Future getOldestPosts() async {
+    emit(FilterProgress());
+    if (filteredPosts.isEmpty) {
+      emit(NoPostYet());
+    } else {
+      filteredPosts = List.from(filteredPosts.reversed);
+      emit(FilterState(filteredPosts: filteredPosts));
+      emit(FilteredSuccessfully());
+    }
+  }
+
+  Future getAllPosts() async {
+    //check the internetCubit
+    // filteredPosts.clear();
+    Map<String, dynamic>? response;
+    emit(FilterProgress());
+    try {
+      response = await PostsRepository().getAllPosts();
+    } catch (e) {
+      emit(FilterFailed(
+          message: response == null
+              ? "Faild Filter , Check your internet connection"
+              : response["message"]));
+    }
+    // if (response == null) emit(FilterFailed(message: 'Failed'));
+    if (response != null && response["message"] == "Success") {
+      filteredPosts = response["posts"] as List;
+      if (filteredPosts.isEmpty) {
+        emit(NoPostYet());
+      } else {
+        emit(FilterState(filteredPosts: filteredPosts));
+        emit(FilteredSuccessfully());
+      }
+    } else {
+      emit(FilterFailed(
           message: response == null
               ? "Faild Filter , Check your internet connection"
               : response["message"]));

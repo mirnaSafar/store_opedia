@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shopesapp/data/enums/file_type.dart';
 import 'package:shopesapp/data/enums/message_type.dart';
-import 'package:shopesapp/data/repositories/posts_repository.dart';
 import 'package:shopesapp/logic/cubites/post/add_post_cubit.dart';
 import 'package:shopesapp/logic/cubites/post/posts_cubit.dart';
 import 'package:shopesapp/main.dart';
@@ -71,6 +70,7 @@ class _AddPostPageState extends State<AddPostPage> {
 
   @override
   Widget build(BuildContext context) {
+    final h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
     var size = MediaQuery.of(context).size;
     return SafeArea(
@@ -101,39 +101,49 @@ class _AddPostPageState extends State<AddPostPage> {
                             setState(() {});
                           }
                         : null,
-                    child: Container(
-                        height: w / 2.3,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: AppColors.mainOrangeColor,
-                        ),
-                        width: w,
-                        child: selectedFile == null ||
-                                selectedFile!.path.isEmpty
-                            ? const Icon(Icons.image)
-                            : FittedBox(
-                                fit: BoxFit.fill,
-                                child: Image.file(File(selectedFile!.path)))),
+                    child: Wrap(
+                      children: [
+                        Container(
+                          height: h / 4,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(w * 0.05),
+                            color: Colors.transparent,
+                          ),
+                          width: w,
+                          child: (selectedFile != null)
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(w * 0.05),
+                                  child: Image.file(
+                                    File(selectedFile!.path),
+                                    fit: BoxFit.contain,
+                                  ),
+                                )
+                              : Image.asset(
+                                  'assets/store_cover_placeholder.jpg',
+                                  fit: BoxFit.contain,
+                                ),
+                        )
+                      ],
+                    ),
                   ),
-                  Visibility(
-                    visible:
-                        selectedFile != null && selectedFile!.path.isNotEmpty,
-                    child: InkWell(
-                      onTap: () {
-                        pickImageDialg();
-                        setState(() {});
-                      },
+                  InkWell(
+                    onTap: () {
+                      pickImageDialg();
+                      setState(() {});
+                    },
+                    child: CircleAvatar(
+                      radius: w * 0.036,
+                      backgroundColor: AppColors.mainWhiteColor,
                       child: CircleAvatar(
-                        radius: w * 0.036,
-                        backgroundColor: AppColors.mainWhiteColor,
-                        child: CircleAvatar(
-                            radius: w * 0.026,
-                            backgroundColor: AppColors.mainBlueColor,
-                            child: Icon(
-                              Icons.edit,
-                              size: w * 0.03,
-                            )),
-                      ),
+                          radius: w * 0.026,
+                          backgroundColor: AppColors.mainBlueColor,
+                          child: Icon(
+                            selectedFile != null &&
+                                    selectedFile!.path.isNotEmpty
+                                ? Icons.edit
+                                : Icons.add,
+                            size: w * 0.03,
+                          )),
                     ),
                   ),
                 ],
@@ -170,7 +180,7 @@ class _AddPostPageState extends State<AddPostPage> {
               (w * 0.08).px,
               Expanded(
                   child: BlocProvider(
-                create: (context) => AddPostCubit(PostsRepository()),
+                create: (context) => AddPostCubit(),
                 child: BlocConsumer<AddPostCubit, AddPostState>(
                   listener: (context, state) async {
                     if (state is AddPostSucceed) {
@@ -179,21 +189,27 @@ class _AddPostPageState extends State<AddPostPage> {
                           size: size,
                           message: "Add Post Successfully",
                           messageType: MessageType.SUCCESS);
-                      context.read<PostsCubit>().getOwnerPosts(
+                      context
+                          .read<PostsCubit>()
+                          .getOwnerPosts(
                             ownerID: globalSharedPreference.getString("ID")!,
                             shopID: globalSharedPreference.getString("shopID")!,
-                          );
+                          )
+                          .then((value) => context.pop());
                     } else if (state is AddPostFailed) {
                       CustomToast.showMessage(
                           context: context,
                           size: size,
                           message: state.message,
                           messageType: MessageType.REJECTED);
+                      // context.pop();
                     }
                   },
                   builder: (context, state) {
                     if (state is AddPostProgress) {
-                      return const Center(child: CircularProgressIndicator());
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
                     }
                     return CustomButton(
                       onPressed: () {
@@ -205,23 +221,20 @@ class _AddPostPageState extends State<AddPostPage> {
                                 size: size,
                                 message: 'Please check required fields',
                                 messageType: MessageType.REJECTED)
-                            : Future.delayed(
-                                const Duration(milliseconds: 1000),
-                                () {
-                                  formKey.currentState!.save();
-
-                                  context.read<AddPostCubit>().addPost(
-                                        title: addPostNameController.text,
-                                        description:
-                                            addPostDescriptionController.text,
-                                        postImage: selectedFile?.path ?? '',
-                                        category: "",
-                                        price: addPostPriceController.text,
-                                        shopeID: globalSharedPreference
-                                            .getString("shopID")!,
-                                      );
-                                },
-                              ).then((value) => context.pop());
+                            : {
+                                formKey.currentState!.save(),
+                                context.read<AddPostCubit>().addPost(
+                                      title: addPostNameController.text,
+                                      description:
+                                          addPostDescriptionController.text,
+                                      postImage: selectedFile?.path ?? '',
+                                      category: "",
+                                      price: addPostPriceController.text,
+                                      shopeID: globalSharedPreference
+                                          .getString("shopID")!,
+                                    ),
+                              };
+                        // ).then((value) => context.pop());
                       },
                       text: 'post',
                       textColor: AppColors.mainWhiteColor,

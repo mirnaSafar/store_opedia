@@ -4,6 +4,8 @@ import 'package:shopesapp/presentation/shared/custom_widgets/custom_divider.dart
 import 'package:shopesapp/presentation/widgets/page_header/page_header.dart';
 import 'package:shopesapp/presentation/widgets/suggested_store/suggested_store.dart';
 
+import '../shared/colors.dart';
+
 class SuggestedStoresView extends StatefulWidget {
   const SuggestedStoresView({Key? key}) : super(key: key);
 
@@ -62,6 +64,7 @@ class _SuggestedStoresViewState extends State<SuggestedStoresView> {
         //   },
         // child:
         Scaffold(
+            backgroundColor: AppColors.mainWhiteColor,
             body: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 0),
                 child: ListView(

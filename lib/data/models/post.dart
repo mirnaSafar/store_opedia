@@ -1,15 +1,17 @@
 import 'dart:convert';
 
+import 'package:shopesapp/main.dart';
+
 class Post {
-  String shopeID;
+  String? shopeID;
   String postID;
   String title;
   String description;
-  String postImage;
-  String category;
-  String ownerID;
-  String ownerName;
-  String ownerPhoneNumber;
+  String photos;
+  String? category;
+  String? ownerID;
+  String? ownerName;
+  String? ownerPhoneNumber;
   String price;
   int? rate;
   bool? isFavorit;
@@ -22,7 +24,7 @@ class Post {
       required this.ownerName,
       required this.ownerPhoneNumber,
       required this.price,
-      required this.postImage,
+      required this.photos,
       required this.shopeID,
       this.isFavorit = false,
       this.rate = 0,
@@ -39,7 +41,7 @@ class Post {
       'ownerName': ownerName,
       'ownerPhoneNumber': ownerPhoneNumber,
       'price': price,
-      'postImage': postImage,
+      'photos': photos,
     };
   }
 
@@ -52,7 +54,7 @@ class Post {
         ownerName: post.ownerName,
         ownerPhoneNumber: post.ownerPhoneNumber,
         price: post.price,
-        postImage: post.postImage,
+        photos: post.photos,
         shopeID: post.shopeID,
         postID: post.postID);
   }
@@ -61,14 +63,17 @@ class Post {
     return Post(
         title: map['title'],
         description: map['description'],
-        category: map['category'],
-        ownerID: map['ownerID'],
-        ownerName: map['ownerName'],
-        ownerPhoneNumber: map['ownerPhoneNumber'],
+        category: map['category'] ??
+            globalSharedPreference.getString("shopCategory") ??
+            '',
+        ownerID: map['ownerID'] ?? globalSharedPreference.getString('ID'),
+        ownerName: map['ownerName'] ?? globalSharedPreference.getString("name"),
+        ownerPhoneNumber: map['ownerPhoneNumber'] ??
+            globalSharedPreference.getString("phoneNumber"),
         price: map['price'],
-        postImage: map['postImage'],
-        shopeID: map['shopeID'],
-        postID: map['postID'] ?? '1');
+        photos: map['photos'],
+        shopeID: map['shopeID'] ?? globalSharedPreference.getString('shopID'),
+        postID: map['postID']);
   }
 
   String toJson() => json.encode(toMap());

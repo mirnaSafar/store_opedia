@@ -79,7 +79,7 @@ Widget buildeEdeitMySotre(BuildContext context, var size) => SimpleSettingsTile(
       leading: iconWidget(icon: Icons.edit, color: Colors.orange),
       child: globalSharedPreference.getString("currentShop") == "notSelected"
           ? noSelectedShop(size, context)
-          : const EditStore(),
+          : EditStore(),
     );
 Widget buildSwitchSotre(BuildContext context) => SimpleSettingsTile(
       title: "Switch to another Store",

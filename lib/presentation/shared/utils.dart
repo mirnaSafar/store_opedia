@@ -1,4 +1,11 @@
+import 'package:bot_toast/bot_toast.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shopesapp/data/enums/file_type.dart';
+import 'package:shopesapp/data/enums/message_type.dart';
+import 'package:shopesapp/presentation/shared/colors.dart';
+import 'package:shopesapp/presentation/shared/custom_widgets/custom_toast.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 bool isEmail(String value) {
   RegExp regExp = RegExp(
@@ -28,3 +35,34 @@ class FileTypeModel {
 
   FileTypeModel(this.path, this.type);
 }
+
+Future cLaunchUrl(Uri url) async {
+  if (await canLaunchUrl(url)) {
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      CustomToast.showMessage(
+          message: 'Cant lunch url',
+          messageType: MessageType.REJECTED,
+          size: const Size(400, 100));
+    }
+  } else {
+    CustomToast.showMessage(
+        message: 'app not installed',
+        messageType: MessageType.REJECTED,
+        size: const Size(400, 100));
+  }
+}
+
+void customLoader(Size size) =>
+    BotToast.showCustomLoading(toastBuilder: (context) {
+      return Container(
+        decoration: BoxDecoration(
+            color: AppColors.mainBlackColor.withOpacity(0.5),
+            borderRadius: BorderRadius.circular(10)),
+        width: size.width / 4,
+        height: size.width / 4,
+        child: SpinKitCircle(
+          color: AppColors.mainOrangeColor,
+          size: size.width / 8,
+        ),
+      );
+    });

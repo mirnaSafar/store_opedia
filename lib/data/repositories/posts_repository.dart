@@ -2,7 +2,8 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:shopesapp/constant/endpoint.dart';
-import 'package:shopesapp/data/models/shop.dart';
+
+import '../../main.dart';
 
 class PostsRepository {
   Future<String?> sendPostRating(
@@ -66,7 +67,7 @@ class PostsRepository {
       Uri.http(ENDPOINT, '/delete/post/$postID'),
       body: jsonEncode(requestBody),
       headers: <String, String>{
-        'Content-Type': 'application/json; ',
+        'Content-Type': 'application/json ',
       },
     );
     if (response.statusCode == 200) {
@@ -95,7 +96,7 @@ class PostsRepository {
       Uri.http(ENDPOINT, '/profile/post/$postID'),
       body: jsonEncode(requestBody),
       headers: <String, String>{
-        'Content-Type': 'application/json; ',
+        'Content-Type': 'application/json',
       },
     );
     if (response.statusCode == 200) {
@@ -119,11 +120,11 @@ class PostsRepository {
       "name": name,
       "description": description,
       "photos": photos ?? "noProductImage",
-      //    "category": category,
+      "category": category,
       "price": price,
     };
     response = await http.post(
-      Uri.http(ENDPOINT, '/AddPost/$ownerID'),
+      Uri.http(ENDPOINT, '/AddPost/$shopeID'),
       body: jsonEncode(requestBody),
       headers: <String, String>{
         'Content-Type': 'application/json',
@@ -133,5 +134,30 @@ class PostsRepository {
       return "Success";
     }
     return "Failed";
+  }
+
+  Future<Map<String, dynamic>?> getAllPosts() async {
+    String userID = globalSharedPreference.getString('ID')!;
+
+    http.Response response;
+    Map<String, dynamic> parsedResult;
+    Map<String, dynamic> requestBody = {
+      "id": globalSharedPreference.getString('ID'),
+    };
+    try {
+      response = await http.post(
+          Uri.http(ENDPOINT, "/show/posts/followedStores/$userID"),
+          body: jsonEncode(requestBody),
+          headers: {
+            'Content-Type': 'application/json',
+          });
+    } catch (e) {
+      return null;
+    }
+    if (response.statusCode == 200) {
+      parsedResult = jsonDecode(response.body);
+      return parsedResult;
+    }
+    return null;
   }
 }

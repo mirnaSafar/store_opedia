@@ -3,6 +3,8 @@ import 'package:shopesapp/data/models/shop.dart';
 import 'package:shopesapp/data/repositories/shared_preferences_repository.dart';
 import 'package:shopesapp/logic/cubites/shop/shop_follwers_counter_cubit.dart';
 
+import '../../../main.dart';
+
 part 'following_state.dart';
 
 class FollowingCubit extends Cubit<FollowingState> {
@@ -13,7 +15,7 @@ class FollowingCubit extends Cubit<FollowingState> {
   void follow(Shop shop) {
     shop.isFollow = true;
     shop = updateShop(shop);
-    SharedPreferencesRepository.saveShop(shop);
+    globalSharedPreference.setBool('isFollowed', true);
     updatedFollowedShops = state.followedShops
       ..removeWhere((jsonshop) =>
           shop.ownerID == Shop.fromJson(jsonshop).ownerID &&
@@ -26,7 +28,8 @@ class FollowingCubit extends Cubit<FollowingState> {
   void unFollow(Shop shop) {
     shop.isFollow = false;
     shop = updateShop(shop);
-    SharedPreferencesRepository.saveShop(shop);
+    // SharedPreferencesRepository.saveShop(shop);
+    globalSharedPreference.setBool('isFollowed', false);
 
     updatedFollowedShops = state.followedShops
       ..removeWhere((jsonshop) =>

@@ -6,8 +6,7 @@ import 'package:shopesapp/main.dart';
 part 'update_post_state.dart';
 
 class UpdatePostCubit extends Cubit<UpdatePostState> {
-  UpdatePostCubit(this._postsRepository) : super(UpdatePostInitial());
-  final PostsRepository _postsRepository;
+  UpdatePostCubit() : super(UpdatePostInitial());
   Future updatePost(
       {required String postID,
       required String shopID,
@@ -16,7 +15,8 @@ class UpdatePostCubit extends Cubit<UpdatePostState> {
       required String? photos,
       required String category,
       required String price}) async {
-    String response = await _postsRepository.updatePost(
+    emit(UpdatePostProgress());
+    String response = await PostsRepository().updatePost(
         postID: postID,
         shopID: shopID,
         name: name,

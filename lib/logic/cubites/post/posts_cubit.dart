@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shopesapp/data/models/post.dart';
 
 import '../../../data/repositories/posts_repository.dart';
 
@@ -13,7 +14,10 @@ class PostsCubit extends Cubit<PostsState> {
   List<dynamic> ownerPosts = [];
 
   void setOwnerPost({required var posts}) {
-    ownerPosts = posts;
+    ownerPosts.clear();
+    for (var element in posts) {
+      ownerPosts.add(Post.fromMap(element));
+    }
   }
 
   PostsCubit() : super(PostsInitial());
@@ -56,12 +60,29 @@ class PostsCubit extends Cubit<PostsState> {
       ownerID: ownerID,
       shopID: shopID,
     );
-    if (response!["message"] == "Success") {
+    if (response!["message"] == "Done") {
       newestPosts = response["posts"] as List;
       if (newestPosts.isEmpty) {
-        emit(NoPostYet());
+        emit(NoPostsYet());
       } else {
         setOwnerPost(posts: response["posts"]);
+        emit(PostsFetchedSuccessfully());
+      }
+    } else {
+      emit(ErrorFetchingPosts(message: response["message"]));
+    }
+  }
+
+  Future getAllPosts({
+    required String userID,
+  }) async {
+    emit(FeatchingPostsProgress());
+    Map<String, dynamic>? response = await PostsRepository().getAllPosts();
+    if (response!["message"] == "Done") {
+      newestPosts = response["posts"] as List;
+      if (newestPosts.isEmpty) {
+        emit(NoPostsYet());
+      } else {
         emit(PostsFetchedSuccessfully());
       }
     } else {
@@ -72,7 +93,7 @@ class PostsCubit extends Cubit<PostsState> {
   Future getOldestPosts() async {
     emit(FeatchingPostsProgress());
     if (newestPosts.isEmpty) {
-      emit(NoPostYet());
+      emit(NoPostsYet());
     } else {
       oldestPosts = List.from(newestPosts.reversed);
       emit(OldestPostsFiltered());

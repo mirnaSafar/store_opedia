@@ -1,14 +1,12 @@
 import 'dart:io';
 
-import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shopesapp/data/enums/file_type.dart';
 import 'package:shopesapp/data/enums/message_type.dart';
-import 'package:shopesapp/data/repositories/posts_repository.dart';
-import 'package:shopesapp/logic/cubites/cubit/posts_cubit.dart';
+import 'package:shopesapp/data/models/post.dart';
+import 'package:shopesapp/main.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_button.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
@@ -22,8 +20,8 @@ import '../../logic/cubites/post/update_post_cubit.dart';
 import '../shared/validation_functions.dart';
 
 class EditPostPage extends StatefulWidget {
-  const EditPostPage({Key? key}) : super(key: key);
-
+  EditPostPage({Key? key, required this.post}) : super(key: key);
+  Post post;
   @override
   State<EditPostPage> createState() => _EditPostPageState();
 }
@@ -98,21 +96,25 @@ class _EditPostPageState extends State<EditPostPage> {
                 Wrap(
                   children: [
                     Container(
-                        height: h / 4,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(w * 0.05),
-                          color: AppColors.mainOrangeColor,
-                        ),
-                        width: w,
+                      height: h / 4,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(w * 0.05),
+                        color: Colors.transparent,
+                      ),
+                      width: w,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(w * 0.05),
                         child: selectedFile != null
-                            ? ClipRRect(
-                                borderRadius: BorderRadius.circular(w * 0.05),
-                                child: Image.file(
-                                  File(selectedFile!.path),
-                                  fit: BoxFit.fill,
-                                ),
+                            ? Image.file(
+                                File(selectedFile!.path),
+                                fit: BoxFit.contain,
                               )
-                            : const Icon(Icons.image)),
+                            : Image.asset(
+                                widget.post.photos,
+                                fit: BoxFit.contain,
+                              ),
+                      ),
+                    )
                   ],
                 ),
                 Padding(
@@ -143,10 +145,17 @@ class _EditPostPageState extends State<EditPostPage> {
             ),
             UserInput(
               text: 'Product name',
+              controller: updatePostNameController,
               validator: (name) => nameValidator(name, 'Enter product name'),
             ),
-            UserInput(text: 'Product Description'),
-            UserInput(text: 'Product price'),
+            UserInput(
+              text: 'Product Description',
+              controller: updatePostDescriptionController,
+            ),
+            UserInput(
+              text: 'Product price',
+              controller: updatePostPriceController,
+            ),
             (w * 0.08).ph,
             Row(children: [
               Expanded(
@@ -162,7 +171,7 @@ class _EditPostPageState extends State<EditPostPage> {
               (w * 0.1).px,
               Expanded(
                   child: BlocProvider(
-                create: (context) => UpdatePostCubit(PostsRepository()),
+                create: (context) => UpdatePostCubit(),
                 child: BlocConsumer<UpdatePostCubit, UpdatePostState>(
                   listener: (context, state) async {
                     if (state is UpdatePostSucceed) {
@@ -171,7 +180,11 @@ class _EditPostPageState extends State<EditPostPage> {
                           message: " Post edited Successfully",
                           messageType: MessageType.SUCCESS,
                           context: context);
-                      await context.read<PostsCubit>().getPosts();
+                      // await context.read<PostsCubit>().getOwnerPosts(
+                      //       ownerID: globalSharedPreference.getString("ID")!,
+                      //       shopID: globalSharedPreference.getString("shopID")!,
+                      //     );
+                      context.pop();
                     } else if (state is UpdatePostFailed) {
                       CustomToast.showMessage(
                           size: size,
@@ -186,43 +199,27 @@ class _EditPostPageState extends State<EditPostPage> {
                     }
                     return CustomButton(
                       onPressed: () {
-                        !formKey.currentState!.validate() &&
-                                (selectedFile == null ||
-                                    selectedFile!.path.isEmpty)
+                        !formKey.currentState!.validate()
                             ? CustomToast.showMessage(
                                 size: size,
                                 message: 'Please check required fields',
-                                messageType: MessageType.REJECTED,
+                                messageType: MessageType.WARNING,
                                 context: context)
-                            : Future.delayed(
-                                const Duration(milliseconds: 1000),
-                                () {
-                                  BotToast.showCustomLoading(
-                                      toastBuilder: (context) {
-                                    return SizedBox(
-                                      width: w / 4,
-                                      height: w / 4,
-                                      child: SpinKitCircle(
-                                        color: AppColors.mainOrangeColor,
-                                        size: w / 8,
-                                      ),
-                                    );
-                                  });
-                                  formKey.currentState!.save();
-
-                                  context.read<UpdatePostCubit>().updatePost(
-                                      title: updatePostNameController.text,
+                            : {
+                                formKey.currentState!.save(),
+                                context.read<UpdatePostCubit>().updatePost(
+                                      name: updatePostNameController.text,
                                       description:
                                           updatePostDescriptionController.text,
-                                      postImages: selectedFile?.path ?? '',
-                                      category: "",
-                                      productPrice:
-                                          updatePostPriceController.text,
-                                      postID: '',
-                                      shopID: '');
-                                },
-                              ).then((value) =>
-                                {BotToast.closeAllLoading(), context.pop()});
+                                      photos: selectedFile?.path ?? '',
+                                      category: globalSharedPreference
+                                              .getString("shopCategory") ??
+                                          '',
+                                      price: updatePostPriceController.text,
+                                      postID: widget.post.postID,
+                                      shopID: widget.post.shopeID!,
+                                    )
+                              };
                       },
                       text: 'post',
                       textColor: AppColors.mainWhiteColor,

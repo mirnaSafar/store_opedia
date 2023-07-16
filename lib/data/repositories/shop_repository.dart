@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:shopesapp/constant/endpoint.dart';
-import 'package:shopesapp/main.dart';
 
 class ShopRepository {
   Future<String?> sendShopRating(
@@ -196,7 +195,8 @@ class ShopRepository {
     required String location,
     required String endWorkTime,
     required String startWorkTime,
-    // required List<String> socialUrl,
+    String? insta,
+    String? facebook,
     required String shopPhoneNumber,
   }) async {
     http.Response response;
@@ -209,8 +209,8 @@ class ShopRepository {
       "location": location,
       "startWorkTime": startWorkTime,
       "endWorkTime": endWorkTime,
-      "insta": "insta",
-      "facebook": "facebook",
+      "insta": insta ?? "insta",
+      "facebook": facebook ?? "facebook",
       "shopPhoneNumber": shopPhoneNumber,
       "id": ownerID,
       "shopID": shopID,

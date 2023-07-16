@@ -11,7 +11,7 @@ class ErrorFetchingPosts extends PostsState {
   ErrorFetchingPosts({required this.message});
 }
 
-class NoPostYet extends PostsState {}
+class NoPostsYet extends PostsState {}
 
 class FeatchingPostsProgress extends PostsState {}
 

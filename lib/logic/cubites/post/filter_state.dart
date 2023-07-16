@@ -1,22 +1,48 @@
 part of 'filter_cubit.dart';
 
-abstract class FilterState {}
+class FilterState {
+  final List<dynamic> filteredPosts;
+  FilterState({required this.filteredPosts});
+}
 
-class FilterInitial extends FilterState {}
+class FilterInitial extends FilterState {
+  FilterInitial() : super(filteredPosts: []);
+}
 
-class FilterProgress extends FilterState {}
+class NoPostYet extends FilterState {
+  NoPostYet() : super(filteredPosts: []);
+}
 
-class NoPostYet extends FilterState {}
+class FilterProgress extends FilterState {
+  FilterProgress() : super(filteredPosts: []);
+}
 
-class LocationsFilteredSuccessfully extends FilterState {}
-
-class RatingsFilteredSuccessfully extends FilterState {}
-
-class CategoriesFilteredSuccessfully extends FilterState {}
-
-class FilterdWithOldestPosts extends FilterState {}
+class FilteredSuccessfully extends FilterState {
+  FilteredSuccessfully() : super(filteredPosts: []);
+}
 
 class FilterFailed extends FilterState {
   String message;
-  FilterFailed({required this.message});
+  FilterFailed({required this.message}) : super(filteredPosts: []);
 }
+
+// class LocationsFilteredSuccessfully extends FilterState {
+//   LocationsFilteredSuccessfully() : super(filteredPosts: []);
+// }
+
+// class RatingsFilteredSuccessfully extends FilterState {
+//   RatingsFilteredSuccessfully() : super(filteredPosts: []);
+// }
+class NoSubCategories extends FilterState {
+  NoSubCategories() : super(filteredPosts: []);
+}
+
+class CategoriesFilteredSuccessfully extends FilterState {
+  List<String> subCategories;
+  CategoriesFilteredSuccessfully({required this.subCategories})
+      : super(filteredPosts: []);
+}
+
+// class FilterdWithOldestPosts extends FilterState {
+//   FilterdWithOldestPosts() : super(filteredPosts: []);
+// }

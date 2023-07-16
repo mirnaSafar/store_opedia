@@ -16,13 +16,13 @@ class SharedPreferencesRepository {
 
   static void setStoreFollowers(int count, Shop shop) {
     setPreference(
-        dataType: DataType.INT, key: shop.shopName + shop.shopID, value: count);
+        dataType: DataType.INT, key: shop.ownerID + shop.shopID, value: count);
   }
 
   static int getStoreFollowers(Shop shop) {
-    if (globalSharedPreference.containsKey(shop.shopName + shop.shopID)) {
+    if (globalSharedPreference.containsKey(shop.ownerID + shop.shopID)) {
       return getPreference(
-        key: shop.shopName + shop.shopID,
+        key: shop.ownerID + shop.shopID,
       );
     } else {
       return 0;

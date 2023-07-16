@@ -106,10 +106,11 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                             ));
                                           },
                                           child: CustomIconTextRow(
+                                              icon: 'instagram-1-svgrepo-com',
                                               fontSize: w * 0.04,
                                               iconColor:
                                                   AppColors.mainBlackColor,
-                                              icon: Icons.storefront,
+                                              // icon: Icons.storefront,
                                               text: 'View Profile'),
                                         ),
                                         BlocBuilder<FavoriteCubit,
@@ -130,10 +131,12 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                                   context.pop();
                                                 },
                                                 child: CustomIconTextRow(
+                                                    icon:
+                                                        'instagram-1-svgrepo-com',
                                                     fontSize: w * 0.04,
                                                     iconColor: AppColors
                                                         .mainBlackColor,
-                                                    icon: Icons.star,
+                                                    // icon: Icons.star,
                                                     text: !read.isShopFavorite(
                                                             shop)
                                                         ? 'Add to favorites'
@@ -171,11 +174,13 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                                 context.pop();
                                               },
                                               child: CustomIconTextRow(
+                                                  icon:
+                                                      'instagram-1-svgrepo-com',
                                                   fontSize: w * 0.04,
                                                   iconColor:
                                                       AppColors.mainBlackColor,
-                                                  icon: Icons
-                                                      .person_add_alt_1_rounded,
+                                                  // icon: Icons
+                                                  // .person_add_alt_1_rounded,
                                                   text: followingCubit
                                                           .getShopFollowingState(
                                                               shop)

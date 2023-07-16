@@ -7,8 +7,8 @@ import '../../../data/repositories/posts_repository.dart';
 part 'add_post_state.dart';
 
 class AddPostCubit extends Cubit<AddPostState> {
-  AddPostCubit(this._postsRepository) : super(AddPostInitial());
-  final PostsRepository _postsRepository;
+  AddPostCubit() : super(AddPostInitial());
+
   Future addPost(
       {
       //required String ownerName,
@@ -19,7 +19,7 @@ class AddPostCubit extends Cubit<AddPostState> {
       required String category,
       required String price}) async {
     emit(AddPostProgress());
-    String response = await _postsRepository.addPost(
+    String response = await PostsRepository().addPost(
         shopeID: shopeID,
         ownerID: globalSharedPreference.getString("ID")!,
         name: title,

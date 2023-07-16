@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shopesapp/data/enums/message_type.dart';
 import 'package:shopesapp/data/models/post.dart';
 import 'package:shopesapp/logic/cubites/post/delete_post_cubit.dart';
 import 'package:shopesapp/logic/cubites/post/post_favorite_cubit.dart';
@@ -8,6 +11,7 @@ import 'package:shopesapp/main.dart';
 import 'package:shopesapp/presentation/pages/edit_post.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_icon_text.dart';
+import 'package:shopesapp/presentation/shared/custom_widgets/custom_toast.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custoum_rate.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/presentation/widgets/product/product_info.dart';
@@ -28,6 +32,7 @@ class _ProductPostState extends State<ProductPost> {
   @override
   Widget build(BuildContext context) {
     final w = MediaQuery.of(context).size.width;
+    final size = MediaQuery.of(context).size;
     final h = MediaQuery.of(context).size.height;
 
     Future postOptionsDialog() {
@@ -44,26 +49,66 @@ class _ProductPostState extends State<ProductPost> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         InkWell(
-                          onTap: () => context.push(const EditPostPage()),
+                          onTap: () => context
+                              .push(EditPostPage(
+                                post: widget.post,
+                              ))
+                              .then((value) => context.pop()),
                           child: CustomIconTextRow(
                               fontSize: w * 0.04,
                               iconColor: AppColors.mainBlackColor,
-                              icon: Icons.edit,
+                              icon: 'edit-svgrepo-com',
+                              // icon: Icons.edit,
                               text: 'Edit Post'),
                         ),
                         30.ph,
-                        InkWell(
-                          onTap: () => BlocProvider.of<DeletePostCubit>(context)
-                              .deletePost(
-                            postID: widget.post.postID,
-                            ownerID: globalSharedPreference.getString("ID")!,
-                            shopID: globalSharedPreference.getString("shopID")!,
+                        BlocProvider(
+                          create: (context) => DeletePostCubit(),
+                          child: BlocConsumer<DeletePostCubit, DeletePostState>(
+                            listener: (context, state) {
+                              if (state is DeletePostFailed) {
+                                CustomToast.showMessage(
+                                    size: size,
+                                    message: state.message,
+                                    context: context,
+                                    messageType: MessageType.REJECTED);
+                                setState(() {});
+                                context.pop();
+                              } else if (state is DeletePostSucceed) {
+                                CustomToast.showMessage(
+                                    size: size,
+                                    message:
+                                        'post has been deleted successfully',
+                                    context: context,
+                                    messageType: MessageType.SUCCESS);
+                                setState(() {});
+                                context.pop();
+                              }
+                            },
+                            builder: (context, state) {
+                              if (state is DeletePostProgress) {
+                                return const Center(
+                                    child: CircularProgressIndicator());
+                              }
+                              return InkWell(
+                                onTap: () =>
+                                    BlocProvider.of<DeletePostCubit>(context)
+                                        .deletePost(
+                                  postID: widget.post.postID,
+                                  ownerID:
+                                      globalSharedPreference.getString("ID")!,
+                                  shopID: globalSharedPreference
+                                      .getString("shopID")!,
+                                ),
+                                child: CustomIconTextRow(
+                                    fontSize: w * 0.04,
+                                    iconColor: AppColors.mainBlackColor,
+                                    icon: 'delete-svgrepo-com',
+                                    // icon: Icons.delete,
+                                    text: 'Delete Post'),
+                              );
+                            },
                           ),
-                          child: CustomIconTextRow(
-                              fontSize: w * 0.04,
-                              iconColor: AppColors.mainBlackColor,
-                              icon: Icons.delete,
-                              text: 'Delete Post'),
                         ),
                       ]),
                 ),
@@ -90,9 +135,14 @@ class _ProductPostState extends State<ProductPost> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const CustomText(text: 'widget.post.shopeID'),
                       CustomText(
-                        text: widget.post.category,
+                        text:
+                            globalSharedPreference.getString('shopName') ?? '',
+                      ),
+                      CustomText(
+                        text: widget.post.category ??
+                            globalSharedPreference.getString("shopCategory") ??
+                            '',
                         fontSize: w * 0.03,
                         textColor: AppColors.mainTextColor,
                       ),
@@ -115,6 +165,9 @@ class _ProductPostState extends State<ProductPost> {
         Container(
           height: h / 5,
           color: AppColors.mainBlackColor,
+          child: widget.post.photos != 'url'
+              ? Image.file(File(widget.post.photos))
+              : Image.asset('assets/images.jpg'),
         ),
         20.ph,
         Padding(

@@ -154,10 +154,11 @@ class AuthRepository {
         shopProfileImage,
         shopCoverImage,
         shopDescription,
-        socialUrl,
         startWorkTime;
+    List<String>? socialUrl;
+
     int? followesNumber, rate;
-    socialUrl = prefs.getString("socialUrl");
+    socialUrl = prefs.getStringList("socialUrl");
     rate = prefs.getInt("rate");
     followesNumber = prefs.getInt("followesNumber");
     shopDescription = prefs.getString("shopDescription");
@@ -220,7 +221,7 @@ class AuthRepository {
     await prefs.setString("shopProfileImage", shop.shopProfileImage ?? "null");
     await prefs.setString("shopCoverImage", shop.shopCoverImage ?? "null");
     await prefs.setString("shopDescription", shop.shopDescription ?? "null");
-    await prefs.setString("socialUrl", shop.socialUrl ?? "null");
+    await prefs.setStringList("socialUrl", shop.socialUrl ?? []);
     await prefs.setInt("rate", shop.rate ?? 0);
     await prefs.setInt("followesNumber", shop.followesNumber ?? 0);
     await prefs.setString("ID", shop.ownerID);

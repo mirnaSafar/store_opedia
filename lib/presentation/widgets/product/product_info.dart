@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:shopesapp/data/models/post.dart';
+import 'package:shopesapp/logic/cubites/post/post_favorite_cubit.dart';
 import 'package:shopesapp/logic/cubites/post/rate_shop_cubit.dart';
+import 'package:shopesapp/main.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_divider.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custoum_rate.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
+import 'package:shopesapp/presentation/shared/utils.dart';
 
 class ProductInfo extends StatefulWidget {
   const ProductInfo({Key? key, required this.post}) : super(key: key);
@@ -39,9 +43,9 @@ class _ProductInfoState extends State<ProductInfo> {
                 // child: Image.asset('assets/verified.png', fit: BoxFit.cover),
               ),
               10.px,
-              const CustomText(
-                text: 'store name',
-                // bold: true,
+              CustomText(
+                text: globalSharedPreference.getString('shopName') ??
+                    '', // bold: true,
               ),
               // CustomText(
               //   text: 'clothes',
@@ -62,9 +66,24 @@ class _ProductInfoState extends State<ProductInfo> {
             // mainAxisAlignment: MainAxisAlignment.center,
             children: [
               30.px,
-              Icon(
-                Icons.favorite_border_outlined,
-                size: w * 0.06,
+
+              BlocBuilder<PostFavoriteCubit, PostFavoriteState>(
+                builder: (context, state) {
+                  PostFavoriteCubit postFavorite =
+                      context.read<PostFavoriteCubit>();
+                  return IconButton(
+                      onPressed: () {
+                        postFavorite.isPostFavorite(widget.post)
+                            ? postFavorite.removeFromFavorites(widget.post)
+                            : postFavorite.addToFavorites(widget.post);
+                      },
+                      icon: !postFavorite.isPostFavorite(widget.post)
+                          ? const Icon(Icons.favorite_border_outlined)
+                          : Icon(
+                              Icons.favorite,
+                              color: AppColors.mainRedColor,
+                            ));
+                },
               ),
               // const CustomText(text: 'product name'),
               15.px,
@@ -101,7 +120,9 @@ class _ProductInfoState extends State<ProductInfo> {
                     ),
                     20.px,
                     CustomText(
-                      text: widget.post.category,
+                      text: widget.post.category ??
+                          globalSharedPreference.getString("shopCategory") ??
+                          '',
                       textColor: AppColors.secondaryFontColor,
                     )
                   ],
@@ -143,7 +164,7 @@ class _ProductInfoState extends State<ProductInfo> {
                     ),
                     20.px,
                     CustomText(
-                      text: 'widget.post.location',
+                      text: globalSharedPreference.getString('location') ?? '',
                       textColor: AppColors.secondaryFontColor,
                     )
                   ],
@@ -177,7 +198,7 @@ class _ProductInfoState extends State<ProductInfo> {
       surfaceTintColor: Colors.transparent,
       alignment: Alignment.bottomRight,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-      insetPadding: const EdgeInsets.only(bottom: 250, right: 40, left: 315),
+      insetPadding: const EdgeInsets.only(bottom: 250, right: 36, left: 315),
       clipBehavior: Clip.hardEdge,
       child: SizedBox(
         // color: AppColors.mainBlueColor,
@@ -188,24 +209,65 @@ class _ProductInfoState extends State<ProductInfo> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
-                Icons.phone,
-                size: 30,
+              // InkWell(
+              //   onTap: () => _launchPhone(),
+              //   child: const Icon(
+              //     Icons.phone,
+              //     size: 30,
+              //   ),
+              // ),
+              // 40.ph,
+              InkWell(
+                onTap: () => cLaunchUrl(emailLaunchUri(widget.post)),
+                child: const Icon(
+                  Icons.mail_outline_outlined,
+                  size: 30,
+                ),
               ),
               40.ph,
-              const Icon(
-                Icons.mail_outline_outlined,
-                size: 30,
-              ),
-              40.ph,
-              const Icon(
-                Icons.facebook,
-                size: 30,
-              ),
+              InkWell(
+                onTap: () => cLaunchUrl(Uri(
+                  path:
+                      'whatsapp://send?phone=${globalSharedPreference.getString("shopPhoneNumber")}',
+                )),
+                child: SvgPicture.asset(
+                  'assets/whatsapp-svgrepo-com.svg',
+                  // color: AppColors.mainRedColor,
+                  width: 35,
+                  height: 35,
+                ),
+              )
             ],
           ),
         ),
       ),
     );
   }
+
+  // _launchPhone() async {
+  //   String phoneNumber =
+  //       '+${globalSharedPreference.getString('shopPhoneNumber')}';
+  //   if (await canLaunch(phoneNumber)) {
+  //     await launch(phoneNumber);
+  //   } else {
+  //     throw 'Could not launch $phoneNumber';
+  //   }
+  // }
 }
+
+String? encodeQueryParameters(Map<String, String> params) {
+  return params.entries
+      .map((MapEntry<String, String> e) =>
+          '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+      .join('&');
+}
+
+// ···
+Uri emailLaunchUri(Post post) => Uri(
+      scheme: 'mailto',
+      path: '${globalSharedPreference.getString('email')}',
+      query: encodeQueryParameters(<String, String>{
+        'subject':
+            '${globalSharedPreference.getString('shopName')}\nproduct title: ${post.title}\ndescription: ${post.description}',
+      }),
+    );

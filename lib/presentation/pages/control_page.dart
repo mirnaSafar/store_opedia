@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shopesapp/data/models/owner.dart';
-import 'package:shopesapp/data/models/shop.dart';
 import 'package:shopesapp/logic/cubites/cubit/auth_cubit.dart';
 import 'package:shopesapp/logic/cubites/cubit/auth_state.dart';
-import 'package:shopesapp/logic/cubites/cubit/profile_cubit.dart';
 import 'package:shopesapp/main.dart';
 
 import 'package:shopesapp/presentation/pages/settings.dart';
@@ -63,73 +60,45 @@ class _ControlPageState extends State<ControlPage> {
     return SafeArea(
         top: false,
         child: Scaffold(
-      backgroundColor: AppColors.mainWhiteColor,
-      extendBody: true,
-      bottomNavigationBar: BottomNavigationBarWidget(
-          bottomNavigationEnum: selected,
-          onTap: (selectedEnum, pageNumber) {
-            controller.animateToPage(pageNumber,
-                curve: Curves.easeInCirc,
-                duration: const Duration(milliseconds: 100));
-            setState(() {
-              selected = selectedEnum;
-            });
-          }),
+          backgroundColor: AppColors.mainWhiteColor,
+          extendBody: true,
+          bottomNavigationBar: BottomNavigationBarWidget(
+              bottomNavigationEnum: selected,
+              onTap: (selectedEnum, pageNumber) {
+                controller.animateToPage(pageNumber,
+                    curve: Curves.easeInCirc,
+                    duration: const Duration(milliseconds: 100));
+                setState(() {
+                  selected = selectedEnum;
+                });
+              }),
 
-      body: PageView(
-        controller: controller,
-        physics: const NeverScrollableScrollPhysics(),
-        onPageChanged: (value) {},
-        children: [
-          const SettingsPage(),
-          const SuggestedStoresView(),
-          const HomePage(),
-          const FavouritePage(),
-          BlocBuilder<AuthCubit, AuthState>(
-            builder: (context, state) {
-              if (state is UserLoginedIn ||
-                  globalSharedPreference.getString("currentShop") ==
-                      "notSelected") {
-                return globalSharedPreference.getString("currentShop") ==
-                        "notSelected"
-                    ? noSelectedShop(size, context)
-                    : const UserStore();
-              }
-              return StorePage(
-                  shop: Shop(
-                    shopCategory:
-                        globalSharedPreference.getString("shopCategory")!,
-                    location: globalSharedPreference.getString("location")!,
-                    startWorkTime:
-                        globalSharedPreference.getString("startWorkTime")!,
-                    endWorkTime:
-                        globalSharedPreference.getString("endWorkTime")!,
-                    ownerID: globalSharedPreference.getString("ID")!,
-                    ownerEmail: globalSharedPreference.getString("email")!,
-                    ownerPhoneNumber:
-                        globalSharedPreference.getString("phoneNumber")!,
-                    shopID: globalSharedPreference.getString("shopID")!,
-                    shopName: globalSharedPreference.getString("shopName")!,
-                    ownerName: globalSharedPreference.getString("name")!,
-                    followesNumber:
-                        globalSharedPreference.getInt("followesNumber")!,
-                    rate: globalSharedPreference.getInt("rate"),
-                    shopCoverImage:
-                        globalSharedPreference.getString("shopCoverImage"),
-                    shopDescription:
-                        globalSharedPreference.getString("shopDescription"),
-                    shopPhoneNumber:
-                        globalSharedPreference.getString("shopPhoneNumber"),
-                    shopProfileImage:
-                        globalSharedPreference.getString("shopProfileImage"),
-                  ),
-                  profileDisplay: true);
-            },
+          body: PageView(
+            controller: controller,
+            physics: const NeverScrollableScrollPhysics(),
+            onPageChanged: (value) {},
+            children: [
+              const SettingsPage(),
+              const SuggestedStoresView(),
+              const HomePage(),
+              const FavouritePage(),
+              BlocBuilder<AuthCubit, AuthState>(
+                builder: (context, state) {
+                  if (state is UserLoginedIn ||
+                      globalSharedPreference.getString("currentShop") ==
+                          "notSelected") {
+                    return globalSharedPreference.getString("currentShop") ==
+                            "notSelected"
+                        ? noSelectedShop(size, context)
+                        : const UserStore();
+                  }
+                  return StorePage(profileDisplay: true);
+                },
+              ),
+            ],
           ),
-        ],
-      ),
-      // /_screenList[_selectedindex],
-    ));
+          // /_screenList[_selectedindex],
+        ));
   }
 }
 

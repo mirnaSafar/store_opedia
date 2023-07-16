@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
@@ -12,7 +13,7 @@ class CustomIconTextRow extends StatelessWidget {
       this.textColor,
       this.fontSize})
       : super(key: key);
-  final IconData icon;
+  final String icon;
   final String text;
   final Color? iconColor;
   final Color? textColor;
@@ -22,10 +23,16 @@ class CustomIconTextRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(
-          icon,
-          color: iconColor ?? Colors.grey[600],
+        SvgPicture.asset(
+          'assets/$icon.svg',
+          // color: iconColor ?? Colors.grey[600],
+          width: 25,
+          height: 25,
         ),
+        // Icon(
+        //   icon,
+        //   color: iconColor ?? Colors.grey[600],
+        // ),
         20.px,
         CustomText(
           text: text,

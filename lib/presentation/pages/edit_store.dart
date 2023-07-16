@@ -19,8 +19,8 @@ import '../shared/utils.dart';
 import '../shared/validation_functions.dart';
 
 class EditStore extends StatefulWidget {
-  const EditStore({Key? key}) : super(key: key);
-
+  EditStore({Key? key, this.function}) : super(key: key);
+  Function()? function;
   @override
   State<EditStore> createState() => _EditStoreState();
 }
@@ -33,8 +33,11 @@ class _EditStoreState extends State<EditStore> {
   TextEditingController storeStartWorkTimecontroller = TextEditingController();
   TextEditingController storeEndWorkTimeController = TextEditingController();
   TextEditingController storeDescriptionController = TextEditingController();
-  TextEditingController storeInstagramController = TextEditingController();
-  TextEditingController storeFacebookController = TextEditingController();
+  TextEditingController storeInstagramController = TextEditingController(
+      text: globalSharedPreference.getStringList("socialUrl")![0]);
+  TextEditingController storeFacebookController = TextEditingController(
+      text: globalSharedPreference.getStringList("socialUrl")![1]);
+
   TextEditingController storeLocationController = TextEditingController();
   String? timeString;
   List<String>? timeParts;
@@ -148,25 +151,30 @@ class _EditStoreState extends State<EditStore> {
                   Wrap(
                     children: [
                       Container(
-                          height: h / 4,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(w * 0.05),
-                            color: AppColors.mainOrangeColor,
-                          ),
-                          width: w,
-                          child: (coverSelectedFile != null) ||
-                                  (coverSelectedFile == null &&
-                                      coverPath != null)
-                              ? ClipRRect(
-                                  borderRadius: BorderRadius.circular(w * 0.05),
-                                  child: Image.file(
-                                    coverSelectedFile != null
-                                        ? File(coverSelectedFile!.path)
-                                        : File(coverPath!),
-                                    fit: BoxFit.fill,
-                                  ),
-                                )
-                              : const Icon(Icons.image)),
+                        height: h / 4,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(w * 0.02),
+                            // color: AppColors.mainOrangeColor,
+                            border:
+                                Border.all(color: AppColors.mainBlackColor)),
+                        width: w,
+                        child: (coverSelectedFile != null) ||
+                                (coverSelectedFile == null &&
+                                    coverPath != 'url')
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(w * 0.05),
+                                child: Image.file(
+                                  coverSelectedFile != null
+                                      ? File(coverSelectedFile!.path)
+                                      : File(coverPath!),
+                                  fit: BoxFit.contain,
+                                ),
+                              )
+                            : Image.asset(
+                                'assets/store_cover_placeholder.jpg',
+                                fit: BoxFit.contain,
+                              ),
+                      )
                     ],
                   ),
                   Padding(
@@ -196,25 +204,26 @@ class _EditStoreState extends State<EditStore> {
                     child: Stack(
                       children: [
                         CircleAvatar(
-                          radius: w * 0.12,
+                          radius: w * 0.13,
                           backgroundColor: AppColors.mainWhiteColor,
                           child: CircleAvatar(
-                            radius: w * 0.11,
-                            backgroundColor: AppColors.mainWhiteColor,
-                            child: CircleAvatar(
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.primary,
-                              radius: w * 0.12,
-                              backgroundImage: (profileSelectedFile != null) ||
-                                      (profileSelectedFile == null &&
-                                          profilePath != null)
-                                  ? FileImage(profileSelectedFile != null
-                                      ? File(profileSelectedFile!.path)
-                                      : File(profilePath!))
-                                  : null,
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                            radius: w * 0.12,
+                            backgroundImage: (profileSelectedFile != null) ||
+                                    (profileSelectedFile == null &&
+                                        profilePath != 'url')
+                                ? FileImage(profileSelectedFile != null
+                                    ? File(profileSelectedFile!.path)
+                                    : File(profilePath!))
+                                : null,
+                            child: ClipOval(
                               child: profileSelectedFile == null &&
-                                      (profilePath == null)
-                                  ? const Icon(Icons.store)
+                                      profilePath == 'url'
+                                  ? Image.asset(
+                                      'assets/store_placeholder.png',
+                                      fit: BoxFit.contain,
+                                    )
                                   : null,
                             ),
                           ),
@@ -371,6 +380,8 @@ class _EditStoreState extends State<EditStore> {
                               size: size,
                               message: "information updated Successfully",
                               messageType: MessageType.SUCCESS);
+                          widget.function;
+                          context.pop();
                         } else if (state is EditShopFailed) {
                           CustomToast.showMessage(
                               context: context,
@@ -401,9 +412,13 @@ class _EditStoreState extends State<EditStore> {
                                         shopDescription:
                                             storeDescriptionController.text,
                                         shopProfileImage:
-                                            profileSelectedFile?.path ?? '',
+                                            profileSelectedFile?.path ??
+                                                profilePath ??
+                                                '',
                                         shopCoverImage:
-                                            coverSelectedFile?.path ?? '',
+                                            coverSelectedFile?.path ??
+                                                coverPath ??
+                                                '',
                                         shopCategory:
                                             storeCategoryController.text,
                                         location: storeLocationController.text,
@@ -412,7 +427,10 @@ class _EditStoreState extends State<EditStore> {
                                         opening:
                                             storeEndWorkTimeController.text,
                                         shopPhoneNumber:
-                                            storeNumberController.text),
+                                            storeNumberController.text,
+                                        insta: storeInstagramController.text,
+                                        facebook: storeFacebookController.text),
+                                    widget.function,
                                     setState(() {})
                                   };
                           },

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shopesapp/data/enums/message_type.dart';
+import 'package:shopesapp/logic/cubites/cubit/auth_cubit.dart';
 import 'package:shopesapp/presentation/pages/signup_categories_page.dart';
 import 'package:shopesapp/presentation/pages/switch_store.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
@@ -14,6 +15,7 @@ import 'package:shopesapp/presentation/shared/extensions.dart';
 import '../../data/enums/file_type.dart';
 import '../../logic/cubites/shop/add_shop_cubit.dart';
 
+import '../../main.dart';
 import '../shared/custom_widgets/custom_text.dart';
 import '../shared/custom_widgets/custom_toast.dart';
 import '../shared/utils.dart';
@@ -104,25 +106,30 @@ class _EditStoreState extends State<AddStorePage> {
               Stack(
                 // fit: StackFit.expand,
                 // alignment: AlignmentDirectional.bottomEnd,
+
                 children: [
                   Wrap(
                     children: [
                       Container(
-                          height: h / 4,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(w * 0.05),
-                            color: AppColors.mainOrangeColor,
-                          ),
-                          width: w,
-                          child: coverSelectedFile != null
-                              ? ClipRRect(
-                                  borderRadius: BorderRadius.circular(w * 0.05),
-                                  child: Image.file(
-                                    File(coverSelectedFile!.path),
-                                    fit: BoxFit.fill,
-                                  ),
-                                )
-                              : const Icon(Icons.image)),
+                        height: h / 4,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(w * 0.05),
+                          // color: AppColors.mainOrangeColor,
+                        ),
+                        width: w,
+                        child: (coverSelectedFile != null)
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(w * 0.05),
+                                child: Image.file(
+                                  File(coverSelectedFile!.path),
+                                  fit: BoxFit.contain,
+                                ),
+                              )
+                            : Image.asset(
+                                'assets/store_cover_placeholder.jpg',
+                                fit: BoxFit.contain,
+                              ),
+                      )
                     ],
                   ),
                   Padding(
@@ -171,10 +178,15 @@ class _EditStoreState extends State<AddStorePage> {
                                 backgroundImage: profileSelectedFile != null
                                     ? FileImage(File(profileSelectedFile!.path))
                                     : null,
-                                child: profileSelectedFile == null ||
-                                        profileSelectedFile!.path.isEmpty
-                                    ? const Icon(Icons.image)
-                                    : null,
+                                child: ClipOval(
+                                  child: profileSelectedFile == null ||
+                                          profileSelectedFile!.path.isEmpty
+                                      ? Image.asset(
+                                          'assets/store_placeholder.png',
+                                          fit: BoxFit.contain,
+                                        )
+                                      : null,
+                                ),
                               ),
                             )),
                         Padding(

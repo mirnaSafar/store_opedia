@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopesapp/logic/cubites/cubit/auth_cubit.dart';
 import 'package:shopesapp/logic/cubites/cubit/internet_cubit.dart';
 import 'package:shopesapp/logic/cubites/cubit/profile_cubit.dart';
+import 'package:shopesapp/logic/cubites/post/filter_cubit.dart';
 import 'package:shopesapp/logic/cubites/post/post_favorite_cubit.dart';
 import 'package:shopesapp/logic/cubites/post/posts_cubit.dart';
 import 'package:shopesapp/logic/cubites/post/rate_shop_cubit.dart';
@@ -103,6 +104,10 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => ShopFollwersCounterCubit(),
+          lazy: false,
+        ),
+        BlocProvider(
+          create: (context) => FilterCubit(),
           lazy: false,
         ),
         BlocProvider(
