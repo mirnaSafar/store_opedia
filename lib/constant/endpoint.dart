@@ -1,2 +1,2 @@
 //const ENDPOINT = 'localhost:8000';
-const ENDPOINT = "anasattoum.pythonanywhere.com";
+const ENDPOINT = "AnasAttoum2023.pythonanywhere.com";
