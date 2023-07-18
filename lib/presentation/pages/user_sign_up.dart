@@ -10,6 +10,7 @@ import 'package:shopesapp/presentation/widgets/auth/phoneNumber_form_field.dart'
 import '../../constant/clipper.dart';
 import '../../data/enums/message_type.dart';
 import '../../logic/cubites/cubit/auth_state.dart';
+import '../shared/custom_widgets/custom_button.dart';
 import '../shared/custom_widgets/custom_toast.dart';
 import '../widgets/auth/email_form_field.dart';
 import '../widgets/auth/password_form_field.dart';
@@ -141,30 +142,21 @@ class _UserSignUpState extends State<UserSignUp> with TickerProviderStateMixin {
                   const SizedBox(
                     height: 20.0,
                   ),
-                  Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.surface,
-                          borderRadius: BorderRadius.circular(10.0)),
-                      child: BlocBuilder<AuthCubit, AuthState>(
-                        builder: (context, state) {
-                          if (state is AuthProgress) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                          return ElevatedButton(
-                            onPressed: () => _submitForm(context),
-                            child: const Text(
-                              'Signup',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w700),
-                            ),
-                          );
+                  BlocBuilder<AuthCubit, AuthState>(
+                    builder: (context, state) {
+                      if (state is AuthProgress) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                      return CustomButton(
+                        onPressed: () {
+                          _submitForm(context);
                         },
-                      )),
+                        text: 'Signup',
+                      );
+                    },
+                  ),
                   const SizedBox(
                     height: 15.0,
                   ),

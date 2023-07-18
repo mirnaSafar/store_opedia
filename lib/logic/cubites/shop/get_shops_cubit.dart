@@ -21,15 +21,15 @@ class GetShopsCubit extends Cubit<GetShopsState> {
 
     Map<String, dynamic>? response = await ShopRepository()
         .getShops(ownerID: globalSharedPreference.getString("ID")!);
-    if (response!["message"] == "Done") {
-      setShops(shops: response["stores"]);
-
-      emit(GetShopsSucceed());
-    } else if (response["message"] != "Done") {
+    if (response == null || response["message"] != "Done") {
       emit(GetShopsFailed(
           message: response == null
               ? "Filed to delet the user , Check your internet connection"
               : response["message"]));
+    } else if (response["message"] == "Done") {
+      setShops(shops: response["stores"]);
+
+      emit(GetShopsSucceed());
     }
   }
 
@@ -38,17 +38,17 @@ class GetShopsCubit extends Cubit<GetShopsState> {
 
     Map<String, dynamic>? response = await ShopRepository()
         .getShops(ownerID: globalSharedPreference.getString("ID")!);
-    if (response!["message"] == "Done") {
+    if (response == null || response["message"] != "Done") {
+      emit(GetShopsFailed(
+          message: response == null
+              ? "Filed to delet the user , Check your internet connection"
+              : response["message"]));
+    } else if (response["message"] == "Done") {
       setShops(shops: response["stores"]);
       shop = _shops
           .firstWhere((element) => Shop.fromJson(element).shopID == shopID);
       emit(GetShopsSucceed());
       return shop!;
-    } else if (response["message"] != "Done") {
-      emit(GetShopsFailed(
-          message: response == null
-              ? "Filed to delet the user , Check your internet connection"
-              : response["message"]));
     }
   }
 }

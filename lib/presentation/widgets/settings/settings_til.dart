@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:shopesapp/presentation/pages/add_store_page.dart';
+import 'package:shopesapp/presentation/pages/deactiva_stores.dart';
 import 'package:shopesapp/presentation/pages/porfile.dart';
 import 'package:shopesapp/presentation/pages/privacy%20policies.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
@@ -74,10 +75,16 @@ Widget buildeAddNewSotre(BuildContext context) => SimpleSettingsTile(
       leading: iconWidget(icon: Icons.add, color: AppColors.mainRedColor),
       child: const AddStorePage(),
     );
+
+Widget buildeDeactiveSotres(BuildContext context) => SimpleSettingsTile(
+      title: "Deactive Stores",
+      leading: iconWidget(icon: Icons.archive, color: Colors.blueGrey),
+      child: const DeactiveStores(),
+    );
 Widget buildeEdeitMySotre(BuildContext context, var size) => SimpleSettingsTile(
       title: "Edit store informations",
       leading: iconWidget(icon: Icons.edit, color: Colors.orange),
-      child: globalSharedPreference.getString("currentShop") == "notSelected"
+      child: globalSharedPreference.getString("currentShop") == "noShop"
           ? noSelectedShop(size, context)
           : EditStore(),
     );

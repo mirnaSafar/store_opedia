@@ -11,6 +11,8 @@ class AddShopCubit extends Cubit<AddShopState> {
   AddShopCubit() : super(AddShopInitial());
 
   Future addShop({
+    required String? facebookAccount,
+    required String? instagramAccount,
     required String shopName,
     required String shopDescription,
     required String? shopProfileImage,
@@ -23,6 +25,8 @@ class AddShopCubit extends Cubit<AddShopState> {
   }) async {
     emit(AddShopProgress());
     String response = await ShopRepository().addShop(
+      facebookAccount: facebookAccount,
+      instagramAccount: instagramAccount,
       ownerID: globalSharedPreference.getString("ID")!,
       shopName: shopName,
       shopDescription: shopDescription,

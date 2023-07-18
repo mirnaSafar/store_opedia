@@ -16,12 +16,13 @@ class UpdateUserCubit extends Cubit<UpdateUserState> {
       required String id}) async {
     emit(UpdateUserProgress());
 
-    String? response = await UserRepository().updateUser(
+    Map<String, dynamic>? response = await UserRepository().updateUser(
         id: id, name: name, password: password, phoneNumber: phoneNumber);
-    if (response == null || response == "Failed") {
+    if (response == null || response["message"] != "Done") {
       emit(UpdateUserFailed(
-          message: response ??
-              "Failed to Update the user , Check your internet connection"));
+          message: response == null
+              ? "Failed to Update the user , Check your internet connection"
+              : response["message"]));
     } else {
       globalSharedPreference.setString("name", name);
       globalSharedPreference.setString("phoneNumber", phoneNumber);

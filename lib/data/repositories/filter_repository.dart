@@ -16,7 +16,7 @@ class FilterRepository {
     } catch (e) {
       return null;
     }
-    if (response.statusCode == 205) {
+    if (response.statusCode == 200) {
       parsedResult = jsonDecode(response.body);
       return parsedResult;
     }
@@ -33,7 +33,7 @@ class FilterRepository {
     } catch (e) {
       return null;
     }
-    if (response.statusCode == 205) {
+    if (response.statusCode == 200) {
       parsedResult = jsonDecode(response.body);
       return parsedResult;
     }
@@ -52,7 +52,7 @@ class FilterRepository {
     } catch (e) {
       return null;
     }
-    if (response.statusCode == 205) {
+    if (response.statusCode == 200) {
       parsedResult = jsonDecode(response.body);
       return parsedResult;
     }

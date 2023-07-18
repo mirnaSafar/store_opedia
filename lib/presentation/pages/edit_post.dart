@@ -19,6 +19,7 @@ import 'package:shopesapp/presentation/shared/utils.dart';
 import '../../logic/cubites/post/update_post_cubit.dart';
 import '../shared/validation_functions.dart';
 
+// ignore: must_be_immutable
 class EditPostPage extends StatefulWidget {
   EditPostPage({Key? key, required this.post}) : super(key: key);
   Post post;

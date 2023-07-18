@@ -30,8 +30,7 @@ class _UserStoreState extends State<UserStore> {
                 height: size.height * 0.02,
               ),
               const CustomText(
-                text: "You don't have any stroe yet",
-                bold: true,
+                text: "You don't have any store yet",
                 fontSize: 25,
               )
             ],

@@ -6,6 +6,10 @@ import 'package:shopesapp/data/repositories/owner_repository.dart';
 
 part 'owner_state.dart';
 
+
+// USER AND OWNER USE THE SAME CUBIT (USER CUBIT)
+// WE CAN DELETE THIS FILE
+/*
 class OwnerCubit extends Cubit<OwnerState> {
   Owner owner;
   OwnerCubit({required this.owner}) : super(OwnerInitial({} as Owner));
@@ -52,3 +56,4 @@ class OwnerCubit extends Cubit<OwnerState> {
     }
   }
 }
+*/

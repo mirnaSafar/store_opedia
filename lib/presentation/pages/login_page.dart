@@ -55,8 +55,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is UserLoginedIn) {
-          //Error from Toast
-          /*CustomToast.showMessage(
+          //Error
+          /*    CustomToast.showMessage(
               context: context,
               size: size,
               message: "Login Successfuly",
@@ -200,8 +200,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                                     padding: const EdgeInsets
                                                             .symmetric(
                                                         vertical: 15),
-                                                    backgroundColor: AppColors
-                                                        .mainOrangeColor,
+                                                    backgroundColor:
+                                                        Theme.of(context)
+                                                            .colorScheme
+                                                            .primary,
                                                     shape:
                                                         RoundedRectangleBorder(
                                                             borderRadius:
@@ -230,8 +232,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                               child: Text(
                                                 "Register",
                                                 style: TextStyle(
-                                                    color: AppColors
-                                                        .mainOrangeColor),
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary,
+                                                ),
                                               ),
                                               style: ElevatedButton.styleFrom(
                                                   padding: const EdgeInsets
@@ -245,8 +249,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                                           BorderRadius.circular(
                                                               30)),
                                                   side: BorderSide(
-                                                      color: AppColors
-                                                          .mainOrangeColor))),
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .primary,
+                                                  ))),
                                         )
                                       ],
                                     ),

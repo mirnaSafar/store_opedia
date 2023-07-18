@@ -34,7 +34,7 @@ class StorePage extends StatefulWidget {
     this.shop,
     this.profileDisplay,
   }) : super(key: key) {
-    shop ??= Shop(
+    /* shop ??= Shop(
       shopCategory: globalSharedPreference.getString("shopCategory") ?? '',
       location: globalSharedPreference.getString("location") ?? '',
       startWorkTime: globalSharedPreference.getString("startWorkTime")!,
@@ -52,8 +52,9 @@ class StorePage extends StatefulWidget {
       shopDescription: globalSharedPreference.getString("shopDescription"),
       shopPhoneNumber: globalSharedPreference.getString("shopPhoneNumber"),
       shopProfileImage: globalSharedPreference.getString("shopProfileImage"),
-      socialUrl: globalSharedPreference.getStringList("socialUrl"),
-    );
+      socialUrl:
+          globalSharedPreference.getStringList("socialUrl") as List<dynamic>,
+    );*/
   }
   Shop? shop;
   bool? profileDisplay;
@@ -72,14 +73,13 @@ class _StorePageState extends State<StorePage> {
   // late UserOwnerCubit userOwnerCubit = context.read<UserOwnerCubit>();
   List<dynamic> postsList = [];
   List<dynamic> ownerShpos = [];
-  String? currentID;
-  bool isLastShop = false;
 
-  @override
+  // String? currentID;
+  //bool isLastShop = false;
+
+  /* @override
   void initState() {
-    if (ownerShpos.isEmpty) {
-      context.read<GetOwnerShopsCubit>().getOwnerShopsRequest();
-    }
+    if (ownerShpos.isEmpty) {}
     if (postsList.isEmpty) {
       context.read<PostsCubit>().getOwnerPosts(
           ownerID: globalSharedPreference.getString('ID')!,
@@ -88,7 +88,7 @@ class _StorePageState extends State<StorePage> {
     currentID = context.read<SwitchShopCubit>().getStoredShopID();
 
     super.initState();
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -96,6 +96,7 @@ class _StorePageState extends State<StorePage> {
     String startWorkTime = splitStartTime[0] + ":" + splitStartTime[1];
     List<String> splitEndWorkTime = widget.shop!.endWorkTime.split(":");
     String endtWorkTime = splitEndWorkTime[0] + ":" + splitEndWorkTime[1];
+
     var size = MediaQuery.of(context).size;
     // updateTheSta
     final w = MediaQuery.of(context).size.width;
@@ -425,13 +426,13 @@ class _StorePageState extends State<StorePage> {
                                         textColor:
                                             Theme.of(context).primaryColorDark,
                                         icon: 'instagram-2-1-logo-svgrepo-com',
-                                        text: widget.shop!.socialUrl?[0] ?? ''),
+                                        text: widget.shop!.socialUrl?[1] ?? ''),
                                     20.ph,
                                     CustomIconTextRow(
                                         textColor:
                                             Theme.of(context).primaryColorDark,
                                         icon: 'facebook-3-logo-svgrepo-com',
-                                        text: widget.shop!.socialUrl?[1] ?? ''),
+                                        text: widget.shop!.socialUrl?[0] ?? ''),
                                     const CustomDivider(),
                                   ],
                                 ),
@@ -472,10 +473,6 @@ class _StorePageState extends State<StorePage> {
                           ownerShpos =
                               BlocProvider.of<GetOwnerShopsCubit>(context)
                                   .ownerShops;
-
-                          if (ownerShpos.length == 1) {
-                            isLastShop = true;
-                          }
 
                           return Padding(
                             padding:
@@ -568,9 +565,7 @@ class _StorePageState extends State<StorePage> {
                       },
                     );
                   }
-                  return const Center(
-                    child: Text('data'),
-                  );
+                  return buildError(size);
                 },
               ),
             ],

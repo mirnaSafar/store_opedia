@@ -1,8 +1,12 @@
+/*
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shopesapp/constant/endpoint.dart';
 import 'package:shopesapp/data/models/shop.dart';
-
+*/
+// USER AND OWNER USE THE SAME CUBIT (USER CUBIT)
+// WE CAN DELETE THIS FILE
+/*
 class OwnerRepository {
   Future<String> deleteOwner({required String id}) async {
     http.Response response;
@@ -50,4 +54,4 @@ class OwnerRepository {
     }
     return null;
   }
-}
+}*/

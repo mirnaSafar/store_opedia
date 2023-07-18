@@ -74,14 +74,14 @@ class AuthRepository {
     } catch (e) {
       return null;
     }
-    if (response.statusCode == 201 || response.statusCode == 202) {
+    if (response.statusCode == 200 || response.statusCode == 202) {
       Map<String, dynamic> parsedResult = jsonDecode(response.body);
-      BlocListener<OwnerCubit, OwnerState>(
+      /* BlocListener<OwnerCubit, OwnerState>(
         listener: (context, state) {
           Owner owner = Owner.fromMap(requestBody);
           OwnerCubit(owner: owner);
         },
-      );
+      );*/
       return parsedResult;
     }
     return null;
@@ -155,7 +155,7 @@ class AuthRepository {
         shopCoverImage,
         shopDescription,
         startWorkTime;
-    List<String>? socialUrl;
+    List<dynamic>? socialUrl;
 
     int? followesNumber, rate;
     socialUrl = prefs.getStringList("socialUrl");
@@ -217,11 +217,19 @@ class AuthRepository {
 
   void saveOwnerAndShop({required Shop shop}) async {
     final prefs = await SharedPreferences.getInstance();
+
+    List<String> socialUrl = [];
+    if (shop.socialUrl!.isEmpty) {
+      shop.socialUrl!.add("www.facebook.com");
+      shop.socialUrl!.add("www.instagram.com");
+    }
+    socialUrl.add(shop.socialUrl![0]);
+    socialUrl.add(shop.socialUrl![1]);
     await prefs.setString("shopPhoneNumber", shop.shopPhoneNumber ?? "null");
     await prefs.setString("shopProfileImage", shop.shopProfileImage ?? "null");
     await prefs.setString("shopCoverImage", shop.shopCoverImage ?? "null");
     await prefs.setString("shopDescription", shop.shopDescription ?? "null");
-    await prefs.setStringList("socialUrl", shop.socialUrl ?? []);
+    await prefs.setStringList("socialUrl", socialUrl);
     await prefs.setInt("rate", shop.rate ?? 0);
     await prefs.setInt("followesNumber", shop.followesNumber ?? 0);
     await prefs.setString("ID", shop.ownerID);
@@ -235,6 +243,7 @@ class AuthRepository {
     await prefs.setString("endWorkTime", shop.endWorkTime);
     await prefs.setString("shopID", shop.shopID);
     await prefs.setString("mode", "owner");
+    globalSharedPreference.setBool("hasDeacyivaedStore", false);
   }
 
   void saveUser({required User user}) async {
@@ -244,5 +253,6 @@ class AuthRepository {
     await prefs.setString("phoneNumber", user.phoneNumber);
     await prefs.setString("name", user.name);
     await prefs.setString("mode", "user");
+    globalSharedPreference.setBool("hasDeacyivaedStore", false);
   }
 }

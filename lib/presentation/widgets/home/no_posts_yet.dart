@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shopesapp/presentation/shared/colors.dart';
 
 import '../../shared/custom_widgets/custom_text.dart';
 
-Widget buildError(var size) {
+Widget buildNoPostsYet(var size) {
   return Column(
     children: [
       SizedBox(
@@ -11,17 +12,17 @@ Widget buildError(var size) {
       Center(
         child: Column(
           children: [
-            const Icon(
-              Icons.cancel_outlined,
-              color: Colors.red,
+            Icon(
+              Icons.info_outline,
+              color: AppColors.mainBlueColor,
               size: 75,
             ),
             SizedBox(
               height: size.height * 0.02,
             ),
             const CustomText(
-              text: "Error",
-              fontSize: 25,
+              text: "NO Posts Yet Follow Stores to Show Posts",
+              fontSize: 20,
             )
           ],
         ),

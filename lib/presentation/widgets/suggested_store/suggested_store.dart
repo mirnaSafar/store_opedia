@@ -5,6 +5,7 @@ import 'package:shopesapp/data/repositories/shared_preferences_repository.dart';
 import 'package:shopesapp/logic/cubites/post/posts_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/favorite_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/following_cubit.dart';
+import 'package:shopesapp/logic/cubites/shop/get_owner_shops_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/rate_shop_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/shop_follwers_counter_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/work_time_cubit.dart';
@@ -101,6 +102,10 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                                         shop.startWorkTime,
                                                     closeTime:
                                                         shop.endWorkTime);
+                                            context
+                                                .read<GetOwnerShopsCubit>()
+                                                .getOwnerShopsRequest(
+                                                    ownerID: shop.ownerID);
                                             context.push(StorePage(
                                               shop: shop,
                                             ));

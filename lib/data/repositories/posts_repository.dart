@@ -119,7 +119,7 @@ class PostsRepository {
       "shopID": shopeID,
       "name": name,
       "description": description,
-      "photos": photos ?? "noProductImage",
+      "photos": photos,
       "category": category,
       "price": price,
     };
@@ -130,6 +130,7 @@ class PostsRepository {
         'Content-Type': 'application/json',
       },
     );
+    print(response.statusCode);
     if (response.statusCode == 200) {
       return "Success";
     }
@@ -137,12 +138,12 @@ class PostsRepository {
   }
 
   Future<Map<String, dynamic>?> getAllPosts() async {
-    String userID = globalSharedPreference.getString('ID')!;
+    String userID = globalSharedPreference.getString("ID")!;
 
     http.Response response;
     Map<String, dynamic> parsedResult;
     Map<String, dynamic> requestBody = {
-      "id": globalSharedPreference.getString('ID'),
+      "id": userID,
     };
     try {
       response = await http.post(
@@ -151,6 +152,7 @@ class PostsRepository {
           headers: {
             'Content-Type': 'application/json',
           });
+      //  print(response.statusCode);
     } catch (e) {
       return null;
     }

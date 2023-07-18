@@ -1,22 +1,21 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shopesapp/logic/cubites/shop/switch_shop_cubit.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_divider.dart';
 import '../../logic/cubites/shop/get_owner_shops_cubit.dart';
 import '../../main.dart';
 import '../widgets/dialogs/awosem_dialog.dart';
+import '../widgets/switch_shop/deactive_shop_item.dart';
 import '../widgets/switch_shop/error.dart';
-import '../widgets/switch_shop/shop_item.dart';
 
-class SwitchStore extends StatefulWidget {
-  const SwitchStore({Key? key}) : super(key: key);
+class DeactiveStores extends StatefulWidget {
+  const DeactiveStores({Key? key}) : super(key: key);
 
   @override
-  State<SwitchStore> createState() => _SwitchStoreState();
+  State<DeactiveStores> createState() => _DeactiveStoresState();
 }
 
-class _SwitchStoreState extends State<SwitchStore> {
+class _DeactiveStoresState extends State<DeactiveStores> {
   List<dynamic> ownerShpos = [];
   String? currentShopID;
   bool isLastShop = false;
@@ -26,7 +25,6 @@ class _SwitchStoreState extends State<SwitchStore> {
       context.read<GetOwnerShopsCubit>().getOwnerShopsRequest(
           ownerID: globalSharedPreference.getString("ID"));
     }
-    currentShopID = globalSharedPreference.getString("shopID");
 
     super.initState();
   }
@@ -36,7 +34,7 @@ class _SwitchStoreState extends State<SwitchStore> {
     var size = MediaQuery.of(context).size;
     return Scaffold(
         appBar: AppBar(
-          title: const Text("My Shops"),
+          title: const Text("My Deactive Shops"),
           centerTitle: true,
         ),
         body: Padding(
@@ -65,8 +63,8 @@ class _SwitchStoreState extends State<SwitchStore> {
 
                 return ListView.separated(
                     itemBuilder: (context, index) {
-                      return buildShopItem(context, size, ownerShpos[index],
-                          isLastShop, currentShopID);
+                      return buildDeactivatedShopItem(context, size,
+                          ownerShpos[index], isLastShop, currentShopID);
                     },
                     separatorBuilder: (context, index) => const CustomDivider(),
                     itemCount: ownerShpos.length);

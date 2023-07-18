@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -52,6 +53,8 @@ class _EditStoreState extends State<AddStorePage> {
   final ImagePicker picker = ImagePicker();
   FileTypeModel? coverSelectedFile;
   FileTypeModel? profileSelectedFile;
+  File? imageFile;
+  String? imageBase64;
   Future<FileTypeModel> pickFile(FileType type, bool profile) async {
     String? path;
     switch (type) {
@@ -60,6 +63,14 @@ class _EditStoreState extends State<AddStorePage> {
             path = profile
                 ? value?.path ?? profileSelectedFile?.path ?? ''
                 : value?.path ?? coverSelectedFile?.path ?? '');
+        print(path);
+        imageFile = File(path!);
+        print("done read file");
+        List<int> imageBytes = await imageFile!.readAsBytes();
+        print("done convert file");
+        imageBase64 = base64Encode(imageBytes);
+
+        print("the hashing image" + imageBase64!);
         context.pop();
 
         setState(() {});
@@ -237,13 +248,6 @@ class _EditStoreState extends State<AddStorePage> {
                   validator: (name) => nameValidator(name, 'enter store name')
                   // return null;
                   ),
-              /*    UserInput(
-                  text: 'Email',
-                  controller: storeEmailController,
-                  validator: (email) =>
-                      emailValidator(email, 'email is required')
-                  // return null;
-                  ),*/
               UserInput(
                 text: 'Store description',
                 controller: storeDescriptionController,
@@ -272,7 +276,8 @@ class _EditStoreState extends State<AddStorePage> {
                           onPressed: () async {
                             await showTimePicker(
                                     context: context,
-                                    initialTime: TimeOfDay.now())
+                                    initialTime:
+                                        const TimeOfDay(hour: 8, minute: 0))
                                 .then((value) {
                               setState(() {
                                 storeStartWorkTimecontroller.text =
@@ -281,6 +286,7 @@ class _EditStoreState extends State<AddStorePage> {
                             });
                           },
                           child: CustomText(
+                            textColor: AppColors.mainWhiteColor,
                             text: storeStartWorkTimecontroller.text,
                           ),
                         )),
@@ -297,7 +303,8 @@ class _EditStoreState extends State<AddStorePage> {
                           onPressed: () async {
                             await showTimePicker(
                                     context: context,
-                                    initialTime: TimeOfDay.now())
+                                    initialTime:
+                                        const TimeOfDay(hour: 20, minute: 00))
                                 .then((value) {
                               setState(() {
                                 storeEndWorkTimeController.text =
@@ -306,6 +313,7 @@ class _EditStoreState extends State<AddStorePage> {
                             });
                           },
                           child: CustomText(
+                            textColor: AppColors.mainWhiteColor,
                             text: storeEndWorkTimeController.text,
                           ),
                         )),
@@ -350,8 +358,6 @@ class _EditStoreState extends State<AddStorePage> {
                               messageType: MessageType.SUCCESS);
                           if (globalSharedPreference.getString("mode") ==
                               "user") {
-                            globalSharedPreference.setString(
-                                "currentShop", "notSelected");
                             context.read<AuthCubit>().userBecomeOwner();
                           }
                           context.pushRepalceme(const SwitchStore());
@@ -397,7 +403,11 @@ class _EditStoreState extends State<AddStorePage> {
                                           opening:
                                               storeStartWorkTimecontroller.text,
                                           shopPhoneNumber:
-                                              storeNumberController.text),
+                                              storeNumberController.text,
+                                          instagramAccount:
+                                              storeInstagramController.text,
+                                          facebookAccount:
+                                              storeFacebookController.text),
                                     };
                             });
                       },

@@ -134,19 +134,17 @@ class FilterCubit extends Cubit<FilterState> {
               : response["message"]));
     }
     // if (response == null) emit(FilterFailed(message: 'Failed'));
-    if (response != null && response["message"] == "Success") {
-      filteredPosts = response["posts"] as List;
-      if (filteredPosts.isEmpty) {
-        emit(NoPostYet());
-      } else {
-        emit(FilterState(filteredPosts: filteredPosts));
-        emit(FilteredSuccessfully());
-      }
-    } else {
+
+    if (response == null) {
       emit(FilterFailed(
-          message: response == null
-              ? "Faild Filter , Check your internet connection"
-              : response["message"]));
+          message: "Failed to Get the Posts , Check your internet connection"));
+    } else if (response["message"] == "You dont have any followed store yet") {
+      emit(NoPostYet());
+    } else if (response["message"] == "Done") {
+      filteredPosts = response["posts"];
+      emit(FilteredSuccessfully());
+    } else {
+      emit(FilterFailed(message: response["message"]));
     }
   }
 }

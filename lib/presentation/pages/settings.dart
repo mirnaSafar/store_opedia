@@ -27,7 +27,8 @@ class _SettingsPageState extends State<SettingsPage> {
     var size = MediaQuery.of(context).size;
 
     return Scaffold(
-      backgroundColor: AppColors.mainWhiteColor,
+      //To Switch to Dark
+      //  backgroundColor: AppColors.mainWhiteColor,
       appBar: AppBar(
         elevation: 0.0,
         backgroundColor: Colors.transparent,
@@ -58,7 +59,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               BlocBuilder<AuthCubit, AuthState>(
                 builder: (context, state) {
-                  if (state is UserLoginedIn) {
+                  if (state is UserLoginedIn || state is UserSignedUp) {
                     return SettingsGroup(
                         titleTextStyle: TextStyle(
                             fontWeight: FontWeight.w600,
@@ -74,7 +75,8 @@ class _SettingsPageState extends State<SettingsPage> {
                       children: <Widget>[
                         buildeAddNewSotre(context),
                         buildeEdeitMySotre(context, size),
-                        buildSwitchSotre(context)
+                        buildSwitchSotre(context),
+                        buildeDeactiveSotres(context)
                       ]);
                 },
               ),

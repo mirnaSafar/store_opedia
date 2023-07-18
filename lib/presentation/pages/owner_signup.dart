@@ -47,7 +47,8 @@ class _UserSignUpState extends State<OwnerSignUp>
   var isPasswordHidden = true;
   var isConfiermPasswordHidden = true;
   String? _email;
-  TimeOfDay initTime = TimeOfDay.now().replacing(hour: 00, minute: 00);
+  TimeOfDay initStartTime = TimeOfDay.now().replacing(hour: 08, minute: 00);
+  TimeOfDay initEndTime = TimeOfDay.now().replacing(hour: 08, minute: 00);
   String? _password;
   String? _phoneNumber;
   String? _ownerName;
@@ -58,10 +59,8 @@ class _UserSignUpState extends State<OwnerSignUp>
 
   @override
   void initState() {
-    _email = globalSharedPreference.getString("email") ?? "";
-
-    _phoneNumber = globalSharedPreference.getString("phoneNumber") ?? "";
-    _ownerName = globalSharedPreference.getString("name") ?? "";
+    storeStartWorkTimecontroller.text = "08:00 AM";
+    storeEndWorkTimeController.text = "08:00 PM";
     super.initState();
   }
 
@@ -207,17 +206,19 @@ class _UserSignUpState extends State<OwnerSignUp>
                         textColor: AppColors.secondaryFontColor,
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 30.0, vertical: 10),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             SizedBox(
-                                width: 80,
-                                child: GestureDetector(
-                                  onTap: () async {
+                                width: 100,
+                                child: ElevatedButton(
+                                  onPressed: () async {
                                     await showTimePicker(
                                             context: context,
-                                            initialTime: TimeOfDay.now())
+                                            initialTime: const TimeOfDay(
+                                                hour: 08, minute: 00))
                                         .then((value) {
                                       setState(() {
                                         storeStartWorkTimecontroller.text =
@@ -226,10 +227,8 @@ class _UserSignUpState extends State<OwnerSignUp>
                                     });
                                   },
                                   child: CustomText(
-                                    text:
-                                        storeStartWorkTimecontroller.text == ""
-                                            ? initTime.format(context)
-                                            : storeStartWorkTimecontroller.text,
+                                    textColor: AppColors.mainWhiteColor,
+                                    text: storeStartWorkTimecontroller.text,
                                   ),
                                 )),
                             Padding(
@@ -240,12 +239,13 @@ class _UserSignUpState extends State<OwnerSignUp>
                               ),
                             ),
                             SizedBox(
-                                width: 80,
-                                child: GestureDetector(
-                                  onTap: () async {
+                                width: 100,
+                                child: ElevatedButton(
+                                  onPressed: () async {
                                     await showTimePicker(
                                             context: context,
-                                            initialTime: TimeOfDay.now())
+                                            initialTime: const TimeOfDay(
+                                                hour: 20, minute: 00))
                                         .then((value) {
                                       setState(() {
                                         storeEndWorkTimeController.text =
@@ -254,35 +254,30 @@ class _UserSignUpState extends State<OwnerSignUp>
                                     });
                                   },
                                   child: CustomText(
-                                    text: storeEndWorkTimeController.text == ""
-                                        ? initTime.format(context)
-                                        : storeEndWorkTimeController.text,
+                                    textColor: AppColors.mainWhiteColor,
+                                    text: storeEndWorkTimeController.text,
                                   ),
                                 )),
                           ],
                         ),
                       ),
                       30.ph,
-                      Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.surface,
-                              borderRadius: BorderRadius.circular(10.0)),
-                          child: BlocBuilder<AuthCubit, AuthState>(
-                            builder: (context, state) {
-                              if (state is AuthProgress) {
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              }
-                              return CustomButton(
-                                onPressed: () {
-                                  _submitForm(context);
-                                },
-                                text: 'Signup',
-                              );
+                      BlocBuilder<AuthCubit, AuthState>(
+                        builder: (context, state) {
+                          if (state is AuthProgress) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                          return CustomButton(
+                            color: Theme.of(context).colorScheme.primary,
+                            onPressed: () {
+                              _submitForm(context);
                             },
-                          )),
+                            text: 'Signup',
+                          );
+                        },
+                      ),
                     ]),
               )
             ])),

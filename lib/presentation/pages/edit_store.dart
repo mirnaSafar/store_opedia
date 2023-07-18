@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ import '../shared/custom_widgets/custom_toast.dart';
 import '../shared/utils.dart';
 import '../shared/validation_functions.dart';
 
+// ignore: must_be_immutable
 class EditStore extends StatefulWidget {
   EditStore({Key? key, this.function}) : super(key: key);
   Function()? function;
@@ -34,9 +36,9 @@ class _EditStoreState extends State<EditStore> {
   TextEditingController storeEndWorkTimeController = TextEditingController();
   TextEditingController storeDescriptionController = TextEditingController();
   TextEditingController storeInstagramController = TextEditingController(
-      text: globalSharedPreference.getStringList("socialUrl")![0]);
-  TextEditingController storeFacebookController = TextEditingController(
       text: globalSharedPreference.getStringList("socialUrl")![1]);
+  TextEditingController storeFacebookController = TextEditingController(
+      text: globalSharedPreference.getStringList("socialUrl")![0]);
 
   TextEditingController storeLocationController = TextEditingController();
   String? timeString;
@@ -85,6 +87,8 @@ class _EditStoreState extends State<EditStore> {
   String? profilePath;
   FileTypeModel? coverSelectedFile;
   FileTypeModel? profileSelectedFile;
+  File? imageFile;
+  String? imageBase64;
   Future<FileTypeModel> pickFile(FileType type, bool profile) async {
     String? path;
     // coverSelectedFile?.path = coverPath!;
@@ -99,6 +103,11 @@ class _EditStoreState extends State<EditStore> {
 
         globalSharedPreference.setString(
             profile ? "shopProfileImage" : "shopCoverImage", path!);
+        imageFile = File(path!);
+        List<int> imageBytes = await imageFile!.readAsBytes();
+        imageBase64 = base64Encode(imageBytes);
+
+        print("the hashing image" + imageBase64!);
 
         setState(() {});
         break;
@@ -301,6 +310,7 @@ class _EditStoreState extends State<EditStore> {
                             });
                           },
                           child: CustomText(
+                            textColor: AppColors.mainWhiteColor,
                             text: storeStartWorkTimecontroller.text,
                           ),
                         )),
@@ -328,6 +338,7 @@ class _EditStoreState extends State<EditStore> {
                             });
                           },
                           child: CustomText(
+                            textColor: AppColors.mainWhiteColor,
                             text: storeEndWorkTimeController.text,
                           ),
                         )),

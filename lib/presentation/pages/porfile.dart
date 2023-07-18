@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/logic/cubites/user/update_user_cubit.dart';
 import 'package:shopesapp/main.dart';
 import 'package:shopesapp/presentation/pages/control_page.dart';
+import 'package:shopesapp/presentation/pages/verify_password.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/presentation/widgets/edit_profile/email_form_field.dart';
@@ -261,7 +262,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
                 onPressed: () {
-                  Navigator.pushNamed(context, "/verifiy");
+                  context.push(const VerifyPassword());
                 },
               ),
             ),
