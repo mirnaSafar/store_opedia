@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -16,6 +15,7 @@ import 'package:shopesapp/presentation/shared/custom_widgets/custom_toast.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/user_input.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/presentation/shared/utils.dart';
+import '../../data/models/shop.dart';
 import '../shared/validation_functions.dart';
 
 class AddPostPage extends StatefulWidget {
@@ -27,14 +27,13 @@ class AddPostPage extends StatefulWidget {
 
 class _AddPostPageState extends State<AddPostPage> {
   final ImagePicker picker = ImagePicker();
-  // late Shop shop;
+  late Shop shop;
   TextEditingController addPostPriceController = TextEditingController();
   TextEditingController addPostNameController = TextEditingController();
   TextEditingController addPostDescriptionController = TextEditingController();
   // late String? addPostImage;
   FileTypeModel? selectedFile;
-  File? imageFile;
-  String? imageBase64;
+
   void getImagePath() {}
   Future<FileTypeModel> pickFile(FileType type) async {
     String? path;
@@ -43,16 +42,9 @@ class _AddPostPageState extends State<AddPostPage> {
         await picker
             .pickImage(source: ImageSource.gallery)
             .then((value) => path = value?.path ?? selectedFile?.path ?? '');
-        // print(path);
-
-        imageFile = File(path!);
-        print("done read file");
-        List<int> imageBytes = await imageFile!.readAsBytes();
-        print("done convert file");
-        imageBase64 = base64Encode(imageBytes);
-
-        print("the hashing image" + imageBase64!);
         context.pop();
+
+        setState(() {});
 
         break;
       case FileType.CAMERA:
@@ -60,10 +52,7 @@ class _AddPostPageState extends State<AddPostPage> {
             .pickImage(source: ImageSource.camera)
             .then((value) => path = value?.path ?? selectedFile?.path ?? '');
         context.pop();
-        setState(() {
-          imageFile = File(path!);
-          //  imageBase64 = base64Encode(imageFile!.readAsBytesSync());
-        });
+        setState(() {});
 
         break;
     }
@@ -71,6 +60,13 @@ class _AddPostPageState extends State<AddPostPage> {
   }
 
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    //online
+    //  shop = context.read<AuthCubit>().getOwnerAndShop();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -231,8 +227,7 @@ class _AddPostPageState extends State<AddPostPage> {
                                       title: addPostNameController.text,
                                       description:
                                           addPostDescriptionController.text,
-                                      postImage:
-                                          imageBase64 ?? "noProductImage",
+                                      postImage: selectedFile?.path ?? '',
                                       category: "",
                                       price: addPostPriceController.text,
                                       shopeID: globalSharedPreference

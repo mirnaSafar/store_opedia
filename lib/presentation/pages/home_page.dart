@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:location/location.dart';
 import 'package:shopesapp/logic/cubites/post/filter_cubit.dart';
+import 'package:shopesapp/presentation/location_service.dart';
+import 'package:shopesapp/presentation/pages/map_page.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_divider.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
+import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/presentation/widgets/page_header/page_header.dart';
 import 'package:shopesapp/presentation/widgets/product/product_post.dart';
 import 'package:shopesapp/presentation/widgets/switch_shop/error.dart';
@@ -78,7 +82,16 @@ class _HomePageState extends State<HomePage> {
                   },
                 );
               }
-              return buildError(size);
+              return InkWell(
+                  onTap: () async {
+                    // LocationService().getCurrentAddressInfo();
+                    LocationData? currentLocation =
+                        await LocationService().getUserCurrentLocation();
+                    if (currentLocation != null) {
+                      context.push(MapView(currentLocation: currentLocation));
+                    }
+                  },
+                  child: buildError(size));
 
               // return ListView.separated(
               //   physics: const NeverScrollableScrollPhysics(),

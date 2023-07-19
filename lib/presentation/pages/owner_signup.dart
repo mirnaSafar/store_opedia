@@ -2,9 +2,12 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:location/location.dart';
 import 'package:shopesapp/logic/cubites/cubit/auth_cubit.dart';
 import 'package:shopesapp/main.dart';
+import 'package:shopesapp/presentation/location_service.dart';
 import 'package:shopesapp/presentation/pages/control_page.dart';
+import 'package:shopesapp/presentation/pages/map_page.dart';
 import 'package:shopesapp/presentation/pages/signup_categories_page.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_button.dart';
@@ -186,9 +189,30 @@ class _UserSignUpState extends State<OwnerSignUp>
                         text: 'Store Name',
                         controller: _storeNameController,
                       ),
-                      UserInput(
-                        text: 'Store Location',
-                        controller: storeLocationController,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: UserInput(
+                              text: 'Store Location',
+                              controller: storeLocationController,
+                            ),
+                          ),
+                          Expanded(
+                            child: CustomButton(
+                              text: 'Store Location',
+                              onPressed: () async {
+                                // LocationService().getCurrentAddressInfo();
+                                LocationData? currentLocation =
+                                    await LocationService()
+                                        .getUserCurrentLocation();
+                                if (currentLocation != null) {
+                                  context.push(MapView(
+                                      currentLocation: currentLocation));
+                                }
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                       UserInput(
                         text: 'Store Number',

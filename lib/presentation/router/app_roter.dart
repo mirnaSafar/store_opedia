@@ -21,7 +21,7 @@ class AppRouter {
               return const ControlPage();
             } else {
               //return const ControlPage();
-              return const LoginPage();
+              return const ControlPage();
             }
           }));
         });

@@ -35,8 +35,11 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc: ^8.0.1
+  geocoding: ^2.1.0
+  location: ^5.0.0
   flutter_settings_screens: ^0.3.3-null-safety+2
   flutter_speed_dial: ^7.0.0
+  google_maps_flutter: ^2.3.0
   flutter_spinkit: ^5.1.0
   flutter_svg: null
   font_awesome_flutter: ^10.1.0
