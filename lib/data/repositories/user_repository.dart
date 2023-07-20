@@ -2,12 +2,14 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shopesapp/constant/endpoint.dart';
 
+//BOTH OF USER AND OWNER USER THIS FILE
 class UserRepository {
-  Future<String?> updateUser(
+  Future<Map<String, dynamic>?> updateUser(
       {required String id,
       required String name,
       required String password,
       required String phoneNumber}) async {
+    Map<String, dynamic> parsedResult;
     Map<String, dynamic> requestBody = {
       "id": id,
       "userName": name,
@@ -21,14 +23,11 @@ class UserRepository {
         body: jsonEncode(requestBody),
         headers: <String, String>{'Content-Type': 'application/json'},
       );
-      if (response.statusCode == 200) {
-        return "Success";
-      }
     } catch (e) {
-      print(e);
-      return "Failed";
+      return null;
     }
-    return "Failed";
+    parsedResult = jsonDecode(response.body);
+    return parsedResult;
   }
 
   Future<String> deleteUser({required String id}) async {

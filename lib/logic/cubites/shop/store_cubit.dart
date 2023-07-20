@@ -3,13 +3,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/data/models/shop.dart';
 import 'package:shopesapp/data/repositories/shop_repository.dart';
 import 'package:shopesapp/logic/cubites/cubit/internet_cubit.dart';
+import 'package:shopesapp/main.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
 
 part 'store_state.dart';
 
 class StoreCubit extends Cubit<StoreState> {
   late Shop shop;
-  late List<Shop> shopsResponse, _oldestShops;
+  List<dynamic> shops = [];
+  List<dynamic> oldshops = [];
+  StoreCubit() : super(ShopsInitial());
   // final String ownerId;
 
   // Future<void> getOwnerStoreById(String ownerID, String shopID) async {
@@ -27,10 +30,37 @@ class StoreCubit extends Cubit<StoreState> {
   //   } else {
   //     emit(ErrorFetchingShops(message: response["message"]) );
   //   }
-  // }
+  //
 
-  StoreCubit() : super(StoreState());
+  Future getAllStores() async {
+    emit(FeatchingShopsProgress());
+    Map<String, dynamic>? response;
+    // try {
+    response = await ShopRepository()
+        .getAllStores(id: globalSharedPreference.getString("ID")!);
+    /*  } catch (e) {
+      emit(ErrorFetchingShops(
+          message: response == null
+              ? "Failed to Get the Stores , Check your internet connection"
+              : response["message"]));
+    }*/
+    if (response == null) {
+      emit(ErrorFetchingShops(
+          message:
+              "Failed to Get the Stores , Check your internet connection"));
+    } else if (response["message"] != "Done" &&
+        response["message"] != "No Stores Yet") {
+      emit(NoShopsYet());
+    } else if (response["message"] == "Done") {
+      // print(response["stores"]);
+      shops = response["stores"];
+      emit(FeatchingShopsSucceed());
+    } else {
+      emit(ErrorFetchingShops(message: response["message"]));
+    }
+  }
 
+//USE GET OWNER Shop Cubit insted this
   Future getOwnerShops(String ownerId) async {
     BlocListener<InternetCubit, InternetState>(
       listener: (context, state) async {
@@ -38,8 +68,8 @@ class StoreCubit extends Cubit<StoreState> {
           Map<String, dynamic>? response =
               await ShopRepository().getOwnerShpos(ownerID: ownerId);
           if (response!["message"] == "Success") {
-            shopsResponse = response["shops"];
-            if (shopsResponse.isEmpty) {
+            shops = response["shops"];
+            if (shops.isEmpty) {
               emit(NoShopsYet());
             } else {
               emit(ShopsFetchedSuccessfully());
@@ -63,10 +93,10 @@ class StoreCubit extends Cubit<StoreState> {
 
   Future getOldestShops() async {
     emit(FeatchingShopsProgress());
-    if (shopsResponse.isEmpty) {
+    if (shops.isEmpty) {
       emit(NoShopsYet());
     } else {
-      _oldestShops = List.from(shopsResponse.reversed);
+      oldshops = List.from(shops.reversed);
       emit(OldestShopsFiltered());
     }
   }

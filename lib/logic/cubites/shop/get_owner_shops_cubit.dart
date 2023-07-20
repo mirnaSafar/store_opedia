@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:shopesapp/data/models/owner.dart';
 import 'package:shopesapp/data/repositories/shop_repository.dart';
 import 'package:shopesapp/main.dart';
 part 'get_owner_shops_state.dart';
@@ -13,21 +14,20 @@ class GetOwnerShopsCubit extends Cubit<GetOwnerShopsState> {
     ownerShops = shops;
   }
 
-  Future getOwnerShopsRequest() async {
+  Future getOwnerShopsRequest({required String? ownerID}) async {
     emit(GetOwnerShopsProgress());
 
-    Map<String, dynamic>? response = /*_shopRepository.getOwnerShposTest();*/
-        await ShopRepository()
-            .getOwnerShpos(ownerID: globalSharedPreference.getString("ID"));
-    if (response!["message"] == "Succeed") {
-      setOwnerShop(shops: response["shops"]);
-
-      emit(GetOwnerShopsSucceed());
-    } else if (response == null || response["message"] != "Succeed") {
+    Map<String, dynamic>? response =
+        await ShopRepository().getOwnerShpos(ownerID: ownerID);
+    if (response == null || response["message"] != "Succeed") {
       emit(GetOwnerShopsFiled(
           message: response == null
               ? "Filed to delet the user , Check your internet connection"
               : response["message"]));
+    } else if (response["message"] == "Succeed") {
+      setOwnerShop(shops: response["shops"]);
+
+      emit(GetOwnerShopsSucceed());
     }
   }
 }

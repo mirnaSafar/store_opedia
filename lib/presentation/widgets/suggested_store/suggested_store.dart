@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:location/location.dart';
 import 'package:shopesapp/data/models/shop.dart';
 import 'package:shopesapp/data/repositories/shared_preferences_repository.dart';
 import 'package:shopesapp/logic/cubites/post/posts_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/favorite_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/following_cubit.dart';
+import 'package:shopesapp/logic/cubites/shop/get_owner_shops_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/rate_shop_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/shop_follwers_counter_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/work_time_cubit.dart';
+import 'package:shopesapp/presentation/pages/map_page.dart';
 import 'package:shopesapp/presentation/pages/store_page.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_icon_text.dart';
@@ -101,6 +104,10 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                                         shop.startWorkTime,
                                                     closeTime:
                                                         shop.endWorkTime);
+                                            context
+                                                .read<GetOwnerShopsCubit>()
+                                                .getOwnerShopsRequest(
+                                                    ownerID: shop.ownerID);
                                             context.push(StorePage(
                                               shop: shop,
                                             ));
@@ -216,7 +223,13 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                   // ),
                   // 20.px,
                   IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        LocationData storeLocation = LocationData.fromMap({
+                          // 'latitude': shop.latitude,
+                          // 'longitude': shop.longitude,
+                        });
+                        MapPage(currentLocation: storeLocation);
+                      },
                       icon: Icon(Icons.location_on, size: w * 0.04)),
 
                   CustomText(

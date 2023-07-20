@@ -2,9 +2,9 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:shopesapp/logic/cubites/cubit/auth_cubit.dart';
-import 'package:shopesapp/main.dart';
 import 'package:shopesapp/presentation/location_service.dart';
 import 'package:shopesapp/presentation/pages/control_page.dart';
 import 'package:shopesapp/presentation/pages/map_page.dart';
@@ -50,7 +50,8 @@ class _UserSignUpState extends State<OwnerSignUp>
   var isPasswordHidden = true;
   var isConfiermPasswordHidden = true;
   String? _email;
-  TimeOfDay initTime = TimeOfDay.now().replacing(hour: 00, minute: 00);
+  TimeOfDay initStartTime = TimeOfDay.now().replacing(hour: 08, minute: 00);
+  TimeOfDay initEndTime = TimeOfDay.now().replacing(hour: 08, minute: 00);
   String? _password;
   String? _phoneNumber;
   String? _ownerName;
@@ -59,12 +60,12 @@ class _UserSignUpState extends State<OwnerSignUp>
   String? storeEndWorkTime;
   String? storeCategory;
 
+  late LatLng selectedStoreLocation;
+
   @override
   void initState() {
-    _email = globalSharedPreference.getString("email") ?? "";
-
-    _phoneNumber = globalSharedPreference.getString("phoneNumber") ?? "";
-    _ownerName = globalSharedPreference.getString("name") ?? "";
+    storeStartWorkTimecontroller.text = "08:00 AM";
+    storeEndWorkTimeController.text = "08:00 PM";
     super.initState();
   }
 
@@ -100,6 +101,8 @@ class _UserSignUpState extends State<OwnerSignUp>
         storeName: _storeNameController.text,
         storeCategory: storeCategoryController.text,
         storeLocation: storeLocationController.text,
+        // latitude: selectedStoreLocation.latitude,
+        // longitude: selectedStoreLocation.longitude,
         startWorkTime: storeStartWorkTimecontroller.text,
         endWorkTime: storeEndWorkTimeController.text,
         shopPhoneNumber: _storeNumberController.text,
@@ -189,31 +192,41 @@ class _UserSignUpState extends State<OwnerSignUp>
                         text: 'Store Name',
                         controller: _storeNameController,
                       ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: UserInput(
-                              text: 'Store Location',
-                              controller: storeLocationController,
-                            ),
-                          ),
-                          Expanded(
-                            child: CustomButton(
-                              text: 'Store Location',
+                      UserInput(
+                          text: 'Store Location',
+                          controller: storeLocationController,
+                          suffixIcon: IconButton(
                               onPressed: () async {
                                 // LocationService().getCurrentAddressInfo();
                                 LocationData? currentLocation =
                                     await LocationService()
                                         .getUserCurrentLocation();
                                 if (currentLocation != null) {
-                                  context.push(MapView(
-                                      currentLocation: currentLocation));
+                                  selectedStoreLocation = await context.push(
+                                    MapPage(
+                                      currentLocation: currentLocation,
+                                    ),
+                                    // '${value?.country ?? ''}-${value?.street ?? ''
+                                  );
+                                  // storeLocationController.text =
+                                  //     selectedStoreLocation.latitude.toString();
+
+                                  LocationService()
+                                      .getAddressInfo(LocationData.fromMap({
+                                        'latitude':
+                                            selectedStoreLocation.latitude,
+                                        'longitude':
+                                            selectedStoreLocation.longitude,
+                                      }))
+                                      .then(
+                                        (value) => storeLocationController
+                                                .text =
+                                            '${value?.country ?? ''}-${value?.street ?? ''}',
+                                      );
+                                  setState(() {});
                                 }
                               },
-                            ),
-                          ),
-                        ],
-                      ),
+                              icon: const Icon(Icons.location_on))),
                       UserInput(
                         text: 'Store Number',
                         controller: _storeNumberController,
@@ -222,8 +235,13 @@ class _UserSignUpState extends State<OwnerSignUp>
                           text: 'Store Category',
                           controller: storeCategoryController,
                           suffixIcon: IconButton(
-                              onPressed: () =>
-                                  context.push(const SignUpCategoriesPage()),
+                              onPressed: () async {
+                                await context
+                                    .push(const SignUpCategoriesPage())
+                                    .then((value) =>
+                                        storeCategoryController.text = value);
+                                setState(() {});
+                              },
                               icon: const Icon(Icons.comment))),
                       30.ph,
                       CustomText(
@@ -231,17 +249,19 @@ class _UserSignUpState extends State<OwnerSignUp>
                         textColor: AppColors.secondaryFontColor,
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 30.0, vertical: 10),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             SizedBox(
-                                width: 80,
-                                child: GestureDetector(
-                                  onTap: () async {
+                                width: 120,
+                                child: ElevatedButton(
+                                  onPressed: () async {
                                     await showTimePicker(
                                             context: context,
-                                            initialTime: TimeOfDay.now())
+                                            initialTime: const TimeOfDay(
+                                                hour: 08, minute: 00))
                                         .then((value) {
                                       setState(() {
                                         storeStartWorkTimecontroller.text =
@@ -250,10 +270,8 @@ class _UserSignUpState extends State<OwnerSignUp>
                                     });
                                   },
                                   child: CustomText(
-                                    text:
-                                        storeStartWorkTimecontroller.text == ""
-                                            ? initTime.format(context)
-                                            : storeStartWorkTimecontroller.text,
+                                    textColor: AppColors.mainWhiteColor,
+                                    text: storeStartWorkTimecontroller.text,
                                   ),
                                 )),
                             Padding(
@@ -264,12 +282,13 @@ class _UserSignUpState extends State<OwnerSignUp>
                               ),
                             ),
                             SizedBox(
-                                width: 80,
-                                child: GestureDetector(
-                                  onTap: () async {
+                                width: 120,
+                                child: ElevatedButton(
+                                  onPressed: () async {
                                     await showTimePicker(
                                             context: context,
-                                            initialTime: TimeOfDay.now())
+                                            initialTime: const TimeOfDay(
+                                                hour: 20, minute: 00))
                                         .then((value) {
                                       setState(() {
                                         storeEndWorkTimeController.text =
@@ -278,35 +297,30 @@ class _UserSignUpState extends State<OwnerSignUp>
                                     });
                                   },
                                   child: CustomText(
-                                    text: storeEndWorkTimeController.text == ""
-                                        ? initTime.format(context)
-                                        : storeEndWorkTimeController.text,
+                                    textColor: AppColors.mainWhiteColor,
+                                    text: storeEndWorkTimeController.text,
                                   ),
                                 )),
                           ],
                         ),
                       ),
                       30.ph,
-                      Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.surface,
-                              borderRadius: BorderRadius.circular(10.0)),
-                          child: BlocBuilder<AuthCubit, AuthState>(
-                            builder: (context, state) {
-                              if (state is AuthProgress) {
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              }
-                              return CustomButton(
-                                onPressed: () {
-                                  _submitForm(context);
-                                },
-                                text: 'Signup',
-                              );
+                      BlocBuilder<AuthCubit, AuthState>(
+                        builder: (context, state) {
+                          if (state is AuthProgress) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                          return CustomButton(
+                            color: Theme.of(context).colorScheme.primary,
+                            onPressed: () {
+                              _submitForm(context);
                             },
-                          )),
+                            text: 'Signup',
+                          );
+                        },
+                      ),
                     ]),
               )
             ])),

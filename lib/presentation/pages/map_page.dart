@@ -1,18 +1,21 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:shopesapp/logic/cubites/shop/store_cubit.dart';
+import 'package:shopesapp/presentation/shared/extensions.dart';
 
-class MapView extends StatefulWidget {
+class MapPage extends StatefulWidget {
   final LocationData currentLocation;
-  const MapView({Key? key, required this.currentLocation}) : super(key: key);
+  const MapPage({Key? key, required this.currentLocation}) : super(key: key);
 
   @override
-  State<MapView> createState() => MapViewState();
+  State<MapPage> createState() => MapPageState();
 }
 
-class MapViewState extends State<MapView> {
+class MapPageState extends State<MapPage> {
   late CameraPosition initalCameraPosition;
 
   static const CameraPosition _kLake = CameraPosition(
@@ -50,14 +53,18 @@ class MapViewState extends State<MapView> {
         initialCameraPosition: initalCameraPosition,
         onMapCreated: (GoogleMapController controller) {
           _controller.complete(controller);
-
-          setState(() {
-            markers.add(Marker(
-                markerId: const MarkerId('Current'),
-                position: LatLng(
-                    widget.currentLocation.latitude ?? 37.43296265331129,
-                    widget.currentLocation.longitude ?? -122.08832357078792)));
-          });
+          List<dynamic> shops = BlocProvider.of<StoreCubit>(context)
+              .getAllStores() as List<dynamic>;
+          for (var element in shops) {
+            setState(() {
+              markers.add(Marker(
+                  markerId: MarkerId(element.shopID),
+                  position: LatLng(
+                      widget.currentLocation.latitude ?? 37.43296265331129,
+                      widget.currentLocation.longitude ??
+                          -122.08832357078792)));
+            });
+          }
         },
         markers: markers,
         onTap: (latlong) {
@@ -70,15 +77,15 @@ class MapViewState extends State<MapView> {
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _goToTheLake,
-        label: const Text('To the lake!'),
+        onPressed: storeLoaction,
+        label: const Text('Done'),
         icon: const Icon(Icons.directions_boat),
       ),
     );
   }
 
-  Future<void> _goToTheLake() async {
-    final GoogleMapController controller = await _controller.future;
-    await controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
+  void storeLoaction() async {
+    context.pop(selectedLocation);
+    // return selectedLocation;
   }
 }

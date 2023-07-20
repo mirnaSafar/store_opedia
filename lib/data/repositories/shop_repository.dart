@@ -17,7 +17,7 @@ class ShopRepository {
     } catch (e) {
       return null;
     }
-    if (response.statusCode == 205) {
+    if (response.statusCode == 200) {
       return 'Success';
     }
 
@@ -91,7 +91,7 @@ class ShopRepository {
           "shopProfileImage": "url",
           "shopCoverImage": "url",
           "shopDescription": "desc",
-          "socialUrl": "test",
+          "socialUrl": ['insta', 'face'],
           "rate": 4,
           "followesNumber": 100,
         },
@@ -110,7 +110,7 @@ class ShopRepository {
           "shopProfileImage": "url",
           "shopCoverImage": "url",
           "shopDescription": "desc",
-          "socialUrl": "test",
+          "socialUrl": ['insta', 'face'],
           "rate": 4,
           "followesNumber": 100,
         },
@@ -119,6 +119,8 @@ class ShopRepository {
   }*/
 
   Future<String> addShop({
+    required String? facebookAccount,
+    required String? instagramAccount,
     required String ownerID,
     required String shopName,
     required String shopDescription,
@@ -139,8 +141,8 @@ class ShopRepository {
       "cover_photo": shopCoverImage ?? "noImage",
       "category": shopCategory,
       "address": location,
-      "facebook": "www.facebook.com",
-      "insta": "www.insta.com",
+      "facebook": facebookAccount,
+      "insta": instagramAccount,
       "opening": opening,
       "closing": closing,
       "rate": 0,
@@ -155,7 +157,7 @@ class ShopRepository {
     } catch (e) {
       return "Faild";
     }
-    if (response.statusCode == 205) {
+    if (response.statusCode == 200) {
       return "Success";
     }
     return "Faild";
@@ -242,8 +244,31 @@ class ShopRepository {
     } catch (e) {
       return null;
     }
-    if (response.statusCode == 205) {
+    if (response.statusCode == 200) {
       parsedResult = jsonDecode(response.body);
+      return parsedResult;
+    }
+    return null;
+  }
+
+  Future<Map<String, dynamic>?> getAllStores({required String id}) async {
+    http.Response response;
+    Map<String, dynamic> parsedResult;
+    Map<String, dynamic> requestBody = {"id": id};
+
+    try {
+      response = await http.post(Uri.http(ENDPOINT, "/show/stores/$id"),
+          body: jsonEncode(requestBody),
+          headers: {
+            'Content-Type': 'application/json',
+          });
+      //   print(response.statusCode);
+    } catch (e) {
+      return null;
+    }
+    if (response.statusCode == 200) {
+      parsedResult = jsonDecode(response.body);
+      //  print(parsedResult);
       return parsedResult;
     }
     return null;

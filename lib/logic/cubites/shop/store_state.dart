@@ -16,6 +16,8 @@ class NoShopsYet extends StoreState {}
 
 class FeatchingShopsProgress extends StoreState {}
 
+class FeatchingShopsSucceed extends StoreState {}
+
 class OldestShopsFiltered extends StoreState {}
 
 class UpdateShopProgress extends StoreState {}

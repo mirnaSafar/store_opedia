@@ -1,8 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:location/location.dart';
 import 'package:shopesapp/data/enums/message_type.dart';
 import 'package:shopesapp/main.dart';
 import 'package:shopesapp/presentation/pages/signup_categories_page.dart';
@@ -13,11 +16,14 @@ import 'package:shopesapp/presentation/shared/extensions.dart';
 
 import '../../data/enums/file_type.dart';
 import '../../logic/cubites/shop/edit_shop_cubit.dart';
+import '../location_service.dart';
 import '../shared/custom_widgets/custom_text.dart';
 import '../shared/custom_widgets/custom_toast.dart';
 import '../shared/utils.dart';
 import '../shared/validation_functions.dart';
+import 'map_page.dart';
 
+// ignore: must_be_immutable
 class EditStore extends StatefulWidget {
   EditStore({Key? key, this.function}) : super(key: key);
   Function()? function;
@@ -34,9 +40,9 @@ class _EditStoreState extends State<EditStore> {
   TextEditingController storeEndWorkTimeController = TextEditingController();
   TextEditingController storeDescriptionController = TextEditingController();
   TextEditingController storeInstagramController = TextEditingController(
-      text: globalSharedPreference.getStringList("socialUrl")![0]);
-  TextEditingController storeFacebookController = TextEditingController(
       text: globalSharedPreference.getStringList("socialUrl")![1]);
+  TextEditingController storeFacebookController = TextEditingController(
+      text: globalSharedPreference.getStringList("socialUrl")![0]);
 
   TextEditingController storeLocationController = TextEditingController();
   String? timeString;
@@ -46,6 +52,8 @@ class _EditStoreState extends State<EditStore> {
   int? startTimeMinute;
   int? endTimeHour;
   int? endTimeMinute;
+
+  late LatLng selectedStoreLocation;
   @override
   void initState() {
     timeString = globalSharedPreference.getString("startWorkTime");
@@ -85,6 +93,8 @@ class _EditStoreState extends State<EditStore> {
   String? profilePath;
   FileTypeModel? coverSelectedFile;
   FileTypeModel? profileSelectedFile;
+  File? imageFile;
+  String? imageBase64;
   Future<FileTypeModel> pickFile(FileType type, bool profile) async {
     String? path;
     // coverSelectedFile?.path = coverPath!;
@@ -99,6 +109,11 @@ class _EditStoreState extends State<EditStore> {
 
         globalSharedPreference.setString(
             profile ? "shopProfileImage" : "shopCoverImage", path!);
+        imageFile = File(path!);
+        List<int> imageBytes = await imageFile!.readAsBytes();
+        imageBase64 = base64Encode(imageBytes);
+
+        print("the hashing image" + imageBase64!);
 
         setState(() {});
         break;
@@ -301,6 +316,7 @@ class _EditStoreState extends State<EditStore> {
                             });
                           },
                           child: CustomText(
+                            textColor: AppColors.mainWhiteColor,
                             text: storeStartWorkTimecontroller.text,
                           ),
                         )),
@@ -328,6 +344,7 @@ class _EditStoreState extends State<EditStore> {
                             });
                           },
                           child: CustomText(
+                            textColor: AppColors.mainWhiteColor,
                             text: storeEndWorkTimeController.text,
                           ),
                         )),
@@ -342,20 +359,50 @@ class _EditStoreState extends State<EditStore> {
                 text: 'facebook account',
                 controller: storeFacebookController,
               ),
+
               UserInput(
-                text: 'store location',
-                controller: storeLocationController,
-              ),
-              30.ph,
-              CustomButton(
-                text: 'Change Store category',
-                borderColor: AppColors.mainTextColor,
-                textColor: AppColors.secondaryFontColor,
-                color: const Color.fromRGBO(242, 242, 242, 1),
-                onPressed: () {
-                  context.push(const SignUpCategoriesPage());
-                },
-              ),
+                  text: 'Store Category',
+                  controller: storeCategoryController,
+                  suffixIcon: IconButton(
+                      onPressed: () async {
+                        await context.push(const SignUpCategoriesPage()).then(
+                            (value) => storeCategoryController.text = value);
+                        setState(() {});
+                      },
+                      icon: const Icon(Icons.comment))),
+
+              UserInput(
+                  text: 'Store Location',
+                  controller: storeLocationController,
+                  suffixIcon: IconButton(
+                      onPressed: () async {
+                        // LocationService().getCurrentAddressInfo();
+                        LocationData? currentLocation =
+                            await LocationService().getUserCurrentLocation();
+                        if (currentLocation != null) {
+                          selectedStoreLocation = await context.push(
+                            MapPage(
+                              currentLocation: currentLocation,
+                            ),
+                            // '${value?.country ?? ''}-${value?.street ?? ''
+                          );
+                          // storeLocationController.text =
+                          //     selectedStoreLocation.latitude.toString();
+
+                          LocationService()
+                              .getAddressInfo(LocationData.fromMap({
+                                'latitude': selectedStoreLocation.latitude,
+                                'longitude': selectedStoreLocation.longitude,
+                              }))
+                              .then(
+                                (value) => storeLocationController.text =
+                                    '${value?.country ?? ''}-${value?.street ?? ''}',
+                              );
+                          setState(() {});
+                        }
+                      },
+                      icon: const Icon(Icons.location_on))),
+
               30.ph,
               Row(children: [
                 Expanded(
@@ -422,6 +469,9 @@ class _EditStoreState extends State<EditStore> {
                                         shopCategory:
                                             storeCategoryController.text,
                                         location: storeLocationController.text,
+
+                                        // latitude: selectedStoreLocation.latitude,
+                                        // longitude: selectedStoreLocation.longitude,
                                         closing:
                                             storeStartWorkTimecontroller.text,
                                         opening:

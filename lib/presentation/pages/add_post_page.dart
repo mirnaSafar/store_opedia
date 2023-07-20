@@ -43,15 +43,6 @@ class _AddPostPageState extends State<AddPostPage> {
         await picker
             .pickImage(source: ImageSource.gallery)
             .then((value) => path = value?.path ?? selectedFile?.path ?? '');
-        // print(path);
-
-        imageFile = File(path!);
-        print("done read file");
-        List<int> imageBytes = await imageFile!.readAsBytes();
-        print("done convert file");
-        imageBase64 = base64Encode(imageBytes);
-
-        print("the hashing image" + imageBase64!);
         context.pop();
 
         break;
@@ -62,7 +53,9 @@ class _AddPostPageState extends State<AddPostPage> {
         context.pop();
         setState(() {
           imageFile = File(path!);
-          //  imageBase64 = base64Encode(imageFile!.readAsBytesSync());
+          print("done read file");
+          imageBase64 = base64Encode(imageFile!.readAsBytesSync());
+          print("the hashing image" + imageBase64!);
         });
 
         break;

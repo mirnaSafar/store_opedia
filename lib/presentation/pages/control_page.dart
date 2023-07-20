@@ -12,6 +12,9 @@ import 'package:shopesapp/presentation/pages/user_store.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/widgets/bottom_navigation_bar/bottom_navigation_bar.dart';
 import '../../data/enums/bottom_navigation.dart';
+import '../../data/models/shop.dart';
+import '../../logic/cubites/post/posts_cubit.dart';
+import '../../logic/cubites/shop/get_owner_shops_cubit.dart';
 import '../../logic/cubites/shop/work_time_cubit.dart';
 import '../widgets/switch_shop/no_selected_store.dart';
 import 'favourite_page.dart';
@@ -26,12 +29,6 @@ class ControlPage extends StatefulWidget {
 class _ControlPageState extends State<ControlPage> {
   @override
   void initState() {
-    context.read<WorkTimeCubit>().testOpenTime(
-        openTime:
-            globalSharedPreference.getString("startWorkTime") ?? "00:00 AM",
-        closeTime:
-            globalSharedPreference.getString("endWorkTime") ?? "00:00 PM");
-    //TODO  get current owner Posts After Add Post
     super.initState();
   }
 
@@ -40,23 +37,6 @@ class _ControlPageState extends State<ControlPage> {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    // Owner user = Owner(
-    //     name: 'name',
-    //     email: 'email',
-    //     phoneNumber: 'phoneNumber',
-    //     id: '123',
-    //     currentShop: Shop(
-    //         shopCategory: 'shopCategory',
-    //         location: 'location',
-    //         startWorkTime: 'startWorkTime',
-    //         endWorkTime: 'endWorkTime',
-    //         ownerID: 'ownerID',
-    //         ownerEmail: 'ownerEmail',
-    //         ownerPhoneNumber: 'ownerPhoneNumber',
-    //         shopID: 'shopID',
-    //         shopName: 'shopName',
-    //         ownerName: 'ownerName'),
-    //     password: '');
     return SafeArea(
         top: false,
         child: Scaffold(
@@ -85,14 +65,60 @@ class _ControlPageState extends State<ControlPage> {
               BlocBuilder<AuthCubit, AuthState>(
                 builder: (context, state) {
                   if (state is UserLoginedIn ||
+                      state is UserSignedUp ||
                       globalSharedPreference.getString("currentShop") ==
-                          "notSelected") {
+                          "noShop") {
                     return globalSharedPreference.getString("currentShop") ==
-                            "notSelected"
+                            "noShop"
                         ? noSelectedShop(size, context)
                         : const UserStore();
                   }
-                  return StorePage(profileDisplay: true);
+                  {
+                    context.read<WorkTimeCubit>().testOpenTime(
+                        openTime:
+                            globalSharedPreference.getString("startWorkTime"),
+                        closeTime:
+                            globalSharedPreference.getString("endWorkTime"));
+                    context.read<GetOwnerShopsCubit>().getOwnerShopsRequest(
+                        ownerID: globalSharedPreference.getString('ID'));
+                    context.read<PostsCubit>().getOwnerPosts(
+                        ownerID: globalSharedPreference.getString('ID')!,
+                        shopID: globalSharedPreference.getString('shopID')!);
+                    return StorePage(
+                        shop: Shop(
+                          socialUrl:
+                              globalSharedPreference.getStringList("socialUrl"),
+                          shopCategory:
+                              globalSharedPreference.getString("shopCategory")!,
+                          location:
+                              globalSharedPreference.getString("location")!,
+                          startWorkTime: globalSharedPreference
+                              .getString("startWorkTime")!,
+                          endWorkTime:
+                              globalSharedPreference.getString("endWorkTime")!,
+                          ownerID: globalSharedPreference.getString("ID")!,
+                          ownerEmail:
+                              globalSharedPreference.getString("email")!,
+                          ownerPhoneNumber:
+                              globalSharedPreference.getString("phoneNumber")!,
+                          shopID: globalSharedPreference.getString("shopID")!,
+                          shopName:
+                              globalSharedPreference.getString("shopName")!,
+                          ownerName: globalSharedPreference.getString("name")!,
+                          followesNumber:
+                              globalSharedPreference.getInt("followesNumber")!,
+                          rate: globalSharedPreference.getInt("rate"),
+                          shopCoverImage: globalSharedPreference
+                              .getString("shopCoverImage"),
+                          shopDescription: globalSharedPreference
+                              .getString("shopDescription"),
+                          shopPhoneNumber: globalSharedPreference
+                              .getString("shopPhoneNumber"),
+                          shopProfileImage: globalSharedPreference
+                              .getString("shopProfileImage"),
+                        ),
+                        profileDisplay: true);
+                  }
                 },
               ),
             ],

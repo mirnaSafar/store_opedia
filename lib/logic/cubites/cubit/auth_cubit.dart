@@ -78,7 +78,13 @@ class AuthCubit extends Cubit<AuthState> {
     Map<String, dynamic>? response =
         await AuthRepository().login(email: email, password: password);
 
-    if (response!["message"] == "user auth succeded") {
+    if (response == null) {
+      emit(AuthFailed("Login Failed Check your internet connection"));
+    }
+    if (response!["message"] != "user auth succeded" &&
+        response["message"] != "owner auth succeded") {
+      emit(AuthFailed(response['message']));
+    } else if (response["message"] == "user auth succeded") {
       user = User.fromMap(response);
 
       AuthRepository().saveUser(user: user!);
@@ -89,16 +95,13 @@ class AuthCubit extends Cubit<AuthState> {
       saveOwnerID(ownerID: ownerID);
 
       emit(OwnerWillSelectStore());
-    } else {
-      emit(AuthFailed(response == null
-          ? "Login Failed Check your internet connection"
-          : response['message']));
     }
   }
 
   void userBecomeOwner() {
     globalSharedPreference.setString("mode", "owner");
     globalSharedPreference.setString("currentShop", "noShop");
+    globalSharedPreference.setString("CurrentShopID", "noID");
     emit(OwnerLoginedIn());
   }
 
@@ -106,7 +109,7 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthProgress());
 
     globalSharedPreference.setString("mode", "user");
-    globalSharedPreference.setString("currentShop", "noShop");
+    globalSharedPreference.setString("currentShop", "shopDeleted");
     globalSharedPreference.remove("shopPhoneNumber");
     globalSharedPreference.remove("shopProfileImage");
     globalSharedPreference.remove("shopCoverImage");
@@ -123,6 +126,7 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   void deleteCurrentShop() {
+    globalSharedPreference.setString("currentShop", "noShop");
     globalSharedPreference.remove("shopPhoneNumber");
     globalSharedPreference.remove("shopProfileImage");
     globalSharedPreference.remove("shopCoverImage");
@@ -147,12 +151,13 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   void selectedShop() {
+    globalSharedPreference.setString("currentShop", "ShopSelected");
     emit(OwnerLoginedIn());
   }
 
   void saveOwnerID({required String ownerID}) async {
-    SharedPreferences _pref = await SharedPreferences.getInstance();
-    await _pref.setString("ID", ownerID);
+    await globalSharedPreference.setString("ID", ownerID);
+    await globalSharedPreference.setString("ShopID", "noID");
   }
 
   Future<void> logOut() async {

@@ -2,9 +2,11 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:location/location.dart';
 import 'package:shopesapp/constant/cities.dart';
 import 'package:shopesapp/data/enums/message_type.dart';
 import 'package:shopesapp/logic/cubites/post/filter_cubit.dart';
+import 'package:shopesapp/presentation/location_service.dart';
 import 'package:shopesapp/presentation/pages/categories_page.dart';
 import 'package:shopesapp/presentation/pages/suggested_stores.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
@@ -18,6 +20,7 @@ import 'package:shopesapp/presentation/shared/utils.dart';
 
 import '../../../constant/categories.dart';
 import '../../../main.dart';
+import '../../pages/map_page.dart';
 
 class PageHeader extends StatefulWidget {
   const PageHeader({Key? key}) : super(key: key);
@@ -292,7 +295,8 @@ class _PageHeaderState extends State<PageHeader> {
                     },
                     child: CustomText(
                       textAlign: TextAlign.center,
-                      text: 'click to Identify your request more specifically',
+                      text:
+                          'click here to Identify your request more specifically',
                       textColor: AppColors.secondaryFontColor,
                     )),
                 10.ph,
@@ -492,6 +496,23 @@ class _PageHeaderState extends State<PageHeader> {
                 ),
               ],
             ),
+          ),
+          Visibility(
+            visible: selectedSortIcon == 'assets/location-1-svgrepo-com.svg',
+            child: InkWell(
+                onTap: () async {
+                  LocationData? currentLocation =
+                      await LocationService().getUserCurrentLocation();
+                  if (currentLocation != null) {
+                    context.push(
+                      MapPage(
+                        currentLocation: currentLocation,
+                      ),
+                      // '${value?.country ?? ''}-${value?.street ?? ''
+                    );
+                  }
+                },
+                child: const Text('Show on the map')),
           ),
           UserInput(
             text: 'Search',

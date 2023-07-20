@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shopesapp/presentation/shared/colors.dart';
 
 import '../../shared/custom_widgets/custom_text.dart';
 
-Widget buildError(var size) {
+Widget buildNoInternet(var size) {
   return Column(
     children: [
       SizedBox(
@@ -11,16 +12,16 @@ Widget buildError(var size) {
       Center(
         child: Column(
           children: [
-            const Icon(
-              Icons.cancel_outlined,
-              color: Colors.red,
+            Icon(
+              Icons.wifi_off,
+              color: AppColors.mainBlueColor,
               size: 75,
             ),
             SizedBox(
               height: size.height * 0.02,
             ),
             const CustomText(
-              text: "Error",
+              text: "NO INTERNET",
               fontSize: 25,
             )
           ],

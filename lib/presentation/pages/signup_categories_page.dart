@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shopesapp/constant/categories.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_divider.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
+import 'package:shopesapp/presentation/shared/extensions.dart';
 
 class SignUpCategoriesPage extends StatefulWidget {
   const SignUpCategoriesPage({Key? key}) : super(key: key);
@@ -11,6 +13,8 @@ class SignUpCategoriesPage extends StatefulWidget {
 }
 
 class _SignUpCategoriesPageState extends State<SignUpCategoriesPage> {
+  String selectedCategory = '';
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -28,9 +32,14 @@ class _SignUpCategoriesPageState extends State<SignUpCategoriesPage> {
                         fontSize: 24,
                         textColor: AppColors.mainTextColor,
                       ),
-                      CustomText(
-                        text: 'Done',
-                        textColor: AppColors.mainBlueColor,
+                      InkWell(
+                        onTap: () {
+                          context.pop(selectedCategory);
+                        },
+                        child: CustomText(
+                          text: 'Done',
+                          textColor: AppColors.mainBlueColor,
+                        ),
                       ),
                     ]),
               ),
@@ -53,7 +62,7 @@ class _SignUpCategoriesPageState extends State<SignUpCategoriesPage> {
                       child: ListView.separated(
                         shrinkWrap: true,
                         physics: const BouncingScrollPhysics(),
-                        itemCount: 10,
+                        itemCount: categories.length,
                         separatorBuilder: (BuildContext context, int index) {
                           return const CustomDivider();
                         },
@@ -61,7 +70,11 @@ class _SignUpCategoriesPageState extends State<SignUpCategoriesPage> {
                           return Stack(
                             children: [
                               InkWell(
-                                onTap: () {},
+                                onTap: () {
+                                  setState(() {
+                                    selectedCategory = categories[index];
+                                  });
+                                },
                                 child: Padding(
                                   padding: const EdgeInsetsDirectional.only(
                                       start: 80, top: 0),
@@ -83,7 +96,7 @@ class _SignUpCategoriesPageState extends State<SignUpCategoriesPage> {
                                           vertical: size.height * 0.032,
                                           horizontal: size.height * 0.05),
                                       child: CustomText(
-                                        text: 'cate',
+                                        text: categories[index],
                                         bold: true,
                                         fontSize: size.width * 0.05,
                                       ),
@@ -97,13 +110,21 @@ class _SignUpCategoriesPageState extends State<SignUpCategoriesPage> {
                                 child: CircleAvatar(
                                   maxRadius: 37,
                                   backgroundColor: AppColors.mainBlackColor,
+                                  backgroundImage:
+                                      const AssetImage('assets/images.jpg'),
                                 ),
                               ),
                               Positioned(
                                 top: size.height * 0.025,
                                 right: size.width * 0.05,
                                 child: InkWell(
-                                  onTap: () {},
+                                  onTap: () {
+                                    setState(() {
+                                      selectedCategory = categories[index] +
+                                          '/' +
+                                          categories[index];
+                                    });
+                                  },
                                   child: Container(
                                     child: Icon(
                                       Icons.arrow_forward_ios_outlined,
@@ -138,15 +159,38 @@ class _SignUpCategoriesPageState extends State<SignUpCategoriesPage> {
 class myClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
-    Path path = Path();
-    path.moveTo(0, 0);
-    path.lineTo(100, 0);
-    path.quadraticBezierTo(130, 10, 140, 20);
-    path.lineTo(100, size.height);
-    path.lineTo(0, size.height);
-    return path;
+    Path path_0 = Path();
+    path_0.moveTo(0, size.height * 0.0000167);
+    path_0.quadraticBezierTo(size.width * 0.0336500, size.height * 0.0013333,
+        size.width * 0.1274000, size.height * 0.0013333);
+    path_0.cubicTo(
+        size.width * 0.3117250,
+        size.height * 0.0025000,
+        size.width * 0.3129000,
+        size.height * 0.1353500,
+        size.width * 0.3125000,
+        size.height * 0.1640833);
+    path_0.cubicTo(
+        size.width * 0.3106500,
+        size.height * 0.2454667,
+        size.width * 0.3120750,
+        size.height * 0.6289167,
+        size.width * 0.3125000,
+        size.height * 0.8363333);
+    path_0.cubicTo(
+        size.width * 0.3051000,
+        size.height * 0.9176000,
+        size.width * 0.2441000,
+        size.height * 0.9980667,
+        size.width * 0.1197500,
+        size.height * 0.9991667);
+    path_0.quadraticBezierTo(size.width * 0.0254000, size.height * 0.9990333,
+        size.width * -0.0008500, size.height * 0.9994500);
+    path_0.lineTo(0, size.height * 0.0000167);
+    path_0.close();
+    return path_0;
   }
 
   @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+  bool shouldReclip(CustomClipper<Path> oldClipper) => true;
 }

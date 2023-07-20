@@ -15,7 +15,7 @@ class Shop {
   String startWorkTime;
   String endWorkTime;
   int? followesNumber;
-  List<String>? socialUrl;
+  List<dynamic>? socialUrl;
   int? rate;
   String shopID;
   bool? isFollow;
@@ -78,7 +78,7 @@ class Shop {
       startWorkTime: map["startWorkTime"] as String,
       endWorkTime: map["endWorkTime"] as String,
       shopID: map["shopID"] as String,
-      socialUrl: map["socialUrl"],
+      socialUrl: map["socialUrl"] as List<dynamic>?,
       rate: map["rate"] as int?,
       shopPhoneNumber: map["shopPhoneNumber"] as String?,
       ownerID: map["ownerID"] as String,

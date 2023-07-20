@@ -78,13 +78,13 @@ class PostsCubit extends Cubit<PostsState> {
   }) async {
     emit(FeatchingPostsProgress());
     Map<String, dynamic>? response = await PostsRepository().getAllPosts();
-    if (response!["message"] == "Done") {
-      newestPosts = response["posts"] as List;
-      if (newestPosts.isEmpty) {
-        emit(NoPostsYet());
-      } else {
-        emit(PostsFetchedSuccessfully());
-      }
+    if (response == null) {
+      emit(ErrorFetchingPosts(
+          message: "Failed to Get the Posts , Check your internet connection"));
+    } else if (response["message"] == "You dont have any followed store yet") {
+      emit(NoPostsYet());
+    } else if (response["message"] == "Done") {
+      emit(PostsFetchedSuccessfully());
     } else {
       emit(ErrorFetchingPosts(message: response["message"]));
     }

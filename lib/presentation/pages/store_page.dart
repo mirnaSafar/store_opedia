@@ -10,7 +10,6 @@ import 'package:shopesapp/logic/cubites/shop/following_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/get_owner_shops_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/rate_shop_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/shop_follwers_counter_cubit.dart';
-import 'package:shopesapp/logic/cubites/shop/switch_shop_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/work_time_cubit.dart';
 import 'package:shopesapp/presentation/pages/add_post_page.dart';
 import 'package:shopesapp/presentation/pages/edit_store.dart';
@@ -34,7 +33,7 @@ class StorePage extends StatefulWidget {
     this.shop,
     this.profileDisplay,
   }) : super(key: key) {
-    shop ??= Shop(
+    /* shop ??= Shop(
       shopCategory: globalSharedPreference.getString("shopCategory") ?? '',
       location: globalSharedPreference.getString("location") ?? '',
       startWorkTime: globalSharedPreference.getString("startWorkTime")!,
@@ -52,8 +51,9 @@ class StorePage extends StatefulWidget {
       shopDescription: globalSharedPreference.getString("shopDescription"),
       shopPhoneNumber: globalSharedPreference.getString("shopPhoneNumber"),
       shopProfileImage: globalSharedPreference.getString("shopProfileImage"),
-      socialUrl: globalSharedPreference.getStringList("socialUrl"),
-    );
+      socialUrl:
+          globalSharedPreference.getStringList("socialUrl") as List<dynamic>,
+    );*/
   }
   Shop? shop;
   bool? profileDisplay;
@@ -72,14 +72,13 @@ class _StorePageState extends State<StorePage> {
   // late UserOwnerCubit userOwnerCubit = context.read<UserOwnerCubit>();
   List<dynamic> postsList = [];
   List<dynamic> ownerShpos = [];
-  String? currentID;
-  bool isLastShop = false;
 
-  @override
+  // String? currentID;
+  //bool isLastShop = false;
+
+  /* @override
   void initState() {
-    if (ownerShpos.isEmpty) {
-      context.read<GetOwnerShopsCubit>().getOwnerShopsRequest();
-    }
+    if (ownerShpos.isEmpty) {}
     if (postsList.isEmpty) {
       context.read<PostsCubit>().getOwnerPosts(
           ownerID: globalSharedPreference.getString('ID')!,
@@ -88,7 +87,7 @@ class _StorePageState extends State<StorePage> {
     currentID = context.read<SwitchShopCubit>().getStoredShopID();
 
     super.initState();
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -96,486 +95,475 @@ class _StorePageState extends State<StorePage> {
     String startWorkTime = splitStartTime[0] + ":" + splitStartTime[1];
     List<String> splitEndWorkTime = widget.shop!.endWorkTime.split(":");
     String endtWorkTime = splitEndWorkTime[0] + ":" + splitEndWorkTime[1];
+
     var size = MediaQuery.of(context).size;
     // updateTheSta
     final w = MediaQuery.of(context).size.width;
     final h = MediaQuery.of(context).size.height;
     return Scaffold(
-        backgroundColor: AppColors.mainWhiteColor,
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding:
-                    EdgeInsetsDirectional.only(start: w * 0.06, end: w * 0.01),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Stack(
-                        // alignment: AlignmentDirectional.topCenter,
-                        children: [
-                          SizedBox(
-                            child: ClipRRect(
-                                borderRadius: BorderRadius.circular(w * 0.05),
-                                child: widget.shop!.shopCoverImage != 'url'
-                                    ? Image.file(
-                                        File(widget.shop!.shopCoverImage!),
-                                        fit: BoxFit.cover,
-                                      )
-                                    : globalSharedPreference
-                                                .getString("shopCoverImage") !=
-                                            'url'
-                                        ? Image.file(
-                                            File(globalSharedPreference
-                                                .getString("shopCoverImage")!),
-                                            fit: BoxFit.contain,
-                                          )
-                                        : const Image(
-                                            image: AssetImage(
-                                                'assets/store_cover_placeholder.jpg'))),
-                            height: h / 5,
-                            width: w,
+      backgroundColor: AppColors.mainWhiteColor,
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding:
+                  EdgeInsetsDirectional.only(start: w * 0.06, end: w * 0.01),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Stack(
+                      // alignment: AlignmentDirectional.topCenter,
+                      children: [
+                        SizedBox(
+                          child: ClipRRect(
+                              borderRadius: BorderRadius.circular(w * 0.05),
+                              child: widget.shop!.shopCoverImage != 'url'
+                                  ? Image.file(
+                                      File(widget.shop!.shopCoverImage!),
+                                      fit: BoxFit.cover,
+                                    )
+                                  : globalSharedPreference
+                                              .getString("shopCoverImage") !=
+                                          'url'
+                                      ? Image.file(
+                                          File(globalSharedPreference
+                                              .getString("shopCoverImage")!),
+                                          fit: BoxFit.contain,
+                                        )
+                                      : const Image(
+                                          image: AssetImage(
+                                              'assets/store_cover_placeholder.jpg'))),
+                          height: h / 5,
+                          width: w,
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(
+                            top: h * 0.15,
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                              top: h * 0.15,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Stack(
-                                  children: [
-                                    CircleAvatar(
-                                      backgroundColor: AppColors.mainWhiteColor,
-                                      radius: w * 0.12,
-                                      child: CircleAvatar(
-                                          radius: w * 0.11,
-                                          backgroundColor:
-                                              AppColors.mainTextColor,
-                                          backgroundImage: FileImage(File(widget
-                                                  .shop!.shopProfileImage ??
-                                              globalSharedPreference.getString(
-                                                  "shopProfileImage") ??
-                                              '')),
-                                          child: widget.shop!
-                                                          .shopProfileImage ==
-                                                      'url' &&
-                                                  globalSharedPreference.getString(
-                                                          "shopProfileImage") ==
-                                                      'url'
-                                              ? ClipOval(
-                                                  child: Image.asset(
-                                                    'assets/store_placeholder.png',
-                                                    fit: BoxFit.fill,
-                                                  ),
-                                                )
-                                              : null),
-                                    ),
-                                    BlocBuilder<WorkTimeCubit, WorkTimeState>(
-                                      builder: (context, state) {
-                                        return Visibility(
-                                          visible: state.isOpen == true,
-                                          child: Padding(
-                                            padding: EdgeInsetsDirectional.only(
-                                                start: w * 0.2, top: w * 0.16),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                CircleAvatar(
-                                                  radius: w * 0.025,
-                                                  backgroundColor:
-                                                      AppColors.mainWhiteColor,
-                                                  child: CircleAvatar(
-                                                    radius: w * 0.02,
-                                                    backgroundColor:
-                                                        Colors.green,
-                                                  ),
-                                                ),
-                                                2.px,
-                                                CustomText(
-                                                  text: 'Open now',
-                                                  textColor: Colors.green,
-                                                  fontSize: w * 0.03,
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                    BlocBuilder<WorkTimeCubit, WorkTimeState>(
-                                      builder: (context, state) {
-                                        return Visibility(
-                                          visible: state.isOpen != true,
-                                          child: Padding(
-                                            padding: EdgeInsetsDirectional.only(
-                                                start: w * 0.2, top: w * 0.16),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                CircleAvatar(
-                                                  radius: w * 0.025,
-                                                  backgroundColor:
-                                                      AppColors.mainWhiteColor,
-                                                  child: CircleAvatar(
-                                                    radius: w * 0.02,
-                                                    backgroundColor: Colors.red,
-                                                  ),
-                                                ),
-                                                2.px,
-                                                CustomText(
-                                                  text: 'Close now',
-                                                  textColor: Colors.red,
-                                                  fontSize: w * 0.03,
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ),
-                                Padding(
-                                  padding: EdgeInsetsDirectional.only(
-                                      start: w * 0.01),
-                                  child: Row(
-                                    children: [
-                                      CustomText(
-                                        text: widget.shop!.shopName,
-                                        bold: true,
-                                        fontSize: w * 0.05,
-                                        textColor:
-                                            Theme.of(context).primaryColorDark,
-                                      ),
-                                      10.px,
-                                      BlocBuilder<RateShopCubit, RateShopState>(
-                                        builder: (context, state) {
-                                          return CustomRate(
-                                            store: widget.shop!,
-                                            enableRate: true,
-                                          );
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                      10.ph,
-                      Stack(
-                        alignment: AlignmentDirectional.topCenter,
-                        children: [
-                          CustomPaint(
-                              painter: profilePainter(),
-                              child: Padding(
-                                padding: EdgeInsetsDirectional.only(
-                                  start: w,
-                                ),
-                                child: SizedBox(
-                                  width: w / 4,
-                                  height: h * 0.6,
-                                ),
-                              )),
-                          // FloatingActionButton(
-                          //     onPressed: () {
-                          //       context.push(const EditStore());
-                          //     },
-                          //     backgroundColor: AppColors.mainOrangeColor,
-                          //     child: const Icon(Icons.edit)),
-                          Visibility(
-                              visible: widget.profileDisplay ?? false,
-                              child: Positioned(
-                                  right: w * 0.06,
-                                  bottom: w * 0.15,
-                                  child: _getFAB())),
-                          Column(
+                          child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              0.ph,
-                              Row(
+                              Stack(
                                 children: [
-                                  Icon(
-                                    Icons.tag,
-                                    color: Colors.grey.shade300,
+                                  CircleAvatar(
+                                    backgroundColor: AppColors.mainWhiteColor,
+                                    radius: w * 0.12,
+                                    child: CircleAvatar(
+                                        radius: w * 0.11,
+                                        backgroundColor:
+                                            AppColors.mainTextColor,
+                                        backgroundImage: FileImage(File(widget
+                                                .shop!.shopProfileImage ??
+                                            globalSharedPreference.getString(
+                                                "shopProfileImage") ??
+                                            '')),
+                                        child: widget.shop!.shopProfileImage ==
+                                                    'url' &&
+                                                globalSharedPreference.getString(
+                                                        "shopProfileImage") ==
+                                                    'url'
+                                            ? ClipOval(
+                                                child: Image.asset(
+                                                  'assets/store_placeholder.png',
+                                                  fit: BoxFit.fill,
+                                                ),
+                                              )
+                                            : null),
                                   ),
-                                  10.px,
-                                  CustomText(
-                                    text: widget.shop!.shopCategory,
-                                    // fontSize: 18,
-                                    textColor: AppColors.secondaryFontColor,
-                                  ),
-                                ],
-                              ),
-                              15.ph,
-                              CustomText(
-                                  textColor: Theme.of(context).primaryColorDark,
-                                  fontSize: 15,
-                                  text: widget.shop!.shopDescription ??
-                                      'basic description about the \nstore and its major'),
-                              20.ph,
-                              Row(
-                                children: [
-                                  BlocBuilder<ShopFollwersCounterCubit,
-                                      ShopFollwersCounterState>(
+                                  BlocBuilder<WorkTimeCubit, WorkTimeState>(
                                     builder: (context, state) {
-                                      return CustomText(
-                                        text:
-                                            '${context.read<ShopFollwersCounterCubit>().getShopFollwersCount(widget.shop!)} Followers',
-                                        textColor: AppColors.mainBlueColor,
+                                      return Visibility(
+                                        visible: state.isOpen == true,
+                                        child: Padding(
+                                          padding: EdgeInsetsDirectional.only(
+                                              start: w * 0.2, top: w * 0.16),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              CircleAvatar(
+                                                radius: w * 0.025,
+                                                backgroundColor:
+                                                    AppColors.mainWhiteColor,
+                                                child: CircleAvatar(
+                                                  radius: w * 0.02,
+                                                  backgroundColor: Colors.green,
+                                                ),
+                                              ),
+                                              2.px,
+                                              CustomText(
+                                                text: 'Open now',
+                                                textColor: Colors.green,
+                                                fontSize: w * 0.03,
+                                              )
+                                            ],
+                                          ),
+                                        ),
                                       );
                                     },
                                   ),
-                                  70.px,
-                                  BlocBuilder<FollowingCubit, FollowingState>(
+                                  BlocBuilder<WorkTimeCubit, WorkTimeState>(
                                     builder: (context, state) {
-                                      var followingCubit =
-                                          context.read<FollowingCubit>();
-                                      var shop = SharedPreferencesRepository
-                                              .getSavedShop(widget.shop!) ??
-                                          widget.shop!;
-                                      return InkWell(
-                                        onTap: () {
-                                          followingCubit
-                                                  .getShopFollowingState(shop)
-                                              ? {
-                                                  context
-                                                      .read<
-                                                          ShopFollwersCounterCubit>()
-                                                      .decrementFollowers(shop),
-                                                  followingCubit.unFollow(shop),
-                                                }
-                                              : {
-                                                  context
-                                                      .read<
-                                                          ShopFollwersCounterCubit>()
-                                                      .incrementFollowers(shop),
-                                                  followingCubit.follow(shop),
-                                                };
-                                        },
-                                        child: CustomText(
-                                          text: followingCubit
-                                                  .getShopFollowingState(shop)
-                                              ? 'Following'
-                                              : 'Follow',
-                                          textColor: AppColors.mainBlueColor,
+                                      return Visibility(
+                                        visible: state.isOpen != true,
+                                        child: Padding(
+                                          padding: EdgeInsetsDirectional.only(
+                                              start: w * 0.2, top: w * 0.16),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              CircleAvatar(
+                                                radius: w * 0.025,
+                                                backgroundColor:
+                                                    AppColors.mainWhiteColor,
+                                                child: CircleAvatar(
+                                                  radius: w * 0.02,
+                                                  backgroundColor: Colors.red,
+                                                ),
+                                              ),
+                                              2.px,
+                                              CustomText(
+                                                text: 'Close now',
+                                                textColor: Colors.red,
+                                                fontSize: w * 0.03,
+                                              )
+                                            ],
+                                          ),
                                         ),
                                       );
                                     },
                                   ),
                                 ],
                               ),
-                              const CustomDivider(),
-                              CustomIconTextRow(
-                                  textColor: Theme.of(context).primaryColorDark,
-                                  icon: 'clock-square-svgrepo-com',
-                                  // icon: Icons.alarm,
-                                  text: '$startWorkTime - $endtWorkTime'),
-                              20.ph,
-                              // CustomIconTextRow(
-                              //     textColor: Theme.of(context).primaryColorDark,
-                              //     icon: Icons.phone,
-                              //     text:
-                              //         "Owner PhoneNumber : ${widget.shop!.ownerPhoneNumber}"),
-                              // 20.ph,
-                              Visibility(
-                                visible: widget.shop!.shopPhoneNumber != null,
-                                child: Column(
-                                  children: [
-                                    CustomIconTextRow(
-                                        textColor:
-                                            Theme.of(context).primaryColorDark,
-                                        icon: 'phone-svgrepo-com',
-                                        text:
-                                            "${widget.shop!.shopPhoneNumber}"),
-                                    20.ph,
-                                  ],
-                                ),
-                              ),
-                              CustomIconTextRow(
-                                  textColor: Theme.of(context).primaryColorDark,
-                                  // icon: Icons.email,
-                                  icon: 'mail-svgrepo-com',
-                                  text: widget.shop!.ownerEmail),
-                              20.ph,
-                              CustomIconTextRow(
-                                  textColor: Theme.of(context).primaryColorDark,
-                                  icon: 'map-point-wave-svgrepo-com',
-                                  text: widget.shop!.location),
-                              const CustomDivider(),
-                              Visibility(
-                                // visible: widget.shop!.socialUrl != null &&
-                                //     widget.shop!.socialUrl!.isNotEmpty,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                              Padding(
+                                padding:
+                                    EdgeInsetsDirectional.only(start: w * 0.01),
+                                child: Row(
                                   children: [
                                     CustomText(
-                                      text: 'Social accounts',
+                                      text: widget.shop!.shopName,
+                                      bold: true,
+                                      fontSize: w * 0.05,
                                       textColor:
                                           Theme.of(context).primaryColorDark,
-                                      fontSize: w * 0.04,
-                                      bold: true,
                                     ),
-                                    30.ph,
-                                    CustomIconTextRow(
-                                        textColor:
-                                            Theme.of(context).primaryColorDark,
-                                        icon: 'instagram-2-1-logo-svgrepo-com',
-                                        text: widget.shop!.socialUrl?[0] ?? ''),
-                                    20.ph,
-                                    CustomIconTextRow(
-                                        textColor:
-                                            Theme.of(context).primaryColorDark,
-                                        icon: 'facebook-3-logo-svgrepo-com',
-                                        text: widget.shop!.socialUrl?[1] ?? ''),
-                                    const CustomDivider(),
+                                    10.px,
+                                    BlocBuilder<RateShopCubit, RateShopState>(
+                                      builder: (context, state) {
+                                        return CustomRate(
+                                          store: widget.shop!,
+                                          enableRate: true,
+                                        );
+                                      },
+                                    ),
                                   ],
                                 ),
-                              ),
-                              CustomText(
-                                text: 'Related Stores',
-                                textColor: Theme.of(context).primaryColorDark,
-                                fontSize: w * 0.04,
-                                bold: true,
-                              ),
+                              )
                             ],
                           ),
-                        ],
-                      ),
-                    ]),
-              ),
-              20.ph,
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(
-                    height: h / 6,
-                    child: BlocConsumer<GetOwnerShopsCubit, GetOwnerShopsState>(
-                      listener: (context, state) {
-                        if (state is GetOwnerShopsFiled) {
-                          buildAwsomeDialog(context, "Filed",
-                                  state.message.toUpperCase(), "OK",
-                                  type: DialogType.ERROR)
-                              .show();
-                        } else if (state is GetOwnerShopsSucceed) {}
-                      },
-                      builder: (context, state) {
-                        if (state is GetOwnerShopsProgress) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        } else if (state is GetOwnerShopsSucceed) {
-                          ownerShpos =
-                              BlocProvider.of<GetOwnerShopsCubit>(context)
-                                  .ownerShops;
-
-                          if (ownerShpos.length == 1) {
-                            isLastShop = true;
-                          }
-
-                          return Padding(
-                            padding:
-                                EdgeInsetsDirectional.only(start: w * 0.04),
-                            child: ListView.separated(
-                              shrinkWrap: true,
-                              // physics: const NeverScrollableScrollPhysics(),
-                              scrollDirection: Axis.horizontal,
-                              itemCount: ownerShpos.length,
-                              separatorBuilder:
-                                  (BuildContext context, int index) {
-                                return 20.px;
-                              },
-                              itemBuilder: (BuildContext context, int index) {
-                                if (ownerShpos[index]['shopID'] !=
-                                    globalSharedPreference
-                                        .getString('shopID')) {
-                                  return Column(
-                                    children: [
-                                      CircleAvatar(
-                                          radius: w * 0.12,
-                                          backgroundColor:
-                                              AppColors.mainTextColor,
-                                          backgroundImage: FileImage(File(
-                                              ownerShpos[index][
-                                                          "shopProfileImage"] !=
-                                                      'url'
-                                                  ? ownerShpos[index]
-                                                      ["shopProfileImage"]
-                                                  : '')),
-                                          child: ownerShpos[index]
-                                                      ["shopProfileImage"] ==
-                                                  'url'
-                                              ? ClipOval(
-                                                  child: Image.asset(
-                                                    'assets/store_placeholder.png',
-                                                    fit: BoxFit.fill,
-                                                  ),
-                                                )
-                                              : null),
-                                      5.ph,
-                                      CustomText(
-                                        text: ownerShpos[index]['shopName'],
-                                        textColor:
-                                            Theme.of(context).primaryColorDark,
-                                      )
-                                    ],
-                                  );
-                                }
-                                return Container();
-                              },
-                            ),
-                          );
-                        }
-                        return buildError(size);
-                      },
+                        )
+                      ],
                     ),
-                  ),
-                ],
-              ),
-              const CustomDivider(),
-              BlocConsumer<PostsCubit, PostsState>(
-                listener: (context, state) {
-                  if (state is ErrorFetchingPosts) {
-                    buildAwsomeDialog(
-                            context, "Filed", state.message.toUpperCase(), "OK",
-                            type: DialogType.ERROR)
-                        .show();
-                  } else if (state is PostsFetchedSuccessfully) {}
-                },
-                builder: (context, state) {
-                  if (state is FeatchingPostsProgress) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  } else if (state is PostsFetchedSuccessfully) {
-                    postsList = BlocProvider.of<PostsCubit>(context).ownerPosts;
+                    10.ph,
+                    Stack(
+                      alignment: AlignmentDirectional.topCenter,
+                      children: [
+                        CustomPaint(
+                            painter: profilePainter(),
+                            child: Padding(
+                              padding: EdgeInsetsDirectional.only(
+                                start: w,
+                              ),
+                              child: SizedBox(
+                                width: w / 4,
+                                height: h * 0.6,
+                              ),
+                            )),
+                        // FloatingActionButton(
+                        //     onPressed: () {
+                        //       context.push(const EditStore());
+                        //     },
+                        //     backgroundColor: AppColors.mainOrangeColor,
+                        //     child: const Icon(Icons.edit)),
 
-                    return ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: postsList.length,
-                      separatorBuilder: (context, index) =>
-                          const CustomDivider(),
-                      itemBuilder: (BuildContext context, int index) {
-                        return ProductPost(
-                          post: postsList[index],
-                          profileDisplay: widget.profileDisplay ?? false,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            0.ph,
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.tag,
+                                  color: Colors.grey.shade300,
+                                ),
+                                10.px,
+                                CustomText(
+                                  text: widget.shop!.shopCategory,
+                                  // fontSize: 18,
+                                  textColor: AppColors.secondaryFontColor,
+                                ),
+                              ],
+                            ),
+                            15.ph,
+                            CustomText(
+                                textColor: Theme.of(context).primaryColorDark,
+                                fontSize: 15,
+                                text: widget.shop!.shopDescription ??
+                                    'basic description about the \nstore and its major'),
+                            20.ph,
+                            Row(
+                              children: [
+                                BlocBuilder<ShopFollwersCounterCubit,
+                                    ShopFollwersCounterState>(
+                                  builder: (context, state) {
+                                    return CustomText(
+                                      text:
+                                          '${context.read<ShopFollwersCounterCubit>().getShopFollwersCount(widget.shop!)} Followers',
+                                      textColor: AppColors.mainBlueColor,
+                                    );
+                                  },
+                                ),
+                                70.px,
+                                BlocBuilder<FollowingCubit, FollowingState>(
+                                  builder: (context, state) {
+                                    var followingCubit =
+                                        context.read<FollowingCubit>();
+                                    var shop = SharedPreferencesRepository
+                                            .getSavedShop(widget.shop!) ??
+                                        widget.shop!;
+                                    return InkWell(
+                                      onTap: () {
+                                        followingCubit
+                                                .getShopFollowingState(shop)
+                                            ? {
+                                                context
+                                                    .read<
+                                                        ShopFollwersCounterCubit>()
+                                                    .decrementFollowers(shop),
+                                                followingCubit.unFollow(shop),
+                                              }
+                                            : {
+                                                context
+                                                    .read<
+                                                        ShopFollwersCounterCubit>()
+                                                    .incrementFollowers(shop),
+                                                followingCubit.follow(shop),
+                                              };
+                                      },
+                                      child: CustomText(
+                                        text: followingCubit
+                                                .getShopFollowingState(shop)
+                                            ? 'Following'
+                                            : 'Follow',
+                                        textColor: AppColors.mainBlueColor,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                            const CustomDivider(),
+                            CustomIconTextRow(
+                                textColor: Theme.of(context).primaryColorDark,
+                                icon: 'clock-square-svgrepo-com',
+                                // icon: Icons.alarm,
+                                text: '$startWorkTime - $endtWorkTime'),
+                            20.ph,
+                            // CustomIconTextRow(
+                            //     textColor: Theme.of(context).primaryColorDark,
+                            //     icon: Icons.phone,
+                            //     text:
+                            //         "Owner PhoneNumber : ${widget.shop!.ownerPhoneNumber}"),
+                            // 20.ph,
+                            Visibility(
+                              visible: widget.shop!.shopPhoneNumber != null,
+                              child: Column(
+                                children: [
+                                  CustomIconTextRow(
+                                      textColor:
+                                          Theme.of(context).primaryColorDark,
+                                      icon: 'phone-svgrepo-com',
+                                      text: "${widget.shop!.shopPhoneNumber}"),
+                                  20.ph,
+                                ],
+                              ),
+                            ),
+                            CustomIconTextRow(
+                                textColor: Theme.of(context).primaryColorDark,
+                                // icon: Icons.email,
+                                icon: 'mail-svgrepo-com',
+                                text: widget.shop!.ownerEmail),
+                            20.ph,
+                            CustomIconTextRow(
+                                textColor: Theme.of(context).primaryColorDark,
+                                icon: 'map-point-wave-svgrepo-com',
+                                text: widget.shop!.location),
+                            const CustomDivider(),
+                            Visibility(
+                              // visible: widget.shop!.socialUrl != null &&
+                              //     widget.shop!.socialUrl!.isNotEmpty,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  CustomText(
+                                    text: 'Social accounts',
+                                    textColor:
+                                        Theme.of(context).primaryColorDark,
+                                    fontSize: w * 0.04,
+                                    bold: true,
+                                  ),
+                                  30.ph,
+                                  CustomIconTextRow(
+                                      textColor:
+                                          Theme.of(context).primaryColorDark,
+                                      icon: 'instagram-2-1-logo-svgrepo-com',
+                                      text: widget.shop!.socialUrl?[1] ?? ''),
+                                  20.ph,
+                                  CustomIconTextRow(
+                                      textColor:
+                                          Theme.of(context).primaryColorDark,
+                                      icon: 'facebook-3-logo-svgrepo-com',
+                                      text: widget.shop!.socialUrl?[0] ?? ''),
+                                  const CustomDivider(),
+                                ],
+                              ),
+                            ),
+                            CustomText(
+                              text: 'Related Stores',
+                              textColor: Theme.of(context).primaryColorDark,
+                              fontSize: w * 0.04,
+                              bold: true,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ]),
+            ),
+            20.ph,
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  height: h / 6,
+                  child: BlocConsumer<GetOwnerShopsCubit, GetOwnerShopsState>(
+                    listener: (context, state) {
+                      if (state is GetOwnerShopsFiled) {
+                        buildAwsomeDialog(context, "Filed",
+                                state.message.toUpperCase(), "OK",
+                                type: DialogType.ERROR)
+                            .show();
+                      } else if (state is GetOwnerShopsSucceed) {}
+                    },
+                    builder: (context, state) {
+                      if (state is GetOwnerShopsProgress) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
                         );
-                      },
-                    );
-                  }
+                      } else if (state is GetOwnerShopsSucceed) {
+                        ownerShpos =
+                            BlocProvider.of<GetOwnerShopsCubit>(context)
+                                .ownerShops;
+
+                        return Padding(
+                          padding: EdgeInsetsDirectional.only(start: w * 0.04),
+                          child: ListView.separated(
+                            shrinkWrap: true,
+                            // physics: const NeverScrollableScrollPhysics(),
+                            scrollDirection: Axis.horizontal,
+                            itemCount: ownerShpos.length,
+                            separatorBuilder:
+                                (BuildContext context, int index) {
+                              return 20.px;
+                            },
+                            itemBuilder: (BuildContext context, int index) {
+                              if (ownerShpos[index]['shopID'] !=
+                                  globalSharedPreference.getString('shopID')) {
+                                return Column(
+                                  children: [
+                                    CircleAvatar(
+                                        radius: w * 0.12,
+                                        backgroundColor:
+                                            AppColors.mainTextColor,
+                                        backgroundImage: FileImage(File(
+                                            ownerShpos[index]
+                                                        ["shopProfileImage"] !=
+                                                    'url'
+                                                ? ownerShpos[index]
+                                                    ["shopProfileImage"]
+                                                : '')),
+                                        child: ownerShpos[index]
+                                                    ["shopProfileImage"] ==
+                                                'url'
+                                            ? ClipOval(
+                                                child: Image.asset(
+                                                  'assets/store_placeholder.png',
+                                                  fit: BoxFit.fill,
+                                                ),
+                                              )
+                                            : null),
+                                    5.ph,
+                                    CustomText(
+                                      text: ownerShpos[index]['shopName'],
+                                      textColor:
+                                          Theme.of(context).primaryColorDark,
+                                    )
+                                  ],
+                                );
+                              }
+                              return Container();
+                            },
+                          ),
+                        );
+                      }
+                      return buildError(size);
+                    },
+                  ),
+                ),
+              ],
+            ),
+            const CustomDivider(),
+            BlocConsumer<PostsCubit, PostsState>(
+              listener: (context, state) {
+                if (state is ErrorFetchingPosts) {
+                  buildAwsomeDialog(
+                          context, "Filed", state.message.toUpperCase(), "OK",
+                          type: DialogType.ERROR)
+                      .show();
+                } else if (state is PostsFetchedSuccessfully) {}
+              },
+              builder: (context, state) {
+                if (state is FeatchingPostsProgress) {
                   return const Center(
-                    child: Text('data'),
+                    child: CircularProgressIndicator(),
                   );
-                },
-              ),
-            ],
-          ),
-        ));
+                } else if (state is PostsFetchedSuccessfully) {
+                  postsList = BlocProvider.of<PostsCubit>(context).ownerPosts;
+
+                  return ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: postsList.length,
+                    separatorBuilder: (context, index) => const CustomDivider(),
+                    itemBuilder: (BuildContext context, int index) {
+                      return ProductPost(
+                        post: postsList[index],
+                        profileDisplay: widget.profileDisplay ?? false,
+                      );
+                    },
+                  );
+                }
+                return buildError(size);
+              },
+            ),
+          ],
+        ),
+      ),
+      floatingActionButton: Visibility(
+          visible: widget.profileDisplay ?? false,
+          child:
+              Positioned(right: w * 0.06, bottom: w * 0.15, child: _getFAB())),
+    );
   }
 
   Widget _getFAB() {
