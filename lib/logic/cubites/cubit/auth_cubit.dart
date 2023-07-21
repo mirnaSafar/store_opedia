@@ -152,12 +152,13 @@ class AuthCubit extends Cubit<AuthState> {
 
   void selectedShop() {
     globalSharedPreference.setString("currentShop", "ShopSelected");
+
     emit(OwnerLoginedIn());
   }
 
   void saveOwnerID({required String ownerID}) async {
     await globalSharedPreference.setString("ID", ownerID);
-    await globalSharedPreference.setString("ShopID", "noID");
+    await globalSharedPreference.setString("shopID", "noID");
   }
 
   Future<void> logOut() async {

@@ -14,11 +14,12 @@ class GetOwnerShopsCubit extends Cubit<GetOwnerShopsState> {
     ownerShops = shops;
   }
 
-  Future getOwnerShopsRequest({required String? ownerID}) async {
+  Future getOwnerShopsRequest(
+      {required String? ownerID, required String message}) async {
     emit(GetOwnerShopsProgress());
 
-    Map<String, dynamic>? response =
-        await ShopRepository().getOwnerShpos(ownerID: ownerID);
+    Map<String, dynamic>? response = await ShopRepository()
+        .getOwnerShpos(ownerID: ownerID, message: message);
     if (response == null || response["message"] != "Succeed") {
       emit(GetOwnerShopsFiled(
           message: response == null

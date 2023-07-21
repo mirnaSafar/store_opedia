@@ -63,7 +63,7 @@ class EditShopCubit extends Cubit<EditShopState> {
               shopID: globalSharedPreference.getString("shopID")!,
               shopName: shopName,
               ownerName: globalSharedPreference.getString("name")!));
-      GetOwnerShopsCubit().getOwnerShopsRequest(ownerID: '');
+      GetOwnerShopsCubit().getOwnerShopsRequest(ownerID: '', message: 'all');
 
       emit(EditShopSucceed());
     }

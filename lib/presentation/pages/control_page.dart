@@ -80,12 +80,14 @@ class _ControlPageState extends State<ControlPage> {
                         closeTime:
                             globalSharedPreference.getString("endWorkTime"));
                     context.read<GetOwnerShopsCubit>().getOwnerShopsRequest(
-                        ownerID: globalSharedPreference.getString('ID'));
+                        ownerID: globalSharedPreference.getString('ID'),
+                        message: 'all');
                     context.read<PostsCubit>().getOwnerPosts(
                         ownerID: globalSharedPreference.getString('ID')!,
                         shopID: globalSharedPreference.getString('shopID')!);
                     return StorePage(
                         shop: Shop(
+                          isActive: globalSharedPreference.getBool("isActive")!,
                           socialUrl:
                               globalSharedPreference.getStringList("socialUrl"),
                           shopCategory:

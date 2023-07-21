@@ -1,12 +1,12 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shopesapp/logic/cubites/shop/switch_shop_cubit.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_divider.dart';
 import '../../logic/cubites/shop/get_owner_shops_cubit.dart';
 import '../../main.dart';
 import '../widgets/dialogs/awosem_dialog.dart';
 import '../widgets/switch_shop/error.dart';
+import '../widgets/switch_shop/no_deactivated_shops.dart';
 import '../widgets/switch_shop/shop_item.dart';
 
 class SwitchStore extends StatefulWidget {
@@ -18,15 +18,13 @@ class SwitchStore extends StatefulWidget {
 
 class _SwitchStoreState extends State<SwitchStore> {
   List<dynamic> ownerShpos = [];
-  String? currentShopID;
   bool isLastShop = false;
   @override
   void initState() {
     if (ownerShpos.isEmpty) {
       context.read<GetOwnerShopsCubit>().getOwnerShopsRequest(
-          ownerID: globalSharedPreference.getString("ID"));
+          ownerID: globalSharedPreference.getString("ID"), message: "active");
     }
-    currentShopID = globalSharedPreference.getString("shopID");
 
     super.initState();
   }
@@ -62,11 +60,15 @@ class _SwitchStoreState extends State<SwitchStore> {
                 if (ownerShpos.length == 1) {
                   isLastShop = true;
                 }
+                if (ownerShpos.isEmpty) {
+                  return buildNoShopItems(
+                      size, "You Don't Have  any Activated Shops Yet !");
+                }
 
                 return ListView.separated(
                     itemBuilder: (context, index) {
-                      return buildShopItem(context, size, ownerShpos[index],
-                          isLastShop, currentShopID);
+                      return buildShopItem(
+                          context, size, ownerShpos[index], isLastShop);
                     },
                     separatorBuilder: (context, index) => const CustomDivider(),
                     itemCount: ownerShpos.length);

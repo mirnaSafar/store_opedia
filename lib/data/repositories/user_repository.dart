@@ -45,4 +45,32 @@ class UserRepository {
     }
     return "Failed";
   }
+
+  Future<String> contactUS({
+    required String id,
+    required String type,
+    required String description,
+    required String? photo,
+  }) async {
+    http.Response response;
+    Map<String, dynamic> requestBody = {
+      "id": id,
+      "type": type,
+      "description": description,
+      "photo": photo ?? "noImage"
+    };
+    //   print(requestBody);
+    response = await http.post(
+      Uri.http(ENDPOINT, '/inbox/$id'),
+      body: jsonEncode(requestBody),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+    );
+    //  print(response.statusCode);
+    if (response.statusCode == 200) {
+      return "Success";
+    }
+    return "Failed";
+  }
 }

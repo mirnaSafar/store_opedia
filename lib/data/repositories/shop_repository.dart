@@ -25,14 +25,17 @@ class ShopRepository {
   }
 
   Future<Map<String, dynamic>?> getOwnerShpos(
-      {required String? ownerID}) async {
+      {required String? ownerID, required String message}) async {
     http.Response response;
     Map<String, dynamic> parsedResult;
     Map<String, dynamic> requestBody = {
-      "ownerID": ownerID,
+      "id": ownerID,
+      "message": message,
     };
+
     try {
-      response = await http.post(Uri.http(ENDPOINT, "/shops/$ownerID"),
+      response = await http.post(
+          Uri.http(ENDPOINT, "/store/activation/$ownerID"),
           body: jsonEncode(requestBody),
           headers: {
             'Content-Type': 'application/json',
@@ -42,6 +45,7 @@ class ShopRepository {
     }
     if (response.statusCode == 200) {
       parsedResult = jsonDecode(response.body);
+      //  print(parsedResult);
       return parsedResult;
     }
 
@@ -272,5 +276,31 @@ class ShopRepository {
       return parsedResult;
     }
     return null;
+  }
+
+  Future<String?> toggleActivation(
+      {required String shopID, required String ownerID}) async {
+    http.Response response;
+    Map<String, dynamic> requestBody = {
+      "id": ownerID,
+      "shopId": shopID,
+    };
+
+    try {
+      response = await http.post(
+          Uri.http(ENDPOINT, "/store/toggleActivation/$shopID"),
+          body: jsonEncode(requestBody),
+          headers: {
+            'Content-Type': 'application/json',
+          });
+      //   print(response.statusCode);
+    } catch (e) {
+      return "Faild";
+    }
+    if (response.statusCode == 200) {
+      //  print(parsedResult);
+      return "Success";
+    }
+    return "Faild";
   }
 }

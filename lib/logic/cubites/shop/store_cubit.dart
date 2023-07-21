@@ -65,8 +65,8 @@ class StoreCubit extends Cubit<StoreState> {
     BlocListener<InternetCubit, InternetState>(
       listener: (context, state) async {
         if (state is InternetConnected) {
-          Map<String, dynamic>? response =
-              await ShopRepository().getOwnerShpos(ownerID: ownerId);
+          Map<String, dynamic>? response = await ShopRepository()
+              .getOwnerShpos(ownerID: ownerId, message: '');
           if (response!["message"] == "Success") {
             shops = response["shops"];
             if (shops.isEmpty) {

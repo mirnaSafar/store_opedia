@@ -2,19 +2,18 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
 import '../../../../data/repositories/shop_repository.dart';
-import '../../../../main.dart';
 
 part 'deactivate_shop_state.dart';
 
 class DeactivateShopCubit extends Cubit<DeactivateShopState> {
   DeactivateShopCubit() : super(DeactivateShopInitial());
 
-  Future deactivateShop({required String shopID}) async {
+  Future deactivateShop(
+      {required String shopID, required String ownerID}) async {
     emit(DeactivateShopProgress());
-    String? ownerID = globalSharedPreference.getString("ID");
 
-    String response =
-        await ShopRepository().deleteShop(shopID: shopID, ownerID: ownerID!);
+    String? response = await ShopRepository()
+        .toggleActivation(shopID: shopID, ownerID: ownerID);
 
     if (response == "Failed") {
       emit(DeactivateShopFailed(

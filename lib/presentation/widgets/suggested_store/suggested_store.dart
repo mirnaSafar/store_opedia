@@ -107,7 +107,8 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                             context
                                                 .read<GetOwnerShopsCubit>()
                                                 .getOwnerShopsRequest(
-                                                    ownerID: shop.ownerID);
+                                                    ownerID: shop.ownerID,
+                                                    message: 'all');
                                             context.push(StorePage(
                                               shop: shop,
                                             ));

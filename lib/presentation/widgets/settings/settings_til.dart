@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:shopesapp/presentation/pages/add_store_page.dart';
+import 'package:shopesapp/presentation/pages/contact_us.dart';
 import 'package:shopesapp/presentation/pages/deactiva_stores.dart';
 import 'package:shopesapp/presentation/pages/porfile.dart';
 import 'package:shopesapp/presentation/pages/privacy%20policies.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
 import 'package:shopesapp/presentation/widgets/settings/theme.picker.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../constant/enums.dart';
-import '../../../data/enums/message_type.dart';
 import '../../../main.dart';
 import '../../pages/edit_store.dart';
 import '../../pages/switch_store.dart';
-import '../../shared/custom_widgets/custom_toast.dart';
 import '../dialogs/delete_user_dialog.dart';
 import '../switch_shop/no_selected_store.dart';
 import 'logOut_alert_dialog.dart';
@@ -119,31 +117,6 @@ Widget buildContactUs(BuildContext context, Size size) {
   return SimpleSettingsTile(
     title: "Contact Us",
     leading: iconWidget(icon: Icons.email, color: AppColors.mainOrangeColor),
-    onTap: () async {
-      String? encodeQueryParameters(Map<String, String> params) {
-        return params.entries
-            .map((MapEntry<String, String> e) =>
-                '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
-            .join('&');
-      }
-
-      final Uri emailUrl = Uri(
-          scheme: 'malito',
-          path: "email.com",
-          query: encodeQueryParameters(<String, String>{
-            'subject': 'Store Opedia',
-            'body': "Hello Admin "
-          }));
-
-      if (await canLaunchUrl(emailUrl)) {
-        launchUrl(emailUrl);
-      } else {
-        CustomToast.showMessage(
-            context: context,
-            size: size,
-            message: 'Please check the Internet Connection',
-            messageType: MessageType.REJECTED);
-      }
-    },
+    child: const ContactUs(),
   );
 }

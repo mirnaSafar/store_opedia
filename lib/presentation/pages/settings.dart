@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:shopesapp/logic/cubites/cubit/auth_state.dart';
 import 'package:shopesapp/logic/cubites/user/delete_user_cubit.dart';
-import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 import '../../data/enums/message_type.dart';
 import '../../logic/cubites/cubit/auth_cubit.dart';

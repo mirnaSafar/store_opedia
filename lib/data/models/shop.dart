@@ -20,29 +20,31 @@ class Shop {
   String shopID;
   bool? isFollow;
   bool? isFavorit;
+  bool isActive;
 
-  Shop({
-    required this.shopCategory,
-    required this.location,
-    required this.startWorkTime,
-    required this.endWorkTime,
-    required this.ownerID,
-    required this.ownerEmail,
-    required this.ownerPhoneNumber,
-    required this.shopID,
-    required this.shopName,
-    required this.ownerName,
-    this.shopPhoneNumber,
-    this.shopProfileImage,
-    this.shopCoverImage,
-    this.shopDescription,
-    this.socialUrl,
-    this.rate = 0,
-    this.isFollow = false,
-    this.isFavorit = false,
-    this.followesNumber = 0,
-    //  this.numberOfFollowers = 0,
-  });
+  Shop(
+      {required this.shopCategory,
+      required this.location,
+      required this.startWorkTime,
+      required this.endWorkTime,
+      required this.ownerID,
+      required this.ownerEmail,
+      required this.ownerPhoneNumber,
+      required this.shopID,
+      required this.shopName,
+      required this.ownerName,
+      this.shopPhoneNumber,
+      this.shopProfileImage,
+      this.shopCoverImage,
+      this.shopDescription,
+      this.socialUrl,
+      this.rate = 0,
+      this.isFollow = false,
+      this.isFavorit = false,
+      this.followesNumber = 0,
+      this.isActive = true
+      //  this.numberOfFollowers = 0,
+      });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -63,7 +65,8 @@ class Shop {
       "ownerID": ownerID,
       "ownerEmail": ownerEmail,
       "ownerPhoneNumber": ownerPhoneNumber,
-      "followesNumber": followesNumber
+      "followesNumber": followesNumber,
+      "is_active": isActive
     };
   }
 
@@ -86,27 +89,28 @@ class Shop {
       ownerPhoneNumber: map["ownerPhoneNumber"] as String,
       ownerName: map["ownerName"] as String,
       followesNumber: map["followesNumber"] as int?,
+      isActive: map["is_active"] as bool,
     );
   }
 
   factory Shop.from(Shop oldShop) {
     return Shop(
-      shopCategory: oldShop.shopCategory,
-      location: oldShop.location,
-      startWorkTime: oldShop.startWorkTime,
-      endWorkTime: oldShop.endWorkTime,
-      ownerID: oldShop.ownerID,
-      ownerEmail: oldShop.ownerEmail,
-      ownerPhoneNumber: oldShop.ownerPhoneNumber,
-      shopID: oldShop.shopID,
-      shopName: oldShop.shopName,
-      ownerName: oldShop.ownerName,
-      shopCoverImage: oldShop.shopCoverImage,
-      shopDescription: oldShop.shopDescription,
-      shopPhoneNumber: oldShop.ownerPhoneNumber,
-      shopProfileImage: oldShop.shopProfileImage,
-      socialUrl: oldShop.socialUrl,
-    );
+        shopCategory: oldShop.shopCategory,
+        location: oldShop.location,
+        startWorkTime: oldShop.startWorkTime,
+        endWorkTime: oldShop.endWorkTime,
+        ownerID: oldShop.ownerID,
+        ownerEmail: oldShop.ownerEmail,
+        ownerPhoneNumber: oldShop.ownerPhoneNumber,
+        shopID: oldShop.shopID,
+        shopName: oldShop.shopName,
+        ownerName: oldShop.ownerName,
+        shopCoverImage: oldShop.shopCoverImage,
+        shopDescription: oldShop.shopDescription,
+        shopPhoneNumber: oldShop.ownerPhoneNumber,
+        shopProfileImage: oldShop.shopProfileImage,
+        socialUrl: oldShop.socialUrl,
+        isActive: oldShop.isActive);
   }
   String toJson() => json.encode(toMap());
 

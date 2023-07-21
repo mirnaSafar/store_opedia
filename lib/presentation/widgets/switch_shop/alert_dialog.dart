@@ -1,10 +1,12 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shopesapp/logic/cubites/shop/cubit/active_shop_cubit.dart';
-import 'package:shopesapp/logic/cubites/shop/cubit/deactivate_shop_cubit.dart';
+
+import 'package:shopesapp/main.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 
+import '../../../logic/cubites/shop/active_shop_cubit.dart';
+import '../../../logic/cubites/shop/deactivate_shop_cubit.dart';
 import '../../../logic/cubites/shop/delete_shop_cubit.dart';
 import '../../../logic/cubites/shop/switch_shop_cubit.dart';
 import '../../shared/custom_widgets/custom_text.dart';
@@ -18,14 +20,12 @@ void showAlertDialog(BuildContext context, var shop) {
       body: const Center(
           child: CustomText(
         text: "Start the App with This Store?",
-        bold: true,
         fontSize: 16,
       )),
       btnCancelOnPress: () {},
       btnCancelText: 'Cancel',
       btnOkText: " Countinue",
       btnOkOnPress: () {
-        // context.read<SwitchShopCubit>().setIDOfSelectedShop(id: shop["shopID"]);
         context.read<SwitchShopCubit>().swithShop(shop: shop);
       }).show();
 }
@@ -56,33 +56,32 @@ void deleteShopAlert(BuildContext context, var shopID, bool isLastShop) {
       }).show();
 }
 
-void deactivatedShopAlert(BuildContext context, var shopID, bool isLastShop) {
+void deactivatedShopAlert(BuildContext context, var shopID) {
   AwesomeDialog(
       btnOkColor: AppColors.mainRedColor,
       btnCancelColor: Colors.green,
       context: context,
       animType: AnimType.SCALE,
       dialogType: DialogType.INFO_REVERSED,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+      body: const Padding(
+        padding: EdgeInsets.symmetric(horizontal: 10),
         child: Center(
-            child: isLastShop == false
-                ? const CustomText(
-                    text:
-                        "You Will Deactivate This Shop  and You can't manage it's posts!")
-                : const CustomText(
-                    text:
-                        "You Will Deactivate The last Shop   and You can't manage it's posts ,  You Will Lose Owner power And become Normal User ,You can Activate it Again!")),
+            child: CustomText(
+                text:
+                    "You Will Deactivate This Shop  and You can't manage it's posts!")),
       ),
       btnCancelOnPress: () {},
       btnCancelText: 'Cancel',
       btnOkText: " Countinue",
       btnOkOnPress: () {
-        context.read<DeactivateShopCubit>().deactivateShop(shopID: shopID);
+        context.read<DeactivateShopCubit>().deactivateShop(
+              shopID: shopID,
+              ownerID: globalSharedPreference.getString("ID")!,
+            );
       }).show();
 }
 
-void activeShopAlert(BuildContext context, var shop) {
+void activeShopAlert(BuildContext context, var shopID) {
   AwesomeDialog(
       btnOkColor: Colors.green,
       context: context,
@@ -90,14 +89,33 @@ void activeShopAlert(BuildContext context, var shop) {
       dialogType: DialogType.INFO_REVERSED,
       body: const Center(
           child: CustomText(
-        text: " Activate This Store?",
-        bold: true,
+        text: " Activate This Store?, You Can Manage it's Posts again!",
         fontSize: 16,
       )),
       btnCancelOnPress: () {},
       btnCancelText: 'Cancel',
       btnOkText: " Countinue",
       btnOkOnPress: () {
-        context.read<ActiveShopCubit>().activeShop(shopID: shop["ShopID"]);
+        context.read<ActiveShopCubit>().activeShop(
+              shopID: shopID,
+              ownerID: globalSharedPreference.getString("ID")!,
+            );
       }).show();
+}
+
+void cantDeactivatedShop(BuildContext context) {
+  AwesomeDialog(
+          btnOkColor: Colors.green,
+          context: context,
+          animType: AnimType.SCALE,
+          dialogType: DialogType.INFO,
+          body: const Center(
+              child: CustomText(
+            text:
+                " You Can't Deactive The Last Shop , Because you Must have at least one active store !",
+            fontSize: 16,
+          )),
+          btnOkText: " OK",
+          btnOkOnPress: () {})
+      .show();
 }

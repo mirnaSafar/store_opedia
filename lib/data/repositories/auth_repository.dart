@@ -243,7 +243,7 @@ class AuthRepository {
     await prefs.setString("endWorkTime", shop.endWorkTime);
     await prefs.setString("shopID", shop.shopID);
     await prefs.setString("mode", "owner");
-    globalSharedPreference.setBool("hasDeacyivaedStore", false);
+    globalSharedPreference.setBool("isActive", shop.isActive);
   }
 
   void saveUser({required User user}) async {
@@ -253,6 +253,5 @@ class AuthRepository {
     await prefs.setString("phoneNumber", user.phoneNumber);
     await prefs.setString("name", user.name);
     await prefs.setString("mode", "user");
-    globalSharedPreference.setBool("hasDeacyivaedStore", false);
   }
 }

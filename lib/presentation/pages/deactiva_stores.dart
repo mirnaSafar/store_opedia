@@ -7,6 +7,7 @@ import '../../main.dart';
 import '../widgets/dialogs/awosem_dialog.dart';
 import '../widgets/switch_shop/deactive_shop_item.dart';
 import '../widgets/switch_shop/error.dart';
+import '../widgets/switch_shop/no_deactivated_shops.dart';
 
 class DeactiveStores extends StatefulWidget {
   const DeactiveStores({Key? key}) : super(key: key);
@@ -16,14 +17,13 @@ class DeactiveStores extends StatefulWidget {
 }
 
 class _DeactiveStoresState extends State<DeactiveStores> {
-  List<dynamic> ownerShpos = [];
-  String? currentShopID;
+  List<dynamic> ownerDeactivateShpos = [];
   bool isLastShop = false;
   @override
   void initState() {
-    if (ownerShpos.isEmpty) {
+    if (ownerDeactivateShpos.isEmpty) {
       context.read<GetOwnerShopsCubit>().getOwnerShopsRequest(
-          ownerID: globalSharedPreference.getString("ID"));
+          ownerID: globalSharedPreference.getString("ID"), message: "deactive");
     }
 
     super.initState();
@@ -54,20 +54,24 @@ class _DeactiveStoresState extends State<DeactiveStores> {
                   child: CircularProgressIndicator(),
                 );
               } else if (state is GetOwnerShopsSucceed) {
-                ownerShpos =
+                ownerDeactivateShpos =
                     BlocProvider.of<GetOwnerShopsCubit>(context).ownerShops;
-                //    print(ownerShpos);
-                if (ownerShpos.length == 1) {
+
+                if (ownerDeactivateShpos.length == 1) {
                   isLastShop = true;
+                }
+                if (ownerDeactivateShpos.isEmpty) {
+                  return buildNoShopItems(
+                      size, "You Don't Have Deactivated Shops !");
                 }
 
                 return ListView.separated(
                     itemBuilder: (context, index) {
                       return buildDeactivatedShopItem(context, size,
-                          ownerShpos[index], isLastShop, currentShopID);
+                          ownerDeactivateShpos[index], isLastShop);
                     },
                     separatorBuilder: (context, index) => const CustomDivider(),
-                    itemCount: ownerShpos.length);
+                    itemCount: ownerDeactivateShpos.length);
               }
               return buildError(size);
             },
