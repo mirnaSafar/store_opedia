@@ -9,6 +9,7 @@ import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/presentation/widgets/switch_shop/alert_dialog.dart';
 import '../../../data/enums/message_type.dart';
+import '../../../logic/cubites/shop/active_shop_cubit.dart';
 import '../../../logic/cubites/shop/deactivate_shop_cubit.dart';
 import '../../../logic/cubites/shop/delete_shop_cubit.dart';
 import '../../../logic/cubites/shop/switch_shop_cubit.dart';
@@ -111,11 +112,65 @@ Widget buildShopItem(
                       },
                     ),
                     15.px,
+                    Visibility(
+                      visible: shop["is_active"] == false &&
+                          globalSharedPreference.getString("shopID") != "noID",
+                      child: BlocProvider(
+                        create: (context) => ActiveShopCubit(),
+                        child: Row(children: [
+                          BlocConsumer<ActiveShopCubit, ActiveShopState>(
+                            listener: (context, state) {
+                              if (state is ActiveShopSucceed) {
+                                CustomToast.showMessage(
+                                    context: context,
+                                    size: size,
+                                    message: 'Shop Acivated',
+                                    messageType: MessageType.SUCCESS);
+                                if (globalSharedPreference
+                                        .getString("shopID") ==
+                                    shop["shopID"]) {
+                                  globalSharedPreference.setBool(
+                                      "isActive", true);
+                                }
+                                context.pushRepalceme(const SwitchStore());
+                              } else if (state is ActiveShopFailed) {
+                                CustomToast.showMessage(
+                                    context: context,
+                                    size: size,
+                                    message: state.message.toUpperCase(),
+                                    messageType: MessageType.WARNING);
+                              }
+                            },
+                            builder: (context, state) {
+                              if (state is ActiveProgress) {
+                                return const Center(
+                                    child: CircularProgressIndicator());
+                              }
+
+                              return ElevatedButton(
+                                onPressed: () {
+                                  activeShopAlert(context, shop["shopID"]);
+                                },
+                                child: const Text("Activate"),
+                                style: ElevatedButton.styleFrom(
+                                    padding: const EdgeInsets.all(10),
+                                    backgroundColor: Colors.green,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(30))),
+                              );
+                            },
+                          ),
+                        ]),
+                      ),
+                    ),
+                    15.px,
                     BlocProvider(
                       create: (context) => DeactivateShopCubit(),
                       child: Visibility(
                           visible: globalSharedPreference.getString("shopID") !=
-                              "noID",
+                                  "noID" &&
+                              shop["is_active"],
                           child: BlocConsumer<DeactivateShopCubit,
                               DeactivateShopState>(
                             listener: (context, state) {
@@ -131,7 +186,7 @@ Widget buildShopItem(
                                     size: size,
                                     message: 'Shop Deacivated',
                                     messageType: MessageType.SUCCESS);
-                                context.push(const SwitchStore());
+                                context.pushRepalceme(const SwitchStore());
                               } else if (state is DeactivateShopFailed) {
                                 CustomToast.showMessage(
                                     context: context,
@@ -168,7 +223,8 @@ Widget buildShopItem(
                       create: (context) => DeleteShopCubit(),
                       child: Visibility(
                           visible: globalSharedPreference.getString("shopID") !=
-                              "noID",
+                                  "noID" &&
+                              shop["is_active"],
                           child: BlocConsumer<DeleteShopCubit, DeleteShopState>(
                             listener: (context, state) {
                               if (state is DeleteShopSucceed) {
@@ -196,6 +252,8 @@ Widget buildShopItem(
                                         context
                                             .pushRepalceme(const ControlPage()),
                                         context
+                                            .read<AuthCubit>()
+                                            .ownerBecomeUser(),
                                       };
                               } else if (state is DeleteShopFailed) {
                                 CustomToast.showMessage(

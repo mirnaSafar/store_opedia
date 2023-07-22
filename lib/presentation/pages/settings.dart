@@ -75,7 +75,6 @@ class _SettingsPageState extends State<SettingsPage> {
                         buildeAddNewSotre(context),
                         buildeEdeitMySotre(context, size),
                         buildSwitchSotre(context),
-                        buildeDeactiveSotres(context)
                       ]);
                 },
               ),

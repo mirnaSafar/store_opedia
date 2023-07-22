@@ -23,7 +23,7 @@ class _SwitchStoreState extends State<SwitchStore> {
   void initState() {
     if (ownerShpos.isEmpty) {
       context.read<GetOwnerShopsCubit>().getOwnerShopsRequest(
-          ownerID: globalSharedPreference.getString("ID"), message: "active");
+          ownerID: globalSharedPreference.getString("ID"), message: "all");
     }
 
     super.initState();

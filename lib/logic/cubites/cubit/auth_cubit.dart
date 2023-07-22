@@ -61,10 +61,10 @@ class AuthCubit extends Cubit<AuthState> {
       endWorkTime: endWorkTime,
       shopPhoneNumber: shopPhoneNumber,
     );
-    if (response == null || response["message"] != "Owner was Created") {
-      emit(AuthFailed(response == null
-          ? "Signup Failed Check your internet connection"
-          : response["message"]));
+    if (response == null) {
+      emit(AuthFailed("Signup Failed Check your internet connection"));
+    } else if (response["message"] != "Owner was Created") {
+      emit(AuthFailed(response["message"]));
     } else {
       shop = Shop.fromMap(response);
       AuthRepository().saveOwnerAndShop(shop: shop!);
@@ -110,7 +110,7 @@ class AuthCubit extends Cubit<AuthState> {
 
     globalSharedPreference.setString("mode", "user");
     globalSharedPreference.setString("currentShop", "shopDeleted");
-    globalSharedPreference.remove("shopPhoneNumber");
+    /*  globalSharedPreference.remove("shopPhoneNumber");
     globalSharedPreference.remove("shopProfileImage");
     globalSharedPreference.remove("shopCoverImage");
     globalSharedPreference.remove("numberOfFollowers");
@@ -120,7 +120,7 @@ class AuthCubit extends Cubit<AuthState> {
     globalSharedPreference.remove("shopCategory");
     globalSharedPreference.remove("location");
     globalSharedPreference.remove("startWorkTime");
-    globalSharedPreference.remove("endWorkTime");
+    globalSharedPreference.remove("endWorkTime");*/
 
     emit(UserLoginedIn());
   }

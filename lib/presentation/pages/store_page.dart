@@ -320,7 +320,8 @@ class _StorePageState extends State<StorePage> {
                           //     backgroundColor: AppColors.mainOrangeColor,
                           //     child: const Icon(Icons.edit)),
                           Visibility(
-                              visible: widget.profileDisplay ?? false,
+                              visible: widget.profileDisplay == false &&
+                                  widget.shop!.isActive == false,
                               child: Positioned(
                                   right: w * 0.06,
                                   bottom: w * 0.15,
@@ -595,7 +596,8 @@ class _StorePageState extends State<StorePage> {
                       itemBuilder: (BuildContext context, int index) {
                         return ProductPost(
                           post: postsList[index],
-                          profileDisplay: widget.profileDisplay ?? false,
+                          profileDisplay: widget.profileDisplay == false ||
+                              widget.shop!.isActive == false,
                         );
                       },
                     );

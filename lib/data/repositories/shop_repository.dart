@@ -75,53 +75,6 @@ class ShopRepository {
     return null;
   }
 
-//Demo test offline
-  /* Map<String, dynamic>? getOwnerShposTest() {
-    return {
-      "message": "Succeed",
-      "shops": [
-        {
-          "ownerID": "123",
-          "ownerName": "demo",
-          "ownerEmail": "email@gmail.com",
-          "ownerPhoneNumber": "0951931846",
-          "shopID": "2",
-          "shopCategory": "Clothes Categories",
-          "shopName": "Joserf store",
-          "shopPhoneNumber": "0912345678",
-          "location": "Homs",
-          "startWorkTime": "12:00:45.893",
-          "endWorkTime": "12:00:45.893",
-          "shopProfileImage": "url",
-          "shopCoverImage": "url",
-          "shopDescription": "desc",
-          "socialUrl": ['insta', 'face'],
-          "rate": 4,
-          "followesNumber": 100,
-        },
-        {
-          "ownerID": "1234",
-          "ownerName": "demo",
-          "ownerEmail": "anas2@gmail.com",
-          "ownerPhoneNumber": "0951931846",
-          "shopID": "1",
-          "shopCategory": "sport Categories",
-          "shopName": "Demo Store",
-          "shopPhoneNumber": "0912345678",
-          "location": "Homs",
-          "startWorkTime": "12:00:45.893",
-          "endWorkTime": "12:00:45.893",
-          "shopProfileImage": "url",
-          "shopCoverImage": "url",
-          "shopDescription": "desc",
-          "socialUrl": ['insta', 'face'],
-          "rate": 4,
-          "followesNumber": 100,
-        },
-      ]
-    };
-  }*/
-
   Future<String> addShop({
     required String? facebookAccount,
     required String? instagramAccount,
@@ -302,5 +255,57 @@ class ShopRepository {
       return "Success";
     }
     return "Faild";
+  }
+
+  Future<Map<String, dynamic>?> toggoleFollowShop(
+      {required String shopID, required String ownerID}) async {
+    http.Response response;
+    Map<String, dynamic> parsedResult;
+    Map<String, dynamic> requestBody = {
+      "id": ownerID,
+      "shopId": shopID,
+    };
+
+    try {
+      response = await http.post(Uri.http(ENDPOINT, "/follow/$ownerID/$shopID"),
+          body: jsonEncode(requestBody),
+          headers: {
+            'Content-Type': 'application/json',
+          });
+      //   print(response.statusCode);
+    } catch (e) {
+      return null;
+    }
+    if (response.statusCode == 200) {
+      parsedResult = jsonDecode(response.body);
+      return parsedResult;
+    }
+    return null;
+  }
+
+  Future<Map<String, dynamic>?> toggoleFavoriteShop(
+      {required String shopID, required String ownerID}) async {
+    http.Response response;
+    Map<String, dynamic> parsedResult;
+    Map<String, dynamic> requestBody = {
+      "id": ownerID,
+      "shopId": shopID,
+    };
+
+    try {
+      response = await http.post(Uri.http(ENDPOINT, "/fav/$ownerID/$shopID"),
+          body: jsonEncode(requestBody),
+          headers: {
+            'Content-Type': 'application/json',
+          });
+      //   print(response.statusCode);
+    } catch (e) {
+      return null;
+    }
+    if (response.statusCode == 200) {
+      parsedResult = jsonDecode(response.body);
+      return parsedResult;
+    }
+    return null;
   }
 }

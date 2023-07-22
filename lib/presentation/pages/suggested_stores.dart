@@ -116,6 +116,7 @@ class _SuggestedStoresViewState extends State<SuggestedStoresView> {
                               return const CustomDivider();
                             },
                             itemBuilder: (BuildContext context, int index) {
+                              //   print(suggestedStoresList);
                               return SuggestedStore(
                                 shop: Shop.fromMap(suggestedStoresList[index]),
                               );

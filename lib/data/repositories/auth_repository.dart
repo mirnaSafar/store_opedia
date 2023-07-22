@@ -74,14 +74,16 @@ class AuthRepository {
     } catch (e) {
       return null;
     }
-    if (response.statusCode == 200 || response.statusCode == 202) {
+    //  print(response.statusCode);
+    if (response.statusCode == 201) {
       Map<String, dynamic> parsedResult = jsonDecode(response.body);
-      /* BlocListener<OwnerCubit, OwnerState>(
+      /*BlocListener<OwnerCubit, OwnerState>(
         listener: (context, state) {
           Owner owner = Owner.fromMap(requestBody);
           OwnerCubit(owner: owner);
         },
       );*/
+      //  print(parsedResult);
       return parsedResult;
     }
     return null;

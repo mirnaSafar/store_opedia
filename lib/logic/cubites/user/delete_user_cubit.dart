@@ -13,6 +13,7 @@ class DeleteUserCubit extends Cubit<DeleteUserState> {
     String id = globalSharedPreference.getString("ID")!;
 
     String response = await UserRepository().deleteUser(id: id);
+
     if (response == "Faield") {
       emit(DeleteUserFailed(
           message:

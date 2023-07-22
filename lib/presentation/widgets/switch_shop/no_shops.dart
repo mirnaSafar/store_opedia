@@ -22,7 +22,6 @@ Widget buildNoShopItems(var size) {
             ),
             const CustomText(
               text: "You Don't Have another Shops !",
-              bold: true,
               fontSize: 20,
             )
           ],
