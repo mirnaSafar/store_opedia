@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
 
 import '../../../../data/repositories/shop_repository.dart';
 
@@ -15,7 +14,7 @@ class ToggoleFavoriteShopCubit extends Cubit<ToggoleFavoriteShopState> {
         .toggoleFollowShop(shopID: shopID, ownerID: ownerID);
     if (response == null || response["message"] == "Access Denied") {
       emit(FailedToggoleFavoriteShop(response == null
-          ? "Failed to Follow this Shop , Check your Internet Connection"
+          ? "Failed to favorite this Shop , Check your Internet Connection"
           : response["message"]));
     } else {
       emit(SucceedToggoleFavoriteShop(message: response["message"]));

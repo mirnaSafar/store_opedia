@@ -4,6 +4,7 @@ import 'package:shopesapp/data/models/shop.dart';
 import 'package:shopesapp/logic/cubites/cubit/internet_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/store_cubit.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_divider.dart';
+import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/presentation/widgets/page_header/page_header.dart';
 import 'package:shopesapp/presentation/widgets/suggested_store/suggested_store.dart';
 
@@ -96,6 +97,7 @@ class _SuggestedStoresViewState extends State<SuggestedStoresView> {
                             EdgeInsets.symmetric(horizontal: 20, vertical: 0),
                         child: PageHeader(),
                       ),
+                      30.ph,
                       BlocBuilder<StoreCubit, StoreState>(
                           builder: (context, state) {
                         if (state is FeatchingShopsProgress) {
@@ -116,7 +118,6 @@ class _SuggestedStoresViewState extends State<SuggestedStoresView> {
                               return const CustomDivider();
                             },
                             itemBuilder: (BuildContext context, int index) {
-                              //   print(suggestedStoresList);
                               return SuggestedStore(
                                 shop: Shop.fromMap(suggestedStoresList[index]),
                               );

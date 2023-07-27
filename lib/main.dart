@@ -9,10 +9,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopesapp/logic/cubites/cubit/auth_cubit.dart';
 import 'package:shopesapp/logic/cubites/cubit/internet_cubit.dart';
 import 'package:shopesapp/logic/cubites/cubit/profile_cubit.dart';
+import 'package:shopesapp/logic/cubites/post/cubit/show_favorite_posts_cubit.dart';
+import 'package:shopesapp/logic/cubites/post/cubit/toggle_post_favorite_cubit.dart';
 import 'package:shopesapp/logic/cubites/post/filter_cubit.dart';
 import 'package:shopesapp/logic/cubites/post/post_favorite_cubit.dart';
 import 'package:shopesapp/logic/cubites/post/posts_cubit.dart';
 import 'package:shopesapp/logic/cubites/post/rate_shop_cubit.dart';
+import 'package:shopesapp/logic/cubites/shop/cubit/toggole_favorite_shop_cubit.dart';
+import 'package:shopesapp/logic/cubites/shop/cubit/toggole_follow_shop_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/favorite_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/following_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/rate_shop_cubit.dart';
@@ -98,6 +102,22 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => FollowingCubit(),
+          lazy: false,
+        ),
+        BlocProvider(
+          create: (context) => ToggoleFollowShopCubit(),
+          lazy: false,
+        ),
+        BlocProvider(
+          create: (context) => ToggoleFavoriteShopCubit(),
+          lazy: false,
+        ),
+        BlocProvider(
+          create: (context) => TogglePostFavoriteCubit(),
+          lazy: false,
+        ),
+        BlocProvider(
+          create: (context) => ShowFavoritePostsCubit(),
           lazy: false,
         ),
         BlocProvider(

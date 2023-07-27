@@ -1,7 +1,6 @@
 import 'dart:core';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopesapp/data/repositories/auth_repository.dart';
 import 'package:shopesapp/logic/cubites/cubit/auth_state.dart';
 import 'package:shopesapp/main.dart';
@@ -46,6 +45,8 @@ class AuthCubit extends Cubit<AuthState> {
     required String endWorkTime,
     required String storeName,
     required String shopPhoneNumber,
+    required double latitude,
+    required double longitude,
   }) async {
     emit(AuthProgress());
 
@@ -60,6 +61,8 @@ class AuthCubit extends Cubit<AuthState> {
       startWorkTime: startWorkTime,
       endWorkTime: endWorkTime,
       shopPhoneNumber: shopPhoneNumber,
+      latitude: latitude,
+      longitude: longitude,
     );
     if (response == null) {
       emit(AuthFailed("Signup Failed Check your internet connection"));
@@ -136,6 +139,8 @@ class AuthCubit extends Cubit<AuthState> {
     globalSharedPreference.remove("shopDescription");
     globalSharedPreference.remove("shopCategory");
     globalSharedPreference.remove("location");
+    globalSharedPreference.remove("latitude");
+    globalSharedPreference.remove("longitude");
   }
 
   Future<void> autoLogIn() async {

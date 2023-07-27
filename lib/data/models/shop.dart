@@ -16,11 +16,13 @@ class Shop {
   String endWorkTime;
   int? followesNumber;
   List<dynamic>? socialUrl;
-  int? rate;
+  double? rate;
   String shopID;
   bool? isFollow;
   bool? isFavorit;
   bool isActive;
+  double latitude;
+  double longitude;
 
   Shop(
       {required this.shopCategory,
@@ -33,6 +35,8 @@ class Shop {
       required this.shopID,
       required this.shopName,
       required this.ownerName,
+      required this.latitude,
+      required this.longitude,
       this.shopPhoneNumber,
       this.shopProfileImage,
       this.shopCoverImage,
@@ -66,7 +70,9 @@ class Shop {
       "ownerEmail": ownerEmail,
       "ownerPhoneNumber": ownerPhoneNumber,
       "followesNumber": followesNumber,
-      "is_active": isActive
+      "is_active": isActive,
+      "latitude": latitude,
+      "longitude": longitude,
     };
   }
 
@@ -82,7 +88,7 @@ class Shop {
       endWorkTime: map["endWorkTime"] as String,
       shopID: map["shopID"] as String,
       socialUrl: map["socialUrl"] as List<dynamic>?,
-      rate: map["rate"] as int?,
+      rate: map["rate"] as double,
       shopPhoneNumber: map["shopPhoneNumber"] as String?,
       ownerID: map["ownerID"] as String,
       ownerEmail: map["ownerEmail"] as String,
@@ -90,6 +96,8 @@ class Shop {
       ownerName: map["ownerName"] as String,
       followesNumber: map["followesNumber"] as int?,
       isActive: map["is_active"] as bool,
+      latitude: map["latitude"],
+      longitude: map["longitude"],
     );
   }
 
@@ -110,7 +118,9 @@ class Shop {
         shopPhoneNumber: oldShop.ownerPhoneNumber,
         shopProfileImage: oldShop.shopProfileImage,
         socialUrl: oldShop.socialUrl,
-        isActive: oldShop.isActive);
+        isActive: oldShop.isActive,
+        latitude: oldShop.latitude,
+        longitude: oldShop.longitude);
   }
   String toJson() => json.encode(toMap());
 

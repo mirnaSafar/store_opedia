@@ -7,13 +7,15 @@ import 'package:shopesapp/presentation/shared/extensions.dart';
 class CustomIconTextRow extends StatelessWidget {
   const CustomIconTextRow(
       {Key? key,
-      required this.icon,
+      this.icon,
       required this.text,
       this.iconColor,
       this.textColor,
-      this.fontSize})
+      this.fontSize,
+      this.svgIcon})
       : super(key: key);
-  final String icon;
+  final String? svgIcon;
+  final IconData? icon;
   final String text;
   final Color? iconColor;
   final Color? textColor;
@@ -23,16 +25,17 @@ class CustomIconTextRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        SvgPicture.asset(
-          'assets/$icon.svg',
-          // color: iconColor ?? Colors.grey[600],
-          width: 25,
-          height: 25,
-        ),
-        // Icon(
-        //   icon,
-        //   color: iconColor ?? Colors.grey[600],
-        // ),
+        svgIcon != null
+            ? SvgPicture.asset(
+                'assets/$svgIcon.svg',
+                // color: iconColor ?? Colors.grey[600],
+                width: 25,
+                height: 25,
+              )
+            : Icon(
+                icon,
+                color: iconColor ?? Colors.grey[600],
+              ),
         20.px,
         CustomText(
           text: text,

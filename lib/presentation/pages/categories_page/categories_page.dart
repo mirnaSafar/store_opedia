@@ -9,9 +9,9 @@ import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/presentation/shared/fonts.dart';
 import 'package:shopesapp/presentation/shared/utils.dart';
 
-import '../../constant/categories.dart';
-import '../../data/enums/message_type.dart';
-import '../shared/custom_widgets/custom_toast.dart';
+import '../../../constant/categories.dart';
+import '../../../data/enums/message_type.dart';
+import '../../shared/custom_widgets/custom_toast.dart';
 
 class CategoriesPage extends StatefulWidget {
   const CategoriesPage({Key? key}) : super(key: key);
@@ -250,7 +250,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                   ),
                                   10.ph,
                                   CustomText(
-                                    text: '20 items',
+                                    text: '',
                                     fontSize: AppFonts.secondaryFontSize,
                                     textColor: AppColors.mainWhiteColor,
                                   )

@@ -42,7 +42,7 @@ Widget buildShopItem(
                       ),
                     )
                   : null),
-          40.px,
+          15.px,
           Expanded(
             flex: 2,
             child: Column(
@@ -61,14 +61,14 @@ Widget buildShopItem(
                     ),
                   ],
                 ),
-                20.ph,
+                10.ph,
                 Row(
                   children: [
                     BlocConsumer<SwitchShopCubit, SwitchShopState>(
                       listener: (context, state) {
                         if (state is SwithShopFiled) {
                           buildAwsomeDialog(
-                              context, "Filed", "OK", "Select Store Filed",
+                              context, "Failed", "OK", "Select Store Failed",
                               type: DialogType.ERROR);
                         } else if (state is SwithShopSucceded) {
                           context.read<AuthCubit>().selectedShop();
@@ -80,9 +80,11 @@ Widget buildShopItem(
                         if (state is SwithShopSucceded &&
                             globalSharedPreference.getString("shopID") ==
                                 shop["shopID"]) {
-                          return const CustomText(
-                            text: "Current Shop",
-                            textColor: Colors.green,
+                          return const Expanded(
+                            child: CustomText(
+                              text: "Current Shop",
+                              textColor: Colors.green,
+                            ),
                           );
                         } else if (state is SwithShopProgress &&
                             globalSharedPreference.getString("shopID") ==
@@ -93,25 +95,29 @@ Widget buildShopItem(
                         } else if (state is SwithShopProgress &&
                             globalSharedPreference.getString("shopID") !=
                                 shop["shopID"]) {
-                          return CustomText(
-                            text: "Waiting....",
-                            textColor: Theme.of(context).primaryColorDark,
+                          return Expanded(
+                            child: CustomText(
+                              text: "Waiting...",
+                              textColor: Theme.of(context).primaryColorDark,
+                            ),
                           );
                         }
-                        return ElevatedButton(
-                          onPressed: () {
-                            showAlertDialog(context, shop);
-                          },
-                          child: const Text("Select  Store"),
-                          style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.all(10),
-                              backgroundColor: Colors.green,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30))),
+                        return Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              showAlertDialog(context, shop);
+                            },
+                            child: const Text("Select Store"),
+                            style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.all(10),
+                                backgroundColor: Colors.green,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30))),
+                          ),
                         );
                       },
                     ),
-                    15.px,
+                    5.px,
                     Visibility(
                       visible: shop["is_active"] == false &&
                           globalSharedPreference.getString("shopID") != "noID",
@@ -147,24 +153,26 @@ Widget buildShopItem(
                                     child: CircularProgressIndicator());
                               }
 
-                              return ElevatedButton(
-                                onPressed: () {
-                                  activeShopAlert(context, shop["shopID"]);
-                                },
-                                child: const Text("Activate"),
-                                style: ElevatedButton.styleFrom(
-                                    padding: const EdgeInsets.all(10),
-                                    backgroundColor: Colors.green,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(30))),
+                              return Expanded(
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    activeShopAlert(context, shop["shopID"]);
+                                  },
+                                  child: const Text("Activate"),
+                                  style: ElevatedButton.styleFrom(
+                                      padding: const EdgeInsets.all(10),
+                                      backgroundColor: Colors.green,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30))),
+                                ),
                               );
                             },
                           ),
                         ]),
                       ),
                     ),
-                    15.px,
+                    0.px,
                     BlocProvider(
                       create: (context) => DeactivateShopCubit(),
                       child: Visibility(
@@ -200,25 +208,27 @@ Widget buildShopItem(
                                 return const Center(
                                     child: CircularProgressIndicator());
                               }
-                              return ElevatedButton(
-                                onPressed: () {
-                                  isLastShop == false
-                                      ? deactivatedShopAlert(
-                                          context, shop["shopID"])
-                                      : cantDeactivatedShop(context);
-                                },
-                                child: const Text("Deactivate"),
-                                style: ElevatedButton.styleFrom(
-                                    padding: const EdgeInsets.all(10),
-                                    backgroundColor: Colors.blueGrey,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(30))),
+                              return Expanded(
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    isLastShop == false
+                                        ? deactivatedShopAlert(
+                                            context, shop["shopID"])
+                                        : cantDeactivatedShop(context);
+                                  },
+                                  child: const Text("Deactivate"),
+                                  style: ElevatedButton.styleFrom(
+                                      padding: const EdgeInsets.all(10),
+                                      backgroundColor: Colors.blueGrey,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30))),
+                                ),
                               );
                             },
                           )),
                     ),
-                    15.px,
+                    5.px,
                     BlocProvider(
                       create: (context) => DeleteShopCubit(),
                       child: Visibility(
@@ -268,18 +278,20 @@ Widget buildShopItem(
                                 return const Center(
                                     child: CircularProgressIndicator());
                               }
-                              return ElevatedButton(
-                                onPressed: () {
-                                  deleteShopAlert(
-                                      context, shop["shopID"], isLastShop);
-                                },
-                                child: const Text("Delete"),
-                                style: ElevatedButton.styleFrom(
-                                    padding: const EdgeInsets.all(10),
-                                    backgroundColor: AppColors.mainRedColor,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(30))),
+                              return Expanded(
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    deleteShopAlert(
+                                        context, shop["shopID"], isLastShop);
+                                  },
+                                  child: const Text("Delete"),
+                                  style: ElevatedButton.styleFrom(
+                                      padding: const EdgeInsets.all(10),
+                                      backgroundColor: AppColors.mainRedColor,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30))),
+                                ),
                               );
                             },
                           )),

@@ -15,8 +15,8 @@ import 'package:shopesapp/presentation/shared/custom_widgets/custom_toast.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/user_input.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/presentation/shared/utils.dart';
-import '../../data/models/shop.dart';
-import '../shared/validation_functions.dart';
+import '../../../data/models/shop.dart';
+import '../../shared/validation_functions.dart';
 
 class AddPostPage extends StatefulWidget {
   const AddPostPage({Key? key}) : super(key: key);

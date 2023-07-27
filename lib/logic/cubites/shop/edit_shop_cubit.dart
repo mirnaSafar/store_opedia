@@ -22,24 +22,29 @@ class EditShopCubit extends Cubit<EditShopState> {
     required String closing,
     required String opening,
     required String shopPhoneNumber,
+    required double latitude,
+    required double longitude,
     String? insta,
     String? facebook,
   }) async {
     emit(EditShopProgress());
     String response = await ShopRepository().editShop(
-        ownerID: globalSharedPreference.getString("ID")!,
-        shopID: globalSharedPreference.getString("shopID")!,
-        shopName: shopName,
-        shopDescription: shopDescription,
-        shopProfileImage: shopProfileImage,
-        shopCoverImage: shopCoverImage,
-        shopCategory: shopCategory,
-        location: location,
-        startWorkTime: opening,
-        endWorkTime: closing,
-        shopPhoneNumber: shopPhoneNumber,
-        facebook: facebook,
-        insta: insta);
+      ownerID: globalSharedPreference.getString("ID")!,
+      shopID: globalSharedPreference.getString("shopID")!,
+      shopName: shopName,
+      shopDescription: shopDescription,
+      shopProfileImage: shopProfileImage,
+      shopCoverImage: shopCoverImage,
+      shopCategory: shopCategory,
+      location: location,
+      startWorkTime: opening,
+      endWorkTime: closing,
+      shopPhoneNumber: shopPhoneNumber,
+      facebook: facebook,
+      insta: insta,
+      latitude: globalSharedPreference.getDouble("latitude")!,
+      longitude: globalSharedPreference.getDouble("longitude")!,
+    );
 
     if (response == "Failed") {
       emit(EditShopFailed(
@@ -47,22 +52,24 @@ class EditShopCubit extends Cubit<EditShopState> {
     } else {
       AuthRepository().saveOwnerAndShop(
           shop: Shop(
-              shopCoverImage: shopCoverImage,
-              shopDescription: shopDescription,
-              shopPhoneNumber: shopPhoneNumber,
-              shopProfileImage: shopProfileImage,
-              socialUrl: [insta ?? '', facebook ?? ''],
-              shopCategory: shopCategory,
-              location: location,
-              startWorkTime: opening,
-              endWorkTime: closing,
-              ownerID: globalSharedPreference.getString("ID")!,
-              ownerEmail: globalSharedPreference.getString("email")!,
-              ownerPhoneNumber:
-                  globalSharedPreference.getString("phoneNumber")!,
-              shopID: globalSharedPreference.getString("shopID")!,
-              shopName: shopName,
-              ownerName: globalSharedPreference.getString("name")!));
+        shopCoverImage: shopCoverImage,
+        shopDescription: shopDescription,
+        shopPhoneNumber: shopPhoneNumber,
+        shopProfileImage: shopProfileImage,
+        socialUrl: [insta ?? '', facebook ?? ''],
+        shopCategory: shopCategory,
+        location: location,
+        startWorkTime: opening,
+        endWorkTime: closing,
+        ownerID: globalSharedPreference.getString("ID")!,
+        ownerEmail: globalSharedPreference.getString("email")!,
+        ownerPhoneNumber: globalSharedPreference.getString("phoneNumber")!,
+        shopID: globalSharedPreference.getString("shopID")!,
+        shopName: shopName,
+        ownerName: globalSharedPreference.getString("name")!,
+        longitude: globalSharedPreference.getDouble("longitude")!,
+        latitude: globalSharedPreference.getDouble("latitude")!,
+      ));
       GetOwnerShopsCubit().getOwnerShopsRequest(ownerID: '', message: 'all');
 
       emit(EditShopSucceed());

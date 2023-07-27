@@ -7,7 +7,7 @@ import 'package:shopesapp/constant/cities.dart';
 import 'package:shopesapp/data/enums/message_type.dart';
 import 'package:shopesapp/logic/cubites/post/filter_cubit.dart';
 import 'package:shopesapp/presentation/location_service.dart';
-import 'package:shopesapp/presentation/pages/categories_page.dart';
+import 'package:shopesapp/presentation/pages/categories_page/categories_page.dart';
 import 'package:shopesapp/presentation/pages/suggested_stores.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_divider.dart';
@@ -61,7 +61,7 @@ class _PageHeaderState extends State<PageHeader> {
                       });
                       context.pop();
                       CustomToast.showMessage(
-                          size: size / 1.5,
+                          size: size,
                           message: state.message,
                           messageType: MessageType.REJECTED,
                           context: context);
@@ -72,7 +72,7 @@ class _PageHeaderState extends State<PageHeader> {
                         setIcon('assets/location-1-svgrepo-com.svg');
                       });
                       CustomToast.showMessage(
-                          size: size / 1.5,
+                          size: size,
                           message: '',
                           messageType: MessageType.SUCCESS,
                           context: context);
@@ -134,7 +134,7 @@ class _PageHeaderState extends State<PageHeader> {
                       });
                       context.pop();
                       CustomToast.showMessage(
-                          size: size / 1.5,
+                          size: size,
                           message: state.message,
                           messageType: MessageType.REJECTED,
                           context: context);
@@ -145,7 +145,7 @@ class _PageHeaderState extends State<PageHeader> {
                         setIcon('assets/sort-vertical-svgrepo-com.svg');
                       });
                       CustomToast.showMessage(
-                          size: size / 1.5,
+                          size: size,
                           message: '',
                           messageType: MessageType.SUCCESS,
                           context: context);
@@ -179,7 +179,7 @@ class _PageHeaderState extends State<PageHeader> {
                     if (state is FilterFailed) {
                       context.pop();
                       CustomToast.showMessage(
-                          size: size / 1.5,
+                          size: size,
                           message: state.message,
                           messageType: MessageType.REJECTED,
                           context: context);
@@ -187,14 +187,14 @@ class _PageHeaderState extends State<PageHeader> {
                     } else if (state is NoPostYet) {
                       context.pop();
                       CustomToast.showMessage(
-                          size: size / 1.5,
+                          size: size,
                           message: 'No Posts to show',
                           messageType: MessageType.REJECTED,
                           context: context);
                       BotToast.closeAllLoading();
                     } else if (state is FilteredSuccessfully) {
                       CustomToast.showMessage(
-                          size: size / 1.5,
+                          size: size,
                           message: '',
                           messageType: MessageType.SUCCESS,
                           context: context);
@@ -227,7 +227,7 @@ class _PageHeaderState extends State<PageHeader> {
                     if (state is FilterFailed) {
                       context.pop();
                       CustomToast.showMessage(
-                          size: size / 1.5,
+                          size: size,
                           message: state.message,
                           messageType: MessageType.REJECTED,
                           context: context);
@@ -235,14 +235,14 @@ class _PageHeaderState extends State<PageHeader> {
                     } else if (state is NoPostYet) {
                       context.pop();
                       CustomToast.showMessage(
-                          size: size / 1.5,
+                          size: size,
                           message: 'No Posts to show',
                           messageType: MessageType.REJECTED,
                           context: context);
                       BotToast.closeAllLoading();
                     } else if (state is FilteredSuccessfully) {
                       CustomToast.showMessage(
-                          size: size / 1.5,
+                          size: size,
                           message: '',
                           messageType: MessageType.SUCCESS,
                           context: context);
@@ -313,14 +313,14 @@ class _PageHeaderState extends State<PageHeader> {
                             if (state is FilterFailed) {
                               context.pop();
                               CustomToast.showMessage(
-                                  size: size / 1.5,
+                                  size: size,
                                   message: state.message,
                                   messageType: MessageType.REJECTED,
                                   context: context);
                               BotToast.closeAllLoading();
                             } else if (state is FilteredSuccessfully) {
                               CustomToast.showMessage(
-                                  size: size / 1.5,
+                                  size: size,
                                   message: '',
                                   messageType: MessageType.SUCCESS,
                                   context: context);
@@ -395,14 +395,14 @@ class _PageHeaderState extends State<PageHeader> {
                             if (state is FilterFailed) {
                               context.pop();
                               CustomToast.showMessage(
-                                  size: size / 1.5,
+                                  size: size,
                                   message: state.message,
                                   messageType: MessageType.REJECTED,
                                   context: context);
                               BotToast.closeAllLoading();
                             } else if (state is FilteredSuccessfully) {
                               CustomToast.showMessage(
-                                  size: size / 1.5,
+                                  size: size,
                                   message: '',
                                   messageType: MessageType.SUCCESS,
                                   context: context);

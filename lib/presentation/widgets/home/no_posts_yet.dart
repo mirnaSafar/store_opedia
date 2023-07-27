@@ -5,12 +5,14 @@ import '../../shared/custom_widgets/custom_text.dart';
 
 Widget buildNoPostsYet(var size, var text) {
   return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
     children: [
       SizedBox(
-        height: size.height / 5,
+        height: size.height / 12,
       ),
       Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.info_outline,
@@ -23,6 +25,9 @@ Widget buildNoPostsYet(var size, var text) {
             CustomText(
               text: text,
               fontSize: 20,
+            ),
+            SizedBox(
+              height: size.height / 12,
             )
           ],
         ),

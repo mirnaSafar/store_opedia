@@ -6,13 +6,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/data/models/shop.dart';
 import 'package:shopesapp/data/repositories/shared_preferences_repository.dart';
 import 'package:shopesapp/logic/cubites/post/posts_cubit.dart';
+import 'package:shopesapp/logic/cubites/shop/cubit/toggole_follow_shop_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/following_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/get_owner_shops_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/rate_shop_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/shop_follwers_counter_cubit.dart';
-import 'package:shopesapp/logic/cubites/shop/switch_shop_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/work_time_cubit.dart';
-import 'package:shopesapp/presentation/pages/add_post_page.dart';
+import 'package:shopesapp/presentation/pages/add_post/add_post_page.dart';
 import 'package:shopesapp/presentation/pages/edit_store.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_divider.dart';
@@ -34,29 +34,7 @@ class StorePage extends StatefulWidget {
     Key? key,
     this.shop,
     this.profileDisplay,
-  }) : super(key: key) {
-    /* shop ??= Shop(
-      shopCategory: globalSharedPreference.getString("shopCategory") ?? '',
-      location: globalSharedPreference.getString("location") ?? '',
-      startWorkTime: globalSharedPreference.getString("startWorkTime")!,
-      endWorkTime: globalSharedPreference.getString("endWorkTime")!,
-      ownerID: globalSharedPreference.getString("ID")!,
-      ownerEmail: globalSharedPreference.getString("email")!,
-      ownerPhoneNumber: globalSharedPreference.getString("phoneNumber")!,
-      shopID: globalSharedPreference.getString("shopID")!,
-      shopName: globalSharedPreference.getString("shopName")!,
-      ownerName: globalSharedPreference.getString("name")!,
-      followesNumber: globalSharedPreference.getInt("followesNumber")!,
-      rate: globalSharedPreference.getInt("rate"),
-      isFollow: globalSharedPreference.getBool("isFollowed") ?? false,
-      shopCoverImage: globalSharedPreference.getString("shopCoverImage"),
-      shopDescription: globalSharedPreference.getString("shopDescription"),
-      shopPhoneNumber: globalSharedPreference.getString("shopPhoneNumber"),
-      shopProfileImage: globalSharedPreference.getString("shopProfileImage"),
-      socialUrl:
-          globalSharedPreference.getStringList("socialUrl") as List<dynamic>,
-    );*/
-  }
+  }) : super(key: key);
   Shop? shop;
   bool? profileDisplay;
   @override
@@ -310,7 +288,7 @@ class _StorePageState extends State<StorePage> {
                                 ),
                                 child: SizedBox(
                                   width: w / 4,
-                                  height: h * 0.6,
+                                  height: h * 0.5,
                                 ),
                               )),
                           // FloatingActionButton(
@@ -318,13 +296,12 @@ class _StorePageState extends State<StorePage> {
                           //       context.push(const EditStore());
                           //     },
                           //     backgroundColor: AppColors.mainOrangeColor,
-                          //     child: const Icon(Icons.edit)),
+                          //     child: const svgIcon(Icons.edit)),
                           Visibility(
-                              visible: widget.profileDisplay == false &&
-                                  widget.shop!.isActive == false,
+                              visible: widget.profileDisplay ?? false,
                               child: Positioned(
                                   right: w * 0.06,
-                                  bottom: w * 0.15,
+                                  bottom: w * 0,
                                   child: _getFAB())),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -389,6 +366,13 @@ class _StorePageState extends State<StorePage> {
                                                       .incrementFollowers(shop),
                                                   followingCubit.follow(shop),
                                                 };
+                                          BlocProvider.of<
+                                                      ToggoleFollowShopCubit>(
+                                                  context)
+                                              .toggoleFolowShop(
+                                                  shopID: widget.shop!.shopID,
+                                                  ownerID:
+                                                      widget.shop!.ownerID);
                                         },
                                         child: CustomText(
                                           text: followingCubit
@@ -405,15 +389,15 @@ class _StorePageState extends State<StorePage> {
                               const CustomDivider(),
                               CustomIconTextRow(
                                   textColor: Theme.of(context).primaryColorDark,
-                                  icon: 'clock-square-svgrepo-com',
-                                  // icon: Icons.alarm,
+                                  svgIcon: 'clock-square-svgrepo-com',
+                                  // svgIcon: Icons.alarm,
                                   text: widget.shop!.isActive == true
                                       ? '$startWorkTime - $endtWorkTime'
                                       : "---  - ---"),
                               20.ph,
                               // CustomIconTextRow(
                               //     textColor: Theme.of(context).primaryColorDark,
-                              //     icon: Icons.phone,
+                              //     svgIcon: Icons.phone,
                               //     text:
                               //         "Owner PhoneNumber : ${widget.shop!.ownerPhoneNumber}"),
                               // 20.ph,
@@ -424,7 +408,7 @@ class _StorePageState extends State<StorePage> {
                                     CustomIconTextRow(
                                         textColor:
                                             Theme.of(context).primaryColorDark,
-                                        icon: 'phone-svgrepo-com',
+                                        svgIcon: 'phone-svgrepo-com',
                                         text: widget.shop!.isActive == true
                                             ? "${widget.shop!.shopPhoneNumber}"
                                             : "------------"),
@@ -434,18 +418,19 @@ class _StorePageState extends State<StorePage> {
                               ),
                               CustomIconTextRow(
                                   textColor: Theme.of(context).primaryColorDark,
-                                  // icon: Icons.email,
-                                  icon: 'mail-svgrepo-com',
+                                  // svgIcon: Icons.email,
+                                  svgIcon: 'mail-svgrepo-com',
                                   text: widget.shop!.ownerEmail),
                               20.ph,
                               CustomIconTextRow(
                                   textColor: Theme.of(context).primaryColorDark,
-                                  icon: 'map-point-wave-svgrepo-com',
+                                  svgIcon: 'map-point-wave-svgrepo-com',
                                   text: widget.shop!.location),
                               const CustomDivider(),
                               Visibility(
-                                // visible: widget.shop!.socialUrl != null &&
-                                //     widget.shop!.socialUrl!.isNotEmpty,
+                                visible: widget.shop!.socialUrl!.isNotEmpty &&
+                                    (widget.shop!.socialUrl![0].length != 0 ||
+                                        widget.shop!.socialUrl![1].length != 0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -457,26 +442,51 @@ class _StorePageState extends State<StorePage> {
                                       bold: true,
                                     ),
                                     30.ph,
-                                    CustomIconTextRow(
-                                        textColor:
-                                            Theme.of(context).primaryColorDark,
-                                        icon: 'instagram-2-1-logo-svgrepo-com',
-                                        text: widget.shop!.socialUrl?[1] ?? ''),
+                                    Visibility(
+                                      visible: widget
+                                              .shop!.socialUrl!.isNotEmpty &&
+                                          widget.shop!.socialUrl![0].length !=
+                                              0,
+                                      child: CustomIconTextRow(
+                                          textColor: Theme.of(context)
+                                              .primaryColorDark,
+                                          svgIcon:
+                                              'instagram-2-1-logo-svgrepo-com',
+                                          text:
+                                              widget.shop!.socialUrl!.isNotEmpty
+                                                  ? widget.shop!.socialUrl![0]
+                                                  : ''),
+                                    ),
                                     20.ph,
-                                    CustomIconTextRow(
-                                        textColor:
-                                            Theme.of(context).primaryColorDark,
-                                        icon: 'facebook-3-logo-svgrepo-com',
-                                        text: widget.shop!.socialUrl?[0] ?? ''),
-                                    const CustomDivider(),
+                                    Visibility(
+                                      visible: widget
+                                              .shop!.socialUrl!.isNotEmpty &&
+                                          widget.shop!.socialUrl![1].length !=
+                                              0,
+                                      child: CustomIconTextRow(
+                                          textColor: Theme.of(context)
+                                              .primaryColorDark,
+                                          svgIcon:
+                                              'facebook-3-logo-svgrepo-com',
+                                          text:
+                                              widget.shop!.socialUrl!.isNotEmpty
+                                                  ? widget.shop!.socialUrl![1]
+                                                  : ''),
+                                    ),
+                                    Visibility(
+                                        visible: ownerShpos.isNotEmpty,
+                                        child: const CustomDivider()),
                                   ],
                                 ),
                               ),
-                              CustomText(
-                                text: 'Related Stores',
-                                textColor: Theme.of(context).primaryColorDark,
-                                fontSize: w * 0.04,
-                                bold: true,
+                              Visibility(
+                                visible: ownerShpos.isNotEmpty,
+                                child: CustomText(
+                                  text: 'Related Stores',
+                                  textColor: Theme.of(context).primaryColorDark,
+                                  fontSize: w * 0.04,
+                                  bold: true,
+                                ),
                               ),
                             ],
                           ),
@@ -484,95 +494,99 @@ class _StorePageState extends State<StorePage> {
                       ),
                     ]),
               ),
-              20.ph,
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(
-                    height: h / 6,
-                    child: BlocConsumer<GetOwnerShopsCubit, GetOwnerShopsState>(
-                      listener: (context, state) {
-                        if (state is GetOwnerShopsFiled) {
-                          buildAwsomeDialog(context, "Filed",
-                                  state.message.toUpperCase(), "OK",
-                                  type: DialogType.ERROR)
-                              .show();
-                        } else if (state is GetOwnerShopsSucceed) {}
-                      },
-                      builder: (context, state) {
-                        if (state is GetOwnerShopsProgress) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        } else if (state is GetOwnerShopsSucceed) {
-                          ownerShpos =
-                              BlocProvider.of<GetOwnerShopsCubit>(context)
-                                  .ownerShops;
+              Visibility(
+                visible: ownerShpos.isNotEmpty,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    20.ph,
+                    SizedBox(
+                      height: h / 6,
+                      child:
+                          BlocConsumer<GetOwnerShopsCubit, GetOwnerShopsState>(
+                        listener: (context, state) {
+                          if (state is GetOwnerShopsFiled) {
+                            buildAwsomeDialog(context, "Failed",
+                                    state.message.toUpperCase(), "OK",
+                                    type: DialogType.ERROR)
+                                .show();
+                          } else if (state is GetOwnerShopsSucceed) {}
+                        },
+                        builder: (context, state) {
+                          if (state is GetOwnerShopsProgress) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else if (state is GetOwnerShopsSucceed) {
+                            ownerShpos =
+                                BlocProvider.of<GetOwnerShopsCubit>(context)
+                                    .ownerShops;
 
-                          return Padding(
-                            padding:
-                                EdgeInsetsDirectional.only(start: w * 0.04),
-                            child: ListView.separated(
-                              shrinkWrap: true,
-                              // physics: const NeverScrollableScrollPhysics(),
-                              scrollDirection: Axis.horizontal,
-                              itemCount: ownerShpos.length,
-                              separatorBuilder:
-                                  (BuildContext context, int index) {
-                                return 20.px;
-                              },
-                              itemBuilder: (BuildContext context, int index) {
-                                if (ownerShpos[index]['shopID'] !=
-                                    widget.shop!.shopID) {
-                                  return Column(
-                                    children: [
-                                      CircleAvatar(
-                                          radius: w * 0.12,
-                                          backgroundColor:
-                                              AppColors.mainTextColor,
-                                          backgroundImage: FileImage(File(
-                                              ownerShpos[index][
-                                                          "shopProfileImage"] !=
-                                                      'url'
-                                                  ? ownerShpos[index]
-                                                      ["shopProfileImage"]
-                                                  : '')),
-                                          child: ownerShpos[index]
-                                                      ["shopProfileImage"] ==
-                                                  'url'
-                                              ? ClipOval(
-                                                  child: Image.asset(
-                                                    'assets/store_placeholder.png',
-                                                    fit: BoxFit.fill,
-                                                  ),
-                                                )
-                                              : null),
-                                      5.ph,
-                                      CustomText(
-                                        text: ownerShpos[index]['shopName'],
-                                        textColor:
-                                            Theme.of(context).primaryColorDark,
-                                      )
-                                    ],
-                                  );
-                                }
-                                return Container();
-                              },
-                            ),
-                          );
-                        }
-                        return buildError(size);
-                      },
+                            return Padding(
+                              padding:
+                                  EdgeInsetsDirectional.only(start: w * 0.04),
+                              child: ListView.separated(
+                                shrinkWrap: true,
+                                // physics: const NeverScrollableScrollPhysics(),
+                                scrollDirection: Axis.horizontal,
+                                itemCount: ownerShpos.length,
+                                separatorBuilder:
+                                    (BuildContext context, int index) {
+                                  return 20.px;
+                                },
+                                itemBuilder: (BuildContext context, int index) {
+                                  if (ownerShpos[index]['shopID'] !=
+                                      widget.shop!.shopID) {
+                                    return Column(
+                                      children: [
+                                        CircleAvatar(
+                                            radius: w * 0.12,
+                                            backgroundColor:
+                                                AppColors.mainTextColor,
+                                            backgroundImage: FileImage(File(
+                                                ownerShpos[index][
+                                                            "shopProfileImage"] !=
+                                                        'url'
+                                                    ? ownerShpos[index]
+                                                        ["shopProfileImage"]
+                                                    : '')),
+                                            child: ownerShpos[index]
+                                                        ["shopProfileImage"] ==
+                                                    'url'
+                                                ? ClipOval(
+                                                    child: Image.asset(
+                                                      'assets/store_placeholder.png',
+                                                      fit: BoxFit.fill,
+                                                    ),
+                                                  )
+                                                : null),
+                                        5.ph,
+                                        CustomText(
+                                          text: ownerShpos[index]['shopName'],
+                                          textColor: Theme.of(context)
+                                              .primaryColorDark,
+                                        )
+                                      ],
+                                    );
+                                  }
+                                  return Container();
+                                },
+                              ),
+                            );
+                          }
+                          return buildError(size);
+                        },
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              const CustomDivider(),
+              const Visibility(child: CustomDivider()),
               BlocConsumer<PostsCubit, PostsState>(
                 listener: (context, state) {
                   if (state is ErrorFetchingPosts) {
-                    buildAwsomeDialog(
-                            context, "Filed", state.message.toUpperCase(), "OK",
+                    buildAwsomeDialog(context, "Failed",
+                            state.message.toUpperCase(), "OK",
                             type: DialogType.ERROR)
                         .show();
                   } else if (state is PostsFetchedSuccessfully) {}
@@ -583,7 +597,7 @@ class _StorePageState extends State<StorePage> {
                       child: CircularProgressIndicator(),
                     );
                   } else if (state is NoPostsYet) {
-                    return buildNoPostsYet(size, "No Posts Yet");
+                    return Center(child: buildNoPostsYet(size, "No Posts Yet"));
                   } else if (state is PostsFetchedSuccessfully) {
                     postsList = BlocProvider.of<PostsCubit>(context).ownerPosts;
 
@@ -596,8 +610,7 @@ class _StorePageState extends State<StorePage> {
                       itemBuilder: (BuildContext context, int index) {
                         return ProductPost(
                           post: postsList[index],
-                          profileDisplay: widget.profileDisplay == false ||
-                              widget.shop!.isActive == false,
+                          profileDisplay: widget.profileDisplay ?? false,
                         );
                       },
                     );

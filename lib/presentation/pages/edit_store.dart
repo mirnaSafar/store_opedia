@@ -8,7 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
 import 'package:shopesapp/data/enums/message_type.dart';
 import 'package:shopesapp/main.dart';
-import 'package:shopesapp/presentation/pages/signup_categories_page.dart';
+import 'package:shopesapp/presentation/pages/categories_page/signup_categories_page.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_button.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/user_input.dart';
@@ -469,12 +469,13 @@ class _EditStoreState extends State<EditStore> {
                                         shopCategory:
                                             storeCategoryController.text,
                                         location: storeLocationController.text,
-
-                                        // latitude: selectedStoreLocation.latitude,
-                                        // longitude: selectedStoreLocation.longitude,
-                                        closing:
-                                            storeStartWorkTimecontroller.text,
+                                        latitude:
+                                            selectedStoreLocation.latitude,
+                                        longitude:
+                                            selectedStoreLocation.longitude,
                                         opening:
+                                            storeStartWorkTimecontroller.text,
+                                        closing:
                                             storeEndWorkTimeController.text,
                                         shopPhoneNumber:
                                             storeNumberController.text,

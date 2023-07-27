@@ -162,4 +162,54 @@ class PostsRepository {
     }
     return null;
   }
+
+  Future<Map<String, dynamic>?> toggoleFavoritePost(
+      {required String postID, required String ownerID}) async {
+    http.Response response;
+    Map<String, dynamic> parsedResult;
+    Map<String, dynamic> requestBody = {
+      "id": ownerID,
+      "postID": postID,
+    };
+
+    try {
+      response = await http.post(Uri.http(ENDPOINT, "/like/$ownerID/$postID"),
+          body: jsonEncode(requestBody),
+          headers: {
+            'Content-Type': 'application/json',
+          });
+    } catch (e) {
+      return null;
+    }
+    if (response.statusCode == 200) {
+      parsedResult = jsonDecode(response.body);
+      return parsedResult;
+    }
+    return null;
+  }
+
+  Future<Map<String, dynamic>?> showFavoritePosts(
+      {required String ownerID}) async {
+    http.Response response;
+    Map<String, dynamic> parsedResult;
+    Map<String, dynamic> requestBody = {
+      "id": ownerID,
+    };
+
+    try {
+      response = await http.post(Uri.http(ENDPOINT, "show/my/like/$ownerID"),
+          body: jsonEncode(requestBody),
+          headers: {
+            'Content-Type': 'application/json',
+          });
+      //   print(response.statusCode);
+    } catch (e) {
+      return null;
+    }
+    if (response.statusCode == 200) {
+      parsedResult = jsonDecode(response.body);
+      return parsedResult;
+    }
+    return null;
+  }
 }

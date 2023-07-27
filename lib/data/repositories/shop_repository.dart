@@ -88,6 +88,8 @@ class ShopRepository {
     required String closing,
     required String opening,
     required String shopPhoneNumber,
+    required double latitude,
+    required double longitude,
   }) async {
     http.Response response;
     Map<String, dynamic> requestBody = {
@@ -104,6 +106,8 @@ class ShopRepository {
       "closing": closing,
       "rate": 0,
       "phone": shopPhoneNumber,
+      "latitude": latitude,
+      "longitude": longitude
     };
     try {
       response = await http.post(Uri.http(ENDPOINT, "/AddStore/$ownerID"),
@@ -157,6 +161,8 @@ class ShopRepository {
     String? insta,
     String? facebook,
     required String shopPhoneNumber,
+    required double latitude,
+    required double longitude,
   }) async {
     http.Response response;
     Map<String, dynamic> requestBody = {
@@ -294,6 +300,31 @@ class ShopRepository {
 
     try {
       response = await http.post(Uri.http(ENDPOINT, "/fav/$ownerID/$shopID"),
+          body: jsonEncode(requestBody),
+          headers: {
+            'Content-Type': 'application/json',
+          });
+      //   print(response.statusCode);
+    } catch (e) {
+      return null;
+    }
+    if (response.statusCode == 200) {
+      parsedResult = jsonDecode(response.body);
+      return parsedResult;
+    }
+    return null;
+  }
+
+  Future<Map<String, dynamic>?> showFavoriteStores(
+      {required String ownerID}) async {
+    http.Response response;
+    Map<String, dynamic> parsedResult;
+    Map<String, dynamic> requestBody = {
+      "id": ownerID,
+    };
+
+    try {
+      response = await http.post(Uri.http(ENDPOINT, "show/my/fav/$ownerID"),
           body: jsonEncode(requestBody),
           headers: {
             'Content-Type': 'application/json',

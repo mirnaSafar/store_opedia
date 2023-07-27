@@ -8,7 +8,7 @@ import 'package:shopesapp/logic/cubites/cubit/auth_cubit.dart';
 import 'package:shopesapp/presentation/location_service.dart';
 import 'package:shopesapp/presentation/pages/control_page.dart';
 import 'package:shopesapp/presentation/pages/map_page.dart';
-import 'package:shopesapp/presentation/pages/signup_categories_page.dart';
+import 'package:shopesapp/presentation/pages/categories_page/signup_categories_page.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_button.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
@@ -101,8 +101,8 @@ class _UserSignUpState extends State<OwnerSignUp>
         storeName: _storeNameController.text,
         storeCategory: storeCategoryController.text,
         storeLocation: storeLocationController.text,
-        // latitude: selectedStoreLocation.latitude,
-        // longitude: selectedStoreLocation.longitude,
+        latitude: selectedStoreLocation.latitude,
+        longitude: selectedStoreLocation.longitude,
         startWorkTime: storeStartWorkTimecontroller.text,
         endWorkTime: storeEndWorkTimeController.text,
         shopPhoneNumber: _storeNumberController.text,
@@ -206,10 +206,7 @@ class _UserSignUpState extends State<OwnerSignUp>
                                     MapPage(
                                       currentLocation: currentLocation,
                                     ),
-                                    // '${value?.country ?? ''}-${value?.street ?? ''
                                   );
-                                  // storeLocationController.text =
-                                  //     selectedStoreLocation.latitude.toString();
 
                                   LocationService()
                                       .getAddressInfo(LocationData.fromMap({
@@ -221,7 +218,7 @@ class _UserSignUpState extends State<OwnerSignUp>
                                       .then(
                                         (value) => storeLocationController
                                                 .text =
-                                            '${value?.country ?? ''}-${value?.street ?? ''}',
+                                            '${value?.administrativeArea ?? ''}-${value?.street ?? ''}',
                                       );
                                   setState(() {});
                                 }

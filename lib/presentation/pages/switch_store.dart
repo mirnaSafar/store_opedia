@@ -43,7 +43,7 @@ class _SwitchStoreState extends State<SwitchStore> {
             listener: (context, state) {
               if (state is GetOwnerShopsFiled) {
                 buildAwsomeDialog(
-                        context, "Filed", state.message.toUpperCase(), "OK",
+                        context, "Failed", state.message.toUpperCase(), "OK",
                         type: DialogType.ERROR)
                     .show();
               } else if (state is GetOwnerShopsSucceed) {}

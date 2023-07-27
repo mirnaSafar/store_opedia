@@ -56,7 +56,9 @@ class Owner {
           ownerPhoneNumber: 'ownerPhoneNumber',
           shopID: 'shopID',
           shopName: 'shopName',
-          ownerName: 'ownerName'),
+          ownerName: 'ownerName',
+          latitude: 0.0,
+          longitude: 0.0),
     );
   }
 

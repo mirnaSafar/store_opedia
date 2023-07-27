@@ -8,6 +8,7 @@ import 'package:shopesapp/presentation/widgets/product/product_post.dart';
 import 'package:shopesapp/presentation/widgets/switch_shop/error.dart';
 
 import '../../data/enums/message_type.dart';
+import '../../data/models/post.dart';
 import '../../logic/cubites/cubit/internet_cubit.dart';
 import '../shared/custom_widgets/custom_toast.dart';
 import '../widgets/home/no_Internet.dart';
@@ -95,7 +96,7 @@ class _HomePageState extends State<HomePage> {
                       },
                       itemBuilder: (BuildContext context, int index) {
                         return ProductPost(
-                          post: postsList[index],
+                          post: Post.fromMap(postsList[index]),
                         );
                       },
                     );

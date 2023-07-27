@@ -10,7 +10,7 @@ import 'package:shopesapp/data/enums/message_type.dart';
 import 'package:shopesapp/logic/cubites/cubit/auth_cubit.dart';
 import 'package:shopesapp/presentation/location_service.dart';
 import 'package:shopesapp/presentation/pages/map_page.dart';
-import 'package:shopesapp/presentation/pages/signup_categories_page.dart';
+import 'package:shopesapp/presentation/pages/categories_page/signup_categories_page.dart';
 import 'package:shopesapp/presentation/pages/switch_store.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_button.dart';
@@ -425,10 +425,10 @@ class _EditStoreState extends State<AddStorePage> {
                                           shopCategory: "shop",
                                           location:
                                               storeLocationController.text,
-
-                                          // latitude: selectedStoreLocation.latitude,
-                                          // longitude: selectedStoreLocation.longitude,
-
+                                          latitude:
+                                              selectedStoreLocation.latitude,
+                                          longitude:
+                                              selectedStoreLocation.longitude,
                                           closing:
                                               storeEndWorkTimeController.text,
                                           opening:

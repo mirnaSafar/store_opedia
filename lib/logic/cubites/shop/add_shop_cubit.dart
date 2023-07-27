@@ -19,6 +19,8 @@ class AddShopCubit extends Cubit<AddShopState> {
     required String? shopCoverImage,
     required String shopCategory,
     required String location,
+    required double latitude,
+    required double longitude,
     required String closing,
     required String opening,
     required String shopPhoneNumber,
@@ -37,6 +39,8 @@ class AddShopCubit extends Cubit<AddShopState> {
       closing: closing,
       opening: opening,
       shopPhoneNumber: shopPhoneNumber,
+      latitude: latitude,
+      longitude: longitude,
     );
 
     if (response == "Failed") {

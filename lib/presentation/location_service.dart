@@ -43,12 +43,12 @@ class LocationService {
 
   Future<geo.Placemark?> getAddressInfo(LocationData locationData,
       {bool showLoader = true}) async {
-    if (showLoader) customLoader(const Size(400, 1200));
+    // if (showLoader) customLoader(const Size(400, 1200));
 
     List<geo.Placemark> placemarks = await geo.placemarkFromCoordinates(
         locationData.latitude ?? 0.0, locationData.longitude ?? 0.0);
 
-    BotToast.closeAllLoading();
+    // BotToast.closeAllLoading();
 
     if (placemarks.isNotEmpty) {
       return placemarks[0];

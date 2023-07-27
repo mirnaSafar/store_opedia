@@ -4,6 +4,7 @@ import 'package:location/location.dart';
 import 'package:shopesapp/data/models/shop.dart';
 import 'package:shopesapp/data/repositories/shared_preferences_repository.dart';
 import 'package:shopesapp/logic/cubites/post/posts_cubit.dart';
+import 'package:shopesapp/logic/cubites/shop/cubit/toggole_favorite_shop_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/favorite_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/following_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/get_owner_shops_cubit.dart';
@@ -17,6 +18,8 @@ import 'package:shopesapp/presentation/shared/custom_widgets/custom_icon_text.da
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custoum_rate.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
+
+import '../../../logic/cubites/shop/cubit/toggole_follow_shop_cubit.dart';
 
 class SuggestedStore extends StatefulWidget {
   SuggestedStore({Key? key, required this.shop}) : super(key: key);
@@ -58,21 +61,20 @@ class _SuggestedStoreState extends State<SuggestedStore> {
           Column(
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.start,
-            // mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Row(
                 mainAxisSize: MainAxisSize.max,
                 // mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   SizedBox(
-                    width: w / 7,
+                    width: w / 3,
                     child: CustomText(
                       text: shop.shopName,
-                      fontSize: w * 0.045,
+                      fontSize: w * 0.040,
                       bold: true,
                     ),
                   ),
-                  120.px,
+                  60.px,
                   IconButton(
                     icon: const Icon(Icons.menu),
                     onPressed: () {
@@ -114,11 +116,12 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                             ));
                                           },
                                           child: CustomIconTextRow(
-                                              icon: 'instagram-1-svgrepo-com',
+                                              // svgIcon:
+                                              //     'instagram-1-svgrepo-com',
                                               fontSize: w * 0.04,
                                               iconColor:
                                                   AppColors.mainBlackColor,
-                                              // icon: Icons.storefront,
+                                              icon: Icons.storefront,
                                               text: 'View Profile'),
                                         ),
                                         BlocBuilder<FavoriteCubit,
@@ -136,15 +139,23 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                                       : read
                                                           .removeFromFavorites(
                                                               shop);
+                                                  BlocProvider.of<
+                                                              ToggoleFavoriteShopCubit>(
+                                                          context)
+                                                      .toggoleFavoriteShop(
+                                                          shopID: widget
+                                                              .shop.shopID,
+                                                          ownerID: widget
+                                                              .shop.ownerID);
                                                   context.pop();
                                                 },
                                                 child: CustomIconTextRow(
-                                                    icon:
-                                                        'instagram-1-svgrepo-com',
+                                                    // svgIcon:
+                                                    //     'instagram-1-svgrepo-com',
                                                     fontSize: w * 0.04,
                                                     iconColor: AppColors
                                                         .mainBlackColor,
-                                                    // icon: Icons.star,
+                                                    icon: Icons.star,
                                                     text: !read.isShopFavorite(
                                                             shop)
                                                         ? 'Add to favorites'
@@ -179,16 +190,24 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                                         followingCubit
                                                             .unFollow(shop),
                                                       };
+                                                BlocProvider.of<
+                                                            ToggoleFollowShopCubit>(
+                                                        context)
+                                                    .toggoleFolowShop(
+                                                        shopID:
+                                                            widget.shop.shopID,
+                                                        ownerID: widget
+                                                            .shop.ownerID);
                                                 context.pop();
                                               },
                                               child: CustomIconTextRow(
-                                                  icon:
-                                                      'instagram-1-svgrepo-com',
+                                                  // svgIcon:
+                                                  //     'instagram-1-svgrepo-com',
                                                   fontSize: w * 0.04,
                                                   iconColor:
                                                       AppColors.mainBlackColor,
-                                                  // icon: Icons
-                                                  // .person_add_alt_1_rounded,
+                                                  icon: Icons
+                                                      .person_add_alt_1_rounded,
                                                   text: followingCubit
                                                           .getShopFollowingState(
                                                               shop)
@@ -229,7 +248,7 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                           // 'latitude': shop.latitude,
                           // 'longitude': shop.longitude,
                         });
-                        MapPage(currentLocation: storeLocation);
+                        context.push(MapPage(currentLocation: storeLocation));
                       },
                       icon: Icon(Icons.location_on, size: w * 0.04)),
 
@@ -277,12 +296,6 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                               ],
                                             ),
                                             const Divider(),
-                                            10.ph,
-                                            CustomText(
-                                              text: shop.shopCategory,
-                                              textColor:
-                                                  AppColors.secondaryFontColor,
-                                            ),
                                             10.ph,
                                             CustomText(
                                               text: shop.shopCategory,

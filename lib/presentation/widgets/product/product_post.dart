@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/data/enums/message_type.dart';
-import 'package:shopesapp/data/models/post.dart';
+import 'package:shopesapp/logic/cubites/post/cubit/toggle_post_favorite_cubit.dart';
 import 'package:shopesapp/logic/cubites/post/delete_post_cubit.dart';
 import 'package:shopesapp/logic/cubites/post/post_favorite_cubit.dart';
 import 'package:shopesapp/logic/cubites/post/rate_shop_cubit.dart';
@@ -19,7 +19,7 @@ import 'package:shopesapp/presentation/widgets/product/product_info.dart';
 import '../../shared/custom_widgets/custom_text.dart';
 
 class ProductPost extends StatefulWidget {
-  final Post post;
+  final dynamic post;
   bool? profileDisplay;
   ProductPost({Key? key, required this.post, this.profileDisplay = false})
       : super(key: key);
@@ -57,7 +57,7 @@ class _ProductPostState extends State<ProductPost> {
                           child: CustomIconTextRow(
                               fontSize: w * 0.04,
                               iconColor: AppColors.mainBlackColor,
-                              icon: 'edit-svgrepo-com',
+                              svgIcon: 'edit-svgrepo-com',
                               // icon: Icons.edit,
                               text: 'Edit Post'),
                         ),
@@ -103,7 +103,7 @@ class _ProductPostState extends State<ProductPost> {
                                 child: CustomIconTextRow(
                                     fontSize: w * 0.04,
                                     iconColor: AppColors.mainBlackColor,
-                                    icon: 'delete-svgrepo-com',
+                                    svgIcon: 'delete-svgrepo-com',
                                     // icon: Icons.delete,
                                     text: 'Delete Post'),
                               );
@@ -205,6 +205,10 @@ class _ProductPostState extends State<ProductPost> {
                             postFavorite.isPostFavorite(widget.post)
                                 ? postFavorite.removeFromFavorites(widget.post)
                                 : postFavorite.addToFavorites(widget.post);
+                            BlocProvider.of<TogglePostFavoriteCubit>(context)
+                                .toggolePostFavorite(
+                                    postID: widget.post!.postID,
+                                    ownerID: widget.post!.ownerID);
                           },
                           icon: !postFavorite.isPostFavorite(widget.post)
                               ? const Icon(Icons.favorite_border_outlined)

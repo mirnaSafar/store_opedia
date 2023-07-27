@@ -10,7 +10,9 @@ class FavoriteCubit extends Cubit<FavoriteState> {
   late List<dynamic> updatedFavoriteShops;
   FavoriteCubit() : super(FavoriteState([])) {
     state.favoriteShops = SharedPreferencesRepository.getFavoriteStores();
-    updatedFavoriteShops = state.favoriteShops;
+    if (state.favoriteShops.isEmpty) {
+      updatedFavoriteShops = state.favoriteShops;
+    }
   }
 
   void addToFavorites(Shop shop) {

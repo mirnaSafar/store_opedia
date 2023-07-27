@@ -109,7 +109,7 @@ class _ControlPageState extends State<ControlPage> {
                           ownerName: globalSharedPreference.getString("name")!,
                           followesNumber:
                               globalSharedPreference.getInt("followesNumber")!,
-                          rate: globalSharedPreference.getInt("rate"),
+                          rate: globalSharedPreference.getDouble("rate"),
                           shopCoverImage: globalSharedPreference
                               .getString("shopCoverImage"),
                           shopDescription: globalSharedPreference
@@ -118,6 +118,10 @@ class _ControlPageState extends State<ControlPage> {
                               .getString("shopPhoneNumber"),
                           shopProfileImage: globalSharedPreference
                               .getString("shopProfileImage"),
+                          latitude:
+                              globalSharedPreference.getDouble("latitude")!,
+                          longitude:
+                              globalSharedPreference.getDouble("longitude")!,
                         ),
                         profileDisplay: true);
                   }

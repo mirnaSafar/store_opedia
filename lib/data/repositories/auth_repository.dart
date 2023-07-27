@@ -1,13 +1,10 @@
 import 'dart:convert';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shopesapp/constant/endpoint.dart';
-import 'package:shopesapp/data/models/owner.dart';
 import 'package:shopesapp/data/models/shop.dart';
 import 'package:shopesapp/data/models/user.dart';
-import 'package:shopesapp/logic/cubites/cubit/owner_cubit.dart';
 import 'package:shopesapp/main.dart';
 
 class AuthRepository {
@@ -49,6 +46,8 @@ class AuthRepository {
     required String endWorkTime,
     required String storeName,
     required String shopPhoneNumber,
+    required double latitude,
+    required double longitude,
   }) async {
     http.Response response;
     Map<String, dynamic> requestBody;
@@ -158,10 +157,13 @@ class AuthRepository {
         shopDescription,
         startWorkTime;
     List<dynamic>? socialUrl;
+    double latitude, longitude;
 
-    int? followesNumber, rate;
+    int? followesNumber;
+
+    double? rate;
     socialUrl = prefs.getStringList("socialUrl");
-    rate = prefs.getInt("rate");
+    rate = prefs.getDouble("rate");
     followesNumber = prefs.getInt("followesNumber");
     shopDescription = prefs.getString("shopDescription");
     shopCoverImage = prefs.getString("shopCoverImage");
@@ -177,7 +179,8 @@ class AuthRepository {
     endWorkTime = prefs.getString("endWorkTime");
     startWorkTime = prefs.getString("startWorkTime");
     location = prefs.getString("location");
-
+    latitude = prefs.getDouble("latitude")!;
+    longitude = prefs.getDouble("longitude")!;
     if (ownerID != null &&
         ownerEmail != null &&
         ownerPhoneNumber != null &&
@@ -207,6 +210,8 @@ class AuthRepository {
           followesNumber: followesNumber,
           rate: rate,
           socialUrl: socialUrl,
+          latitude: latitude,
+          longitude: longitude,
         ),
       };
     }
@@ -232,7 +237,7 @@ class AuthRepository {
     await prefs.setString("shopCoverImage", shop.shopCoverImage ?? "null");
     await prefs.setString("shopDescription", shop.shopDescription ?? "null");
     await prefs.setStringList("socialUrl", socialUrl);
-    await prefs.setInt("rate", shop.rate ?? 0);
+    await prefs.setDouble("rate", shop.rate ?? 0);
     await prefs.setInt("followesNumber", shop.followesNumber ?? 0);
     await prefs.setString("ID", shop.ownerID);
     await prefs.setString("email", shop.ownerEmail);
@@ -246,6 +251,8 @@ class AuthRepository {
     await prefs.setString("shopID", shop.shopID);
     await prefs.setString("mode", "owner");
     globalSharedPreference.setBool("isActive", shop.isActive);
+    globalSharedPreference.setDouble("latitude", shop.latitude);
+    globalSharedPreference.setDouble("longitude", shop.longitude);
   }
 
   void saveUser({required User user}) async {

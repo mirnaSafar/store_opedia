@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/constant/categories.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_divider.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
+
+import '../../../data/enums/message_type.dart';
+import '../../../logic/cubites/post/filter_cubit.dart';
+import '../../shared/custom_widgets/custom_toast.dart';
 
 class SignUpCategoriesPage extends StatefulWidget {
   const SignUpCategoriesPage({Key? key}) : super(key: key);
@@ -14,6 +19,10 @@ class SignUpCategoriesPage extends StatefulWidget {
 
 class _SignUpCategoriesPageState extends State<SignUpCategoriesPage> {
   String selectedCategory = '';
+  List<String> currentCategories = categories;
+  set setCurrentCategories(List<String> categories) {
+    currentCategories = categories;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -125,25 +134,87 @@ class _SignUpCategoriesPageState extends State<SignUpCategoriesPage> {
                                           categories[index];
                                     });
                                   },
-                                  child: Container(
-                                    child: Icon(
-                                      Icons.arrow_forward_ios_outlined,
-                                      color: AppColors.mainOrangeColor,
-                                    ),
-                                    padding: const EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                        boxShadow: [
-                                          BoxShadow(
-                                              color: AppColors.mainTextColor,
-                                              offset: const Offset(0, 2),
-                                              blurRadius: 8)
-                                        ],
-                                        color: AppColors.mainWhiteColor,
-                                        borderRadius:
-                                            BorderRadius.circular(30)),
-                                  ),
+                                  child: BlocProvider(
+                                      create: (context) => FilterCubit(),
+                                      child: BlocConsumer<FilterCubit,
+                                              FilterState>(
+                                          listener: (context, state) {
+                                        if (state
+                                            is CategoriesFilteredSuccessfully) {
+                                          currentCategories =
+                                              state.subCategories;
+                                          setCurrentCategories =
+                                              currentCategories;
+                                          CustomToast.showMessage(
+                                              size: const Size(400, 100),
+                                              message: 'fetched',
+                                              context: context);
+                                        }
+                                        if (state is NoSubCategories) {
+                                          CustomToast.showMessage(
+                                              size: const Size(300, 100),
+                                              message: 'No sub categories',
+                                              context: context);
+                                        }
+                                        if (state is FilterFailed) {
+                                          CustomToast.showMessage(
+                                            size: const Size(300, 100),
+                                            message:
+                                                'failed fetch the categories',
+                                            messageType: MessageType.REJECTED,
+                                            context: context,
+                                          );
+                                        }
+                                      }, builder: (context, state) {
+                                        return BlocBuilder<FilterCubit,
+                                            FilterState>(
+                                          builder: (context, state) {
+                                            if (state is FilterProgress) {
+                                              return const Center(
+                                                  child: SizedBox(
+                                                      width: 20,
+                                                      height: 20,
+                                                      child:
+                                                          CircularProgressIndicator()));
+                                            }
+
+                                            return Container(
+                                              child: IconButton(
+                                                icon: const Icon(Icons
+                                                    .arrow_forward_ios_outlined),
+                                                color:
+                                                    AppColors.mainOrangeColor,
+                                                onPressed: () {
+                                                  context
+                                                      .read<FilterCubit>()
+                                                      .filterPostsWithCategory(
+                                                          onlyShowSubcategories:
+                                                              true,
+                                                          category: categories[
+                                                              index]);
+                                                },
+                                              ),
+                                              padding: const EdgeInsets.all(0),
+                                              decoration: BoxDecoration(
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                        color: AppColors
+                                                            .mainTextColor,
+                                                        offset:
+                                                            const Offset(0, 2),
+                                                        blurRadius: 8)
+                                                  ],
+                                                  color:
+                                                      AppColors.mainWhiteColor,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          30)),
+                                            );
+                                          },
+                                        );
+                                      })),
                                 ),
-                              ),
+                              )
                             ],
                           );
                         },
