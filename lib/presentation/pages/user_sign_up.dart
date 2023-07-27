@@ -9,6 +9,7 @@ import 'package:shopesapp/presentation/widgets/auth/confirm_form_field.dart';
 import 'package:shopesapp/presentation/widgets/auth/phoneNumber_form_field.dart';
 import '../../constant/clipper.dart';
 import '../../data/enums/message_type.dart';
+import '../../data/repositories/shared_preferences_repository.dart';
 import '../../logic/cubites/cubit/auth_state.dart';
 import '../shared/custom_widgets/custom_button.dart';
 import '../shared/custom_widgets/custom_toast.dart';
@@ -152,6 +153,8 @@ class _UserSignUpState extends State<UserSignUp> with TickerProviderStateMixin {
                       return CustomButton(
                         onPressed: () {
                           _submitForm(context);
+                          SharedPreferencesRepository.setBrowsingPostsMode(
+                              isBrowsingMode: false);
                         },
                         text: 'Signup',
                       );

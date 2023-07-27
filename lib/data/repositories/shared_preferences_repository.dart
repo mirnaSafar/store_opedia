@@ -13,6 +13,24 @@ class SharedPreferencesRepository {
   static String PREF_POST_RATING = " post rating ";
   static String PREF_STORE_RATING = " Store rating ";
   static String PREF_STORE_FOLLOWERS = " Store FOLLOWERS number ";
+  static String PREF_Browsing_Mode = "browsing mode";
+
+  static void setBrowsingPostsMode({required bool isBrowsingMode}) {
+    setPreference(
+        dataType: DataType.BOOLEAN,
+        key: PREF_Browsing_Mode,
+        value: isBrowsingMode);
+  }
+
+  static bool getBrowsingPostsMode() {
+    if (globalSharedPreference.containsKey(PREF_Browsing_Mode)) {
+      return getPreference(
+        key: PREF_Browsing_Mode,
+      );
+    } else {
+      return false;
+    }
+  }
 
   static void setStoreFollowers(int count, Shop shop) {
     setPreference(

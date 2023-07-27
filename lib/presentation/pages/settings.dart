@@ -2,6 +2,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
+import 'package:shopesapp/data/repositories/shared_preferences_repository.dart';
 import 'package:shopesapp/logic/cubites/cubit/auth_state.dart';
 import 'package:shopesapp/logic/cubites/user/delete_user_cubit.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
@@ -52,13 +53,15 @@ class _SettingsPageState extends State<SettingsPage> {
                       fontWeight: FontWeight.w600,
                       color: Theme.of(context).colorScheme.secondary),
                   title: "Profile",
-                  children: <Widget>[buildProfile(context)]),
+                  children: <Widget>[10.ph, buildProfile(context)]),
               SizedBox(
                 height: size.height * 0.01,
               ),
               BlocBuilder<AuthCubit, AuthState>(
                 builder: (context, state) {
-                  if (state is UserLoginedIn || state is UserSignedUp) {
+                  if (state is UserLoginedIn ||
+                      state is UserSignedUp ||
+                      SharedPreferencesRepository.getBrowsingPostsMode()) {
                     return SettingsGroup(
                         titleTextStyle: TextStyle(
                             fontWeight: FontWeight.w600,
@@ -96,37 +99,44 @@ class _SettingsPageState extends State<SettingsPage> {
                       color: Theme.of(context).colorScheme.secondary),
                   title: "GENERAL",
                   children: <Widget>[
-                    buildLogout(context),
-                    BlocProvider<DeleteUserCubit>(
-                      create: (context) => DeleteUserCubit(),
-                      child: BlocConsumer<DeleteUserCubit, DeleteUserState>(
-                        listener: (context, state) {
-                          if (state is DeleteUserSucceed) {
-                            BlocProvider.of<AuthCubit>(context).logOut();
-                            context.read<ThemesCubit>().changeTheme(0);
-                            context.pushRepalceme(const LoginPage());
-                            CustomToast.showMessage(
-                                context: context,
-                                size: size,
-                                message: "Delete Account Succecfuly",
-                                messageType: MessageType.REJECTED);
-                          } else if (state is DeleteUserFailed) {
-                            buildAwsomeDialog(context, "Faild",
-                                    state.message.toUpperCase(), "Cancle",
-                                    type: DialogType.ERROR)
-                                .show();
-                          }
-                        },
-                        builder: (context, state) {
-                          if (state is DeleteUserProgress) {
-                            return const LinearProgressIndicator();
-                          }
-                          return buildDeleteAccount(
-                            context,
-                          );
-                        },
+                    if (SharedPreferencesRepository.getBrowsingPostsMode()) ...[
+                      buildLogin(context),
+                      buildCreateAccount(context),
+                    ],
+                    if (!SharedPreferencesRepository
+                        .getBrowsingPostsMode()) ...[
+                      buildLogout(context),
+                      BlocProvider<DeleteUserCubit>(
+                        create: (context) => DeleteUserCubit(),
+                        child: BlocConsumer<DeleteUserCubit, DeleteUserState>(
+                          listener: (context, state) {
+                            if (state is DeleteUserSucceed) {
+                              BlocProvider.of<AuthCubit>(context).logOut();
+                              context.read<ThemesCubit>().changeTheme(0);
+                              context.pushRepalceme(const LoginPage());
+                              CustomToast.showMessage(
+                                  context: context,
+                                  size: size,
+                                  message: "Delete Account Successfully",
+                                  messageType: MessageType.REJECTED);
+                            } else if (state is DeleteUserFailed) {
+                              buildAwsomeDialog(context, "Failed",
+                                      state.message.toUpperCase(), "Cancel",
+                                      type: DialogType.ERROR)
+                                  .show();
+                            }
+                          },
+                          builder: (context, state) {
+                            if (state is DeleteUserProgress) {
+                              return const LinearProgressIndicator();
+                            }
+                            return buildDeleteAccount(
+                              context,
+                            );
+                          },
+                        ),
                       ),
-                    ),
+                    ]
                   ]),
               SizedBox(
                 height: size.height * 0.01,
@@ -145,7 +155,8 @@ class _SettingsPageState extends State<SettingsPage> {
                       fontWeight: FontWeight.w600,
                       color: Theme.of(context).colorScheme.secondary),
                   title: "Privacy",
-                  children: <Widget>[buildPrivacy(context)])
+                  children: <Widget>[buildPrivacy(context)]),
+              (size.height / 4).ph
             ],
           ),
         ),

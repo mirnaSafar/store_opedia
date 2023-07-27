@@ -26,6 +26,7 @@ import 'package:shopesapp/presentation/widgets/product/product_post.dart';
 import 'package:shopesapp/presentation/widgets/switch_shop/error.dart';
 
 import '../../main.dart';
+import '../widgets/dialogs/browsing_alert_dialog.dart';
 import '../widgets/home/no_posts_yet.dart';
 
 // ignore: must_be_immutable
@@ -350,29 +351,37 @@ class _StorePageState extends State<StorePage> {
                                           widget.shop!;
                                       return InkWell(
                                         onTap: () {
-                                          followingCubit
-                                                  .getShopFollowingState(shop)
-                                              ? {
-                                                  context
-                                                      .read<
-                                                          ShopFollwersCounterCubit>()
-                                                      .decrementFollowers(shop),
-                                                  followingCubit.unFollow(shop),
-                                                }
-                                              : {
-                                                  context
-                                                      .read<
-                                                          ShopFollwersCounterCubit>()
-                                                      .incrementFollowers(shop),
-                                                  followingCubit.follow(shop),
-                                                };
-                                          BlocProvider.of<
-                                                      ToggoleFollowShopCubit>(
-                                                  context)
-                                              .toggoleFolowShop(
-                                                  shopID: widget.shop!.shopID,
-                                                  ownerID:
-                                                      widget.shop!.ownerID);
+                                          if (!SharedPreferencesRepository
+                                              .getBrowsingPostsMode()) {
+                                            !followingCubit
+                                                    .getShopFollowingState(shop)
+                                                ? {
+                                                    context
+                                                        .read<
+                                                            ShopFollwersCounterCubit>()
+                                                        .incrementFollowers(
+                                                            shop),
+                                                    followingCubit.follow(shop),
+                                                  }
+                                                : {
+                                                    context
+                                                        .read<
+                                                            ShopFollwersCounterCubit>()
+                                                        .decrementFollowers(
+                                                            shop),
+                                                    followingCubit
+                                                        .unFollow(shop),
+                                                  };
+                                            BlocProvider.of<
+                                                        ToggoleFollowShopCubit>(
+                                                    context)
+                                                .toggoleFolowShop(
+                                                    shopID: widget.shop!.shopID,
+                                                    ownerID:
+                                                        widget.shop!.ownerID);
+                                          } else {
+                                            showBrowsingDialogAlert(context);
+                                          }
                                         },
                                         child: CustomText(
                                           text: followingCubit

@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
+import 'package:shopesapp/data/repositories/shared_preferences_repository.dart';
 import 'package:shopesapp/presentation/pages/add_store_page.dart';
 import 'package:shopesapp/presentation/pages/contact_us.dart';
+import 'package:shopesapp/presentation/pages/login_page.dart';
 import 'package:shopesapp/presentation/pages/porfile.dart';
 import 'package:shopesapp/presentation/pages/privacy%20policies.dart';
+import 'package:shopesapp/presentation/pages/start_sign_up_page.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
+import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/presentation/widgets/settings/theme.picker.dart';
 import '../../../constant/enums.dart';
 import '../../../main.dart';
 import '../../pages/edit_store.dart';
 import '../../pages/switch_store.dart';
+import '../dialogs/browsing_alert_dialog.dart';
 import '../dialogs/delete_user_dialog.dart';
 import '../switch_shop/no_selected_store.dart';
 import 'logOut_alert_dialog.dart';
@@ -31,7 +36,14 @@ Widget buildProfile(BuildContext context) => SimpleSettingsTile(
           ),
         ),
       ),
-      child: const ProfilePage(),
+      onTap: () {
+        if (SharedPreferencesRepository.getBrowsingPostsMode()) {
+          showBrowsingDialogAlert(context);
+        }
+      },
+      child: !SharedPreferencesRepository.getBrowsingPostsMode()
+          ? const ProfilePage()
+          : null,
     );
 
 Widget buildLogout(BuildContext context) => SimpleSettingsTile(
@@ -41,6 +53,18 @@ Widget buildLogout(BuildContext context) => SimpleSettingsTile(
         Settings.clearCache();
         showLogOutAlertDialog(context);
       },
+    );
+Widget buildLogin(BuildContext context) => SimpleSettingsTile(
+      title: "Login",
+      leading: iconWidget(icon: Icons.login, color: Colors.grey),
+      child: const LoginPage(),
+    );
+Widget buildCreateAccount(BuildContext context) => SimpleSettingsTile(
+      title: "Create Account",
+      leading: iconWidget(
+          icon: Icons.add_circle_outline_outlined,
+          color: const Color.fromARGB(255, 52, 82, 134)),
+      child: const StartSignupPage(),
     );
 
 Widget buildDeleteAccount(BuildContext context) => SimpleSettingsTile(
@@ -74,7 +98,7 @@ Widget buildeAddNewSotre(BuildContext context) => SimpleSettingsTile(
     );
 
 Widget buildeEdeitMySotre(BuildContext context, var size) => SimpleSettingsTile(
-      title: "Edit store informations",
+      title: "Edit store information",
       leading: iconWidget(icon: Icons.edit, color: Colors.orange),
       child: globalSharedPreference.getString("currentShop") == "noShop"
           ? noSelectedShop(size, context)
@@ -88,10 +112,16 @@ Widget buildSwitchSotre(BuildContext context) => SimpleSettingsTile(
     );
 
 Widget buildSwitchUserAccount(BuildContext context) => SimpleSettingsTile(
-      title: "Add Stroe and Switch to Owner Account",
-      leading: iconWidget(icon: Icons.add, color: Colors.green),
-      child: const AddStorePage(),
-    );
+    title: "Add Store and Switch to Owner Account",
+    leading: iconWidget(icon: Icons.add, color: Colors.green),
+    onTap: () {
+      if (SharedPreferencesRepository.getBrowsingPostsMode()) {
+        showBrowsingDialogAlert(context);
+      }
+    },
+    child: !SharedPreferencesRepository.getBrowsingPostsMode()
+        ? const AddStorePage()
+        : null);
 
 Widget buildAbout(BuildContext context) => ExpandableSettingsTile(
       title: "About",
@@ -104,6 +134,7 @@ Widget buildAbout(BuildContext context) => ExpandableSettingsTile(
           text: "Version 0.1",
           textColor: Theme.of(context).primaryColorDark,
         ),
+        10.ph,
       ],
     );
 
@@ -111,6 +142,13 @@ Widget buildContactUs(BuildContext context, Size size) {
   return SimpleSettingsTile(
     title: "Contact Us",
     leading: iconWidget(icon: Icons.email, color: AppColors.mainOrangeColor),
-    child: const ContactUs(),
+    onTap: () {
+      if (SharedPreferencesRepository.getBrowsingPostsMode()) {
+        showBrowsingDialogAlert(context);
+      }
+    },
+    child: !SharedPreferencesRepository.getBrowsingPostsMode()
+        ? const ContactUs()
+        : null,
   );
 }

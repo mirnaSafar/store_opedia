@@ -20,6 +20,7 @@ import 'package:shopesapp/presentation/shared/custom_widgets/custoum_rate.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 
 import '../../../logic/cubites/shop/cubit/toggole_follow_shop_cubit.dart';
+import '../dialogs/browsing_alert_dialog.dart';
 
 class SuggestedStore extends StatefulWidget {
   SuggestedStore({Key? key, required this.shop}) : super(key: key);
@@ -169,35 +170,41 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                           builder: (context, state) {
                                             return InkWell(
                                               onTap: () {
-                                                !followingCubit
-                                                        .getShopFollowingState(
-                                                            shop)
-                                                    ? {
-                                                        context
-                                                            .read<
-                                                                ShopFollwersCounterCubit>()
-                                                            .incrementFollowers(
-                                                                shop),
-                                                        followingCubit
-                                                            .follow(shop),
-                                                      }
-                                                    : {
-                                                        context
-                                                            .read<
-                                                                ShopFollwersCounterCubit>()
-                                                            .decrementFollowers(
-                                                                shop),
-                                                        followingCubit
-                                                            .unFollow(shop),
-                                                      };
-                                                BlocProvider.of<
-                                                            ToggoleFollowShopCubit>(
-                                                        context)
-                                                    .toggoleFolowShop(
-                                                        shopID:
-                                                            widget.shop.shopID,
-                                                        ownerID: widget
-                                                            .shop.ownerID);
+                                                if (!SharedPreferencesRepository
+                                                    .getBrowsingPostsMode()) {
+                                                  !followingCubit
+                                                          .getShopFollowingState(
+                                                              shop)
+                                                      ? {
+                                                          context
+                                                              .read<
+                                                                  ShopFollwersCounterCubit>()
+                                                              .incrementFollowers(
+                                                                  shop),
+                                                          followingCubit
+                                                              .follow(shop),
+                                                        }
+                                                      : {
+                                                          context
+                                                              .read<
+                                                                  ShopFollwersCounterCubit>()
+                                                              .decrementFollowers(
+                                                                  shop),
+                                                          followingCubit
+                                                              .unFollow(shop),
+                                                        };
+                                                  BlocProvider.of<
+                                                              ToggoleFollowShopCubit>(
+                                                          context)
+                                                      .toggoleFolowShop(
+                                                          shopID: widget
+                                                              .shop.shopID,
+                                                          ownerID: widget
+                                                              .shop.ownerID);
+                                                } else {
+                                                  showBrowsingDialogAlert(
+                                                      context);
+                                                }
                                                 context.pop();
                                               },
                                               child: CustomIconTextRow(

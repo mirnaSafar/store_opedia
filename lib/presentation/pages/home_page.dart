@@ -9,6 +9,7 @@ import 'package:shopesapp/presentation/widgets/switch_shop/error.dart';
 
 import '../../data/enums/message_type.dart';
 import '../../data/models/post.dart';
+import '../../data/repositories/shared_preferences_repository.dart';
 import '../../logic/cubites/cubit/internet_cubit.dart';
 import '../shared/custom_widgets/custom_toast.dart';
 import '../widgets/home/no_Internet.dart';
@@ -61,7 +62,7 @@ class _HomePageState extends State<HomePage> {
               CustomToast.showMessage(
                   context: context,
                   size: size,
-                  message: "Interne tDisconnected",
+                  message: "Interne Disconnected",
                   messageType: MessageType.REJECTED);
             }
           },
@@ -69,60 +70,65 @@ class _HomePageState extends State<HomePage> {
             if (state is InternetDisconnected) {
               return buildNoInternet(size);
             }
+
             return ListView(
               children: [
                 const Padding(
                   padding: EdgeInsets.only(left: 20, right: 20, bottom: 30),
                   child: PageHeader(),
                 ),
-                BlocBuilder<FilterCubit, FilterState>(
-                    builder: (context, state) {
-                  // online
-                  if (state is FilterProgress) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (state is NoPostYet) {
-                    return buildNoPostsYet(
-                        size, "NO Posts Yet , Follow Stores to Show Posts");
-                  } else if (state is FilteredSuccessfully) {
-                    postsList =
-                        BlocProvider.of<FilterCubit>(context).filteredPosts;
+                (SharedPreferencesRepository.getBrowsingPostsMode())
+                    ? buildError(size)
+                    : BlocBuilder<FilterCubit, FilterState>(
+                        builder: (context, state) {
+                        // online
+                        if (state is FilterProgress) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        } else if (state is NoPostYet) {
+                          return buildNoPostsYet(size,
+                              "NO Posts Yet , Follow Stores to Show Posts");
+                        } else if (state is FilteredSuccessfully) {
+                          postsList = BlocProvider.of<FilterCubit>(context)
+                              .filteredPosts;
 
-                    return ListView.separated(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: postsList.length,
-                      separatorBuilder: (BuildContext context, int index) {
-                        return const CustomDivider();
-                      },
-                      itemBuilder: (BuildContext context, int index) {
-                        return ProductPost(
-                          post: Post.fromMap(postsList[index]),
-                        );
-                      },
-                    );
-                  }
-                  return buildError(size);
+                          return ListView.separated(
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: postsList.length,
+                            separatorBuilder:
+                                (BuildContext context, int index) {
+                              return const CustomDivider();
+                            },
+                            itemBuilder: (BuildContext context, int index) {
+                              return ProductPost(
+                                post: Post.fromMap(postsList[index]),
+                              );
+                            },
+                          );
+                        }
+                        return buildError(size);
 
-                  // return ListView.separated(
-                  //   physics: const NeverScrollableScrollPhysics(),
-                  //   shrinkWrap: true,
-                  //   itemCount: postsList.length,
-                  //   separatorBuilder: (BuildContext context, int index) {
-                  //     return const CustomDivider();
-                  //   },
-                  //   itemBuilder: (BuildContext context, int index) {
-                  //     return ProductPost(
-                  //       post: postsList[index],
-                  //     );
-                  //   },
-                  // );
-                }
-                    //else if(state is ErrorFetchingPosts){
-                    // return Center(child: CustomText( text:  ErrorFetchingPosts.message,))
-                    //}
-                    // }
-                    // },
-                    ),
+                        // return ListView.separated(
+                        //   physics: const NeverScrollableScrollPhysics(),
+                        //   shrinkWrap: true,
+                        //   itemCount: postsList.length,
+                        //   separatorBuilder: (BuildContext context, int index) {
+                        //     return const CustomDivider();
+                        //   },
+                        //   itemBuilder: (BuildContext context, int index) {
+                        //     return ProductPost(
+                        //       post: postsList[index],
+                        //     );
+                        //   },
+                        // );
+                      }
+                        //else if(state is ErrorFetchingPosts){
+                        // return Center(child: CustomText( text:  ErrorFetchingPosts.message,))
+                        //}
+                        // }
+                        // },
+                        ),
               ],
             );
           },

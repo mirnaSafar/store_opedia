@@ -8,6 +8,7 @@ import 'package:shopesapp/presentation/pages/switch_store.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 import '../../data/enums/message_type.dart';
+import '../../data/repositories/shared_preferences_repository.dart';
 import '../../logic/cubites/cubit/auth_cubit.dart';
 import '../../logic/cubites/cubit/auth_state.dart';
 import '../shared/custom_widgets/custom_toast.dart';
@@ -209,8 +210,13 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                                                   BorderRadius
                                                                       .circular(
                                                                           30))),
-                                                  onPressed: () =>
-                                                      _submitForm(context),
+                                                  onPressed: () => {
+                                                    _submitForm(context),
+                                                    SharedPreferencesRepository
+                                                        .setBrowsingPostsMode(
+                                                            isBrowsingMode:
+                                                                false),
+                                                  },
                                                   child: const Text(
                                                     'Login',
                                                     style: TextStyle(

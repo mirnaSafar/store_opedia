@@ -18,6 +18,7 @@ import 'package:shopesapp/presentation/widgets/auth/confirm_form_field.dart';
 import 'package:shopesapp/presentation/widgets/auth/phoneNumber_form_field.dart';
 import '../../constant/clipper.dart';
 import '../../data/enums/message_type.dart';
+import '../../data/repositories/shared_preferences_repository.dart';
 import '../../logic/cubites/cubit/auth_state.dart';
 import '../shared/custom_widgets/custom_toast.dart';
 import '../widgets/auth/email_form_field.dart';
@@ -313,6 +314,8 @@ class _UserSignUpState extends State<OwnerSignUp>
                             color: Theme.of(context).colorScheme.primary,
                             onPressed: () {
                               _submitForm(context);
+                              SharedPreferencesRepository.setBrowsingPostsMode(
+                                  isBrowsingMode: false);
                             },
                             text: 'Signup',
                           );
