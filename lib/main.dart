@@ -15,6 +15,7 @@ import 'package:shopesapp/logic/cubites/post/filter_cubit.dart';
 import 'package:shopesapp/logic/cubites/post/post_favorite_cubit.dart';
 import 'package:shopesapp/logic/cubites/post/posts_cubit.dart';
 import 'package:shopesapp/logic/cubites/post/rate_shop_cubit.dart';
+import 'package:shopesapp/logic/cubites/shop/cubit/show_favorite_stores_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/cubit/toggole_favorite_shop_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/cubit/toggole_follow_shop_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/favorite_cubit.dart';
@@ -85,6 +86,12 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => FavoriteCubit(),
+        ),
+        BlocProvider(
+          create: (context) => ShowFavoritePostsCubit(),
+        ),
+        BlocProvider(
+          create: (context) => ShowFavoriteStoresCubit(),
         ),
         BlocProvider(
           create: ((context) => ProfileCubit()..initVerified()),

@@ -82,7 +82,7 @@ class _HomePageState extends State<HomePage> {
                     return const Center(child: CircularProgressIndicator());
                   } else if (state is NoPostYet) {
                     return buildNoPostsYet(
-                        size, "NO Posts Yet Follow Stores to Show Posts");
+                        size, "NO Posts Yet , Follow Stores to Show Posts");
                   } else if (state is FilteredSuccessfully) {
                     postsList =
                         BlocProvider.of<FilterCubit>(context).filteredPosts;

@@ -345,7 +345,7 @@ class _EditStoreState extends State<AddStorePage> {
                               }))
                               .then(
                                 (value) => storeLocationController.text =
-                                    '${value?.country ?? ''}-${value?.street ?? ''}',
+                                    '${value?.administrativeArea ?? ''}-${value?.street ?? ''}',
                               );
                           setState(() {});
                         }
