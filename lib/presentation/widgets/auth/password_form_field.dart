@@ -53,7 +53,7 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
       obscureText: widget.isPasswordHidden,
       validator: (String? value) {
         if (value!.isEmpty || value.length < 5 || value.length > 14) {
-          return 'Password  must be +5 chars and less than 15';
+          return 'Password must be +5 chars and less than 15';
         }
         return null;
       },

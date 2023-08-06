@@ -82,8 +82,8 @@ class _EditStoreState extends State<EditStore> {
         globalSharedPreference.getString("startWorkTime")!;
     storeEndWorkTimeController.text =
         globalSharedPreference.getString("endWorkTime")!;
-    profilePath = globalSharedPreference.getString("shopProfileImage") ?? '';
-    coverPath = globalSharedPreference.getString("shopCoverImage") ?? '';
+    profilePath = globalSharedPreference.getString("shopProfileImage");
+    coverPath = globalSharedPreference.getString("shopCoverImage");
 
     super.initState();
   }
@@ -94,26 +94,35 @@ class _EditStoreState extends State<EditStore> {
   FileTypeModel? coverSelectedFile;
   FileTypeModel? profileSelectedFile;
   File? imageFile;
-  String? imageBase64;
+  String? imageCoverBase64;
+  String? imageProfileBase64;
+  String? storeProfileImageType;
+  String? splitPath;
+  String? storeCoverImageType;
   Future<FileTypeModel> pickFile(FileType type, bool profile) async {
     String? path;
-    // coverSelectedFile?.path = coverPath!;
-    // profileSelectedFile?.path = profilePath!;
+
     switch (type) {
       case FileType.GALLERY:
         await picker.pickImage(source: ImageSource.gallery).then((value) =>
             path = profile
                 ? value?.path ?? profileSelectedFile?.path ?? profilePath ?? ''
                 : value?.path ?? coverSelectedFile?.path ?? coverPath ?? '');
-        context.pop();
-
         globalSharedPreference.setString(
             profile ? "shopProfileImage" : "shopCoverImage", path!);
         imageFile = File(path!);
-        List<int> imageBytes = await imageFile!.readAsBytes();
-        imageBase64 = base64Encode(imageBytes);
+        splitPath = path!.split("/").last;
 
-        print("the hashing image" + imageBase64!);
+        profile
+            ? storeProfileImageType = splitPath!.split(".").last
+            : storeCoverImageType = splitPath!.split(".").last;
+
+        List<int> imageBytes = await imageFile!.readAsBytes();
+        profile
+            ? imageProfileBase64 = base64Encode(imageBytes)
+            : imageCoverBase64 = base64Encode(imageBytes);
+
+        context.pop();
 
         setState(() {});
         break;
@@ -122,10 +131,21 @@ class _EditStoreState extends State<EditStore> {
             path = profile
                 ? value?.path ?? profileSelectedFile?.path ?? profilePath ?? ''
                 : value?.path ?? coverSelectedFile?.path ?? coverPath ?? '');
-        context.pop();
         globalSharedPreference.setString(
             profile ? "shopProfileImage" : "shopCoverImage", path!);
+        imageFile = File(path!);
+        splitPath = path!.split("/").last;
 
+        profile
+            ? storeProfileImageType = splitPath!.split(".").last
+            : storeCoverImageType = splitPath!.split(".").last;
+
+        List<int> imageBytes = await imageFile!.readAsBytes();
+        profile
+            ? imageProfileBase64 = base64Encode(imageBytes)
+            : imageCoverBase64 = base64Encode(imageBytes);
+
+        context.pop();
         setState(() {});
 
         break;
@@ -141,14 +161,13 @@ class _EditStoreState extends State<EditStore> {
 
     return SafeArea(
         child: Scaffold(
-      backgroundColor: AppColors.mainWhiteColor,
+      // backgroundColor: AppColors.mainWhiteColor,
       appBar: AppBar(
         leading: const BackButton(color: Colors.black),
-        backgroundColor: AppColors.mainWhiteColor,
+        //  backgroundColor: AppColors.mainWhiteColor,
         title: CustomText(
           text: 'Edit Store',
           fontSize: w * 0.05,
-          // textColor: AppColors.mainWhiteColor,
         ),
         elevation: 0,
       ),
@@ -166,30 +185,32 @@ class _EditStoreState extends State<EditStore> {
                   Wrap(
                     children: [
                       Container(
-                        height: h / 4,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(w * 0.02),
-                            // color: AppColors.mainOrangeColor,
-                            border:
-                                Border.all(color: AppColors.mainBlackColor)),
-                        width: w,
-                        child: (coverSelectedFile != null) ||
-                                (coverSelectedFile == null &&
-                                    coverPath != 'url')
-                            ? ClipRRect(
-                                borderRadius: BorderRadius.circular(w * 0.05),
-                                child: Image.file(
-                                  coverSelectedFile != null
-                                      ? File(coverSelectedFile!.path)
-                                      : File(coverPath!),
-                                  fit: BoxFit.contain,
-                                ),
-                              )
-                            : Image.asset(
-                                'assets/store_cover_placeholder.jpg',
-                                fit: BoxFit.contain,
-                              ),
-                      )
+                          height: h / 4,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(w * 0.02),
+                              // color: AppColors.mainOrangeColor,
+                              border:
+                                  Border.all(color: AppColors.mainBlackColor)),
+                          width: w,
+                          child: (coverSelectedFile != null) ||
+                                  (coverSelectedFile == null &&
+                                      coverPath != 'url')
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(w * 0.05),
+                                  child: coverSelectedFile != null
+                                      ? Image.file(
+                                          File(coverSelectedFile!.path),
+                                          fit: BoxFit.contain,
+                                        )
+                                      : Image.network(coverPath!),
+                                )
+                              : ClipRRect(
+                                  borderRadius: BorderRadius.circular(w * 0.05),
+                                  child: Image.asset(
+                                    'assets/store_cover_placeholder.jpg',
+                                    fit: BoxFit.contain,
+                                  ),
+                                ))
                     ],
                   ),
                   Padding(
@@ -227,18 +248,20 @@ class _EditStoreState extends State<EditStore> {
                             radius: w * 0.12,
                             backgroundImage: (profileSelectedFile != null) ||
                                     (profileSelectedFile == null &&
-                                        profilePath != 'url')
-                                ? FileImage(profileSelectedFile != null
-                                    ? File(profileSelectedFile!.path)
-                                    : File(profilePath!))
+                                        profilePath == 'url')
+                                ? profileSelectedFile != null
+                                    ? FileImage(File(profileSelectedFile!.path))
+                                    : null
                                 : null,
                             child: ClipOval(
-                              child: profileSelectedFile == null &&
-                                      profilePath == 'url'
-                                  ? Image.asset(
-                                      'assets/store_placeholder.png',
-                                      fit: BoxFit.contain,
-                                    )
+                              child: (profileSelectedFile == null &&
+                                      profilePath != 'url')
+                                  ? profileSelectedFile == null
+                                      ? Image.asset(
+                                          'assets/store_placeholder.png',
+                                          fit: BoxFit.contain,
+                                        )
+                                      : Image.network(profilePath!)
                                   : null,
                             ),
                           ),
@@ -455,17 +478,17 @@ class _EditStoreState extends State<EditStore> {
                                 : {
                                     formKey.currentState!.save(),
                                     context.read<EditShopCubit>().editShop(
+                                        storeCoverImageType:
+                                            storeCoverImageType!,
+                                        storeProfileImageType:
+                                            storeProfileImageType!,
                                         shopName: storeNameController.text,
                                         shopDescription:
                                             storeDescriptionController.text,
                                         shopProfileImage:
-                                            profileSelectedFile?.path ??
-                                                profilePath ??
-                                                '',
+                                            imageProfileBase64 ?? 'url',
                                         shopCoverImage:
-                                            coverSelectedFile?.path ??
-                                                coverPath ??
-                                                '',
+                                            imageCoverBase64 ?? 'url',
                                         shopCategory:
                                             storeCategoryController.text,
                                         location: storeLocationController.text,

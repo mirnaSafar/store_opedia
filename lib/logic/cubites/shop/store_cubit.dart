@@ -60,44 +60,29 @@ class StoreCubit extends Cubit<StoreState> {
     }
   }
 
-//USE GET OWNER Shop Cubit insted this
-  Future getOwnerShops(String ownerId) async {
-    BlocListener<InternetCubit, InternetState>(
-      listener: (context, state) async {
-        if (state is InternetConnected) {
-          Map<String, dynamic>? response = await ShopRepository()
-              .getOwnerShpos(ownerID: ownerId, message: '');
-          if (response!["message"] == "Success") {
-            shops = response["shops"];
-            if (shops.isEmpty) {
-              emit(NoShopsYet());
-            } else {
-              emit(ShopsFetchedSuccessfully());
-              // return shopsResponse;
-            }
-          } else {
-            emit(ErrorFetchingShops(message: response["message"]));
-          }
-        } else if (state is InternetDisconnected) {
-          const Center(
-              child: CustomText(
-            text: 'No Internet Connected',
-          ));
-        } else {
-          const CircularProgressIndicator();
-        }
-      },
-    );
+  Future filterStores({
+    required String id,
+    required String type,
+  }) async {
     emit(FeatchingShopsProgress());
-  }
+    //print("start");
+    Map<String, dynamic>? response;
 
-  Future getOldestShops() async {
-    emit(FeatchingShopsProgress());
-    if (shops.isEmpty) {
+    response = await ShopRepository().filterStores(id: id, type: type);
+
+    if (response == null) {
+      emit(ErrorFetchingShops(
+          message:
+              "Failed to Get the Stores , Check your internet connection"));
+    } else if (response["message"] != "Done" &&
+        response["message"] != "No Stores Yet") {
       emit(NoShopsYet());
+    } else if (response["message"] == "Done") {
+      // print(response["stores"]);
+      shops = response["stores"];
+      emit(FeatchingShopsSucceed());
     } else {
-      oldshops = List.from(shops.reversed);
-      emit(OldestShopsFiltered());
+      emit(ErrorFetchingShops(message: response["message"]));
     }
   }
 }

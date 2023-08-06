@@ -61,9 +61,11 @@ class AuthRepository {
       "storeCategory": storeCategory,
       "startWorkTime": startWorkTime,
       "endWorkTime": endWorkTime,
-      "shopPhoneNumber": shopPhoneNumber
+      "shopPhoneNumber": shopPhoneNumber,
+      "latitude": latitude,
+      "longitude": longitude,
     };
-
+    //print(requestBody);
     var uri = Uri.http(ENDPOINT, "/owners/signup");
 
     try {
@@ -76,6 +78,7 @@ class AuthRepository {
     //  print(response.statusCode);
     if (response.statusCode == 201) {
       Map<String, dynamic> parsedResult = jsonDecode(response.body);
+      //  print(parsedResult);
       /*BlocListener<OwnerCubit, OwnerState>(
         listener: (context, state) {
           Owner owner = Owner.fromMap(requestBody);

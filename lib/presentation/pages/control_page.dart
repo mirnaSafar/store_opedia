@@ -42,7 +42,7 @@ class _ControlPageState extends State<ControlPage> {
     return SafeArea(
         top: false,
         child: Scaffold(
-          backgroundColor: AppColors.mainWhiteColor,
+          //  backgroundColor: AppColors.mainWhiteColor,
           extendBody: true,
           bottomNavigationBar: BottomNavigationBarWidget(
               bottomNavigationEnum: selected,
@@ -91,9 +91,9 @@ class _ControlPageState extends State<ControlPage> {
                                       globalSharedPreference.getString('ID'),
                                   message: 'all');
                           context.read<PostsCubit>().getOwnerPosts(
-                              ownerID: globalSharedPreference.getString('ID')!,
+                              ownerID: globalSharedPreference.getString('ID'),
                               shopID:
-                                  globalSharedPreference.getString('shopID')!);
+                                  globalSharedPreference.getString('shopID'));
                           return StorePage(
                               shop: Shop(
                                 isActive:

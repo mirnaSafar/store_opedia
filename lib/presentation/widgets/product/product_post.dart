@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/data/enums/message_type.dart';
@@ -18,6 +16,7 @@ import 'package:shopesapp/presentation/widgets/product/product_info.dart';
 
 import '../../shared/custom_widgets/custom_text.dart';
 
+// ignore: must_be_immutable
 class ProductPost extends StatefulWidget {
   final dynamic post;
   bool? profileDisplay;
@@ -136,13 +135,11 @@ class _ProductPostState extends State<ProductPost> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CustomText(
-                        text:
-                            globalSharedPreference.getString('shopName') ?? '',
+                        text: globalSharedPreference.getString('shopName')!,
                       ),
                       CustomText(
                         text: widget.post.category ??
-                            globalSharedPreference.getString("shopCategory") ??
-                            '',
+                            globalSharedPreference.getString("shopCategory")!,
                         fontSize: w * 0.03,
                         textColor: AppColors.mainTextColor,
                       ),
@@ -166,7 +163,7 @@ class _ProductPostState extends State<ProductPost> {
           height: h / 5,
           color: AppColors.mainBlackColor,
           child: widget.post.photos != 'url'
-              ? Image.file(File(widget.post.photos))
+              ? Image.network(widget.post.photos)
               : Image.asset('assets/images.jpg'),
         ),
         20.ph,
@@ -179,24 +176,20 @@ class _ProductPostState extends State<ProductPost> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CustomText(text: widget.post.title),
-                  5.ph,
+                  /* 5.ph,
                   BlocBuilder<RatePostCubit, RatePostState>(
                     builder: (context, state) {
                       return CustomRate(
                         post: widget.post,
                       );
                     },
-                  ),
+                  ),*/
                 ],
               ),
               // 190.px,
               Row(
                 children: [
-                  // BlocBuilder<PostFavoriteCubit, PostFavoriteState>(
-                  //   builder: (context, state) {
-                  //     final postFavorite = context.read<PostFavoriteCubit>();
-
-                  BlocBuilder<PostFavoriteCubit, PostFavoriteState>(
+                  BlocBuilder<TogglePostFavoriteCubit, TogglePostFavoriteState>(
                     builder: (context, state) {
                       PostFavoriteCubit postFavorite =
                           context.read<PostFavoriteCubit>();
@@ -205,10 +198,12 @@ class _ProductPostState extends State<ProductPost> {
                             postFavorite.isPostFavorite(widget.post)
                                 ? postFavorite.removeFromFavorites(widget.post)
                                 : postFavorite.addToFavorites(widget.post);
-                            BlocProvider.of<TogglePostFavoriteCubit>(context)
+                            context
+                                .read<TogglePostFavoriteCubit>()
                                 .toggolePostFavorite(
-                                    postID: widget.post!.postID,
-                                    ownerID: widget.post!.ownerID);
+                                    postID: widget.post.postID,
+                                    userID: globalSharedPreference
+                                        .getString("ID")!);
                           },
                           icon: !postFavorite.isPostFavorite(widget.post)
                               ? const Icon(Icons.favorite_border_outlined)
@@ -218,12 +213,6 @@ class _ProductPostState extends State<ProductPost> {
                                 ));
                     },
                   ),
-                  // : Icon(
-                  //     Icons.favorite,
-                  //     color: AppColors.mainRedColor,
-                  //   ));
-                  // },
-                  // ),
                   10.px,
                   InkWell(
                       onTap: () => context.push(ProductInfo(

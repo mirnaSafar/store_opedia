@@ -10,8 +10,7 @@ class AddPostCubit extends Cubit<AddPostState> {
   AddPostCubit() : super(AddPostInitial());
 
   Future addPost(
-      {
-      //required String ownerName,
+      {required String postImageType,
       required String shopeID,
       required String title,
       required String description,
@@ -21,6 +20,7 @@ class AddPostCubit extends Cubit<AddPostState> {
     emit(AddPostProgress());
     String response = await PostsRepository().addPost(
         shopeID: shopeID,
+        postImageType: postImageType,
         ownerID: globalSharedPreference.getString("ID")!,
         name: title,
         description: description,

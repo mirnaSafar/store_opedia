@@ -1,5 +1,6 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
@@ -27,7 +28,9 @@ import 'package:shopesapp/logic/cubites/shop/switch_shop_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/work_time_cubit.dart';
 import 'package:shopesapp/presentation/router/app_roter.dart';
 import 'package:flutter/material.dart';
+import 'package:shopesapp/translation/codegen_loader.g.dart';
 import 'constant/themes.dart';
+import 'logic/cubites/cubit/get_caht_messages_cubit.dart';
 import 'logic/cubites/cubit/verify_password_cubit.dart';
 import 'logic/cubites/mode/themes_cubit.dart';
 import 'logic/cubites/shop/get_owner_shops_cubit.dart';
@@ -37,19 +40,26 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   globalSharedPreference = await SharedPreferences.getInstance();
   // globalSharedPreference.clear();
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+
   await Settings.init(cacheProvider: SharePreferenceCache());
-  final storage = await HydratedStorage.build(
+  HydratedBloc.storage = await HydratedStorage.build(
       storageDirectory: kIsWeb
           ? HydratedStorage.webStorageDirectory
           : await getApplicationDocumentsDirectory());
+
   AppRouter appRouter = AppRouter();
-  HydratedBlocOverrides.runZoned(
-    () => runApp(MyApp(
+  runApp(EasyLocalization(
+    supportedLocales: const [Locale('en'), Locale('ar')],
+    path: 'assets/translations', // <-- change the path of the translation files
+    fallbackLocale: const Locale('en', 'US'),
+    assetLoader: const CodegenLoader(),
+    child: MyApp(
       appRouter: appRouter,
       connectivity: Connectivity(),
-    )),
-    storage: storage,
-  );
+    ),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -146,10 +156,16 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => WorkTimeCubit(),
         ),
+        BlocProvider(
+          create: (context) => GetCahtMessagesCubit(),
+        ),
       ],
       child: BlocBuilder<ThemesCubit, ThemesState>(
         builder: (context, state) {
           return MaterialApp(
+            localizationsDelegates: context.localizationDelegates,
+            supportedLocales: context.supportedLocales,
+            locale: context.locale,
             builder: BotToastInit(),
             navigatorObservers: [BotToastNavigatorObserver()],
             title: 'ShopsApp',

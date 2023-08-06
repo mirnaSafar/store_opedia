@@ -8,3 +8,11 @@ class RateShopState {
 class RateShopInitial extends RateShopState {
   RateShopInitial({required double rate}) : super(rate: rate);
 }
+
+class RateShopFailed extends RateShopState {
+  RateShopFailed({required double rate}) : super(rate: rate);
+}
+
+class RateShopSucceded extends RateShopState {
+  RateShopSucceded({required double rate}) : super(rate: rate);
+}

@@ -26,6 +26,8 @@ class EditShopCubit extends Cubit<EditShopState> {
     required double longitude,
     String? insta,
     String? facebook,
+    required String storeProfileImageType,
+    required String storeCoverImageType,
   }) async {
     emit(EditShopProgress());
     String response = await ShopRepository().editShop(
@@ -44,6 +46,8 @@ class EditShopCubit extends Cubit<EditShopState> {
       insta: insta,
       latitude: globalSharedPreference.getDouble("latitude")!,
       longitude: globalSharedPreference.getDouble("longitude")!,
+      storeCoverImageType: storeCoverImageType,
+      storeProfileImageType: storeProfileImageType,
     );
 
     if (response == "Failed") {

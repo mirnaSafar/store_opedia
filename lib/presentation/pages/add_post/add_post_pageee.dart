@@ -1,4 +1,4 @@
-import 'dart:io';
+/*import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -155,7 +155,7 @@ class _AddPostPageState extends State<AddPostPage> {
             UserInput(
               controller: addPostNameController,
               text: 'Product name',
-              validator: (name) => nameValidator(name, 'Enter product name'),
+              //  validator: (name) => nameValidator(name, 'Enter product name'),
             ),
             UserInput(
               text: 'Product Description',
@@ -325,3 +325,4 @@ class _AddPostPageState extends State<AddPostPage> {
     );
   }
 }
+*/

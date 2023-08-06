@@ -160,7 +160,9 @@ class _PageHeaderState extends State<PageHeader> {
                     }
                     return InkWell(
                       onTap: () {
-                        context.read<FilterCubit>().filterPostsWithRatings();
+                        context.read<FilterCubit>().filterPostsWithRatings(
+                            id: globalSharedPreference.getString("ID")!,
+                            type: 'rate');
                       },
                       child: const CustomSortRow(
                         title: 'Rate',
@@ -344,7 +346,12 @@ class _PageHeaderState extends State<PageHeader> {
                                 },
                                 child: CustomSortRow(
                                   title: categories[index],
-                                  icon: Icons.location_on_sharp,
+                                  cIcon: Icon(
+                                    categoryIcon(categories[index]),
+                                    // color:
+                                    //     Theme.of(context).colorScheme.primary,
+                                    size: 20,
+                                  ),
                                 ));
                           },
                         ));
@@ -353,7 +360,7 @@ class _PageHeaderState extends State<PageHeader> {
                     return const CustomDivider();
                   },
                 ),
-                30.ph
+                // 30.ph
               ],
             ),
           ),

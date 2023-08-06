@@ -6,6 +6,7 @@ import 'package:shopesapp/logic/cubites/cubit/auth_state.dart';
 import 'package:shopesapp/main.dart';
 import '../../../data/models/shop.dart';
 import '../../../data/models/user.dart';
+import '../../../data/repositories/shared_preferences_repository.dart';
 
 class AuthCubit extends Cubit<AuthState> {
   AuthCubit() : super(AuthInitialState());
@@ -27,6 +28,8 @@ class AuthCubit extends Cubit<AuthState> {
           : response["message"]));
     } else {
       user = User.fromMap(response);
+
+      SharedPreferencesRepository.setBrowsingPostsMode(isBrowsingMode: false);
 
       AuthRepository().saveUser(user: user!);
       emit(UserSignedUp());
@@ -69,9 +72,11 @@ class AuthCubit extends Cubit<AuthState> {
     } else if (response["message"] != "Owner was Created") {
       emit(AuthFailed(response["message"]));
     } else {
+      emit(OwnerSignedUp());
       shop = Shop.fromMap(response);
       AuthRepository().saveOwnerAndShop(shop: shop!);
-      emit(OwnerSignedUp());
+
+      SharedPreferencesRepository.setBrowsingPostsMode(isBrowsingMode: false);
     }
   }
 
@@ -91,11 +96,14 @@ class AuthCubit extends Cubit<AuthState> {
       user = User.fromMap(response);
 
       AuthRepository().saveUser(user: user!);
+      SharedPreferencesRepository.setBrowsingPostsMode(isBrowsingMode: false);
       emit(UserLoginedIn());
     } else if (response["message"] == "owner auth succeded") {
       String ownerID = response["ownerID"];
 
       saveOwnerID(ownerID: ownerID);
+
+      SharedPreferencesRepository.setBrowsingPostsMode(isBrowsingMode: false);
 
       emit(OwnerWillSelectStore());
     }

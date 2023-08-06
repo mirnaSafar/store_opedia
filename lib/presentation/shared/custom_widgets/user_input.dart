@@ -58,7 +58,7 @@ class _UserInputState extends State<UserInput> {
               color: Color.fromRGBO(182, 183, 183, 1),
             ),
             filled: true,
-            fillColor: const Color.fromRGBO(242, 242, 242, 1),
+            //  fillColor: const Color.fromRGBO(242, 242, 242, 1),
             prefixIcon: widget.prefixIcon,
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(30),

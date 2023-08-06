@@ -130,9 +130,9 @@ class _FavouritePageState extends State<FavouritePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      //  backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        //  backgroundColor: Colors.white,
         bottom: TabBar(controller: tabController, tabs: const [
           Tab(
             child: CustomText(text: 'Favorite Products'),

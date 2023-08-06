@@ -131,7 +131,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 CustomToast.showMessage(
                     context: context,
                     size: size,
-                    message: "Updates User Info Successfully",
+                    message: "Updated User Info Successfully",
                     messageType: MessageType.SUCCESS);
 
                 context.pushRepalceme(const ControlPage());
@@ -172,7 +172,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             getPassword() == "" &&
                             (getPhoneNumber() == _oldPhoneNumber)) ||
                         (_newName!.isEmpty && _newPhoneNumber!.isEmpty)) {
-                      buildAwsomeDialog(context, "Field",
+                      buildAwsomeDialog(context, "Failrd",
                               "You Already use the Same information", "OK",
                               type: DialogType.INFO)
                           .show();

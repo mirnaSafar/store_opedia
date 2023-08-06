@@ -7,14 +7,16 @@ part 'update_post_state.dart';
 
 class UpdatePostCubit extends Cubit<UpdatePostState> {
   UpdatePostCubit() : super(UpdatePostInitial());
-  Future updatePost(
-      {required String postID,
-      required String shopID,
-      required String name,
-      required String description,
-      required String? photos,
-      required String category,
-      required String price}) async {
+  Future updatePost({
+    required String postID,
+    required String shopID,
+    required String name,
+    required String description,
+    required String? photos,
+    required String category,
+    required String postImageType,
+    required String price,
+  }) async {
     emit(UpdatePostProgress());
     String response = await PostsRepository().updatePost(
         postID: postID,
@@ -22,7 +24,7 @@ class UpdatePostCubit extends Cubit<UpdatePostState> {
         name: name,
         description: description,
         photos: photos,
-        // category: category,
+        postImageType: postImageType,
         price: price,
         ownerID: globalSharedPreference.getString("ID")!);
     if (response == "Failed") {

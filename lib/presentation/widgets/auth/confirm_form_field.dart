@@ -58,7 +58,7 @@ class _CreateConfirmPasswordFormFieldState
         validator: (String? value) {
           // ignore: unrelated_type_equality_checks
           if (value != widget.getPassword() || value!.isEmpty) {
-            return 'Passwords dont match';
+            return 'Passwords don\'t match';
           }
           return null;
         });

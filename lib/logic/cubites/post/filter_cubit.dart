@@ -49,13 +49,17 @@ class FilterCubit extends Cubit<FilterState> {
     }
   }
 
-  Future filterPostsWithRatings() async {
+  Future filterPostsWithRatings({
+    required String id,
+    required String type,
+  }) async {
     //check the internetCubit
     emit(FilterProgress());
-    Map<String, dynamic>? response =
-        await FilterRepository().getPostsFilteredWithRatings();
+    Map<String, dynamic>? response;
+    //   await FilterRepository().getPostsFilteredWithRatings();
     try {
-      response = await FilterRepository().getPostsFilteredWithRatings();
+      response = await FilterRepository()
+          .getPostsFilteredWithRatings(id: id, type: type);
     } catch (e) {
       emit(FilterFailed(
           message: response == null
@@ -109,14 +113,36 @@ class FilterCubit extends Cubit<FilterState> {
     }
   }
 
-  Future getOldestPosts() async {
+  Future filterWithOldestPosts({
+    required String id,
+    required String type,
+  }) async {
+    //check the internetCubit
     emit(FilterProgress());
-    if (filteredPosts.isEmpty) {
-      emit(NoPostYet());
+    Map<String, dynamic>? response;
+    //   await FilterRepository().getPostsFilteredWithRatings();
+    try {
+      response = await FilterRepository()
+          .getPostsFilteredWithRatings(id: id, type: type);
+    } catch (e) {
+      emit(FilterFailed(
+          message: response == null
+              ? "Faild Filter , Check your internet connection"
+              : response["message"]));
+    }
+    if (response != null && response["message"] == "Success") {
+      filteredPosts = response["posts"] as List<dynamic>;
+      if (filteredPosts.isEmpty) {
+        emit(NoPostYet());
+      } else {
+        emit(FilterState(filteredPosts: filteredPosts));
+        emit(FilteredSuccessfully());
+      }
     } else {
-      filteredPosts = List.from(filteredPosts.reversed);
-      emit(FilterState(filteredPosts: filteredPosts));
-      emit(FilteredSuccessfully());
+      emit(FilterFailed(
+          message: response == null
+              ? "Faild Filter , Check your internet connection"
+              : response["message"]));
     }
   }
 
@@ -139,6 +165,8 @@ class FilterCubit extends Cubit<FilterState> {
       emit(FilterFailed(
           message: "Failed to Get the Posts , Check your internet connection"));
     } else if (response["message"] == "You dont have any followed store yet") {
+      emit(DontFollowStoreYet());
+    } else if (response["message"] == "You dont have any post to show  yet") {
       emit(NoPostYet());
     } else if (response["message"] == "Done") {
       filteredPosts = response["posts"];
@@ -147,4 +175,6 @@ class FilterCubit extends Cubit<FilterState> {
       emit(FilterFailed(message: response["message"]));
     }
   }
+
+  void getOldestPosts() {}
 }

@@ -1,4 +1,5 @@
 {
+  "ADD POST PAGE START TAG":"ADD POST PAGE TAG",
   "add your post details": "add your post details",
   "Add Post":"Add Post",
   "Product Name": "Product Name",
@@ -7,5 +8,6 @@
   "cancel": "cancel",
   "post": "post",
   "Add Post Successfully": "Post Added Successfully",
-  "Please check required fields": "Please check required fields"
+  "Please check required fields": "Please check required fields",
+  "ADD POST PAGE END TAG":"ADD POST PAGE TAG"
 }

@@ -96,8 +96,8 @@ class Shop {
       ownerName: map["ownerName"] as String,
       followesNumber: map["followesNumber"] as int?,
       isActive: map["is_active"] as bool,
-      latitude: map["latitude"],
-      longitude: map["longitude"],
+      latitude: map["latitude"] as double,
+      longitude: map["longitude"] as double,
     );
   }
 

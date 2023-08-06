@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:shopesapp/data/repositories/shared_preferences_repository.dart';
@@ -23,19 +24,8 @@ import 'icon_widget.dart';
 
 Widget buildProfile(BuildContext context) => SimpleSettingsTile(
       title: "My Account",
-      leading: CircleAvatar(
-        backgroundColor: Colors.grey.shade700,
-        maxRadius: 25,
-        child: CircleAvatar(
-          maxRadius: 20,
-          backgroundColor: Colors.grey.shade200,
-          child: Icon(
-            Icons.person_rounded,
-            size: 30,
-            color: Colors.grey.shade700,
-          ),
-        ),
-      ),
+      leading: iconWidget(
+          icon: Icons.person, color: const Color.fromARGB(255, 169, 141, 245)),
       onTap: () {
         if (SharedPreferencesRepository.getBrowsingPostsMode()) {
           showBrowsingDialogAlert(context);
@@ -73,10 +63,15 @@ Widget buildDeleteAccount(BuildContext context) => SimpleSettingsTile(
       onTap: () => showDeleteAlert(context),
     );
 
-Widget buildLanguage() => SwitchSettingsTile(
+Widget buildLanguage(BuildContext context) => SwitchSettingsTile(
       title: "Arabic Language",
       settingKey: KeyLanguage,
       leading: iconWidget(icon: Icons.translate, color: Colors.blueAccent),
+      onChange: (value) async {
+        value == true
+            ? await context.setLocale(const Locale('ar'))
+            : await context.setLocale(const Locale('en'));
+      },
     );
 
 Widget buildThemes(BuildContext context) => SimpleSettingsTile(

@@ -76,21 +76,24 @@ class PostsRepository {
     return "Failed";
   }
 
-  Future<String> updatePost(
-      {required String postID,
-      required String ownerID,
-      required String shopID,
-      required String name,
-      required String description,
-      required String? photos,
-      required String price}) async {
+  Future<String> updatePost({
+    required String postID,
+    required String ownerID,
+    required String shopID,
+    required String name,
+    required String description,
+    required String? photos,
+    required String price,
+    required String postImageType,
+  }) async {
     http.Response response;
     Map<String, dynamic> requestBody = {
       "id": ownerID, //ownerID
       "name": name,
       "description": description,
       "photos": photos ?? "noProductImage",
-      "price": price
+      "price": price,
+      "postImageType": postImageType,
     };
     response = await http.put(
       Uri.http(ENDPOINT, '/profile/post/$postID'),
@@ -105,14 +108,16 @@ class PostsRepository {
     return "Failed";
   }
 
-  Future<String> addPost(
-      {required String shopeID,
-      required String ownerID,
-      required String name,
-      required String description,
-      required String? photos,
-      required String category,
-      required String price}) async {
+  Future<String> addPost({
+    required String shopeID,
+    required String ownerID,
+    required String name,
+    required String description,
+    required String? photos,
+    required String category,
+    required String price,
+    required String postImageType,
+  }) async {
     http.Response response;
     Map<String, dynamic> requestBody = {
       "id": ownerID, //ownerID
@@ -122,6 +127,7 @@ class PostsRepository {
       "photos": photos,
       "category": category,
       "price": price,
+      "postImageType": postImageType,
     };
     response = await http.post(
       Uri.http(ENDPOINT, '/AddPost/$shopeID'),
@@ -145,6 +151,7 @@ class PostsRepository {
     Map<String, dynamic> requestBody = {
       "id": userID,
     };
+    print(requestBody);
     try {
       response = await http.post(
           Uri.http(ENDPOINT, "/show/posts/followedStores/$userID"),
@@ -158,22 +165,25 @@ class PostsRepository {
     }
     if (response.statusCode == 200) {
       parsedResult = jsonDecode(response.body);
+      print(parsedResult);
       return parsedResult;
     }
     return null;
   }
 
-  Future<Map<String, dynamic>?> toggoleFavoritePost(
-      {required String postID, required String ownerID}) async {
+  Future<Map<String, dynamic>?> toggoleFavoritePost({
+    required String postID,
+    required String userID,
+  }) async {
     http.Response response;
     Map<String, dynamic> parsedResult;
     Map<String, dynamic> requestBody = {
-      "id": ownerID,
+      "id": userID,
       "postID": postID,
     };
-
+    print(requestBody);
     try {
-      response = await http.post(Uri.http(ENDPOINT, "/like/$ownerID/$postID"),
+      response = await http.post(Uri.http(ENDPOINT, "/like/$userID/$postID"),
           body: jsonEncode(requestBody),
           headers: {
             'Content-Type': 'application/json',
@@ -181,6 +191,7 @@ class PostsRepository {
     } catch (e) {
       return null;
     }
+    print(response.statusCode);
     if (response.statusCode == 200) {
       parsedResult = jsonDecode(response.body);
       return parsedResult;

@@ -40,7 +40,7 @@ class PrivacyPlicies extends StatelessWidget {
                 onPressed: () => Navigator.pop(
                       context,
                     ),
-                child: const Text("Hidden"))
+                child: const Text("Hide"))
           ],
         ),
       ),

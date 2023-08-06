@@ -31,9 +31,6 @@ Widget buildShopItem(
           CircleAvatar(
               radius: size.width * 0.12,
               backgroundColor: AppColors.mainTextColor,
-              backgroundImage: FileImage(File(shop["shopProfileImage"] != 'url'
-                  ? shop["shopProfileImage"]
-                  : '')),
               child: shop["shopProfileImage"] == 'url'
                   ? ClipOval(
                       child: Image.asset(
@@ -41,7 +38,10 @@ Widget buildShopItem(
                         fit: BoxFit.fill,
                       ),
                     )
-                  : null),
+                  : Image.network(
+                      shop["shopProfileImage"],
+                      fit: BoxFit.fill,
+                    )),
           15.px,
           Expanded(
             flex: 2,
@@ -107,7 +107,7 @@ Widget buildShopItem(
                             onPressed: () {
                               showAlertDialog(context, shop);
                             },
-                            child: const Text("Select Store"),
+                            child: const Text("Select"),
                             style: ElevatedButton.styleFrom(
                                 padding: const EdgeInsets.all(10),
                                 backgroundColor: Colors.green,

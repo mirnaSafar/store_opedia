@@ -7,7 +7,7 @@ AwesomeDialog buildAwsomeDialog(
     {DialogType? type}) {
   return AwesomeDialog(
       btnOkColor: Colors.green,
-      aligment: Alignment.center,
+      alignment: Alignment.center,
       context: context,
       title: title,
       body: Center(

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -30,13 +31,25 @@ class EditPostPage extends StatefulWidget {
 class _EditPostPageState extends State<EditPostPage> {
   final ImagePicker picker = ImagePicker();
   FileTypeModel? selectedFile;
+  String? path;
+  File? imageFile;
+  String? imageBase64;
+  String? splitPath;
+  String? postImageType;
   Future<FileTypeModel> pickFile(FileType type) async {
-    String? path;
     switch (type) {
       case FileType.GALLERY:
         await picker
             .pickImage(source: ImageSource.gallery)
             .then((value) => path = value?.path ?? selectedFile?.path ?? '');
+
+        splitPath = path!.split("/").last;
+        postImageType = splitPath!.split(".").last;
+        imageFile = File(path!);
+
+        List<int> imageBytes = await imageFile!.readAsBytes();
+
+        imageBase64 = base64Encode(imageBytes);
 
         context.pop();
 
@@ -47,6 +60,15 @@ class _EditPostPageState extends State<EditPostPage> {
         await picker
             .pickImage(source: ImageSource.camera)
             .then((value) => path = value?.path ?? selectedFile?.path ?? '');
+
+        imageFile = File(path!);
+        splitPath = path!.split("/").last;
+        postImageType = splitPath!.split(".").last;
+
+        List<int> imageBytes = await imageFile!.readAsBytes();
+
+        imageBase64 = base64Encode(imageBytes);
+
         context.pop();
         setState(() {});
 
@@ -110,7 +132,7 @@ class _EditPostPageState extends State<EditPostPage> {
                                 File(selectedFile!.path),
                                 fit: BoxFit.contain,
                               )
-                            : Image.asset(
+                            : Image.network(
                                 widget.post.photos,
                                 fit: BoxFit.contain,
                               ),
@@ -181,10 +203,7 @@ class _EditPostPageState extends State<EditPostPage> {
                           message: " Post edited Successfully",
                           messageType: MessageType.SUCCESS,
                           context: context);
-                      // await context.read<PostsCubit>().getOwnerPosts(
-                      //       ownerID: globalSharedPreference.getString("ID")!,
-                      //       shopID: globalSharedPreference.getString("shopID")!,
-                      //     );
+
                       context.pop();
                     } else if (state is UpdatePostFailed) {
                       CustomToast.showMessage(
@@ -212,13 +231,14 @@ class _EditPostPageState extends State<EditPostPage> {
                                       name: updatePostNameController.text,
                                       description:
                                           updatePostDescriptionController.text,
-                                      photos: selectedFile?.path ?? '',
+                                      photos: imageBase64 ?? 'noImage',
                                       category: globalSharedPreference
                                               .getString("shopCategory") ??
                                           '',
                                       price: updatePostPriceController.text,
                                       postID: widget.post.postID,
                                       shopID: widget.post.shopeID!,
+                                      postImageType: postImageType!,
                                     )
                               };
                       },

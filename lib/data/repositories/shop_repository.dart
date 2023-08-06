@@ -4,23 +4,34 @@ import 'package:http/http.dart' as http;
 import 'package:shopesapp/constant/endpoint.dart';
 
 class ShopRepository {
-  Future<String?> sendShopRating(
-      String ownerId, String shopId, double rate) async {
+  Future<Map<String, dynamic>?> sendShopRating({
+    required String userID,
+    required String shopID,
+    required double rateValue,
+  }) async {
     http.Response response;
-
+    Map<String, dynamic> parsedResult;
+    Map<String, dynamic> requestBody = {
+      "id": userID,
+      "shopID": shopID,
+      "value": rateValue,
+    };
+    print(requestBody);
     try {
-      response = await http.post(Uri.http(ENDPOINT, "/$ownerId/$shopId"),
+      response = await http.post(Uri.http(ENDPOINT, "rate/$userID/$shopID"),
+          body: jsonEncode(requestBody),
           headers: {
             'Content-Type': 'application/json',
-          },
-          body: jsonEncode({'shopRate': rate}));
+          });
+      //   print(response.statusCode);
     } catch (e) {
       return null;
     }
-    if (response.statusCode == 200) {
-      return 'Success';
+    if (response.statusCode == 200 || response.statusCode == 400) {
+      parsedResult = jsonDecode(response.body);
+      print(parsedResult);
+      return parsedResult;
     }
-
     return null;
   }
 
@@ -90,6 +101,8 @@ class ShopRepository {
     required String shopPhoneNumber,
     required double latitude,
     required double longitude,
+    required String storeProfileImageType,
+    required String storeCoverImageType,
   }) async {
     http.Response response;
     Map<String, dynamic> requestBody = {
@@ -107,8 +120,11 @@ class ShopRepository {
       "rate": 0,
       "phone": shopPhoneNumber,
       "latitude": latitude,
-      "longitude": longitude
+      "longitude": longitude,
+      "storeCoverImageType": storeCoverImageType,
+      "storeProfileImageType": storeProfileImageType,
     };
+
     try {
       response = await http.post(Uri.http(ENDPOINT, "/AddStore/$ownerID"),
           body: jsonEncode(requestBody),
@@ -163,6 +179,8 @@ class ShopRepository {
     required String shopPhoneNumber,
     required double latitude,
     required double longitude,
+    required String storeProfileImageType,
+    required String storeCoverImageType,
   }) async {
     http.Response response;
     Map<String, dynamic> requestBody = {
@@ -179,6 +197,8 @@ class ShopRepository {
       "shopPhoneNumber": shopPhoneNumber,
       "id": ownerID,
       "shopID": shopID,
+      "storeCoverImageType": storeCoverImageType,
+      "storeProfileImageType": storeProfileImageType,
     };
     try {
       response = await http.put(Uri.http(ENDPOINT, "/profile/store/$ownerID"),
@@ -237,6 +257,34 @@ class ShopRepository {
     return null;
   }
 
+  Future<Map<String, dynamic>?> filterStores(
+      {required String id, required String type}) async {
+    http.Response response;
+    Map<String, dynamic> parsedResult;
+    Map<String, dynamic> requestBody = {
+      "id": id,
+      "type": type,
+    };
+    print(requestBody);
+    try {
+      response = await http.post(Uri.http(ENDPOINT, "/filters/$id"),
+          body: jsonEncode(requestBody),
+          headers: {
+            'Content-Type': 'application/json',
+          });
+      //   print(response.statusCode);
+    } catch (e) {
+      return null;
+    }
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      parsedResult = jsonDecode(response.body);
+      //  print(parsedResult);
+      return parsedResult;
+    }
+    return null;
+  }
+
   Future<String?> toggleActivation(
       {required String shopID, required String ownerID}) async {
     http.Response response;
@@ -264,16 +312,16 @@ class ShopRepository {
   }
 
   Future<Map<String, dynamic>?> toggoleFollowShop(
-      {required String shopID, required String ownerID}) async {
+      {required String shopID, required String userID}) async {
     http.Response response;
     Map<String, dynamic> parsedResult;
     Map<String, dynamic> requestBody = {
-      "id": ownerID,
+      "id": userID,
       "shopId": shopID,
     };
-
+    print(requestBody);
     try {
-      response = await http.post(Uri.http(ENDPOINT, "/follow/$ownerID/$shopID"),
+      response = await http.post(Uri.http(ENDPOINT, "/follow/$userID/$shopID"),
           body: jsonEncode(requestBody),
           headers: {
             'Content-Type': 'application/json',
@@ -282,8 +330,10 @@ class ShopRepository {
     } catch (e) {
       return null;
     }
+
     if (response.statusCode == 200) {
       parsedResult = jsonDecode(response.body);
+      print(parsedResult);
       return parsedResult;
     }
     return null;

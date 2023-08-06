@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/logic/cubites/post/filter_cubit.dart';
-import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_divider.dart';
 import 'package:shopesapp/presentation/widgets/page_header/page_header.dart';
 import 'package:shopesapp/presentation/widgets/product/product_post.dart';
 import 'package:shopesapp/presentation/widgets/switch_shop/error.dart';
-
 import '../../data/enums/message_type.dart';
 import '../../data/models/post.dart';
 import '../../data/repositories/shared_preferences_repository.dart';
@@ -38,24 +36,10 @@ class _HomePageState extends State<HomePage> {
     var size = MediaQuery.of(context).size;
     return RefreshIndicator(
       onRefresh: () async {
-        //online
         context.read<FilterCubit>().getAllPosts();
-
-        // await context.read<PostsCubit>().getOwnerPosts(
-        //     ownerID: globalSharedPreference.getString("ID")!,
-        //     shopID: globalSharedPreference.getString("shopID")!);
       },
-      // child: BlocListener<InternetCubit, InternetState>(
-      //   listener: (context, state) async {
-      //     if (state is InternetConnected) {
-      //       context.read<PostsCubit>().getPosts();
-      //     } else if (state is InternetDisconnected) {
-      //     } else {
-      //       const CircularProgressIndicator();
-      //     }
-      //   },
+
       child: Scaffold(
-        backgroundColor: AppColors.mainWhiteColor,
         body: BlocConsumer<InternetCubit, InternetState>(
           listener: (context, state) {
             if (state is InternetDisconnected) {
@@ -81,13 +65,17 @@ class _HomePageState extends State<HomePage> {
                     ? buildError(size)
                     : BlocBuilder<FilterCubit, FilterState>(
                         builder: (context, state) {
-                        // online
                         if (state is FilterProgress) {
                           return const Center(
                               child: CircularProgressIndicator());
                         } else if (state is NoPostYet) {
+                          //  print("selected");
                           return buildNoPostsYet(size,
                               "NO Posts Yet , Follow Stores to Show Posts");
+                        } else if (state is DontFollowStoreYet) {
+                          //  print("selected");
+                          return buildNoPostsYet(
+                              size, "You dont have any followed store yet");
                         } else if (state is FilteredSuccessfully) {
                           postsList = BlocProvider.of<FilterCubit>(context)
                               .filteredPosts;
@@ -107,28 +95,14 @@ class _HomePageState extends State<HomePage> {
                             },
                           );
                         }
+                        /*    if (!SharedPreferencesRepository
+                            .getBrowsingPostsMode()) {
+                          return buildNoPostsYet(
+                              "You Can't Follow Store Yet \n Pleas Create one now or login  befor",
+                              size);
+                        }*/
                         return buildError(size);
-
-                        // return ListView.separated(
-                        //   physics: const NeverScrollableScrollPhysics(),
-                        //   shrinkWrap: true,
-                        //   itemCount: postsList.length,
-                        //   separatorBuilder: (BuildContext context, int index) {
-                        //     return const CustomDivider();
-                        //   },
-                        //   itemBuilder: (BuildContext context, int index) {
-                        //     return ProductPost(
-                        //       post: postsList[index],
-                        //     );
-                        //   },
-                        // );
-                      }
-                        //else if(state is ErrorFetchingPosts){
-                        // return Center(child: CustomText( text:  ErrorFetchingPosts.message,))
-                        //}
-                        // }
-                        // },
-                        ),
+                      }),
               ],
             );
           },

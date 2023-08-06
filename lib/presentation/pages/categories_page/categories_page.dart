@@ -176,11 +176,12 @@ class _CategoriesPageState extends State<CategoriesPage> {
                 )
               ],
             ),
-            Image.asset(
-              'assets/verified.png',
-              height: double.infinity,
-              width: 100,
-            ),
+            Icon(categoryIcon(element)),
+            // Image.asset(
+            //   'assets/verified.png',
+            //   height: double.infinity,
+            //   width: 100,
+            // ),
           ]),
         ),
       ));

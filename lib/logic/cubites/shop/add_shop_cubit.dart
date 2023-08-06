@@ -24,9 +24,13 @@ class AddShopCubit extends Cubit<AddShopState> {
     required String closing,
     required String opening,
     required String shopPhoneNumber,
+    required String storeProfileImageType,
+    required String storeCoverImageType,
   }) async {
     emit(AddShopProgress());
     String response = await ShopRepository().addShop(
+      storeProfileImageType: storeProfileImageType,
+      storeCoverImageType: storeCoverImageType,
       facebookAccount: facebookAccount,
       instagramAccount: instagramAccount,
       ownerID: globalSharedPreference.getString("ID")!,

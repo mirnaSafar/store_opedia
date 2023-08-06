@@ -2,7 +2,6 @@ import 'package:bloc/bloc.dart';
 import 'package:shopesapp/data/models/post.dart';
 import 'package:shopesapp/data/repositories/shared_preferences_repository.dart';
 import 'package:shopesapp/main.dart';
-
 part 'post_favorite_state.dart';
 
 class PostFavoriteCubit extends Cubit<PostFavoriteState> {

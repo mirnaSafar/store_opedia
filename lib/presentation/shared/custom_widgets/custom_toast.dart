@@ -74,9 +74,7 @@ class CustomToast {
                   child: CustomText(
                       textAlign: TextAlign.center,
                       text: message,
-                      textColor: context != null
-                          ? Theme.of(context).primaryColorDark
-                          : AppColors.primaryFontColor),
+                      textColor: AppColors.primaryFontColor),
                 ),
                 SizedBox(
                   height: size.width * 0.06,

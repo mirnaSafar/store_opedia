@@ -4,18 +4,17 @@ import '../../../constant/themes.dart';
 import '../../../logic/cubites/mode/themes_cubit.dart';
 
 void showThemePicker(BuildContext context) async {
+  // var size = MediaQuery.of(context).size;
   return await showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: const Text("Select The Theme"),
-          content: Row(
-            children: [
-              buildIconButton(context, 0),
-              buildIconButton(context, 1),
-              buildIconButton(context, 2)
-            ],
-          ),
+          content: Row(children: [
+            buildIconButton(context, 0),
+            buildIconButton(context, 1),
+            buildIconButton(context, 2),
+          ]),
         );
       });
 }

@@ -52,176 +52,169 @@ class _SignUpCategoriesPageState extends State<SignUpCategoriesPage> {
                       ),
                     ]),
               ),
-              SizedBox(
-                width: size.width,
-                child: Stack(
-                  children: [
-                    Positioned.fill(
-                      child: ClipPath(
-                          clipper: myClipper(),
-                          child: Container(
-                            color: AppColors.mainOrangeColor,
-                            width: 100,
-                            height: size.height,
-                          )),
-                    ),
-                    Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: size.height * 0.04),
-                      child: ListView.separated(
-                        shrinkWrap: true,
-                        physics: const BouncingScrollPhysics(),
-                        itemCount: categories.length,
-                        separatorBuilder: (BuildContext context, int index) {
-                          return const CustomDivider();
-                        },
-                        itemBuilder: (BuildContext context, int index) {
-                          return Stack(
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    selectedCategory = categories[index];
-                                  });
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsetsDirectional.only(
-                                      start: 80, top: 0),
-                                  child: Container(
-                                    width: size.width * 0.7,
-                                    height: size.height * 0.1,
-                                    decoration: BoxDecoration(
-                                      boxShadow: [
-                                        BoxShadow(
-                                            color: AppColors.mainTextColor,
-                                            offset: const Offset(0, 2),
-                                            blurRadius: 8)
-                                      ],
-                                      color: AppColors.mainWhiteColor,
-                                      borderRadius: BorderRadius.circular(30),
-                                    ),
-                                    child: Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: size.height * 0.032,
-                                          horizontal: size.height * 0.05),
-                                      child: CustomText(
-                                        text: categories[index],
-                                        bold: true,
-                                        fontSize: size.width * 0.05,
-                                      ),
+              Stack(
+                children: [
+                  Positioned.fill(
+                    child: ClipPath(
+                        clipper: myClipper(),
+                        child: Container(
+                          color: AppColors.mainOrangeColor,
+                          width: size.width / 5,
+                          // height: size.height,
+                        )),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: size.height * 0.04),
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: categories.length,
+                      separatorBuilder: (BuildContext context, int index) {
+                        return const CustomDivider();
+                      },
+                      itemBuilder: (BuildContext context, int index) {
+                        return Stack(
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  selectedCategory = categories[index];
+                                });
+                              },
+                              child: Padding(
+                                padding: const EdgeInsetsDirectional.only(
+                                    start: 80, top: 0),
+                                child: Container(
+                                  width: size.width * 0.7,
+                                  height: size.height * 0.1,
+                                  decoration: BoxDecoration(
+                                    boxShadow: [
+                                      BoxShadow(
+                                          color: AppColors.mainTextColor,
+                                          offset: const Offset(0, 2),
+                                          blurRadius: 8)
+                                    ],
+                                    color: AppColors.mainWhiteColor,
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: size.height * 0.032,
+                                        horizontal: size.height * 0.05),
+                                    child: CustomText(
+                                      text: categories[index],
+                                      bold: true,
+                                      fontSize: size.width * 0.05,
                                     ),
                                   ),
                                 ),
                               ),
-                              Positioned(
-                                top: size.height * 0.005,
-                                left: size.width * 0.07,
-                                child: CircleAvatar(
-                                  maxRadius: 37,
-                                  backgroundColor: AppColors.mainBlackColor,
-                                  backgroundImage:
-                                      const AssetImage('assets/images.jpg'),
-                                ),
+                            ),
+                            Positioned(
+                              top: size.height * 0.005,
+                              left: size.width * 0.07,
+                              child: CircleAvatar(
+                                maxRadius: 37,
+                                backgroundColor: AppColors.mainBlackColor,
+                                // backgroundImage:
+                                //     const AssetImage('assets/images.jpg'),
+                                child: Icon(categoryIcon(categories[index])),
                               ),
-                              Positioned(
-                                top: size.height * 0.025,
-                                right: size.width * 0.05,
-                                child: InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      selectedCategory = categories[index] +
-                                          '/' +
-                                          categories[index];
-                                    });
-                                  },
-                                  child: BlocProvider(
-                                      create: (context) => FilterCubit(),
-                                      child: BlocConsumer<FilterCubit,
-                                              FilterState>(
-                                          listener: (context, state) {
-                                        if (state
-                                            is CategoriesFilteredSuccessfully) {
-                                          currentCategories =
-                                              state.subCategories;
-                                          setCurrentCategories =
-                                              currentCategories;
-                                          CustomToast.showMessage(
-                                              size: const Size(400, 100),
-                                              message: 'fetched',
-                                              context: context);
-                                        }
-                                        if (state is NoSubCategories) {
-                                          CustomToast.showMessage(
-                                              size: const Size(300, 100),
-                                              message: 'No sub categories',
-                                              context: context);
-                                        }
-                                        if (state is FilterFailed) {
-                                          CustomToast.showMessage(
+                            ),
+                            Positioned(
+                              top: size.height * 0.025,
+                              right: size.width * 0.05,
+                              child: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    selectedCategory = categories[index] +
+                                        '/' +
+                                        categories[index];
+                                  });
+                                },
+                                child: BlocProvider(
+                                    create: (context) => FilterCubit(),
+                                    child:
+                                        BlocConsumer<FilterCubit, FilterState>(
+                                            listener: (context, state) {
+                                      if (state
+                                          is CategoriesFilteredSuccessfully) {
+                                        currentCategories = state.subCategories;
+                                        setCurrentCategories =
+                                            currentCategories;
+                                        CustomToast.showMessage(
+                                            size: const Size(400, 100),
+                                            message: 'fetched',
+                                            context: context);
+                                      }
+                                      if (state is NoSubCategories) {
+                                        CustomToast.showMessage(
                                             size: const Size(300, 100),
-                                            message:
-                                                'failed fetch the categories',
-                                            messageType: MessageType.REJECTED,
-                                            context: context,
-                                          );
-                                        }
-                                      }, builder: (context, state) {
-                                        return BlocBuilder<FilterCubit,
-                                            FilterState>(
-                                          builder: (context, state) {
-                                            if (state is FilterProgress) {
-                                              return const Center(
-                                                  child: SizedBox(
-                                                      width: 20,
-                                                      height: 20,
-                                                      child:
-                                                          CircularProgressIndicator()));
-                                            }
-
-                                            return Container(
-                                              child: IconButton(
-                                                icon: const Icon(Icons
-                                                    .arrow_forward_ios_outlined),
-                                                color:
-                                                    AppColors.mainOrangeColor,
-                                                onPressed: () {
-                                                  context
-                                                      .read<FilterCubit>()
-                                                      .filterPostsWithCategory(
-                                                          onlyShowSubcategories:
-                                                              true,
-                                                          category: categories[
-                                                              index]);
-                                                },
-                                              ),
-                                              padding: const EdgeInsets.all(0),
-                                              decoration: BoxDecoration(
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                        color: AppColors
-                                                            .mainTextColor,
-                                                        offset:
-                                                            const Offset(0, 2),
-                                                        blurRadius: 8)
-                                                  ],
-                                                  color:
-                                                      AppColors.mainWhiteColor,
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          30)),
-                                            );
-                                          },
+                                            message: 'No sub categories',
+                                            context: context);
+                                      }
+                                      if (state is FilterFailed) {
+                                        CustomToast.showMessage(
+                                          size: const Size(300, 100),
+                                          message:
+                                              'failed fetch the categories',
+                                          messageType: MessageType.REJECTED,
+                                          context: context,
                                         );
-                                      })),
-                                ),
-                              )
-                            ],
-                          );
-                        },
-                      ),
+                                      }
+                                    }, builder: (context, state) {
+                                      return BlocBuilder<FilterCubit,
+                                          FilterState>(
+                                        builder: (context, state) {
+                                          if (state is FilterProgress) {
+                                            return const Center(
+                                                child: SizedBox(
+                                                    width: 20,
+                                                    height: 20,
+                                                    child:
+                                                        CircularProgressIndicator()));
+                                          }
+
+                                          return Container(
+                                            child: IconButton(
+                                              icon: const Icon(Icons
+                                                  .arrow_forward_ios_outlined),
+                                              color: AppColors.mainOrangeColor,
+                                              onPressed: () {
+                                                context
+                                                    .read<FilterCubit>()
+                                                    .filterPostsWithCategory(
+                                                        onlyShowSubcategories:
+                                                            true,
+                                                        category:
+                                                            categories[index]);
+                                              },
+                                            ),
+                                            padding: const EdgeInsets.all(0),
+                                            decoration: BoxDecoration(
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                      color: AppColors
+                                                          .mainTextColor,
+                                                      offset:
+                                                          const Offset(0, 2),
+                                                      blurRadius: 8)
+                                                ],
+                                                color: AppColors.mainWhiteColor,
+                                                borderRadius:
+                                                    BorderRadius.circular(30)),
+                                          );
+                                        },
+                                      );
+                                    })),
+                              ),
+                            )
+                          ],
+                        );
+                      },
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ])));
   }

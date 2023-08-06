@@ -13,6 +13,10 @@ class NoPostYet extends FilterState {
   NoPostYet() : super(filteredPosts: []);
 }
 
+class DontFollowStoreYet extends FilterState {
+  DontFollowStoreYet() : super(filteredPosts: []);
+}
+
 class FilterProgress extends FilterState {
   FilterProgress() : super(filteredPosts: []);
 }

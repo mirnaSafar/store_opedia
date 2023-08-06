@@ -1,6 +1,5 @@
 part of 'toggle_post_favorite_cubit.dart';
 
-@immutable
 abstract class TogglePostFavoriteState {}
 
 class ToggoleFavoritePostInitial extends TogglePostFavoriteState {}

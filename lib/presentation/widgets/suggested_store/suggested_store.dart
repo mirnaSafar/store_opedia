@@ -11,6 +11,7 @@ import 'package:shopesapp/logic/cubites/shop/get_owner_shops_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/rate_shop_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/shop_follwers_counter_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/work_time_cubit.dart';
+import 'package:shopesapp/main.dart';
 import 'package:shopesapp/presentation/pages/map_page.dart';
 import 'package:shopesapp/presentation/pages/store_page.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
@@ -22,6 +23,7 @@ import 'package:shopesapp/presentation/shared/extensions.dart';
 import '../../../logic/cubites/shop/cubit/toggole_follow_shop_cubit.dart';
 import '../dialogs/browsing_alert_dialog.dart';
 
+// ignore: must_be_immutable
 class SuggestedStore extends StatefulWidget {
   SuggestedStore({Key? key, required this.shop}) : super(key: key);
   Shop shop;
@@ -32,12 +34,11 @@ class SuggestedStore extends StatefulWidget {
 class _SuggestedStoreState extends State<SuggestedStore> {
   late FavoriteCubit read;
   late FollowingCubit followingCubit;
-  // late Shop shop;
+
   @override
   void initState() {
     read = context.read<FavoriteCubit>();
     followingCubit = context.read<FollowingCubit>();
-    // shop = SharedPreferencesRepository.getSavedShop(widget.shop) ?? widget.shop;
 
     super.initState();
   }
@@ -55,7 +56,6 @@ class _SuggestedStoreState extends State<SuggestedStore> {
         children: [
           CircleAvatar(
             radius: w * 0.12,
-            // child: Image.asset(''),
             backgroundColor: AppColors.mainBlueColor,
           ),
           20.px,
@@ -65,7 +65,6 @@ class _SuggestedStoreState extends State<SuggestedStore> {
             children: [
               Row(
                 mainAxisSize: MainAxisSize.max,
-                // mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   SizedBox(
                     width: w / 3,
@@ -146,13 +145,13 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                                       .toggoleFavoriteShop(
                                                           shopID: widget
                                                               .shop.shopID,
-                                                          ownerID: widget
-                                                              .shop.ownerID);
+                                                          ownerID:
+                                                              globalSharedPreference
+                                                                  .getString(
+                                                                      "ID")!);
                                                   context.pop();
                                                 },
                                                 child: CustomIconTextRow(
-                                                    // svgIcon:
-                                                    //     'instagram-1-svgrepo-com',
                                                     fontSize: w * 0.04,
                                                     iconColor: AppColors
                                                         .mainBlackColor,
@@ -199,8 +198,10 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                                       .toggoleFolowShop(
                                                           shopID: widget
                                                               .shop.shopID,
-                                                          ownerID: widget
-                                                              .shop.ownerID);
+                                                          ownerID:
+                                                              globalSharedPreference
+                                                                  .getString(
+                                                                      "ID")!);
                                                 } else {
                                                   showBrowsingDialogAlert(
                                                       context);
@@ -208,8 +209,6 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                                 context.pop();
                                               },
                                               child: CustomIconTextRow(
-                                                  // svgIcon:
-                                                  //     'instagram-1-svgrepo-com',
                                                   fontSize: w * 0.04,
                                                   iconColor:
                                                       AppColors.mainBlackColor,
@@ -240,21 +239,14 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                     builder: (context, state) {
                       return CustomRate(
                         store: shop,
+                        enableRate: false,
+                        rateValue: shop.rate,
                       );
                     },
                   ),
-
-                  // CustomText(
-                  //   text: 'category',
-                  //   fontSize: w * 0.035,
-                  // ),
-                  // 20.px,
                   IconButton(
                       onPressed: () {
-                        LocationData storeLocation = LocationData.fromMap({
-                          // 'latitude': shop.latitude,
-                          // 'longitude': shop.longitude,
-                        });
+                        LocationData storeLocation = LocationData.fromMap({});
                         context.push(MapPage(currentLocation: storeLocation));
                       },
                       icon: Icon(Icons.location_on, size: w * 0.04)),

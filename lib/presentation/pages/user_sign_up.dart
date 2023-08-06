@@ -9,7 +9,6 @@ import 'package:shopesapp/presentation/widgets/auth/confirm_form_field.dart';
 import 'package:shopesapp/presentation/widgets/auth/phoneNumber_form_field.dart';
 import '../../constant/clipper.dart';
 import '../../data/enums/message_type.dart';
-import '../../data/repositories/shared_preferences_repository.dart';
 import '../../logic/cubites/cubit/auth_state.dart';
 import '../shared/custom_widgets/custom_button.dart';
 import '../shared/custom_widgets/custom_toast.dart';
@@ -74,12 +73,12 @@ class _UserSignUpState extends State<UserSignUp> with TickerProviderStateMixin {
           CustomToast.showMessage(
               context: context,
               size: size,
-              message: "Sign UP Successfuly",
+              message: "Sign UP Successfully",
               messageType: MessageType.SUCCESS);
           context.pushRepalceme(const ControlPage());
         } else if (state is AuthFailed) {
           buildAwsomeDialog(
-                  context, "Faild", state.message.toUpperCase(), "Cancle",
+                  context, "Failed", state.message.toUpperCase(), "Cancle",
                   type: DialogType.ERROR)
               .show();
         }
@@ -153,8 +152,6 @@ class _UserSignUpState extends State<UserSignUp> with TickerProviderStateMixin {
                       return CustomButton(
                         onPressed: () {
                           _submitForm(context);
-                          SharedPreferencesRepository.setBrowsingPostsMode(
-                              isBrowsingMode: false);
                         },
                         text: 'Signup',
                       );

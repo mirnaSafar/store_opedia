@@ -1,4 +1,5 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
@@ -9,6 +10,7 @@ import 'package:shopesapp/presentation/shared/extensions.dart';
 import '../../data/enums/message_type.dart';
 import '../../logic/cubites/cubit/auth_cubit.dart';
 import '../../logic/cubites/mode/themes_cubit.dart';
+import '../../translation/locale_keys.g.dart';
 import '../shared/custom_widgets/custom_toast.dart';
 import '../widgets/dialogs/awosem_dialog.dart';
 import '../widgets/settings/settings_til.dart';
@@ -27,13 +29,11 @@ class _SettingsPageState extends State<SettingsPage> {
     var size = MediaQuery.of(context).size;
 
     return Scaffold(
-      //To Switch to Dark
-      //  backgroundColor: AppColors.mainWhiteColor,
       appBar: AppBar(
         elevation: 0.0,
         backgroundColor: Colors.transparent,
         title: Text(
-          "Settings",
+          LocaleKeys.settings.tr(),
           style: TextStyle(
               color: Theme.of(context).primaryColorDark,
               fontWeight: FontWeight.w600),
@@ -89,7 +89,10 @@ class _SettingsPageState extends State<SettingsPage> {
                       fontWeight: FontWeight.w600,
                       color: Theme.of(context).colorScheme.secondary),
                   title: "MODE",
-                  children: <Widget>[buildLanguage(), buildThemes(context)]),
+                  children: <Widget>[
+                    buildLanguage(context),
+                    buildThemes(context)
+                  ]),
               SizedBox(
                 height: size.height * 0.01,
               ),
@@ -118,11 +121,11 @@ class _SettingsPageState extends State<SettingsPage> {
                                   context: context,
                                   size: size,
                                   message: "Delete Account Successfully",
-                                  messageType: MessageType.REJECTED);
+                                  messageType: MessageType.SUCCESS);
                             } else if (state is DeleteUserFailed) {
                               buildAwsomeDialog(context, "Failed",
                                       state.message.toUpperCase(), "Cancel",
-                                      type: DialogType.ERROR)
+                                      type: DialogType.error)
                                   .show();
                             }
                           },

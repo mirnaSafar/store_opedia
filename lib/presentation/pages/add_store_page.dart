@@ -60,7 +60,11 @@ class _EditStoreState extends State<AddStorePage> {
   FileTypeModel? coverSelectedFile;
   FileTypeModel? profileSelectedFile;
   File? imageFile;
-  String? imageBase64;
+  String? imageCoverBase64;
+  String? imageProfileBase64;
+  String? storeProfileImageType;
+  String? splitPath;
+  String? storeCoverImageType;
   Future<FileTypeModel> pickFile(FileType type, bool profile) async {
     String? path;
     switch (type) {
@@ -69,14 +73,20 @@ class _EditStoreState extends State<AddStorePage> {
             path = profile
                 ? value?.path ?? profileSelectedFile?.path ?? ''
                 : value?.path ?? coverSelectedFile?.path ?? '');
-        print(path);
+        globalSharedPreference.setString(
+            profile ? "shopProfileImage" : "shopCoverImage", path!);
         imageFile = File(path!);
-        print("done read file");
-        List<int> imageBytes = await imageFile!.readAsBytes();
-        print("done convert file");
-        imageBase64 = base64Encode(imageBytes);
+        splitPath = path!.split("/").last;
 
-        print("the hashing image" + imageBase64!);
+        profile
+            ? storeProfileImageType = splitPath!.split(".").last
+            : storeCoverImageType = splitPath!.split(".").last;
+
+        List<int> imageBytes = await imageFile!.readAsBytes();
+        profile
+            ? imageProfileBase64 = base64Encode(imageBytes)
+            : imageCoverBase64 = base64Encode(imageBytes);
+
         context.pop();
 
         setState(() {});
@@ -86,6 +96,20 @@ class _EditStoreState extends State<AddStorePage> {
             path = profile
                 ? value?.path ?? profileSelectedFile?.path ?? ''
                 : value?.path ?? coverSelectedFile?.path ?? '');
+        globalSharedPreference.setString(
+            profile ? "shopProfileImage" : "shopCoverImage", path!);
+        imageFile = File(path!);
+        splitPath = path!.split("/").last;
+
+        profile
+            ? storeProfileImageType = splitPath!.split(".").last
+            : storeCoverImageType = splitPath!.split(".").last;
+
+        List<int> imageBytes = await imageFile!.readAsBytes();
+        profile
+            ? imageProfileBase64 = base64Encode(imageBytes)
+            : imageCoverBase64 = base64Encode(imageBytes);
+
         context.pop();
 
         setState(() {});
@@ -102,7 +126,7 @@ class _EditStoreState extends State<AddStorePage> {
     final size = MediaQuery.of(context).size;
     return SafeArea(
         child: Scaffold(
-      backgroundColor: AppColors.mainWhiteColor,
+      //   backgroundColor: AppColors.mainWhiteColor,
       appBar: AppBar(
         leading: const BackButton(color: Colors.black),
         backgroundColor: AppColors.mainWhiteColor,
@@ -246,11 +270,11 @@ class _EditStoreState extends State<AddStorePage> {
                       },
                       icon: const Icon(Icons.comment))),
               UserInput(
-                  text: 'Store name',
-                  controller: storeNameController,
-                  validator: (name) => nameValidator(name, 'enter store name')
-                  // return null;
-                  ),
+                text: 'Store name',
+                controller: storeNameController,
+                //   validator: (name) => nameValidator(name, 'enter store name')
+                // return null;
+              ),
               UserInput(
                 text: 'Store description',
                 controller: storeDescriptionController,
@@ -328,7 +352,6 @@ class _EditStoreState extends State<AddStorePage> {
                   controller: storeLocationController,
                   suffixIcon: IconButton(
                       onPressed: () async {
-                        // LocationService().getCurrentAddressInfo();
                         LocationData? currentLocation =
                             await LocationService().getUserCurrentLocation();
                         if (currentLocation != null) {
@@ -368,7 +391,7 @@ class _EditStoreState extends State<AddStorePage> {
                   },
                   text: 'cancel',
                   color: AppColors.mainWhiteColor,
-                  textColor: AppColors.mainOrangeColor,
+                  textColor: Theme.of(context).primaryColor,
                   borderColor: AppColors.mainOrangeColor,
                 )),
                 70.px,
@@ -415,13 +438,17 @@ class _EditStoreState extends State<AddStorePage> {
                                   : {
                                       formKey.currentState!.save(),
                                       context.read<AddShopCubit>().addShop(
+                                          storeCoverImageType:
+                                              storeCoverImageType!,
+                                          storeProfileImageType:
+                                              storeProfileImageType!,
                                           shopName: storeNameController.text,
                                           shopDescription:
                                               storeDescriptionController.text,
                                           shopProfileImage:
-                                              profileSelectedFile?.path ?? '',
+                                              imageProfileBase64 ?? 'url',
                                           shopCoverImage:
-                                              profileSelectedFile?.path ?? '',
+                                              imageCoverBase64 ?? 'url',
                                           shopCategory: "shop",
                                           location:
                                               storeLocationController.text,

@@ -18,7 +18,6 @@ import 'package:shopesapp/presentation/widgets/auth/confirm_form_field.dart';
 import 'package:shopesapp/presentation/widgets/auth/phoneNumber_form_field.dart';
 import '../../constant/clipper.dart';
 import '../../data/enums/message_type.dart';
-import '../../data/repositories/shared_preferences_repository.dart';
 import '../../logic/cubites/cubit/auth_state.dart';
 import '../shared/custom_widgets/custom_toast.dart';
 import '../widgets/auth/email_form_field.dart';
@@ -114,217 +113,215 @@ class _UserSignUpState extends State<OwnerSignUp>
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    return BlocListener<AuthCubit, AuthState>(
-      listener: (context, state) async {
-        if (state is OwnerSignedUp) {
-          CustomToast.showMessage(
-              context: context,
-              size: size,
-              message: "Sign UP Successfuly",
-              messageType: MessageType.SUCCESS);
-          context.pushRepalceme(const ControlPage());
-        } else if (state is AuthFailed) {
-          await buildAwsomeDialog(
-                  context, "Faild", state.message.toUpperCase(), "Cancle",
-                  type: DialogType.ERROR)
-              .show();
-        }
-      },
-      child: Scaffold(
-          body: SingleChildScrollView(
-        child: Form(
-            key: _formKey,
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              ClipPath(
-                clipper: TsClip1(),
-                child: Container(
-                  width: double.infinity,
-                  height: 150,
-                  color: Theme.of(context).colorScheme.primary,
-                  child: Center(
-                    child: Text(
-                      'Owner SignUp',
-                      style: GoogleFonts.indieFlower(
-                          textStyle: Theme.of(context).textTheme.headlineMedium,
-                          fontSize: 48,
-                          fontWeight: FontWeight.w700,
-                          fontStyle: FontStyle.italic,
-                          color: Colors.white),
-                    ),
+    return Scaffold(
+        body: SingleChildScrollView(
+      child: Form(
+          key: _formKey,
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            ClipPath(
+              clipper: TsClip1(),
+              child: Container(
+                width: double.infinity,
+                height: 150,
+                color: Theme.of(context).colorScheme.primary,
+                child: Center(
+                  child: Text(
+                    'Owner SignUp',
+                    style: GoogleFonts.indieFlower(
+                        textStyle: Theme.of(context).textTheme.headlineMedium,
+                        fontSize: 48,
+                        fontWeight: FontWeight.w700,
+                        fontStyle: FontStyle.italic,
+                        color: Colors.white),
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 20.0,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CreateEmailFormField(
-                        setEmail: setEmail,
-                      ),
-                      const SizedBox(
-                        height: 20.0,
-                      ),
-                      CreatePasswordFormField(
-                        isPasswordHidden: isPasswordHidden,
-                        setPassword: setPassword,
-                      ),
-                      const SizedBox(
-                        height: 20.0,
-                      ),
-                      CreateConfirmPasswordFormField(
-                        getPassword: getPassword,
-                        isConfiermPasswordHidden: isConfiermPasswordHidden,
-                      ),
-                      const SizedBox(
-                        height: 30.0,
-                      ),
-                      CreateUserNameFormField(setUserName: setOwnerName),
-                      const SizedBox(
-                        height: 30.0,
-                      ),
-                      CreatePhoneNumberFormField(
-                          setPhoneNumber: setPhoneNumber),
-                      UserInput(
-                        text: 'Store Name',
-                        controller: _storeNameController,
-                      ),
-                      UserInput(
-                          text: 'Store Location',
-                          controller: storeLocationController,
-                          suffixIcon: IconButton(
-                              onPressed: () async {
-                                // LocationService().getCurrentAddressInfo();
-                                LocationData? currentLocation =
-                                    await LocationService()
-                                        .getUserCurrentLocation();
-                                if (currentLocation != null) {
-                                  selectedStoreLocation = await context.push(
-                                    MapPage(
-                                      currentLocation: currentLocation,
-                                    ),
-                                  );
+            ),
+            const SizedBox(
+              height: 20.0,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CreateEmailFormField(
+                      setEmail: setEmail,
+                    ),
+                    const SizedBox(
+                      height: 20.0,
+                    ),
+                    CreatePasswordFormField(
+                      isPasswordHidden: isPasswordHidden,
+                      setPassword: setPassword,
+                    ),
+                    const SizedBox(
+                      height: 20.0,
+                    ),
+                    CreateConfirmPasswordFormField(
+                      getPassword: getPassword,
+                      isConfiermPasswordHidden: isConfiermPasswordHidden,
+                    ),
+                    const SizedBox(
+                      height: 30.0,
+                    ),
+                    CreateUserNameFormField(setUserName: setOwnerName),
+                    const SizedBox(
+                      height: 30.0,
+                    ),
+                    CreatePhoneNumberFormField(setPhoneNumber: setPhoneNumber),
+                    UserInput(
+                      text: 'Store Name',
+                      controller: _storeNameController,
+                    ),
+                    UserInput(
+                        text: 'Store Location',
+                        controller: storeLocationController,
+                        suffixIcon: IconButton(
+                            onPressed: () async {
+                              // LocationService().getCurrentAddressInfo();
+                              LocationData? currentLocation =
+                                  await LocationService()
+                                      .getUserCurrentLocation();
+                              if (currentLocation != null) {
+                                selectedStoreLocation = await context.push(
+                                  MapPage(
+                                    currentLocation: currentLocation,
+                                  ),
+                                );
 
-                                  LocationService()
-                                      .getAddressInfo(LocationData.fromMap({
-                                        'latitude':
-                                            selectedStoreLocation.latitude,
-                                        'longitude':
-                                            selectedStoreLocation.longitude,
-                                      }))
-                                      .then(
-                                        (value) => storeLocationController
-                                                .text =
-                                            '${value?.administrativeArea ?? ''}-${value?.street ?? ''}',
-                                      );
-                                  setState(() {});
-                                }
-                              },
-                              icon: const Icon(Icons.location_on))),
-                      UserInput(
-                        text: 'Store Number',
-                        controller: _storeNumberController,
-                      ),
-                      UserInput(
-                          text: 'Store Category',
-                          controller: storeCategoryController,
-                          suffixIcon: IconButton(
-                              onPressed: () async {
-                                await context
-                                    .push(const SignUpCategoriesPage())
-                                    .then((value) =>
-                                        storeCategoryController.text = value);
+                                LocationService()
+                                    .getAddressInfo(LocationData.fromMap({
+                                      'latitude':
+                                          selectedStoreLocation.latitude,
+                                      'longitude':
+                                          selectedStoreLocation.longitude,
+                                    }))
+                                    .then(
+                                      (value) => storeLocationController.text =
+                                          '${value?.administrativeArea ?? ''}-${value?.street ?? ''}',
+                                    );
                                 setState(() {});
-                              },
-                              icon: const Icon(Icons.comment))),
-                      30.ph,
-                      CustomText(
-                        text: 'Store Work Time',
-                        textColor: AppColors.secondaryFontColor,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 30.0, vertical: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SizedBox(
-                                width: 120,
-                                child: ElevatedButton(
-                                  onPressed: () async {
-                                    await showTimePicker(
-                                            context: context,
-                                            initialTime: const TimeOfDay(
-                                                hour: 08, minute: 00))
-                                        .then((value) {
-                                      setState(() {
-                                        storeStartWorkTimecontroller.text =
-                                            value!.format(context);
-                                      });
-                                    });
-                                  },
-                                  child: CustomText(
-                                    textColor: AppColors.mainWhiteColor,
-                                    text: storeStartWorkTimecontroller.text,
-                                  ),
-                                )),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 15.0),
-                              child: CustomText(
-                                text: 'to',
-                                textColor: AppColors.secondaryFontColor,
-                              ),
-                            ),
-                            SizedBox(
-                                width: 120,
-                                child: ElevatedButton(
-                                  onPressed: () async {
-                                    await showTimePicker(
-                                            context: context,
-                                            initialTime: const TimeOfDay(
-                                                hour: 20, minute: 00))
-                                        .then((value) {
-                                      setState(() {
-                                        storeEndWorkTimeController.text =
-                                            value!.format(context);
-                                      });
-                                    });
-                                  },
-                                  child: CustomText(
-                                    textColor: AppColors.mainWhiteColor,
-                                    text: storeEndWorkTimeController.text,
-                                  ),
-                                )),
-                          ],
-                        ),
-                      ),
-                      30.ph,
-                      BlocBuilder<AuthCubit, AuthState>(
-                        builder: (context, state) {
-                          if (state is AuthProgress) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                          return CustomButton(
-                            color: Theme.of(context).colorScheme.primary,
-                            onPressed: () {
-                              _submitForm(context);
-                              SharedPreferencesRepository.setBrowsingPostsMode(
-                                  isBrowsingMode: false);
+                              }
                             },
-                            text: 'Signup',
-                          );
-                        },
+                            icon: const Icon(Icons.location_on))),
+                    UserInput(
+                      text: 'Store Number',
+                      controller: _storeNumberController,
+                    ),
+                    UserInput(
+                        text: 'Store Category',
+                        controller: storeCategoryController,
+                        suffixIcon: IconButton(
+                            onPressed: () async {
+                              await context
+                                  .push(const SignUpCategoriesPage())
+                                  .then((value) =>
+                                      storeCategoryController.text = value);
+                              setState(() {});
+                            },
+                            icon: const Icon(Icons.comment))),
+                    30.ph,
+                    CustomText(
+                      text: 'Store Work Time',
+                      textColor: AppColors.secondaryFontColor,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 30.0, vertical: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                              width: 120,
+                              child: ElevatedButton(
+                                onPressed: () async {
+                                  await showTimePicker(
+                                          context: context,
+                                          initialTime: const TimeOfDay(
+                                              hour: 08, minute: 00))
+                                      .then((value) {
+                                    setState(() {
+                                      storeStartWorkTimecontroller.text =
+                                          value!.format(context);
+                                    });
+                                  });
+                                },
+                                child: CustomText(
+                                  textColor: AppColors.mainWhiteColor,
+                                  text: storeStartWorkTimecontroller.text,
+                                ),
+                              )),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 15.0),
+                            child: CustomText(
+                              text: 'to',
+                              textColor: AppColors.secondaryFontColor,
+                            ),
+                          ),
+                          SizedBox(
+                              width: 120,
+                              child: ElevatedButton(
+                                onPressed: () async {
+                                  await showTimePicker(
+                                          context: context,
+                                          initialTime: const TimeOfDay(
+                                              hour: 20, minute: 00))
+                                      .then((value) {
+                                    setState(() {
+                                      storeEndWorkTimeController.text =
+                                          value!.format(context);
+                                    });
+                                  });
+                                },
+                                child: CustomText(
+                                  textColor: AppColors.mainWhiteColor,
+                                  text: storeEndWorkTimeController.text,
+                                ),
+                              )),
+                        ],
                       ),
-                    ]),
-              )
-            ])),
-      )),
-    );
+                    ),
+                    30.ph,
+                    BlocConsumer<AuthCubit, AuthState>(
+                      listener: (context, state) async {
+                        if (state is OwnerSignedUp) {
+                          CustomToast.showMessage(
+                              context: context,
+                              size: size,
+                              message: "Sign UP Successfuly",
+                              messageType: MessageType.SUCCESS);
+                          context.pushRepalceme(const ControlPage());
+                        } else if (state is AuthFailed) {
+                          await buildAwsomeDialog(context, "Faild",
+                                  state.message.toUpperCase(), "Cancle",
+                                  type: DialogType.ERROR)
+                              .show();
+                        }
+                      },
+                      builder: (context, state) {
+                        return BlocBuilder<AuthCubit, AuthState>(
+                          builder: (context, state) {
+                            if (state is AuthProgress) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+                            return CustomButton(
+                              color: Theme.of(context).colorScheme.primary,
+                              onPressed: () {
+                                _submitForm(context);
+                              },
+                              text: 'Signup',
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ]),
+            )
+          ])),
+    ));
   }
 }

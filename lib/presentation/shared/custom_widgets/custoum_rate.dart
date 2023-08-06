@@ -5,17 +5,24 @@ import 'package:shopesapp/data/models/post.dart';
 import 'package:shopesapp/data/models/shop.dart';
 import 'package:shopesapp/logic/cubites/post/rate_shop_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/rate_shop_cubit.dart';
+import 'package:shopesapp/main.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
 
 class CustomRate extends StatefulWidget {
-  const CustomRate(
-      {Key? key, this.size, this.enableRate = false, this.store, this.post})
-      : super(key: key);
+  const CustomRate({
+    Key? key,
+    this.size,
+    this.enableRate = false,
+    this.store,
+    this.post,
+    this.rateValue,
+  }) : super(key: key);
   final double? size;
   final bool? enableRate;
   final Shop? store;
   final Post? post;
+  final double? rateValue;
 
   @override
   State<CustomRate> createState() => _CustomRateState();
@@ -30,35 +37,27 @@ class _CustomRateState extends State<CustomRate> {
   @override
   Widget build(BuildContext context) {
     final w = MediaQuery.of(context).size.width;
+    final Size size = MediaQuery.of(context).size;
 
     final rateDialog = RatingDialog(
-      initialRating: 1.0,
-      title: const Text(''),
-      message: Text(
-        'Please Rate the ${widget.store != null ? 'store' : 'product'} if you tried it',
-        textAlign: TextAlign.center,
-        style: const TextStyle(fontSize: 15),
-      ),
-      submitButtonText: 'Submit',
-      commentHint: 'you can leave your comment here',
-      onCancelled: () => print('cancelled'),
-      onSubmitted: (response) {
-        print('rating: ${response.rating}, comment: ${response.comment}');
-
-        if (response.rating > 3.0) {
-          widget.post == null
-              ? context.read<RateShopCubit>().setShopRating(
-                  newRate: response.rating,
-                  ownerId: widget.store?.ownerID ?? '1',
-                  shopId: widget.store?.shopID ?? '1')
-              : context.read<RatePostCubit>().setPostRating(
-                  newRate: response.rating,
-                  ownerId: widget.post?.ownerID ?? '1',
-                  shopId: widget.post?.shopeID ?? '1',
-                  postId: widget.post!.postID);
-        } else {}
-      },
-    );
+        initialRating: widget.rateValue!,
+        title: const Text(''),
+        message: Text(
+          'Please Rate the ${widget.store != null ? 'store' : 'product'} if you tried it',
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 15),
+        ),
+        submitButtonText: 'Submit',
+        commentHint: 'you can leave your comment here',
+        onSubmitted: (response) {
+          context.read<RateShopCubit>().setShopRating(
+                context: context,
+                newRate: response.rating,
+                shopId: globalSharedPreference.getString("shopID")!,
+                size: size,
+                userID: globalSharedPreference.getString("ID")!,
+              );
+        });
 
     return Row(
       children: [
@@ -86,12 +85,7 @@ class _CustomRateState extends State<CustomRate> {
                     builder: (context, state) {
                       return CustomText(
                         text: widget.post == null
-                            ? context
-                                .read<RateShopCubit>()
-                                .getShopRating(
-                                    ownerId: widget.store?.ownerID ?? '1',
-                                    shopId: widget.store?.shopID ?? '1')
-                                .toString()
+                            ? context.read<RateShopCubit>().ratevalue.toString()
                             : context
                                 .read<RatePostCubit>()
                                 .getPostRating(

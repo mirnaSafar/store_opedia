@@ -23,11 +23,14 @@ class FilterRepository {
     return null;
   }
 
-  Future<Map<String, dynamic>?> getPostsFilteredWithRatings() async {
+  Future<Map<String, dynamic>?> getPostsFilteredWithRatings({
+    required String id,
+    required String type,
+  }) async {
     http.Response response;
     Map<String, dynamic> parsedResult;
     try {
-      response = await http.get(Uri.http(ENDPOINT, "/posts/ratings"), headers: {
+      response = await http.get(Uri.http(ENDPOINT, "/filters/$id"), headers: {
         'Content-Type': 'application/json',
       });
     } catch (e) {

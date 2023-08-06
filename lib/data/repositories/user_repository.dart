@@ -74,4 +74,32 @@ class UserRepository {
     }
     return "Failed";
   }
+
+  Future<Map<String, dynamic>?> getCahtMessages({
+    required String userID,
+  }) async {
+    http.Response response;
+    Map<String, dynamic> parsedResult;
+    Map<String, dynamic> requestBody = {
+      "id": userID,
+    };
+    //   print(requestBody);
+    try {
+      response = await http.post(
+        Uri.http(ENDPOINT, '/showReply/inbox/$userID'),
+        body: jsonEncode(requestBody),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+        },
+      );
+    } catch (e) {
+      return null;
+    }
+    //  print(response.statusCode);
+    if (response.statusCode == 200) {
+      parsedResult = jsonDecode(response.body);
+      return parsedResult;
+    }
+    return null;
+  }
 }

@@ -67,12 +67,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           CustomToast.showMessage(
               context: context,
               size: size,
-              message: "AUTH SUCCEDED",
+              message: "AUTH SUCCEEDED",
               messageType: MessageType.SUCCESS);
           context.push(const SwitchStore());
         } else if (state is AuthFailed) {
           buildAwsomeDialog(
-                  context, "Faild", state.message.toUpperCase(), "Cancle",
+                  context, "Failed", state.message.toUpperCase(), "Cancel",
                   type: DialogType.ERROR)
               .show();
         }
@@ -129,7 +129,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                       height: 30.0,
                                     ),
                                     Text(
-                                      "By singing in you are agreeing with",
+                                      "By signing in you are agreeing with",
                                       style: TextStyle(
                                           fontSize: 16,
                                           color: AppColors.secondaryFontColor),
@@ -212,10 +212,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                                                           30))),
                                                   onPressed: () => {
                                                     _submitForm(context),
-                                                    SharedPreferencesRepository
-                                                        .setBrowsingPostsMode(
-                                                            isBrowsingMode:
-                                                                false),
                                                   },
                                                   child: const Text(
                                                     'Login',
@@ -234,14 +230,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                                   context.push(
                                                       const StartSignupPage());
                                                 },
-                                                child: Text(
-                                                  "Register",
-                                                  style: TextStyle(
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .primary,
-                                                  ),
-                                                ),
                                                 style: ElevatedButton.styleFrom(
                                                     padding: const EdgeInsets
                                                         .symmetric(
@@ -259,7 +247,15 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                                       color: Theme.of(context)
                                                           .colorScheme
                                                           .primary,
-                                                    ))),
+                                                    )),
+                                                child: Text(
+                                                  "Register",
+                                                  style: TextStyle(
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .primary,
+                                                  ),
+                                                )),
                                           )
                                         ],
                                       ),

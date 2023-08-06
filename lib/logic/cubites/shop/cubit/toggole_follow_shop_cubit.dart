@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:shopesapp/data/repositories/shop_repository.dart';
 
 part 'toggole_follow_shop_state.dart';
@@ -10,12 +11,17 @@ class ToggoleFollowShopCubit extends Cubit<ToggoleFollowShopState> {
       {required String shopID, required String ownerID}) async {
     emit(ProgressToggoleFollowShop());
     Map<String, dynamic>? response = await ShopRepository()
-        .toggoleFollowShop(shopID: shopID, ownerID: ownerID);
+        .toggoleFollowShop(shopID: shopID, userID: ownerID);
     if (response == null || response["message"] == "Access Denied") {
+      ScaffoldMessenger(
+          child: Text(response == null
+              ? "Failed to favorite this Shop , Check your Internet Connection"
+              : response["message"]));
       emit(FailedToggoleFollowShop(response == null
           ? "Failed to Follow this Shop , Check your Internet Connection"
           : response["message"]));
     } else {
+      const ScaffoldMessenger(child: Text('Rated Successfuly!'));
       emit(SucceedToggoleFollowShop(message: response["message"]));
     }
   }

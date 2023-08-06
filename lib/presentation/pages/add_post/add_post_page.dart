@@ -34,6 +34,8 @@ class _AddPostPageState extends State<AddPostPage> {
   // late String? addPostImage;
   FileTypeModel? selectedFile;
   File? imageFile;
+  String? postImageType;
+  String? splitImagePath;
   String? imageBase64;
   void getImagePath() {}
   Future<FileTypeModel> pickFile(FileType type) async {
@@ -43,6 +45,11 @@ class _AddPostPageState extends State<AddPostPage> {
         await picker
             .pickImage(source: ImageSource.gallery)
             .then((value) => path = value?.path ?? selectedFile?.path ?? '');
+        imageFile = File(path!);
+        splitImagePath = path!.split("/").last;
+        postImageType = splitImagePath!.split(".").last;
+        imageBase64 = base64Encode(imageFile!.readAsBytesSync());
+
         context.pop();
 
         break;
@@ -53,9 +60,9 @@ class _AddPostPageState extends State<AddPostPage> {
         context.pop();
         setState(() {
           imageFile = File(path!);
-          print("done read file");
+          splitImagePath = path!.split("/").last;
+          postImageType = splitImagePath!.split(".").last;
           imageBase64 = base64Encode(imageFile!.readAsBytesSync());
-          print("the hashing image" + imageBase64!);
         });
 
         break;
@@ -152,7 +159,7 @@ class _AddPostPageState extends State<AddPostPage> {
             UserInput(
               controller: addPostNameController,
               text: 'Product name',
-              validator: (name) => nameValidator(name, 'Enter product name'),
+              //   validator: (name) => nameValidator(name, 'Enter product name'),
             ),
             UserInput(
               text: 'Product Description',
@@ -221,11 +228,11 @@ class _AddPostPageState extends State<AddPostPage> {
                             : {
                                 formKey.currentState!.save(),
                                 context.read<AddPostCubit>().addPost(
+                                      postImageType: postImageType!,
                                       title: addPostNameController.text,
                                       description:
                                           addPostDescriptionController.text,
-                                      postImage:
-                                          imageBase64 ?? "noProductImage",
+                                      postImage: imageBase64 ?? "url",
                                       category: "",
                                       price: addPostPriceController.text,
                                       shopeID: globalSharedPreference

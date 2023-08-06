@@ -12,6 +12,8 @@ import 'package:shopesapp/presentation/shared/custom_widgets/custoum_rate.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/presentation/shared/utils.dart';
 
+import '../../../logic/cubites/post/cubit/toggle_post_favorite_cubit.dart';
+
 class ProductInfo extends StatefulWidget {
   const ProductInfo({Key? key, required this.post}) : super(key: key);
   final Post post;
@@ -26,7 +28,7 @@ class _ProductInfoState extends State<ProductInfo> {
     final h = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: AppColors.mainWhiteColor,
+      //  backgroundColor: AppColors.mainWhiteColor,
       appBar: AppBar(
         elevation: 0,
         leading: const BackButton(color: Colors.black),
@@ -59,7 +61,8 @@ class _ProductInfoState extends State<ProductInfo> {
           20.ph,
           Container(
             height: h / 5,
-            color: AppColors.mainBlackColor,
+            // color: AppColors.mainBlackColor,
+            child: Image.network(widget.post.photos),
           ),
           20.ph,
           Row(
@@ -74,8 +77,16 @@ class _ProductInfoState extends State<ProductInfo> {
                   return IconButton(
                       onPressed: () {
                         postFavorite.isPostFavorite(widget.post)
-                            ? postFavorite.removeFromFavorites(widget.post)
+                            ? {
+                                postFavorite.removeFromFavorites(widget.post),
+                              }
                             : postFavorite.addToFavorites(widget.post);
+                        context
+                            .read<TogglePostFavoriteCubit>()
+                            .toggolePostFavorite(
+                                postID: widget.post.postID,
+                                userID:
+                                    globalSharedPreference.getString("ID")!);
                       },
                       icon: !postFavorite.isPostFavorite(widget.post)
                           ? const Icon(Icons.favorite_border_outlined)
@@ -86,7 +97,7 @@ class _ProductInfoState extends State<ProductInfo> {
                 },
               ),
               // const CustomText(text: 'product name'),
-              15.px,
+              /*     15.px,
               BlocBuilder<RatePostCubit, RatePostState>(
                 builder: (context, state) {
                   return CustomRate(
@@ -95,7 +106,7 @@ class _ProductInfoState extends State<ProductInfo> {
                     size: w * 0.035,
                   );
                 },
-              ),
+              ),*/
             ],
           ),
           const CustomDivider(),

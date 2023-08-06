@@ -3,11 +3,13 @@ import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 
 class CustomSortRow extends StatelessWidget {
-  const CustomSortRow({Key? key, required this.title, this.subtitle, this.icon})
+  const CustomSortRow(
+      {Key? key, required this.title, this.subtitle, this.icon, this.cIcon})
       : super(key: key);
   final String title;
   final String? subtitle;
   final IconData? icon;
+  final Icon? cIcon;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -16,7 +18,12 @@ class CustomSortRow extends StatelessWidget {
         // mainAxisAlignment: MainAxisAlignment.sp,
         children: [
           // 20.px,
-          Icon(icon),
+          if (cIcon == null)
+            Icon(
+              icon,
+            ),
+          if (cIcon != null) ...[cIcon!],
+
           20.px,
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,

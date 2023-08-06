@@ -21,11 +21,8 @@ class _SwitchStoreState extends State<SwitchStore> {
   bool isLastShop = false;
   @override
   void initState() {
-    if (ownerShpos.isEmpty) {
-      context.read<GetOwnerShopsCubit>().getOwnerShopsRequest(
-          ownerID: globalSharedPreference.getString("ID"), message: "all");
-    }
-
+    context.read<GetOwnerShopsCubit>().getOwnerShopsRequest(
+        ownerID: globalSharedPreference.getString("ID"), message: "all");
     super.initState();
   }
 
@@ -56,7 +53,7 @@ class _SwitchStoreState extends State<SwitchStore> {
               } else if (state is GetOwnerShopsSucceed) {
                 ownerShpos =
                     BlocProvider.of<GetOwnerShopsCubit>(context).ownerShops;
-                //    print(ownerShpos);
+                print(ownerShpos);
                 if (ownerShpos.length == 1) {
                   isLastShop = true;
                 }
