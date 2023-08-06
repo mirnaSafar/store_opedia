@@ -12,5 +12,4 @@ final List<String> categories = [
   'Pharmacies',
   'Services',
   'Variants',
-  'Malls',
 ];
