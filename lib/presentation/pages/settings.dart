@@ -7,10 +7,10 @@ import 'package:shopesapp/data/repositories/shared_preferences_repository.dart';
 import 'package:shopesapp/logic/cubites/cubit/auth_state.dart';
 import 'package:shopesapp/logic/cubites/user/delete_user_cubit.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 import '../../data/enums/message_type.dart';
 import '../../logic/cubites/cubit/auth_cubit.dart';
 import '../../logic/cubites/mode/themes_cubit.dart';
-import '../../translation/locale_keys.g.dart';
 import '../shared/custom_widgets/custom_toast.dart';
 import '../widgets/dialogs/awosem_dialog.dart';
 import '../widgets/settings/settings_til.dart';
@@ -31,7 +31,7 @@ class _SettingsPageState extends State<SettingsPage> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
-        backgroundColor: Colors.transparent,
+        backgroundColor: const Color.fromRGBO(0, 0, 0, 0),
         title: Text(
           LocaleKeys.settings.tr(),
           style: TextStyle(
@@ -52,7 +52,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   titleTextStyle: TextStyle(
                       fontWeight: FontWeight.w600,
                       color: Theme.of(context).colorScheme.secondary),
-                  title: "Profile",
+                  title: LocaleKeys.pofile.tr(),
                   children: <Widget>[10.ph, buildProfile(context)]),
               SizedBox(
                 height: size.height * 0.01,
@@ -66,14 +66,14 @@ class _SettingsPageState extends State<SettingsPage> {
                         titleTextStyle: TextStyle(
                             fontWeight: FontWeight.w600,
                             color: Theme.of(context).colorScheme.secondary),
-                        title: "Account",
+                        title: LocaleKeys.my_Account.tr(),
                         children: <Widget>[buildSwitchUserAccount(context)]);
                   }
                   return SettingsGroup(
                       titleTextStyle: TextStyle(
                           fontWeight: FontWeight.w600,
                           color: Theme.of(context).colorScheme.secondary),
-                      title: "MY STORE",
+                      title: LocaleKeys.my_stroe.tr(),
                       children: <Widget>[
                         buildeAddNewSotre(context),
                         buildeEdeitMySotre(context, size),
@@ -88,7 +88,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   titleTextStyle: TextStyle(
                       fontWeight: FontWeight.w600,
                       color: Theme.of(context).colorScheme.secondary),
-                  title: "MODE",
+                  title: LocaleKeys.mode.tr(),
                   children: <Widget>[
                     buildLanguage(context),
                     buildThemes(context)
@@ -100,7 +100,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   titleTextStyle: TextStyle(
                       fontWeight: FontWeight.w600,
                       color: Theme.of(context).colorScheme.secondary),
-                  title: "GENERAL",
+                  title: LocaleKeys.general.tr(),
                   children: <Widget>[
                     if (SharedPreferencesRepository.getBrowsingPostsMode()) ...[
                       buildLogin(context),
@@ -120,11 +120,14 @@ class _SettingsPageState extends State<SettingsPage> {
                               CustomToast.showMessage(
                                   context: context,
                                   size: size,
-                                  message: "Delete Account Successfully",
+                                  message: LocaleKeys.delete_account.tr(),
                                   messageType: MessageType.SUCCESS);
                             } else if (state is DeleteUserFailed) {
-                              buildAwsomeDialog(context, "Failed",
-                                      state.message.toUpperCase(), "Cancel",
+                              buildAwsomeDialog(
+                                      context,
+                                      LocaleKeys.faild.tr(),
+                                      state.message.toUpperCase(),
+                                      LocaleKeys.cancle.tr(),
                                       type: DialogType.error)
                                   .show();
                             }
@@ -148,7 +151,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   titleTextStyle: TextStyle(
                       fontWeight: FontWeight.w600,
                       color: Theme.of(context).colorScheme.secondary),
-                  title: "About",
+                  title: LocaleKeys.about.tr(),
                   children: <Widget>[
                     buildContactUs(context, size),
                     buildAbout(context)
@@ -157,7 +160,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   titleTextStyle: TextStyle(
                       fontWeight: FontWeight.w600,
                       color: Theme.of(context).colorScheme.secondary),
-                  title: "Privacy",
+                  title: LocaleKeys.privacy.tr(),
                   children: <Widget>[buildPrivacy(context)]),
               (size.height / 4).ph
             ],

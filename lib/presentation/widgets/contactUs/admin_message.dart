@@ -22,7 +22,7 @@ Widget adminMessage(var size, var message) => Align(
               ),
             )),
         child: CustomText(
-          text: "hello",
+          text: message,
           textColor: AppColors.mainWhiteColor,
         ),
       ),

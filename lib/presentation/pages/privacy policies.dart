@@ -1,6 +1,6 @@
-// ignore: file_names
-// ignore: file_names
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 import '../../constant/privacy_policies.dart';
 
 class PrivacyPlicies extends StatelessWidget {
@@ -8,40 +8,36 @@ class PrivacyPlicies extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Privacy Policies"),
+        title: Text(LocaleKeys.privacy_and_policies.tr()),
         centerTitle: true,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 10.0,
-            ),
-            ListView.separated(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                scrollDirection: Axis.vertical,
-                itemBuilder: (context, index) => Text(
-                      privacy_policies[index],
-                      style: const TextStyle(
-                          fontSize: 16.0, fontWeight: FontWeight.bold),
-                    ),
-                separatorBuilder: (context, index) => const SizedBox(
-                      height: 20.0,
-                    ),
-                itemCount: privacy_policies.length),
-            const SizedBox(
-              height: 20.0,
-            ),
-            ElevatedButton(
-                onPressed: () => Navigator.pop(
-                      context,
-                    ),
-                child: const Text("Hide"))
-          ],
+        padding: EdgeInsets.all(height * 0.0002),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              ListView.separated(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
+                  itemBuilder: (context, index) => Text(
+                        privacy_policies[index],
+                        style: const TextStyle(fontSize: 16.0),
+                      ),
+                  separatorBuilder: (context, index) =>
+                      SizedBox(height: height * 0.009),
+                  itemCount: privacy_policies.length),
+              SizedBox(height: height * 0.2),
+              ElevatedButton(
+                  onPressed: () => Navigator.pop(
+                        context,
+                      ),
+                  child: Text(LocaleKeys.ok.tr()))
+            ],
+          ),
         ),
       ),
     );

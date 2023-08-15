@@ -48,6 +48,7 @@ class PostsRepository {
     }
     if (response.statusCode == 200) {
       parsedResult = jsonDecode(response.body);
+      print(parsedResult);
       return parsedResult;
     }
     return null;
@@ -136,7 +137,7 @@ class PostsRepository {
         'Content-Type': 'application/json',
       },
     );
-    print(response.statusCode);
+    // print(response.statusCode);
     if (response.statusCode == 200) {
       return "Success";
     }
@@ -151,7 +152,7 @@ class PostsRepository {
     Map<String, dynamic> requestBody = {
       "id": userID,
     };
-    print(requestBody);
+    // print(requestBody);
     try {
       response = await http.post(
           Uri.http(ENDPOINT, "/show/posts/followedStores/$userID"),
@@ -165,7 +166,7 @@ class PostsRepository {
     }
     if (response.statusCode == 200) {
       parsedResult = jsonDecode(response.body);
-      print(parsedResult);
+      //  print(parsedResult);
       return parsedResult;
     }
     return null;
@@ -181,7 +182,7 @@ class PostsRepository {
       "id": userID,
       "postID": postID,
     };
-    print(requestBody);
+    //  print(requestBody);
     try {
       response = await http.post(Uri.http(ENDPOINT, "/like/$userID/$postID"),
           body: jsonEncode(requestBody),
@@ -191,7 +192,7 @@ class PostsRepository {
     } catch (e) {
       return null;
     }
-    print(response.statusCode);
+    //  print(response.statusCode);
     if (response.statusCode == 200) {
       parsedResult = jsonDecode(response.body);
       return parsedResult;
@@ -208,7 +209,7 @@ class PostsRepository {
     };
 
     try {
-      response = await http.post(Uri.http(ENDPOINT, "show/my/like/$ownerID"),
+      response = await http.post(Uri.http(ENDPOINT, "show/my/Like/$ownerID"),
           body: jsonEncode(requestBody),
           headers: {
             'Content-Type': 'application/json',
@@ -221,6 +222,6 @@ class PostsRepository {
       parsedResult = jsonDecode(response.body);
       return parsedResult;
     }
-    return null;
+    return jsonDecode(response.body);
   }
 }

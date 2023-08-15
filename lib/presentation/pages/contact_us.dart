@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/logic/cubites/cubit/cubit/contact_us_cubit.dart';
@@ -5,6 +6,7 @@ import 'package:shopesapp/main.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/user_input.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 import '../../data/enums/message_color.dart';
 import '../../data/enums/message_type.dart';
@@ -29,9 +31,8 @@ class _ContactUsState extends State<ContactUs> {
   String? savedMessage;
   @override
   void initState() {
-    context
-        .read<GetCahtMessagesCubit>()
-        .getChatMessages(ownerID: globalSharedPreference.getString("ID")!);
+    context.read<GetCahtMessagesCubit>().getChatMessages(
+        ownerID: globalSharedPreference.getString("ID") ?? '0');
     isMessageSelected = false;
     globalSharedPreference.setBool("isMessageSelected", false);
     super.initState();
@@ -45,15 +46,7 @@ class _ContactUsState extends State<ContactUs> {
 
     GlobalKey<FormState> formKey = GlobalKey<FormState>();
     return Scaffold(
-      body: // Padding(
-          /*  padding: EdgeInsets.only(
-          left: (size.width * 0.045),
-          right: (size.width * 0.045),
-          top: (size.width * 0.018),
-          bottom: (size.width * 0.018),
-        ),
-        child: */
-          Form(
+      body: Form(
         key: formKey,
         autovalidateMode: AutovalidateMode.disabled,
         child: Column(
@@ -79,8 +72,8 @@ class _ContactUsState extends State<ContactUs> {
                   Padding(
                     padding: EdgeInsetsDirectional.only(
                         start: size.width * 0.15, top: size.width * 0.05),
-                    child: const CustomText(
-                      text: "Admin",
+                    child: CustomText(
+                      text: LocaleKeys.admin.tr(),
                     ),
                   ),
                   Padding(
@@ -99,7 +92,7 @@ class _ContactUsState extends State<ContactUs> {
                         ),
                         2.px,
                         CustomText(
-                          text: 'Online',
+                          text: LocaleKeys.online.tr(),
                           textColor: Colors.green,
                           fontSize: size.width * 0.03,
                         )
@@ -111,43 +104,48 @@ class _ContactUsState extends State<ContactUs> {
             ),
             const Divider(),
             SingleChildScrollView(
-              child: BlocConsumer<GetCahtMessagesCubit, GetCahtMessagesState>(
-                listener: (context, state) {
-                  if (state is GetCahtMessagesFailed) {
-                    CustomToast.showMessage(
-                        context: context,
-                        size: size,
-                        message: state.message.toUpperCase(),
-                        messageType: MessageType.REJECTED);
-                  }
-                },
-                builder: (context, state) {
-                  if (state is GetCahtMessagesProgress) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  } else if (state is GetCahtMessagesSucceed) {
-                    if (context.read<GetCahtMessagesCubit>().messages.isEmpty) {
-                      return buildNoMessagesYet(size);
+              child: Expanded(
+                child: BlocConsumer<GetCahtMessagesCubit, GetCahtMessagesState>(
+                  listener: (context, state) {
+                    if (state is GetCahtMessagesFailed) {
+                      CustomToast.showMessage(
+                          context: context,
+                          size: size,
+                          message: state.message.toUpperCase(),
+                          messageType: MessageType.REJECTED);
                     }
+                  },
+                  builder: (context, state) {
+                    if (state is GetCahtMessagesProgress) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (state is GetCahtMessagesSucceed) {
+                      if (context
+                          .read<GetCahtMessagesCubit>()
+                          .messages
+                          .isEmpty) {
+                        return buildNoMessagesYet(size);
+                      }
 
-                    messages = context.read<GetCahtMessagesCubit>().messages;
-                    return ListView.separated(
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          if (messages[index]["reply"] != null) {
+                      messages = context.read<GetCahtMessagesCubit>().messages;
+                      return ListView.separated(
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            if (messages[index]["reply"] != null) {
+                              return Expanded(
+                                  child: adminMessage(size, messages[index]));
+                            }
                             return Expanded(
-                                child: adminMessage(size, messages[index]));
-                          }
-                          return Expanded(
-                              child: userMessage(size, messages[index]));
-                        },
-                        separatorBuilder: (context, index) =>
-                            (size.width * 0.08).px,
-                        itemCount: messages.length);
-                  }
-                  return buildError(size);
-                },
+                                child: userMessage(size, messages[index]));
+                          },
+                          separatorBuilder: (context, index) =>
+                              (size.width * 0.08).px,
+                          itemCount: messages.length);
+                    }
+                    return buildError(size);
+                  },
+                ),
               ),
             ),
             const Spacer(),
@@ -159,17 +157,18 @@ class _ContactUsState extends State<ContactUs> {
                     children: [
                       Expanded(
                         child: UserInput(
-                          text: "type your message here...",
+                          text: LocaleKeys.type_your_message_here.tr(),
                           controller: messageText,
                           validator: (message) {
                             if (message!.isEmpty) {
-                              return "Type a right message";
+                              return LocaleKeys.type_a_right_message.tr();
                             } else if (message.length > 500) {
-                              return " message less than 500 words ";
+                              return LocaleKeys.message_less_than_500_words
+                                  .tr();
                             } else if (globalSharedPreference
                                     .getBool("isMessageSelected") ==
                                 false) {
-                              return "Message Type required";
+                              return LocaleKeys.message_type_required.tr();
                             }
                             return null;
                           },
@@ -184,7 +183,7 @@ class _ContactUsState extends State<ContactUs> {
                                   context: context,
                                   size: size,
                                   message:
-                                      'Message sent successfuly \n We will reply as soon as possible',
+                                      LocaleKeys.message_sent_successfuly.tr(),
                                   messageType: MessageType.SUCCESS);
                               context.pushRepalceme(const ContactUs());
                             } else if (state is ContactUsFailed) {
@@ -216,8 +215,9 @@ class _ContactUsState extends State<ContactUs> {
                                       ? CustomToast.showMessage(
                                           context: context,
                                           size: size,
-                                          message:
-                                              'Please check required fields',
+                                          message: LocaleKeys
+                                              .please_check_required_fields
+                                              .tr(),
                                           messageType: MessageType.REJECTED)
                                       : {
                                           formKey.currentState!.save(),
@@ -255,11 +255,11 @@ class _ContactUsState extends State<ContactUs> {
                                 "messageType", messageTypes[0]);
                           });
                         },
-                        child: const Text("Error"),
                         style: ElevatedButton.styleFrom(
                             backgroundColor: messageColor[0],
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30))),
+                        child: Text(LocaleKeys.error.tr()),
                       ),
                       ElevatedButton(
                         onPressed: () {
@@ -268,11 +268,11 @@ class _ContactUsState extends State<ContactUs> {
                           globalSharedPreference.setString(
                               "messageType", messageTypes[1]);
                         },
-                        child: const Text("Suggestion"),
                         style: ElevatedButton.styleFrom(
                             backgroundColor: messageColor[1],
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30))),
+                        child: Text(LocaleKeys.suggestion.tr()),
                       ),
                       ElevatedButton(
                         onPressed: () {
@@ -281,11 +281,11 @@ class _ContactUsState extends State<ContactUs> {
                           globalSharedPreference.setString(
                               "messageType", messageTypes[2]);
                         },
-                        child: const Text("Guidance"),
                         style: ElevatedButton.styleFrom(
                             backgroundColor: messageColor[2],
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30))),
+                        child: Text(LocaleKeys.guidance.tr()),
                       ),
                       ElevatedButton(
                         onPressed: () {
@@ -294,11 +294,11 @@ class _ContactUsState extends State<ContactUs> {
                           globalSharedPreference.setString(
                               "messageType", messageTypes[3]);
                         },
-                        child: const Text("Others"),
                         style: ElevatedButton.styleFrom(
                             backgroundColor: messageColor[3],
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30))),
+                        child: Text(LocaleKeys.others.tr()),
                       ),
                     ],
                   ),

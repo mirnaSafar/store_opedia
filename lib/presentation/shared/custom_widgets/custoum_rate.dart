@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rating_dialog/rating_dialog.dart';
@@ -8,6 +9,7 @@ import 'package:shopesapp/logic/cubites/shop/rate_shop_cubit.dart';
 import 'package:shopesapp/main.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 class CustomRate extends StatefulWidget {
   const CustomRate({
@@ -43,19 +45,19 @@ class _CustomRateState extends State<CustomRate> {
         initialRating: widget.rateValue!,
         title: const Text(''),
         message: Text(
-          'Please Rate the ${widget.store != null ? 'store' : 'product'} if you tried it',
+          LocaleKeys.rate_message.tr(),
           textAlign: TextAlign.center,
           style: const TextStyle(fontSize: 15),
         ),
-        submitButtonText: 'Submit',
-        commentHint: 'you can leave your comment here',
+        submitButtonText: LocaleKeys.submit.tr(),
+        commentHint: LocaleKeys.rate_comment.tr(),
         onSubmitted: (response) {
           context.read<RateShopCubit>().setShopRating(
                 context: context,
                 newRate: response.rating,
-                shopId: globalSharedPreference.getString("shopID")!,
+                shopId: widget.store!.shopID,
                 size: size,
-                userID: globalSharedPreference.getString("ID")!,
+                userID: globalSharedPreference.getString("ID"),
               );
         });
 
@@ -85,7 +87,7 @@ class _CustomRateState extends State<CustomRate> {
                     builder: (context, state) {
                       return CustomText(
                         text: widget.post == null
-                            ? context.read<RateShopCubit>().ratevalue.toString()
+                            ? widget.store!.rate.toString()
                             : context
                                 .read<RatePostCubit>()
                                 .getPostRating(

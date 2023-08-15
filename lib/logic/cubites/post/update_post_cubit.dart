@@ -1,7 +1,9 @@
 import 'package:bloc/bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:shopesapp/data/repositories/posts_repository.dart';
 import 'package:shopesapp/main.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 part 'update_post_state.dart';
 
@@ -28,9 +30,7 @@ class UpdatePostCubit extends Cubit<UpdatePostState> {
         price: price,
         ownerID: globalSharedPreference.getString("ID")!);
     if (response == "Failed") {
-      emit(UpdatePostFailed(
-          message:
-              "Failed to Update the Post , Check your internet connection"));
+      emit(UpdatePostFailed(message: LocaleKeys.update_post_failed.tr()));
     } else {
       emit(UpdatePostSucceed());
     }

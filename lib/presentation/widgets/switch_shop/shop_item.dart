@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/logic/cubites/cubit/auth_cubit.dart';
@@ -8,6 +9,7 @@ import 'package:shopesapp/logic/cubites/cubit/auth_cubit.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/presentation/widgets/switch_shop/alert_dialog.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 import '../../../data/enums/message_type.dart';
 import '../../../logic/cubites/shop/active_shop_cubit.dart';
 import '../../../logic/cubites/shop/deactivate_shop_cubit.dart';
@@ -54,10 +56,12 @@ Widget buildShopItem(
                   mainAxisSize: MainAxisSize.max,
                   // mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    CustomText(
-                      text: shop["shopName"],
-                      bold: true,
-                      fontSize: 20,
+                    Center(
+                      child: CustomText(
+                        text: shop["shopName"],
+                        bold: true,
+                        fontSize: 20,
+                      ),
                     ),
                   ],
                 ),
@@ -68,8 +72,11 @@ Widget buildShopItem(
                       listener: (context, state) {
                         if (state is SwithShopFiled) {
                           buildAwsomeDialog(
-                              context, "Failed", "OK", "Select Store Failed",
-                              type: DialogType.ERROR);
+                              context,
+                              LocaleKeys.faild.tr(),
+                              LocaleKeys.ok.tr(),
+                              LocaleKeys.select_store_failed.tr(),
+                              type: DialogType.error);
                         } else if (state is SwithShopSucceded) {
                           context.read<AuthCubit>().selectedShop();
 
@@ -80,9 +87,9 @@ Widget buildShopItem(
                         if (state is SwithShopSucceded &&
                             globalSharedPreference.getString("shopID") ==
                                 shop["shopID"]) {
-                          return const Expanded(
+                          return Expanded(
                             child: CustomText(
-                              text: "Current Shop",
+                              text: LocaleKeys.current_shop.tr(),
                               textColor: Colors.green,
                             ),
                           );
@@ -97,7 +104,7 @@ Widget buildShopItem(
                                 shop["shopID"]) {
                           return Expanded(
                             child: CustomText(
-                              text: "Waiting...",
+                              text: LocaleKeys.waiting.tr(),
                               textColor: Theme.of(context).primaryColorDark,
                             ),
                           );
@@ -107,12 +114,12 @@ Widget buildShopItem(
                             onPressed: () {
                               showAlertDialog(context, shop);
                             },
-                            child: const Text("Select"),
                             style: ElevatedButton.styleFrom(
                                 padding: const EdgeInsets.all(10),
                                 backgroundColor: Colors.green,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(30))),
+                            child: Text(LocaleKeys.select.tr()),
                           ),
                         );
                       },
@@ -130,7 +137,7 @@ Widget buildShopItem(
                                 CustomToast.showMessage(
                                     context: context,
                                     size: size,
-                                    message: 'Shop Acivated',
+                                    message: LocaleKeys.shop_acivated.tr(),
                                     messageType: MessageType.SUCCESS);
                                 if (globalSharedPreference
                                         .getString("shopID") ==
@@ -158,13 +165,13 @@ Widget buildShopItem(
                                   onPressed: () {
                                     activeShopAlert(context, shop["shopID"]);
                                   },
-                                  child: const Text("Activate"),
                                   style: ElevatedButton.styleFrom(
                                       padding: const EdgeInsets.all(10),
                                       backgroundColor: Colors.green,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(30))),
+                                  child: Text(LocaleKeys.activate.tr()),
                                 ),
                               );
                             },
@@ -192,7 +199,7 @@ Widget buildShopItem(
                                 CustomToast.showMessage(
                                     context: context,
                                     size: size,
-                                    message: 'Shop Deacivated',
+                                    message: LocaleKeys.shop_acivated.tr(),
                                     messageType: MessageType.SUCCESS);
                                 context.pushRepalceme(const SwitchStore());
                               } else if (state is DeactivateShopFailed) {
@@ -216,13 +223,13 @@ Widget buildShopItem(
                                             context, shop["shopID"])
                                         : cantDeactivatedShop(context);
                                   },
-                                  child: const Text("Deactivate"),
                                   style: ElevatedButton.styleFrom(
                                       padding: const EdgeInsets.all(10),
                                       backgroundColor: Colors.blueGrey,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(30))),
+                                  child: Text(LocaleKeys.deactivate.tr()),
                                 ),
                               );
                             },
@@ -248,7 +255,8 @@ Widget buildShopItem(
                                         CustomToast.showMessage(
                                             context: context,
                                             size: size,
-                                            message: 'Shop Delete',
+                                            message:
+                                                LocaleKeys.shop_delete.tr(),
                                             messageType: MessageType.SUCCESS),
                                         context
                                             .pushRepalceme(const SwitchStore())
@@ -257,7 +265,8 @@ Widget buildShopItem(
                                         CustomToast.showMessage(
                                             context: context,
                                             size: size,
-                                            message: 'Shop Delete',
+                                            message:
+                                                LocaleKeys.shop_delete.tr(),
                                             messageType: MessageType.SUCCESS),
                                         context
                                             .pushRepalceme(const ControlPage()),
@@ -269,7 +278,7 @@ Widget buildShopItem(
                                 CustomToast.showMessage(
                                     context: context,
                                     size: size,
-                                    message: 'Failed',
+                                    message: LocaleKeys.faild.tr(),
                                     messageType: MessageType.WARNING);
                               }
                             },
@@ -284,13 +293,13 @@ Widget buildShopItem(
                                     deleteShopAlert(
                                         context, shop["shopID"], isLastShop);
                                   },
-                                  child: const Text("Delete"),
                                   style: ElevatedButton.styleFrom(
                                       padding: const EdgeInsets.all(10),
                                       backgroundColor: AppColors.mainRedColor,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(30))),
+                                  child: Text(LocaleKeys.delete.tr()),
                                 ),
                               );
                             },

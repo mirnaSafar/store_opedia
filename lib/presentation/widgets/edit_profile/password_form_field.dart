@@ -1,4 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 import '../../shared/utils.dart';
 
@@ -25,14 +27,14 @@ class _EditPasswordFormFieldState extends State<EditPasswordFormField> {
       initialValue: widget.password,
       keyboardType: TextInputType.visiblePassword,
       decoration: InputDecoration(
-          labelText: 'Password',
+          labelText: LocaleKeys.password.tr(),
           labelStyle: TextStyle(
               fontSize: 20, color: Theme.of(context).colorScheme.onSurface),
           prefixIcon: Icon(
             Icons.lock,
             color: Theme.of(context).colorScheme.primary,
           ),
-          helperText: 'Password must be More Than 8',
+          // helperText: 'Password must be More Than 8',
           helperStyle: const TextStyle(fontSize: 15),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),

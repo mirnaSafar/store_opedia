@@ -1,4 +1,5 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/logic/cubites/user/update_user_cubit.dart';
@@ -14,6 +15,7 @@ import 'package:shopesapp/presentation/widgets/edit_profile/user_name_form_field
 import 'package:shopesapp/presentation/widgets/profile/appBar.dart';
 import 'package:shopesapp/presentation/widgets/profile/password_form_field.dart';
 import 'package:shopesapp/presentation/widgets/profile/phoneNumber_form_field.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 import '../../data/enums/message_type.dart';
 import '../../logic/cubites/cubit/profile_cubit.dart';
 import '../shared/custom_widgets/custom_text.dart';
@@ -73,17 +75,17 @@ class _ProfilePageState extends State<ProfilePage> {
     AwesomeDialog(
         btnOkColor: Colors.green,
         context: context,
-        animType: AnimType.SCALE,
-        dialogType: DialogType.WARNING,
-        body: const Center(
+        animType: AnimType.scale,
+        dialogType: DialogType.warning,
+        body: Center(
           child: Text(
-            'You Will Update Your Account Information !',
-            style: TextStyle(fontStyle: FontStyle.italic),
+            LocaleKeys.update_profile_alert.tr(),
+            style: const TextStyle(fontStyle: FontStyle.italic),
           ),
         ),
         btnCancelOnPress: () {},
-        btnCancelText: 'Cancel',
-        btnOkText: " Countinue",
+        btnCancelText: LocaleKeys.cancle.tr(),
+        btnOkText: LocaleKeys.countinue.tr(),
         btnOkOnPress: () {
           BlocProvider.of<UpdateUserCubit>(context).updateUser(
               id: globalSharedPreference.getString("ID")!,
@@ -123,100 +125,99 @@ class _ProfilePageState extends State<ProfilePage> {
         const SizedBox(
           height: 15.0,
         ),
-        BlocProvider<UpdateUserCubit>(
-          create: (context) => UpdateUserCubit(),
-          child: BlocConsumer<UpdateUserCubit, UpdateUserState>(
-            listener: (context, state) {
-              if (state is UpdateUserSucceed) {
-                CustomToast.showMessage(
-                    context: context,
-                    size: size,
-                    message: "Updated User Info Successfully",
-                    messageType: MessageType.SUCCESS);
-
-                context.pushRepalceme(const ControlPage());
-              } else if (state is UpdateUserFailed) {
-                CustomToast.showMessage(
-                    context: context,
-                    size: size,
-                    message: state.message,
-                    messageType: MessageType.REJECTED);
-              }
-            },
-            builder: (context, state) {
-              if (state is UpdateUserProgress) {
-                return const CircularProgressIndicator();
-              }
-              return Container(
-                width: 200.0,
-                decoration: BoxDecoration(
-                    color: Colors.green,
-                    borderRadius: BorderRadius.circular(10.0)),
-                child: MaterialButton(
-                  elevation: 10.0,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.check,
-                        color: Colors.white,
-                      ),
-                      CustomText(
-                        text: "Save Updates",
-                        textColor: AppColors.mainWhiteColor,
-                      )
-                    ],
-                  ),
+        Row(
+          children: [
+            Expanded(
+              child: ElevatedButton(
                   onPressed: () {
-                    if (((_oldName == getUserName()) &&
-                            getPassword() == "" &&
-                            (getPhoneNumber() == _oldPhoneNumber)) ||
-                        (_newName!.isEmpty && _newPhoneNumber!.isEmpty)) {
-                      buildAwsomeDialog(context, "Failrd",
-                              "You Already use the Same information", "OK",
-                              type: DialogType.INFO)
-                          .show();
-                    } else {
-                      _submitForm(context);
+                    BlocProvider.of<ProfileCubit>(context).setVerifiy(false);
+                  },
+                  style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 15,
+                      ),
+                      backgroundColor: AppColors.mainWhiteColor,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30)),
+                      side: BorderSide(
+                        color: Theme.of(context).colorScheme.primary,
+                      )),
+                  child: Text(
+                    LocaleKeys.show_profile_mode.tr(),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  )),
+            ),
+            (size.width * 0.08).px,
+            Expanded(
+              child: BlocProvider<UpdateUserCubit>(
+                create: (context) => UpdateUserCubit(),
+                child: BlocConsumer<UpdateUserCubit, UpdateUserState>(
+                  listener: (context, state) {
+                    if (state is UpdateUserSucceed) {
+                      CustomToast.showMessage(
+                          context: context,
+                          size: size,
+                          message: LocaleKeys.update_success.tr(),
+                          messageType: MessageType.SUCCESS);
+
+                      context.pushRepalceme(const ControlPage());
+                    } else if (state is UpdateUserFailed) {
+                      CustomToast.showMessage(
+                          context: context,
+                          size: size,
+                          message: state.message,
+                          messageType: MessageType.REJECTED);
                     }
                   },
+                  builder: (context, state) {
+                    if (state is UpdateUserProgress) {
+                      return const CircularProgressIndicator();
+                    }
+                    return ElevatedButton(
+                        onPressed: () {
+                          if (((_oldName == getUserName()) &&
+                                  getPassword() == "" &&
+                                  (getPhoneNumber() == _oldPhoneNumber)) ||
+                              (_newName!.isEmpty && _newPhoneNumber!.isEmpty)) {
+                            buildAwsomeDialog(
+                                    context,
+                                    LocaleKeys.faild.tr(),
+                                    LocaleKeys.same_info_alert.tr(),
+                                    LocaleKeys.ok.tr(),
+                                    type: DialogType.info)
+                                .show();
+                          } else {
+                            _submitForm(context);
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 15,
+                          ),
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30)),
+                        ),
+                        child: Text(
+                          LocaleKeys.edit.tr(),
+                          style: TextStyle(color: AppColors.mainWhiteColor),
+                        ));
+                  },
                 ),
-              );
-            },
-          ),
-        ),
-        const SizedBox(
-          height: 15.0,
-        ),
-        Container(
-            width: 200.0,
-            decoration: BoxDecoration(
-                color: Colors.grey, borderRadius: BorderRadius.circular(10.0)),
-            child: MaterialButton(
-              onPressed: () {
-                BlocProvider.of<ProfileCubit>(context).setVerifiy(false);
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.arrow_back,
-                    color: Colors.white,
-                  ),
-                  CustomText(
-                    text: "Show Profle Mode",
-                    textColor: AppColors.mainWhiteColor,
-                  )
-                ],
               ),
-            ))
+            ),
+          ],
+        ),
       ],
     );
   }
 
-  Widget _buildUserInfoPage(BuildContext context, var pageWidth) {
+  Widget _buildUserInfoPage(BuildContext context, Size size) {
     return Padding(
-        padding: EdgeInsets.symmetric(horizontal: pageWidth * 0.05),
+        padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
         child: Column(
           children: [
             Center(
@@ -241,59 +242,51 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(
               height: 15.0,
             ),
-            Container(
-              width: 200.0,
-              decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
-                  borderRadius: BorderRadius.circular(10.0)),
-              child: MaterialButton(
-                elevation: 10.0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.edit,
-                      color: Colors.white,
-                    ),
-                    CustomText(
-                      text: "Edit",
-                      textColor: AppColors.mainWhiteColor,
-                    )
-                  ],
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                      onPressed: () {
+                        context.pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 15,
+                          ),
+                          backgroundColor: AppColors.mainWhiteColor,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30)),
+                          side: BorderSide(
+                            color: Theme.of(context).colorScheme.primary,
+                          )),
+                      child: Text(
+                        LocaleKeys.back.tr(),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      )),
                 ),
-                onPressed: () {
-                  context.push(const VerifyPassword());
-                },
-              ),
-            ),
-            const SizedBox(
-              height: 15.0,
-            ),
-            Container(
-              width: 200.0,
-              decoration: BoxDecoration(
-                  color: Colors.grey,
-                  borderRadius: BorderRadius.circular(10.0)),
-              child: MaterialButton(
-                elevation: 10.0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.arrow_back,
-                      color: Colors.white,
-                    ),
-                    CustomText(
-                      text: "Back",
-                      textColor: AppColors.mainWhiteColor,
-                    )
-                  ],
+                (size.width * 0.08).px,
+                Expanded(
+                  child: ElevatedButton(
+                      onPressed: () {
+                        context.push(const VerifyPassword());
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 15,
+                        ),
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30)),
+                      ),
+                      child: Text(
+                        LocaleKeys.edit.tr(),
+                        style: TextStyle(color: AppColors.mainWhiteColor),
+                      )),
                 ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ),
+              ],
+            )
           ],
         ));
   }
@@ -320,7 +313,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               horizontal: size.height * 0.05),
                           child: _buildUpdatePage(context, size));
                     }
-                    return _buildUserInfoPage(context, size.width);
+                    return _buildUserInfoPage(context, size);
                   },
                 )
               ],
@@ -329,3 +322,5 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 }
+/*
+*/

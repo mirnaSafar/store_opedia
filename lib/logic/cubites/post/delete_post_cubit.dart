@@ -1,6 +1,8 @@
 import 'package:bloc/bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:shopesapp/data/repositories/posts_repository.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 part 'delete_post_state.dart';
 
@@ -14,9 +16,7 @@ class DeletePostCubit extends Cubit<DeletePostState> {
     String response = await PostsRepository()
         .deletePost(postID: postID, shopID: shopID, ownerID: ownerID);
     if (response == "Failed") {
-      emit(DeletePostFailed(
-          message:
-              "Failed to delete the Post , Check your internet connection"));
+      emit(DeletePostFailed(message: LocaleKeys.delete_post_failed.tr()));
     } else {
       emit(DeletePostSucceed());
     }

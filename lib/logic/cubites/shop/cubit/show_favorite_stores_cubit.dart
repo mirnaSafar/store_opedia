@@ -1,4 +1,6 @@
 import 'package:bloc/bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 import '../../../../data/repositories/shop_repository.dart';
 
@@ -15,13 +17,13 @@ class ShowFavoriteStoresCubit extends Cubit<ShowFavoriteStoresState> {
     } catch (e) {
       emit(ShowFavoriteStoresFailed(
           message: response == null
-              ? "Faild Filter , Check your internet connection"
+              ? LocaleKeys.filter_repo_failed.tr()
               : response["message"]));
     }
     if (response != null && response['message'] == 'Done') {
       favoriteStores = response['favs'] as List<dynamic>;
-      // emit(ShowFavoriteStoresState(favoriteStores: favoriteStores));
-      emit(ShowFavoriteStoresSuccessed());
+      ShowFavoriteStoresState(favoriteStores: favoriteStores);
+      emit(ShowFavoriteStoresSuccessed(favoriteStores: favoriteStores));
     } else if (response != null &&
         response['message'] == 'You dont have any favourite stores yet') {
       emit(NoFavoriteStores());

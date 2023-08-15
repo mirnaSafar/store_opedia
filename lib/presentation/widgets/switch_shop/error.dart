@@ -1,4 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 import '../../shared/custom_widgets/custom_text.dart';
 
@@ -19,8 +21,8 @@ Widget buildError(var size) {
             SizedBox(
               height: size.height * 0.02,
             ),
-            const CustomText(
-              text: "Error",
+            CustomText(
+              text: LocaleKeys.error.tr(),
               fontSize: 25,
             )
           ],

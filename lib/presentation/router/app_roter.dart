@@ -5,7 +5,7 @@ import 'package:shopesapp/presentation/pages/login_page.dart';
 import 'package:shopesapp/presentation/pages/porfile.dart';
 import 'package:shopesapp/presentation/pages/privacy%20policies.dart';
 import 'package:shopesapp/presentation/pages/settings.dart';
-import 'package:shopesapp/presentation/pages/startup_page/startup_page.dart';
+import 'package:shopesapp/presentation/pages/splash_screen_page.dart';
 
 import 'package:shopesapp/presentation/pages/verify_password.dart';
 
@@ -22,7 +22,7 @@ class AppRouter {
               return const ControlPage();
             } else {
               // return const ControlPage();
-              return const StartUpPage();
+              return const SplashScreenPage();
             }
           }));
         });

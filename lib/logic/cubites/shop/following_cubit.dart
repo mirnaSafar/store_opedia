@@ -57,6 +57,7 @@ class FollowingCubit extends Cubit<FollowingState> {
 
   bool getShopFollowingState(Shop shop) {
     print(shop.toJson());
+
     return state.followedShops.isNotEmpty
         ? state.followedShops.firstWhere(
                 (element) =>

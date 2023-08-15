@@ -1,26 +1,39 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:location/location.dart';
 import 'package:shopesapp/data/enums/message_type.dart';
+import 'package:shopesapp/data/models/shop.dart';
+import 'package:shopesapp/logic/cubites/post/cubit/show_favorite_posts_cubit.dart';
 import 'package:shopesapp/logic/cubites/post/cubit/toggle_post_favorite_cubit.dart';
 import 'package:shopesapp/logic/cubites/post/delete_post_cubit.dart';
 import 'package:shopesapp/logic/cubites/post/post_favorite_cubit.dart';
-import 'package:shopesapp/logic/cubites/post/rate_shop_cubit.dart';
 import 'package:shopesapp/main.dart';
 import 'package:shopesapp/presentation/pages/edit_post.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_icon_text.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_toast.dart';
-import 'package:shopesapp/presentation/shared/custom_widgets/custoum_rate.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
+import 'package:shopesapp/presentation/widgets/product/delete_post_alert_dialog.dart';
 import 'package:shopesapp/presentation/widgets/product/product_info.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
+import '../../../constant/switch_to_arabic.dart';
+import '../../../data/repositories/shared_preferences_repository.dart';
+import '../../../logic/cubites/post/filter_cubit.dart';
+import '../../../logic/cubites/shop/cubit/show_favorite_stores_cubit.dart';
+import '../../pages/map_page.dart';
 import '../../shared/custom_widgets/custom_text.dart';
+import '../dialogs/browsing_alert_dialog.dart';
 
 // ignore: must_be_immutable
 class ProductPost extends StatefulWidget {
   final dynamic post;
+  Shop? shop;
+
   bool? profileDisplay;
-  ProductPost({Key? key, required this.post, this.profileDisplay = false})
+  ProductPost(
+      {Key? key, required this.post, this.profileDisplay = false, this.shop})
       : super(key: key);
 
   @override
@@ -28,6 +41,14 @@ class ProductPost extends StatefulWidget {
 }
 
 class _ProductPostState extends State<ProductPost> {
+  @override
+  void initState() {
+    BlocProvider.of<ShowFavoriteStoresCubit>(context)
+        .showMyFavoriteStores(ownerID: globalSharedPreference.getString("ID")!);
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final w = MediaQuery.of(context).size.width;
@@ -55,10 +76,11 @@ class _ProductPostState extends State<ProductPost> {
                               .then((value) => context.pop()),
                           child: CustomIconTextRow(
                               fontSize: w * 0.04,
-                              iconColor: AppColors.mainBlackColor,
+                              iconColor: Theme.of(context).primaryColorDark,
                               svgIcon: 'edit-svgrepo-com',
+                              textColor: Theme.of(context).primaryColorDark,
                               // icon: Icons.edit,
-                              text: 'Edit Post'),
+                              text: LocaleKeys.edit_post.tr()),
                         ),
                         30.ph,
                         BlocProvider(
@@ -76,11 +98,11 @@ class _ProductPostState extends State<ProductPost> {
                               } else if (state is DeletePostSucceed) {
                                 CustomToast.showMessage(
                                     size: size,
-                                    message:
-                                        'post has been deleted successfully',
+                                    message: LocaleKeys
+                                        .post_has_been_deleted_successfully
+                                        .tr(),
                                     context: context,
                                     messageType: MessageType.SUCCESS);
-                                setState(() {});
                                 context.pop();
                               }
                             },
@@ -90,21 +112,25 @@ class _ProductPostState extends State<ProductPost> {
                                     child: CircularProgressIndicator());
                               }
                               return InkWell(
-                                onTap: () =>
-                                    BlocProvider.of<DeletePostCubit>(context)
-                                        .deletePost(
-                                  postID: widget.post.postID,
+                                onTap: () => buildDeletePostAlert(
+                                  context: context,
                                   ownerID:
-                                      globalSharedPreference.getString("ID")!,
+                                      globalSharedPreference.getString("ID") ??
+                                          '0',
                                   shopID: globalSharedPreference
-                                      .getString("shopID")!,
+                                          .getString("shopID") ??
+                                      '0',
+                                  postID: widget.post.postID,
                                 ),
                                 child: CustomIconTextRow(
                                     fontSize: w * 0.04,
-                                    iconColor: AppColors.mainBlackColor,
+                                    iconColor:
+                                        Theme.of(context).primaryColorDark,
                                     svgIcon: 'delete-svgrepo-com',
+                                    textColor:
+                                        Theme.of(context).primaryColorDark,
                                     // icon: Icons.delete,
-                                    text: 'Delete Post'),
+                                    text: LocaleKeys.delete_post.tr()),
                               );
                             },
                           ),
@@ -126,22 +152,25 @@ class _ProductPostState extends State<ProductPost> {
               Row(
                 children: [
                   CircleAvatar(
-                    radius: w * 0.065,
-                    backgroundColor: AppColors.mainTextColor,
-                    // child: Image.asset('assets/verified.png', fit: BoxFit.cover),
-                  ),
+                      radius: w * 0.07,
+                      backgroundColor: AppColors.mainTextColor,
+                      child: ClipOval(
+                          child: Image.network(widget.post.shopProfileImage))),
                   10.px,
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       CustomText(
-                        text: globalSharedPreference.getString('shopName')!,
+                        text: widget.post.shopName,
+                        bold: true,
                       ),
                       CustomText(
-                        text: widget.post.category ??
-                            globalSharedPreference.getString("shopCategory")!,
-                        fontSize: w * 0.03,
-                        textColor: AppColors.mainTextColor,
+                        text: globalSharedPreference.getBool("isArabic") ==
+                                false
+                            ? widget.post.shopCategory
+                            : switchCategoryToArabic(widget.post.shopCategory),
+                        fontSize: w * 0.033,
+                        textColor: AppColors.secondaryFontColor,
                       ),
                     ],
                   )
@@ -150,8 +179,17 @@ class _ProductPostState extends State<ProductPost> {
 //test if the post
               // 190.px,
               IconButton(
-                  onPressed: () =>
-                      widget.profileDisplay! ? postOptionsDialog() : null,
+                  onPressed: () {
+                    if (widget.profileDisplay!) {
+                      postOptionsDialog();
+                    } else {
+                      context.push(MapPage(
+                          currentLocation: LocationData.fromMap({
+                        'latitude': widget.post.latitude,
+                        'longitude': widget.post.longitude
+                      })));
+                    }
+                  },
                   icon: !widget.profileDisplay!
                       ? const Icon(Icons.location_on_outlined)
                       : const Icon(Icons.edit))
@@ -195,17 +233,32 @@ class _ProductPostState extends State<ProductPost> {
                           context.read<PostFavoriteCubit>();
                       return IconButton(
                           onPressed: () {
-                            postFavorite.isPostFavorite(widget.post)
-                                ? postFavorite.removeFromFavorites(widget.post)
-                                : postFavorite.addToFavorites(widget.post);
-                            context
-                                .read<TogglePostFavoriteCubit>()
-                                .toggolePostFavorite(
-                                    postID: widget.post.postID,
-                                    userID: globalSharedPreference
-                                        .getString("ID")!);
+                            if (!SharedPreferencesRepository
+                                .getBrowsingPostsMode()) {
+                              postFavorite.isPostFavorite(widget.post)
+                                  ? postFavorite
+                                      .removeFromFavorites(widget.post)
+                                  : postFavorite.addToFavorites(widget.post);
+
+                              context
+                                  .read<TogglePostFavoriteCubit>()
+                                  .toggolePostFavorite(
+                                      postID: widget.post.postID,
+                                      userID: globalSharedPreference
+                                          .getString("ID")!);
+                              context.read<FilterCubit>().getAllPosts();
+
+                              context
+                                  .read<ShowFavoritePostsCubit>()
+                                  .showMyFavoritePosts(
+                                      ownerID: globalSharedPreference
+                                              .getString("ID") ??
+                                          '0');
+                            } else {
+                              showBrowsingDialogAlert(context);
+                            }
                           },
-                          icon: !postFavorite.isPostFavorite(widget.post)
+                          icon: !widget.post.isFavorit
                               ? const Icon(Icons.favorite_border_outlined)
                               : Icon(
                                   Icons.favorite,
@@ -215,9 +268,8 @@ class _ProductPostState extends State<ProductPost> {
                   ),
                   10.px,
                   InkWell(
-                      onTap: () => context.push(ProductInfo(
-                            post: widget.post,
-                          )),
+                      onTap: () => context.push(
+                          ProductInfo(post: widget.post, shop: widget.shop)),
                       child: const Icon(Icons.info_outline)),
                 ],
               ),

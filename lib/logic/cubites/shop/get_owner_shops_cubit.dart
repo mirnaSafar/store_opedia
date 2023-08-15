@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:shopesapp/data/models/owner.dart';
 import 'package:shopesapp/data/repositories/shop_repository.dart';
 import 'package:shopesapp/main.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 part 'get_owner_shops_state.dart';
 
 class GetOwnerShopsCubit extends Cubit<GetOwnerShopsState> {
@@ -23,7 +25,7 @@ class GetOwnerShopsCubit extends Cubit<GetOwnerShopsState> {
     if (response == null || response["message"] != "Succeed") {
       emit(GetOwnerShopsFiled(
           message: response == null
-              ? "Filed to delet the user , Check your internet connection"
+              ? LocaleKeys.get_stores_failed.tr()
               : response["message"]));
     } else if (response["message"] == "Succeed") {
       setOwnerShop(shops: response["shops"]);

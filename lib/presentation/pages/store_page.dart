@@ -1,8 +1,10 @@
-import 'dart:io';
+// ignore_for_file: unrelated_type_equality_checks
 
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shopesapp/constant/switch_to_arabic.dart';
 import 'package:shopesapp/data/models/shop.dart';
 import 'package:shopesapp/data/repositories/shared_preferences_repository.dart';
 import 'package:shopesapp/logic/cubites/post/posts_cubit.dart';
@@ -24,6 +26,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:shopesapp/presentation/widgets/dialogs/awosem_dialog.dart';
 import 'package:shopesapp/presentation/widgets/product/product_post.dart';
 import 'package:shopesapp/presentation/widgets/switch_shop/error.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 import '../../main.dart';
 import '../widgets/dialogs/browsing_alert_dialog.dart';
@@ -34,7 +37,7 @@ class StorePage extends StatefulWidget {
   StorePage({
     Key? key,
     this.shop,
-    this.profileDisplay,
+    this.profileDisplay = false,
   }) : super(key: key);
   Shop? shop;
   bool? profileDisplay;
@@ -53,16 +56,16 @@ class _StorePageState extends State<StorePage> {
   @override
   Widget build(BuildContext context) {
     List<String> splitStartTime = widget.shop!.startWorkTime.split(":");
-    String startWorkTime = splitStartTime[0] + ":" + splitStartTime[1];
+    String startWorkTime = "${splitStartTime[0]}:${splitStartTime[1]}";
     List<String> splitEndWorkTime = widget.shop!.endWorkTime.split(":");
-    String endtWorkTime = splitEndWorkTime[0] + ":" + splitEndWorkTime[1];
+    String endtWorkTime = "${splitEndWorkTime[0]}:${splitEndWorkTime[1]}";
 
     var size = MediaQuery.of(context).size;
 
     final w = MediaQuery.of(context).size.width;
     final h = MediaQuery.of(context).size.height;
     return Scaffold(
-        //   backgroundColor: AppColors.mainWhiteColor,
+        // backgroundColor: AppColors.mainWhiteColor,
         body: SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,6 +77,8 @@ class _StorePageState extends State<StorePage> {
               Stack(
                 children: [
                   SizedBox(
+                    height: h / 5,
+                    width: w,
                     child: ClipRRect(
                         borderRadius: BorderRadius.circular(w * 0.05),
                         child: widget.shop!.shopCoverImage != 'url'
@@ -81,8 +86,6 @@ class _StorePageState extends State<StorePage> {
                             : const Image(
                                 image: AssetImage(
                                     'assets/store_cover_placeholder.jpg'))),
-                    height: h / 5,
-                    width: w,
                   ),
                   Padding(
                     padding: EdgeInsets.only(
@@ -131,7 +134,7 @@ class _StorePageState extends State<StorePage> {
                                         ),
                                         2.px,
                                         CustomText(
-                                          text: 'Open now',
+                                          text: LocaleKeys.open_now.tr(),
                                           textColor: Colors.green,
                                           fontSize: w * 0.03,
                                         )
@@ -163,7 +166,7 @@ class _StorePageState extends State<StorePage> {
                                         ),
                                         2.px,
                                         CustomText(
-                                          text: 'Close now',
+                                          text: LocaleKeys.close_now.tr(),
                                           textColor: Colors.red,
                                           fontSize: w * 0.03,
                                         )
@@ -191,7 +194,7 @@ class _StorePageState extends State<StorePage> {
                                     ),
                                     2.px,
                                     CustomText(
-                                      text: 'Deactivated Now',
+                                      text: LocaleKeys.deactive_now.tr(),
                                       textColor: Colors.blueGrey,
                                       fontSize: w * 0.03,
                                     )
@@ -238,29 +241,40 @@ class _StorePageState extends State<StorePage> {
               ),
               10.ph,
               Stack(
-                alignment: AlignmentDirectional.topCenter,
+                alignment: AlignmentDirectional.topEnd,
                 children: [
-                  CustomPaint(
-                      painter: profilePainter(),
-                      child: Padding(
-                        padding: EdgeInsetsDirectional.only(
-                          start: w,
-                        ),
-                        child: SizedBox(
-                          width: w / 4,
-                          height: h * 0.5,
-                        ),
-                      )),
+                  Visibility(
+                    visible:
+                        globalSharedPreference.getBool("isDarkMode") == false,
+                    child: CustomPaint(
+                        painter: profilePainter(),
+                        child: Padding(
+                          padding: EdgeInsetsDirectional.only(
+                            start: w / 2,
+                          ),
+                          child: SizedBox(
+                            width: w / 4,
+                            height: h * 0.34,
+                          ),
+                        )),
+                  ),
                   // FloatingActionButton(
                   //     onPressed: () {
                   //       context.push(const EditStore());
                   //     },
                   //     backgroundColor: AppColors.mainOrangeColor,
                   //     child: const svgIcon(Icons.edit)),
-                  Visibility(
-                      visible: widget.profileDisplay ?? false,
-                      child: Positioned(
-                          right: w * 0.06, bottom: w * 0, child: _getFAB())),
+                  globalSharedPreference.getBool("isArabic") == false
+                      ? Visibility(
+                          visible: widget.profileDisplay ?? false,
+                          child: Positioned(
+                              right: w * 0.06, bottom: w * 0, child: _getFAB()))
+                      : Visibility(
+                          visible: widget.profileDisplay ?? false,
+                          child: Positioned(
+                              left: w * 0.095,
+                              bottom: w * 0,
+                              child: _getFAB())),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -273,18 +287,24 @@ class _StorePageState extends State<StorePage> {
                           ),
                           10.px,
                           CustomText(
-                            text: widget.shop!.shopCategory,
-                            // fontSize: 18,
+                            text: globalSharedPreference.getBool("isArabic") ==
+                                    false
+                                ? widget.shop!.shopCategory
+                                : switchCategoryToArabic(
+                                    widget.shop!.shopCategory),
                             textColor: AppColors.secondaryFontColor,
                           ),
                         ],
                       ),
                       15.ph,
-                      CustomText(
-                          textColor: Theme.of(context).primaryColorDark,
-                          fontSize: 15,
-                          text: widget.shop!.shopDescription ??
-                              'basic description about the \nstore and its major'),
+                      Visibility(
+                        visible: widget.shop!.shopDescription!.isNotEmpty,
+                        child: CustomText(
+                            textColor: Theme.of(context).primaryColorDark,
+                            fontSize: 15,
+                            text: widget.shop!.shopDescription ??
+                                LocaleKeys.defult_description.tr()),
+                      ),
                       20.ph,
                       Row(
                         children: [
@@ -293,7 +313,7 @@ class _StorePageState extends State<StorePage> {
                             builder: (context, state) {
                               return CustomText(
                                 text:
-                                    '${context.read<ShopFollwersCounterCubit>().getShopFollwersCount(widget.shop!)} Followers',
+                                    '${widget.shop!.followesNumber}${LocaleKeys.followers.tr()}',
                                 textColor: AppColors.mainBlueColor,
                               );
                             },
@@ -309,9 +329,11 @@ class _StorePageState extends State<StorePage> {
                                       widget.shop!;
                               return InkWell(
                                 onTap: () {
+                                  // context
+                                  //     .pushRepalceme((const FavouritePage()));
                                   if (!SharedPreferencesRepository
                                       .getBrowsingPostsMode()) {
-                                    !followingCubit.getShopFollowingState(shop)
+                                    !widget.shop!.isFollow!
                                         ? {
                                             context
                                                 .read<
@@ -330,17 +352,24 @@ class _StorePageState extends State<StorePage> {
                                             context)
                                         .toggoleFolowShop(
                                             shopID: widget.shop!.shopID,
-                                            ownerID: widget.shop!.ownerID);
+                                            ownerID: globalSharedPreference
+                                                    .getString("ID") ??
+                                                '0');
                                   } else {
                                     showBrowsingDialogAlert(context);
                                   }
                                 },
-                                child: CustomText(
-                                  text:
-                                      followingCubit.getShopFollowingState(shop)
-                                          ? 'Following'
-                                          : 'Follow',
-                                  textColor: AppColors.mainBlueColor,
+                                child: Visibility(
+                                  visible: !widget.profileDisplay!,
+                                  child: CustomText(
+                                    text:
+                                        // followingCubit
+                                        //             .getShopFollowingState(shop) ||
+                                        widget.shop!.isFollow!
+                                            ? LocaleKeys.following.tr()
+                                            : LocaleKeys.follow.tr(),
+                                    textColor: AppColors.mainBlueColor,
+                                  ),
                                 ),
                               );
                             },
@@ -356,12 +385,6 @@ class _StorePageState extends State<StorePage> {
                               ? '$startWorkTime - $endtWorkTime'
                               : "---  - ---"),
                       20.ph,
-                      // CustomIconTextRow(
-                      //     textColor: Theme.of(context).primaryColorDark,
-                      //     svgIcon: Icons.phone,
-                      //     text:
-                      //         "Owner PhoneNumber : ${widget.shop!.ownerPhoneNumber}"),
-                      // 20.ph,
                       Visibility(
                         visible: widget.shop!.shopPhoneNumber != null,
                         child: Column(
@@ -383,9 +406,13 @@ class _StorePageState extends State<StorePage> {
                           text: widget.shop!.ownerEmail),
                       20.ph,
                       CustomIconTextRow(
-                          textColor: Theme.of(context).primaryColorDark,
-                          svgIcon: 'map-point-wave-svgrepo-com',
-                          text: widget.shop!.location),
+                        textColor: Theme.of(context).primaryColorDark,
+                        svgIcon: 'map-point-wave-svgrepo-com',
+                        text:
+                            globalSharedPreference.getBool("isArabic") == false
+                                ? widget.shop!.location
+                                : switchLocationToArabic(widget.shop!.location),
+                      ),
                       const CustomDivider(),
                       Visibility(
                         visible: widget.shop!.socialUrl!.isNotEmpty &&
@@ -395,7 +422,7 @@ class _StorePageState extends State<StorePage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             CustomText(
-                              text: 'Social accounts',
+                              text: LocaleKeys.social_Account.tr(),
                               textColor: Theme.of(context).primaryColorDark,
                               fontSize: w * 0.04,
                               bold: true,
@@ -422,16 +449,15 @@ class _StorePageState extends State<StorePage> {
                                       ? widget.shop!.socialUrl![1]
                                       : ''),
                             ),
-                            Visibility(
-                                visible: ownerShpos.isNotEmpty,
-                                child: const CustomDivider()),
+                            const CustomDivider(),
                           ],
                         ),
                       ),
+                      20.ph,
                       Visibility(
-                        visible: ownerShpos.isNotEmpty,
+                        visible: ownerShpos.length > 1,
                         child: CustomText(
-                          text: 'Related Stores',
+                          text: LocaleKeys.related_stores.tr(),
                           textColor: Theme.of(context).primaryColorDark,
                           fontSize: w * 0.04,
                           bold: true,
@@ -444,7 +470,7 @@ class _StorePageState extends State<StorePage> {
             ]),
           ),
           Visibility(
-            visible: ownerShpos.isNotEmpty,
+            visible: ownerShpos.length > 1,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -454,9 +480,9 @@ class _StorePageState extends State<StorePage> {
                   child: BlocConsumer<GetOwnerShopsCubit, GetOwnerShopsState>(
                     listener: (context, state) {
                       if (state is GetOwnerShopsFiled) {
-                        buildAwsomeDialog(context, "Failed",
-                                state.message.toUpperCase(), "OK",
-                                type: DialogType.ERROR)
+                        buildAwsomeDialog(context, LocaleKeys.faild.tr(),
+                                state.message.toUpperCase(), LocaleKeys.ok.tr(),
+                                type: DialogType.error)
                             .show();
                       } else if (state is GetOwnerShopsSucceed) {}
                     },
@@ -487,16 +513,19 @@ class _StorePageState extends State<StorePage> {
                                 return Column(
                                   children: [
                                     CircleAvatar(
-                                        radius: w * 0.12,
+                                        radius: w * 0.1,
                                         backgroundColor:
                                             AppColors.mainTextColor,
-                                        backgroundImage: FileImage(File(
+                                        backgroundImage: NetworkImage(
                                             ownerShpos[index]
-                                                        ["shopProfileImage"] !=
-                                                    'url'
-                                                ? ownerShpos[index]
-                                                    ["shopProfileImage"]
-                                                : '')),
+                                                ["shopProfileImage"]),
+                                        // FileImage(File(
+                                        //     ownerShpos[index][
+                                        //                 "shopProfileImage"] !=
+                                        //             'url'
+                                        //         ? ownerShpos[index]
+                                        //             ["shopProfileImage"]
+                                        //         : '')),
                                         child: ownerShpos[index]
                                                     ["shopProfileImage"] ==
                                                 'url'
@@ -516,7 +545,31 @@ class _StorePageState extends State<StorePage> {
                                   ],
                                 );
                               }
-                              return Container();
+                              return Column(
+                                children: [
+                                  CircleAvatar(
+                                      radius: w * 0.1,
+                                      backgroundColor: AppColors.mainTextColor,
+                                      backgroundImage: NetworkImage(
+                                          ownerShpos[index]
+                                              ["shopProfileImage"]),
+                                      child:
+                                          widget.shop!.shopProfileImage == 'url'
+                                              ? ClipOval(
+                                                  child: Image.asset(
+                                                    'assets/store_placeholder.png',
+                                                    fit: BoxFit.fill,
+                                                  ),
+                                                )
+                                              : null),
+                                  5.ph,
+                                  CustomText(
+                                    text: widget.shop!.shopName,
+                                    textColor:
+                                        Theme.of(context).primaryColorDark,
+                                  )
+                                ],
+                              );
                             },
                           ),
                         );
@@ -528,13 +581,20 @@ class _StorePageState extends State<StorePage> {
               ],
             ),
           ),
-          const Visibility(child: CustomDivider()),
+          Visibility(
+            // visible: ownerShpos.isNotEmpty,
+            child: Padding(
+                padding: EdgeInsets.symmetric(vertical: h * 0.01),
+                child: const Divider(
+                  thickness: 7,
+                )),
+          ),
           BlocConsumer<PostsCubit, PostsState>(
             listener: (context, state) {
               if (state is ErrorFetchingPosts) {
-                buildAwsomeDialog(
-                        context, "Failed", state.message.toUpperCase(), "OK",
-                        type: DialogType.ERROR)
+                buildAwsomeDialog(context, LocaleKeys.faild.tr(),
+                        state.message.toUpperCase(), LocaleKeys.ok.tr(),
+                        type: DialogType.error)
                     .show();
               } else if (state is PostsFetchedSuccessfully) {}
             },
@@ -544,18 +604,27 @@ class _StorePageState extends State<StorePage> {
                   child: CircularProgressIndicator(),
                 );
               } else if (state is NoPostsYet) {
-                return Center(child: buildNoPostsYet(size, "No Posts Yet"));
+                return Center(
+                    child: buildNoPostsYet(
+                        size, LocaleKeys.no_posts_yet_follow_alert.tr()));
               } else if (state is PostsFetchedSuccessfully) {
                 postsList = BlocProvider.of<PostsCubit>(context).ownerPosts;
+                //print(postsList);
 
                 return ListView.separated(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: postsList.length,
-                  separatorBuilder: (context, index) => const CustomDivider(),
+                  separatorBuilder: (context, index) => Padding(
+                      padding: EdgeInsets.symmetric(vertical: h * 0.01),
+                      child: const Divider(
+                        thickness: 7,
+                      )),
                   itemBuilder: (BuildContext context, int index) {
+                    //  print(postsList);
                     return ProductPost(
                       post: postsList[index],
+                      shop: widget.shop!,
                       profileDisplay: widget.profileDisplay ?? false,
                     );
                   },
@@ -564,6 +633,7 @@ class _StorePageState extends State<StorePage> {
               return buildError(size);
             },
           ),
+          50.ph,
         ],
       ),
     ));
@@ -571,7 +641,7 @@ class _StorePageState extends State<StorePage> {
 
   Widget _getFAB() {
     return SpeedDial(
-      animatedIcon: AnimatedIcons.view_list,
+      animatedIcon: AnimatedIcons.list_view,
       animatedIconTheme:
           IconThemeData(size: 22, color: AppColors.mainWhiteColor),
       backgroundColor: Theme.of(context).colorScheme.primary,
@@ -586,7 +656,7 @@ class _StorePageState extends State<StorePage> {
           onTap: () {
             context.push(const AddPostPage());
           },
-          label: 'Add new post',
+          label: LocaleKeys.add_Post.tr(),
           labelStyle: TextStyle(
             fontWeight: FontWeight.w500,
             color: AppColors.mainWhiteColor,
@@ -600,7 +670,7 @@ class _StorePageState extends State<StorePage> {
             context.push(EditStore(function: updateStoreState));
             // setState(() {});
           },
-          label: 'Edit store information',
+          label: LocaleKeys.edit_stroe_informations.tr(),
           labelStyle: TextStyle(
             fontWeight: FontWeight.w500,
             color: AppColors.mainWhiteColor,

@@ -1,7 +1,10 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import 'package:shopesapp/data/enums/bottom_navigation.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
+import '../../../main.dart';
 import '../../shared/colors.dart';
 import 'bottom_nav_clipper.dart';
 
@@ -35,7 +38,9 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
               child: Container(
                 width: size.width,
                 height: size.height * 0.09,
-                color: AppColors.mainWhiteColor,
+                color: globalSharedPreference.getBool("isDarkMode") == false
+                    ? Colors.white
+                    : const Color.fromARGB(244, 43, 42, 42),
               ),
             ),
           ),
@@ -68,7 +73,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
                 // crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   navItem(
-                      text: 'settings',
+                      text: LocaleKeys.settings.tr(),
                       icon: Icons.settings,
                       isSelected: widget.bottomNavigationEnum ==
                           BottomNavigationEnum.MORE,
@@ -78,7 +83,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
                       size: size),
                   navItem(
                       icon: Icons.store,
-                      text: 'Stores',
+                      text: LocaleKeys.stores.tr(),
                       isSelected: widget.bottomNavigationEnum ==
                           BottomNavigationEnum.STORES,
                       onTap: () {
@@ -90,7 +95,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
                   ),
                   navItem(
                       icon: Icons.favorite,
-                      text: 'favorites',
+                      text: LocaleKeys.favorites.tr(),
                       isSelected: widget.bottomNavigationEnum ==
                           BottomNavigationEnum.FAVORITES,
                       onTap: () {
@@ -99,7 +104,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
                       size: size),
                   navItem(
                       icon: Icons.person,
-                      text: 'profile',
+                      text: LocaleKeys.pofile.tr(),
                       isSelected: widget.bottomNavigationEnum ==
                           BottomNavigationEnum.PROFILE,
                       onTap: () {
@@ -135,9 +140,13 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
                 ? Theme.of(context).colorScheme.primary
                 : AppColors.secondaryFontColor,
           ),
-          SizedBox(
-            height: size.width * 0.02,
-          ),
+          globalSharedPreference.getBool("isArabic") == false
+              ? SizedBox(
+                  height: size.width * 0.02,
+                )
+              : SizedBox(
+                  height: size.width * 0.001,
+                ),
           Text(
             text,
             style: TextStyle(

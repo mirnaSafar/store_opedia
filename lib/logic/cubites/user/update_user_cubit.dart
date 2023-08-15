@@ -1,6 +1,8 @@
 import 'package:bloc/bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:meta/meta.dart';
 import 'package:shopesapp/data/repositories/user_repository.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 import '../../../main.dart';
 
@@ -21,7 +23,7 @@ class UpdateUserCubit extends Cubit<UpdateUserState> {
     if (response == null || response["message"] != "Done") {
       emit(UpdateUserFailed(
           message: response == null
-              ? "Failed to Update the user , Check your internet connection"
+              ? LocaleKeys.update_user_failed.tr()
               : response["message"]));
     } else {
       globalSharedPreference.setString("name", name);

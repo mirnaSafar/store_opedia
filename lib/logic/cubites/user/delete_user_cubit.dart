@@ -1,7 +1,9 @@
 import 'package:bloc/bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:meta/meta.dart';
 import 'package:shopesapp/data/repositories/user_repository.dart';
 import 'package:shopesapp/main.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 part 'delete_user_state.dart';
 
@@ -15,9 +17,7 @@ class DeleteUserCubit extends Cubit<DeleteUserState> {
     String response = await UserRepository().deleteUser(id: id);
 
     if (response == "Faield") {
-      emit(DeleteUserFailed(
-          message:
-              "Failed to delet the user , Check your internet connection"));
+      emit(DeleteUserFailed(message: LocaleKeys.delete_user_failed.tr()));
     } else if (response == "Success") {
       emit(DeleteUserSucceed());
     }

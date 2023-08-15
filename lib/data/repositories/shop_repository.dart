@@ -16,7 +16,7 @@ class ShopRepository {
       "shopID": shopID,
       "value": rateValue,
     };
-    print(requestBody);
+    //  print(requestBody);
     try {
       response = await http.post(Uri.http(ENDPOINT, "rate/$userID/$shopID"),
           body: jsonEncode(requestBody),
@@ -29,7 +29,7 @@ class ShopRepository {
     }
     if (response.statusCode == 200 || response.statusCode == 400) {
       parsedResult = jsonDecode(response.body);
-      print(parsedResult);
+      //  print(parsedResult);
       return parsedResult;
     }
     return null;
@@ -265,7 +265,7 @@ class ShopRepository {
       "id": id,
       "type": type,
     };
-    print(requestBody);
+    // print(requestBody);
     try {
       response = await http.post(Uri.http(ENDPOINT, "/filters/$id"),
           body: jsonEncode(requestBody),
@@ -276,7 +276,70 @@ class ShopRepository {
     } catch (e) {
       return null;
     }
-    print(response.statusCode);
+//    print(response.statusCode);
+    if (response.statusCode == 200) {
+      parsedResult = jsonDecode(response.body);
+      //  print(parsedResult);
+      return parsedResult;
+    }
+    return null;
+  }
+
+  Future<Map<String, dynamic>?> locationFilterStores(
+      {required String id,
+      required double longitude,
+      required double latitude}) async {
+    http.Response response;
+    Map<String, dynamic> parsedResult;
+    Map<String, dynamic> requestBody = {
+      "id": id,
+      "longitude": longitude.toString(),
+      "latitude": latitude.toString(),
+    };
+    // print(requestBody);
+    try {
+      response = await http.post(
+          Uri.http(ENDPOINT, "/filters/nearestStores/$id"),
+          body: jsonEncode(requestBody),
+          headers: {
+            'Content-Type': 'application/json',
+          });
+      //   print(response.statusCode);
+    } catch (e) {
+      return null;
+    }
+    //  print(response.statusCode);
+    if (response.statusCode == 200) {
+      parsedResult = jsonDecode(response.body);
+      //  print(parsedResult);
+      return parsedResult;
+    }
+    return null;
+  }
+
+  Future<Map<String, dynamic>?> cityFilterStores({
+    required String id,
+    required String address,
+  }) async {
+    http.Response response;
+    Map<String, dynamic> parsedResult;
+    Map<String, dynamic> requestBody = {
+      "id": id,
+      "address": address,
+    };
+    //  print(requestBody);
+    try {
+      response = await http.post(
+          Uri.http(ENDPOINT, "/filters/stores/location/$id"),
+          body: jsonEncode(requestBody),
+          headers: {
+            'Content-Type': 'application/json',
+          });
+      //   print(response.statusCode);
+    } catch (e) {
+      return null;
+    }
+    //   print(response.statusCode);
     if (response.statusCode == 200) {
       parsedResult = jsonDecode(response.body);
       //  print(parsedResult);
@@ -319,7 +382,7 @@ class ShopRepository {
       "id": userID,
       "shopId": shopID,
     };
-    print(requestBody);
+    //   print(requestBody);
     try {
       response = await http.post(Uri.http(ENDPOINT, "/follow/$userID/$shopID"),
           body: jsonEncode(requestBody),
@@ -333,7 +396,7 @@ class ShopRepository {
 
     if (response.statusCode == 200) {
       parsedResult = jsonDecode(response.body);
-      print(parsedResult);
+      //  print(parsedResult);
       return parsedResult;
     }
     return null;
@@ -375,6 +438,32 @@ class ShopRepository {
 
     try {
       response = await http.post(Uri.http(ENDPOINT, "show/my/fav/$ownerID"),
+          body: jsonEncode(requestBody),
+          headers: {
+            'Content-Type': 'application/json',
+          });
+      //   print(response.statusCode);
+    } catch (e) {
+      return null;
+    }
+    if (response.statusCode == 200) {
+      parsedResult = jsonDecode(response.body);
+      return parsedResult;
+    }
+    return jsonDecode(response.body);
+  }
+
+  Future<Map<String, dynamic>?> searchStore(
+      {required String ownerID, required String search}) async {
+    http.Response response;
+    Map<String, dynamic> parsedResult;
+    Map<String, dynamic> requestBody = {
+      "id": ownerID,
+      "search": search,
+    };
+
+    try {
+      response = await http.post(Uri.http(ENDPOINT, "search/stores/$ownerID"),
           body: jsonEncode(requestBody),
           headers: {
             'Content-Type': 'application/json',

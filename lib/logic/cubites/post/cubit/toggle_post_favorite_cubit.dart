@@ -1,6 +1,8 @@
 import 'package:bloc/bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:shopesapp/data/repositories/posts_repository.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 part 'toggle_post_favorite_state.dart';
 
@@ -17,10 +19,10 @@ class TogglePostFavoriteCubit extends Cubit<TogglePostFavoriteState> {
     if (response == null || response["message"] == "Access Denied") {
       ScaffoldMessenger(
           child: Text(response == null
-              ? "Failed to add this post to favorites , Check your Internet Connection"
+              ? LocaleKeys.fav_post_failed.tr()
               : response["message"]));
       emit(FailedToggoleFavoritePost(response == null
-          ? "Failed to add this post to favorites , Check your Internet Connection"
+          ? LocaleKeys.fav_post_failed.tr()
           : response["message"]));
     } else {
       const ScaffoldMessenger(child: Text('Add Sccuueded!'));

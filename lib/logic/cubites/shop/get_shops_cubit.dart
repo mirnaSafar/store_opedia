@@ -1,7 +1,11 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'package:bloc/bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:meta/meta.dart';
 import 'package:shopesapp/data/models/shop.dart';
 import 'package:shopesapp/main.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 import '../../../data/repositories/shop_repository.dart';
 
@@ -24,7 +28,7 @@ class GetShopsCubit extends Cubit<GetShopsState> {
     if (response == null || response["message"] != "Done") {
       emit(GetShopsFailed(
           message: response == null
-              ? "Filed to delet the user , Check your internet connection"
+              ? LocaleKeys.get_stores_failed.tr()
               : response["message"]));
     } else if (response["message"] == "Done") {
       setShops(shops: response["stores"]);
@@ -41,7 +45,7 @@ class GetShopsCubit extends Cubit<GetShopsState> {
     if (response == null || response["message"] != "Done") {
       emit(GetShopsFailed(
           message: response == null
-              ? "Filed to delet the user , Check your internet connection"
+              ? LocaleKeys.get_stores_failed.tr()
               : response["message"]));
     } else if (response["message"] == "Done") {
       setShops(shops: response["stores"]);

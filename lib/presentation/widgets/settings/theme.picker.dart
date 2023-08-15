@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 import '../../../constant/themes.dart';
 import '../../../logic/cubites/mode/themes_cubit.dart';
 
@@ -9,7 +11,7 @@ void showThemePicker(BuildContext context) async {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Select The Theme"),
+          title: Text(LocaleKeys.select_the_theme.tr()),
           content: Row(children: [
             buildIconButton(context, 0),
             buildIconButton(context, 1),

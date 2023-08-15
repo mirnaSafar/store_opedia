@@ -1,10 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/data/models/shop.dart';
 import 'package:shopesapp/data/repositories/shop_repository.dart';
-import 'package:shopesapp/logic/cubites/cubit/internet_cubit.dart';
 import 'package:shopesapp/main.dart';
-import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
 
 part 'store_state.dart';
 
@@ -13,31 +10,13 @@ class StoreCubit extends Cubit<StoreState> {
   List<dynamic> shops = [];
   List<dynamic> oldshops = [];
   StoreCubit() : super(ShopsInitial());
-  // final String ownerId;
-
-  // Future<void> getOwnerStoreById(String ownerID, String shopID) async {
-  //   Map<String, dynamic>? response =
-  //       await ShopRepository().getShopById(ownerID: ownerID, shopID: shopID);
-
-  //   if (response!["message"] == "Success") {
-  //     shop = response["shop"] as Shop;
-  //     if (shopsResponse.isEmpty) {
-  //       emit(NoShopsYet() );
-  //     } else {
-  //       emit(ShopsFetchedSuccessfully() );
-  //       // return shopsResponse;
-  //     }
-  //   } else {
-  //     emit(ErrorFetchingShops(message: response["message"]) );
-  //   }
-  //
 
   Future getAllStores() async {
     emit(FeatchingShopsProgress());
     Map<String, dynamic>? response;
     // try {
     response = await ShopRepository()
-        .getAllStores(id: globalSharedPreference.getString("ID")!);
+        .getAllStores(id: globalSharedPreference.getString("ID") ?? '0');
     /*  } catch (e) {
       emit(ErrorFetchingShops(
           message: response == null
@@ -76,6 +55,62 @@ class StoreCubit extends Cubit<StoreState> {
               "Failed to Get the Stores , Check your internet connection"));
     } else if (response["message"] != "Done" &&
         response["message"] != "No Stores Yet") {
+      emit(NoShopsYet());
+    } else if (response["message"] == "Done") {
+      // print(response["stores"]);
+      shops = response["stores"];
+      emit(FeatchingShopsSucceed());
+    } else {
+      emit(ErrorFetchingShops(message: response["message"]));
+    }
+  }
+
+  Future locationFilterStores(
+      {required String id,
+      required double longitude,
+      required double latitude}) async {
+    emit(FeatchingShopsProgress());
+    //print("start");
+    Map<String, dynamic>? response;
+
+    response = await ShopRepository()
+        .locationFilterStores(id: id, latitude: latitude, longitude: longitude);
+
+    if (response == null) {
+      emit(ErrorFetchingShops(
+          message:
+              "Failed to Get the Stores , Check your internet connection"));
+    } else if (response["message"] != "Done") {
+      emit(NoShopsYet());
+    } else if (response["message"] == "Done") {
+      // print(response["stores"]);
+      shops = response["stores"];
+      if (shops.isEmpty) {
+        emit(NoShopsYet());
+      } else {
+        emit(FeatchingShopsSucceed());
+      }
+    } else {
+      emit(ErrorFetchingShops(message: response["message"]));
+    }
+  }
+
+  Future cilyFilterStores({
+    required String id,
+    required String address,
+  }) async {
+    emit(FeatchingShopsProgress());
+    //print("start");
+    Map<String, dynamic>? response;
+
+    response =
+        await ShopRepository().cityFilterStores(id: id, address: address);
+
+    if (response == null) {
+      emit(ErrorFetchingShops(
+          message:
+              "Failed to Get the Stores , Check your internet connection"));
+    } else if (response["message"] != "Done") {
       emit(NoShopsYet());
     } else if (response["message"] == "Done") {
       // print(response["stores"]);

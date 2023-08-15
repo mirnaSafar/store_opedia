@@ -7,7 +7,7 @@ import '../../../main.dart';
 part 'favorite_state.dart';
 
 class FavoriteCubit extends Cubit<FavoriteState> {
-  late List<dynamic> updatedFavoriteShops;
+  List<dynamic> updatedFavoriteShops = [];
   FavoriteCubit() : super(FavoriteState([])) {
     state.favoriteShops = SharedPreferencesRepository.getFavoriteStores();
     if (state.favoriteShops.isEmpty) {
@@ -50,8 +50,8 @@ class FavoriteCubit extends Cubit<FavoriteState> {
     return state.favoriteShops.isNotEmpty
         ? state.favoriteShops.firstWhere(
                 (element) =>
-                    shop.ownerID == Shop.fromJson(element).ownerID &&
-                    shop.shopID == Shop.fromJson(element).shopID,
+                    shop.ownerID == Shop.fromMap(element).ownerID &&
+                    shop.shopID == Shop.fromMap(element).shopID,
                 orElse: () => null) !=
             null
         : false;

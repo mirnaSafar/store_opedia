@@ -16,7 +16,8 @@ class AuthRepository {
       "name": userName,
       "emil": email,
       "password": password,
-      "phoneNumber": phoneNumber
+      "phoneNumber": phoneNumber,
+      //  "lang": globalSharedPreference.getString("currentLanguage") ?? "en"
     };
     var uri = Uri.http(ENDPOINT, "/users/signup");
 
@@ -64,6 +65,7 @@ class AuthRepository {
       "shopPhoneNumber": shopPhoneNumber,
       "latitude": latitude,
       "longitude": longitude,
+      //  "lang": globalSharedPreference.getString("currentLanguage") ?? "en"
     };
     //print(requestBody);
     var uri = Uri.http(ENDPOINT, "/owners/signup");
@@ -99,6 +101,7 @@ class AuthRepository {
     requestBody = {
       "email": email,
       "password": password,
+      //    "lang": globalSharedPreference.getString("currentLanguage") ?? "en"
     };
     try {
       var uri = Uri.http(ENDPOINT, "/login");
@@ -127,6 +130,7 @@ class AuthRepository {
     Map<String, dynamic> requestBody = {
       "id": id,
       "password": password,
+      //  "lang": globalSharedPreference.getString("currentLanguage") ?? "en"
     };
     try {
       response = await http.post(Uri.http(ENDPOINT, "/verifyPassword/$id"),
@@ -230,8 +234,8 @@ class AuthRepository {
 
     List<String> socialUrl = [];
     if (shop.socialUrl!.isEmpty) {
-      shop.socialUrl!.add("www.facebook.com");
-      shop.socialUrl!.add("www.instagram.com");
+      shop.socialUrl!.add("");
+      shop.socialUrl!.add("");
     }
     socialUrl.add(shop.socialUrl![0]);
     socialUrl.add(shop.socialUrl![1]);

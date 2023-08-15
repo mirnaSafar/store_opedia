@@ -1,4 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 class EditUserNameFormField extends StatelessWidget {
   const EditUserNameFormField(
@@ -12,14 +14,14 @@ class EditUserNameFormField extends StatelessWidget {
         initialValue: userName,
         readOnly: false,
         decoration: InputDecoration(
-          labelText: 'User Name',
+          labelText: LocaleKeys.user_name.tr(),
           labelStyle: TextStyle(
               fontSize: 20, color: Theme.of(context).colorScheme.onSurface),
           prefixIcon: Icon(
             Icons.person,
             color: Theme.of(context).colorScheme.primary,
           ),
-          helperText: 'Name must be +3 characters',
+          // helperText: 'Name must be +3 characters',
           helperStyle: const TextStyle(fontSize: 15),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),

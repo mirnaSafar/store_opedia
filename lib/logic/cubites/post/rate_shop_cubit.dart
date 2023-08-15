@@ -1,7 +1,9 @@
 import 'package:bloc/bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:shopesapp/data/repositories/posts_repository.dart';
 import 'package:shopesapp/data/repositories/shared_preferences_repository.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 part 'rate_shop_state.dart';
 
@@ -29,7 +31,10 @@ class RatePostCubit extends Cubit<RatePostState> {
             ownerId: ownerId, shopId: shopId, rate: newRate, postId: postId);
         emit(RatePostState(rate: newRate));
       } else {
-        const ScaffoldMessenger(child: Text('Something went wrong!'));
+        ScaffoldMessenger(
+            child: Text(LocaleKeys
+                .some_thing_went_wrong_check_your_internet_connection_and_try_again
+                .tr()));
       }
     }
   }

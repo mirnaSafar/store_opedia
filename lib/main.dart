@@ -29,6 +29,8 @@ import 'package:shopesapp/logic/cubites/shop/work_time_cubit.dart';
 import 'package:shopesapp/presentation/router/app_roter.dart';
 import 'package:flutter/material.dart';
 import 'package:shopesapp/translation/codegen_loader.g.dart';
+
+//import 'package:shopesapp/translations/codegen_loader.g.dart';
 import 'constant/themes.dart';
 import 'logic/cubites/cubit/get_caht_messages_cubit.dart';
 import 'logic/cubites/cubit/verify_password_cubit.dart';
@@ -40,7 +42,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   globalSharedPreference = await SharedPreferences.getInstance();
   // globalSharedPreference.clear();
-  WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
 
   await Settings.init(cacheProvider: SharePreferenceCache());
@@ -52,9 +53,10 @@ void main() async {
   AppRouter appRouter = AppRouter();
   runApp(EasyLocalization(
     supportedLocales: const [Locale('en'), Locale('ar')],
-    path: 'assets/translations', // <-- change the path of the translation files
-    fallbackLocale: const Locale('en', 'US'),
+    path: 'assets/translations',
+    fallbackLocale: const Locale('en'),
     assetLoader: const CodegenLoader(),
+    startLocale: const Locale.fromSubtags(languageCode: 'en'),
     child: MyApp(
       appRouter: appRouter,
       connectivity: Connectivity(),
@@ -162,17 +164,19 @@ class MyApp extends StatelessWidget {
       ],
       child: BlocBuilder<ThemesCubit, ThemesState>(
         builder: (context, state) {
-          return MaterialApp(
-            localizationsDelegates: context.localizationDelegates,
-            supportedLocales: context.supportedLocales,
-            locale: context.locale,
-            builder: BotToastInit(),
-            navigatorObservers: [BotToastNavigatorObserver()],
-            title: 'ShopsApp',
-            debugShowCheckedModeBanner: false,
-            theme: themeArray[state.themeIndex],
-            onGenerateRoute: appRouter.onGeneratedRoutes,
-          );
+          return Builder(builder: (context) {
+            return MaterialApp(
+              localizationsDelegates: context.localizationDelegates,
+              supportedLocales: context.supportedLocales,
+              locale: context.locale,
+              builder: BotToastInit(),
+              navigatorObservers: [BotToastNavigatorObserver()],
+              title: 'ShopsApp',
+              debugShowCheckedModeBanner: false,
+              theme: themeArray[state.themeIndex],
+              onGenerateRoute: appRouter.onGeneratedRoutes,
+            );
+          });
         },
       ),
     );

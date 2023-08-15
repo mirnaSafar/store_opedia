@@ -1,5 +1,9 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
+
+import '../../shared/validation_functions.dart';
 
 // ignore: must_be_immutable
 class CreatePasswordFormField extends StatefulWidget {
@@ -21,8 +25,8 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
       keyboardType: TextInputType.visiblePassword,
       decoration: InputDecoration(
           filled: true,
-          fillColor: const Color.fromRGBO(242, 242, 242, 1),
-          labelText: '   Password',
+          //  fillColor: const Color.fromRGBO(242, 242, 242, 1),
+          labelText: LocaleKeys.password.tr(),
           labelStyle: TextStyle(fontSize: 20, color: AppColors.mainTextColor),
           border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30),
@@ -52,9 +56,7 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
                 )),
       obscureText: widget.isPasswordHidden,
       validator: (String? value) {
-        if (value!.isEmpty || value.length < 5 || value.length > 14) {
-          return 'Password must be +5 chars and less than 15';
-        }
+        // return passValidator(value);
         return null;
       },
       onChanged: (String value) {

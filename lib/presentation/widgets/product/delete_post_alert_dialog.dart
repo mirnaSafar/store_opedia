@@ -1,27 +1,26 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/translation/locale_keys.g.dart';
 
-import '../../../logic/cubites/user/update_user_cubit.dart';
-import '../../../main.dart';
+import '../../../logic/cubites/post/delete_post_cubit.dart';
 
-void showUpdateAlert({
+void buildDeletePostAlert({
   required BuildContext context,
-  required TextEditingController userName,
-  required TextEditingController password,
-  required TextEditingController phoneNumber,
+  required String ownerID,
+  required String shopID,
+  required String postID,
 }) {
   AwesomeDialog(
-      btnOkColor: Colors.green,
+      btnCancelColor: Colors.green,
+      btnOkColor: Colors.red,
       context: context,
       animType: AnimType.scale,
       dialogType: DialogType.warning,
       body: Center(
         child: Text(
-          LocaleKeys.update_profile_alert.tr(),
+          LocaleKeys.delete_post_alert.tr(),
           style: const TextStyle(fontStyle: FontStyle.italic),
         ),
       ),
@@ -29,10 +28,7 @@ void showUpdateAlert({
       btnCancelText: LocaleKeys.cancle.tr(),
       btnOkText: LocaleKeys.countinue.tr(),
       btnOkOnPress: () {
-        BlocProvider.of<UpdateUserCubit>(context).updateUser(
-            id: globalSharedPreference.getString("ID")!,
-            name: userName.text,
-            password: password.text,
-            phoneNumber: phoneNumber.text);
+        BlocProvider.of<DeletePostCubit>(context)
+            .deletePost(postID: postID, ownerID: ownerID, shopID: shopID);
       }).show();
 }

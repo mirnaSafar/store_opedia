@@ -1,4 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 class ProfilePhoneNumberFormField extends StatelessWidget {
   final String phoneNmber;
@@ -13,7 +15,7 @@ class ProfilePhoneNumberFormField extends StatelessWidget {
       enabled: false,
       keyboardType: TextInputType.phone,
       decoration: InputDecoration(
-        labelText: ' Phone number',
+        labelText: LocaleKeys.phone_number.tr(),
         labelStyle: TextStyle(
             fontSize: 20, color: Theme.of(context).colorScheme.onSurface),
         prefixIcon: Icon(

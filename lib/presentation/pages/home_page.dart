@@ -1,10 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/logic/cubites/post/filter_cubit.dart';
-import 'package:shopesapp/presentation/shared/custom_widgets/custom_divider.dart';
 import 'package:shopesapp/presentation/widgets/page_header/page_header.dart';
 import 'package:shopesapp/presentation/widgets/product/product_post.dart';
 import 'package:shopesapp/presentation/widgets/switch_shop/error.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 import '../../data/enums/message_type.dart';
 import '../../data/models/post.dart';
 import '../../data/repositories/shared_preferences_repository.dart';
@@ -70,27 +71,47 @@ class _HomePageState extends State<HomePage> {
                               child: CircularProgressIndicator());
                         } else if (state is NoPostYet) {
                           //  print("selected");
-                          return buildNoPostsYet(size,
-                              "NO Posts Yet , Follow Stores to Show Posts");
+                          return buildNoPostsYet(
+                              size, LocaleKeys.no_posts_yet_follow_alert.tr());
                         } else if (state is DontFollowStoreYet) {
                           //  print("selected");
                           return buildNoPostsYet(
-                              size, "You dont have any followed store yet");
+                              size,
+                              LocaleKeys.you_dont_have_any_followed_store_yet
+                                  .tr());
                         } else if (state is FilteredSuccessfully) {
                           postsList = BlocProvider.of<FilterCubit>(context)
                               .filteredPosts;
-
+                          //  print(postsList);
                           return ListView.separated(
                             physics: const NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
                             itemCount: postsList.length,
                             separatorBuilder:
                                 (BuildContext context, int index) {
-                              return const CustomDivider();
+                              return Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: size.height * 0.01),
+                                  child: const Divider(
+                                    thickness: 7,
+                                  ));
                             },
                             itemBuilder: (BuildContext context, int index) {
                               return ProductPost(
                                 post: Post.fromMap(postsList[index]),
+                                // shop: Shop.fromJson(
+                                //     BlocProvider.of<FollowingCubit>(context)
+                                //         .updatedFollowedShops
+                                //         .firstWhere(
+                                //           (element) =>
+                                //               Post.fromMap(postsList[index])
+                                //                       .ownerID ==
+                                //                   Shop.fromJson(element)
+                                //                       .ownerID &&
+                                //               Post.fromMap(postsList[index])
+                                //                       .shopeID ==
+                                //                   Shop.fromJson(element).shopID,
+                                //         )),
                               );
                             },
                           );

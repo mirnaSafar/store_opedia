@@ -1,4 +1,7 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:bot_toast/bot_toast.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -8,7 +11,6 @@ import 'package:shopesapp/data/enums/message_type.dart';
 import 'package:shopesapp/logic/cubites/post/filter_cubit.dart';
 import 'package:shopesapp/presentation/location_service.dart';
 import 'package:shopesapp/presentation/pages/categories_page/categories_page.dart';
-import 'package:shopesapp/presentation/pages/suggested_stores.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_divider.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_sort_row.dart';
@@ -17,6 +19,7 @@ import 'package:shopesapp/presentation/shared/custom_widgets/custom_toast.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/user_input.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/presentation/shared/utils.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 import '../../../constant/categories.dart';
 import '../../../main.dart';
@@ -73,12 +76,11 @@ class _PageHeaderState extends State<PageHeader> {
                       });
                       CustomToast.showMessage(
                           size: size,
-                          message: '',
+                          message: LocaleKeys.filter_applay_successfully.tr(),
                           messageType: MessageType.SUCCESS,
                           context: context);
                       context.pop();
 
-                      context.push(const SuggestedStoresView());
                       BotToast.closeAllLoading();
                     }
                   },
@@ -107,13 +109,15 @@ class _PageHeaderState extends State<PageHeader> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const CustomText(
-                                  text: 'Location',
+                                CustomText(
+                                  text: LocaleKeys.location.tr(),
                                   bold: true,
                                 ),
                                 8.ph,
-                                const CustomText(
-                                    text: 'Nearest stores will be seen first'),
+                                CustomText(
+                                    text: LocaleKeys
+                                        .nearest_posts_will_be_seen_first
+                                        .tr()),
                               ],
                             ),
                           ],
@@ -124,7 +128,7 @@ class _PageHeaderState extends State<PageHeader> {
                 )
                 //harp),
                 ),
-            BlocProvider(
+            /*    BlocProvider(
                 create: (context) => FilterCubit(),
                 child: BlocConsumer<FilterCubit, FilterState>(
                   listener: (context, state) {
@@ -146,11 +150,11 @@ class _PageHeaderState extends State<PageHeader> {
                       });
                       CustomToast.showMessage(
                           size: size,
-                          message: '',
+                          message: LocaleKeys.filter_applay_successfully.tr(),
                           messageType: MessageType.SUCCESS,
                           context: context);
                       context.pop();
-                      context.push(const SuggestedStoresView());
+
                       BotToast.closeAllLoading();
                     }
                   },
@@ -164,16 +168,18 @@ class _PageHeaderState extends State<PageHeader> {
                             id: globalSharedPreference.getString("ID")!,
                             type: 'rate');
                       },
-                      child: const CustomSortRow(
-                        title: 'Rate',
-                        subtitle: 'Most rated stores will be seen first',
+                      child: CustomSortRow(
+                        title: LocaleKeys.rate.tr(),
+                        subtitle: LocaleKeys
+                            .most_Rated_Stores_will_be_seen_first
+                            .tr(),
                         icon: Icons.star,
                       ),
                     );
                   },
                 )
                 //harp),
-                ),
+                ),*/
             BlocProvider(
                 create: (context) => FilterCubit(),
                 child: BlocConsumer<FilterCubit, FilterState>(
@@ -190,18 +196,18 @@ class _PageHeaderState extends State<PageHeader> {
                       context.pop();
                       CustomToast.showMessage(
                           size: size,
-                          message: 'No Posts to show',
+                          message: LocaleKeys.no_posts_yet_follow_alert.tr(),
                           messageType: MessageType.REJECTED,
                           context: context);
                       BotToast.closeAllLoading();
                     } else if (state is FilteredSuccessfully) {
                       CustomToast.showMessage(
                           size: size,
-                          message: '',
+                          message: LocaleKeys.filter_applay_successfully.tr(),
                           messageType: MessageType.SUCCESS,
                           context: context);
                       context.pop();
-                      context.push(const SuggestedStoresView());
+
                       BotToast.closeAllLoading();
                     }
                   },
@@ -213,9 +219,10 @@ class _PageHeaderState extends State<PageHeader> {
                       onTap: () {
                         context.read<FilterCubit>().getOldestPosts();
                       },
-                      child: const CustomSortRow(
-                        title: 'Oldest',
-                        subtitle: 'Oldest stores will be seen first',
+                      child: CustomSortRow(
+                        title: LocaleKeys.oldest.tr(),
+                        subtitle:
+                            LocaleKeys.oldest_posts_will_be_seen_first.tr(),
                       ),
                     );
                   },
@@ -238,18 +245,18 @@ class _PageHeaderState extends State<PageHeader> {
                       context.pop();
                       CustomToast.showMessage(
                           size: size,
-                          message: 'No Posts to show',
+                          message: LocaleKeys.no_posts_yet_follow_alert.tr(),
                           messageType: MessageType.REJECTED,
                           context: context);
                       BotToast.closeAllLoading();
                     } else if (state is FilteredSuccessfully) {
                       CustomToast.showMessage(
                           size: size,
-                          message: '',
+                          message: LocaleKeys.filter_applay_successfully.tr(),
                           messageType: MessageType.SUCCESS,
                           context: context);
                       context.pop();
-                      context.push(const SuggestedStoresView());
+
                       BotToast.closeAllLoading();
                     }
                   },
@@ -261,9 +268,10 @@ class _PageHeaderState extends State<PageHeader> {
                       onTap: () {
                         context.read<FilterCubit>().getAllPosts();
                       },
-                      child: const CustomSortRow(
-                        title: 'Newest',
-                        subtitle: 'Newest stores will be seen first',
+                      child: CustomSortRow(
+                        title: LocaleKeys.newest.tr(),
+                        subtitle:
+                            LocaleKeys.nearest_posts_will_be_seen_first.tr(),
                       ),
                     );
                   },
@@ -297,8 +305,9 @@ class _PageHeaderState extends State<PageHeader> {
                     },
                     child: CustomText(
                       textAlign: TextAlign.center,
-                      text:
-                          'click here to Identify your request more specifically',
+                      text: LocaleKeys
+                          .click_here_to_Identify_your_request_more_specifically
+                          .tr(),
                       textColor: AppColors.secondaryFontColor,
                     )),
                 10.ph,
@@ -323,12 +332,12 @@ class _PageHeaderState extends State<PageHeader> {
                             } else if (state is FilteredSuccessfully) {
                               CustomToast.showMessage(
                                   size: size,
-                                  message: '',
+                                  message: LocaleKeys.filter_applay_successfully
+                                      .tr(),
                                   messageType: MessageType.SUCCESS,
                                   context: context);
                               context.pop();
 
-                              context.push(const SuggestedStoresView());
                               BotToast.closeAllLoading();
                             }
                           },
@@ -385,7 +394,7 @@ class _PageHeaderState extends State<PageHeader> {
                 Padding(
                   padding: EdgeInsetsDirectional.only(start: w * 0.05),
                   child: CustomText(
-                    text: 'Choose a city ',
+                    text: LocaleKeys.choose_a_city.tr(),
                     bold: true,
                     textColor: AppColors.secondaryFontColor,
                   ),
@@ -410,12 +419,12 @@ class _PageHeaderState extends State<PageHeader> {
                             } else if (state is FilteredSuccessfully) {
                               CustomToast.showMessage(
                                   size: size,
-                                  message: '',
+                                  message: LocaleKeys.filter_applay_successfully
+                                      .tr(),
                                   messageType: MessageType.SUCCESS,
                                   context: context);
                               context.pop();
 
-                              context.push(const SuggestedStoresView());
                               BotToast.closeAllLoading();
                             }
                           },
@@ -519,10 +528,10 @@ class _PageHeaderState extends State<PageHeader> {
                     );
                   }
                 },
-                child: const Text('Show on the map')),
+                child: Text(LocaleKeys.show_on_map.tr())),
           ),
           UserInput(
-            text: 'Search',
+            text: LocaleKeys.search.tr(),
             prefixIcon: const Icon(Icons.search),
             controller: searchController,
           )

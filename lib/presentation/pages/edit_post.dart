@@ -1,6 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,6 +19,7 @@ import 'package:shopesapp/presentation/shared/custom_widgets/user_input.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/presentation/shared/fonts.dart';
 import 'package:shopesapp/presentation/shared/utils.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 import '../../logic/cubites/post/update_post_cubit.dart';
 import '../shared/validation_functions.dart';
@@ -90,12 +94,12 @@ class _EditPostPageState extends State<EditPostPage> {
     var size = MediaQuery.of(context).size;
     return SafeArea(
         child: Scaffold(
-      backgroundColor: AppColors.mainWhiteColor,
+      // backgroundColor: AppColors.mainWhiteColor,
       appBar: AppBar(
         elevation: 0,
         leading: const BackButton(color: Colors.black),
         backgroundColor: Colors.transparent,
-        title: const CustomText(text: 'edit product'),
+        title: CustomText(text: LocaleKeys.edit_post.tr()),
       ),
       body: Padding(
         padding: EdgeInsets.symmetric(vertical: w * 0.06, horizontal: w * 0.06),
@@ -105,16 +109,16 @@ class _EditPostPageState extends State<EditPostPage> {
           child: ListView(children: [
             Center(
                 child: CustomText(
-              text: 'Edit Post',
+              text: LocaleKeys.edit_post.tr(),
               fontSize: AppFonts.primaryFontSize,
               textColor: AppColors.primaryFontColor,
             )),
             (w * 0.02).ph,
-            const Center(child: CustomText(text: 'Edit your post details')),
+            Center(
+                child:
+                    CustomText(text: LocaleKeys.edit_your_post_details.tr())),
             (w * 0.05).ph,
             Stack(
-              // fit: StackFit.expand,
-              // alignment: AlignmentDirectional.bottomEnd,
               children: [
                 Wrap(
                   children: [
@@ -167,16 +171,17 @@ class _EditPostPageState extends State<EditPostPage> {
               height: w * 0.03,
             ),
             UserInput(
-              text: 'Product name',
+              text: LocaleKeys.product_Name.tr(),
               controller: updatePostNameController,
-              validator: (name) => nameValidator(name, 'Enter product name'),
+              validator: (name) =>
+                  nameValidator(name, LocaleKeys.enter_product_name.tr()),
             ),
             UserInput(
-              text: 'Product Description',
+              text: LocaleKeys.product_Description.tr(),
               controller: updatePostDescriptionController,
             ),
             UserInput(
-              text: 'Product price',
+              text: LocaleKeys.product_price.tr(),
               controller: updatePostPriceController,
             ),
             (w * 0.08).ph,
@@ -186,7 +191,7 @@ class _EditPostPageState extends State<EditPostPage> {
                 onPressed: () {
                   context.pop();
                 },
-                text: 'cancel',
+                text: LocaleKeys.cancle.tr(),
                 color: AppColors.mainWhiteColor,
                 textColor: Theme.of(context).colorScheme.primary,
                 borderColor: Theme.of(context).colorScheme.primary,
@@ -200,7 +205,7 @@ class _EditPostPageState extends State<EditPostPage> {
                     if (state is UpdatePostSucceed) {
                       CustomToast.showMessage(
                           size: size,
-                          message: " Post edited Successfully",
+                          message: LocaleKeys.post_edited_successfully.tr(),
                           messageType: MessageType.SUCCESS,
                           context: context);
 
@@ -222,7 +227,8 @@ class _EditPostPageState extends State<EditPostPage> {
                         !formKey.currentState!.validate()
                             ? CustomToast.showMessage(
                                 size: size,
-                                message: 'Please check required fields',
+                                message: LocaleKeys.please_check_required_fields
+                                    .tr(),
                                 messageType: MessageType.WARNING,
                                 context: context)
                             : {
@@ -242,7 +248,7 @@ class _EditPostPageState extends State<EditPostPage> {
                                     )
                               };
                       },
-                      text: 'post',
+                      text: LocaleKeys.post.tr(),
                       textColor: AppColors.mainWhiteColor,
                     );
                   },
@@ -288,7 +294,7 @@ class _EditPostPageState extends State<EditPostPage> {
                             ),
                             (MediaQuery.of(context).size.width * 0.08).px,
                             CustomText(
-                              text: 'Camera',
+                              text: LocaleKeys.camera.tr(),
                               fontSize:
                                   (MediaQuery.of(context).size.width * 0.04),
                             )
@@ -313,7 +319,7 @@ class _EditPostPageState extends State<EditPostPage> {
                             ),
                             (MediaQuery.of(context).size.width * 0.08).px,
                             CustomText(
-                              text: 'Gallery',
+                              text: LocaleKeys.gallery.tr(),
                               fontSize:
                                   (MediaQuery.of(context).size.width * 0.04),
                             )

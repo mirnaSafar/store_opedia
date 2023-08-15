@@ -1,4 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 class ProfilePasswordFormField extends StatefulWidget {
   const ProfilePasswordFormField({Key? key, required this.password})
@@ -19,7 +21,7 @@ class _ProfilePasswordFormFieldState extends State<ProfilePasswordFormField> {
         enabled: false,
         keyboardType: TextInputType.visiblePassword,
         decoration: InputDecoration(
-          labelText: 'Password',
+          labelText: LocaleKeys.password.tr(),
           labelStyle: TextStyle(
               fontSize: 20, color: Theme.of(context).colorScheme.onSurface),
           prefixIcon: Icon(

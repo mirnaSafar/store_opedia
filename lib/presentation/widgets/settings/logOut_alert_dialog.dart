@@ -1,27 +1,31 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/presentation/pages/login_page.dart';
+import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 import '../../../logic/cubites/cubit/auth_cubit.dart';
 import '../../../logic/cubites/mode/themes_cubit.dart';
 
 void showLogOutAlertDialog(BuildContext context) {
   AwesomeDialog(
-      btnOkColor: Colors.green,
+      btnOkColor: AppColors.mainRedColor,
+      btnCancelColor: Colors.green,
       context: context,
-      animType: AnimType.SCALE,
-      dialogType: DialogType.WARNING,
-      body: const Center(
+      animType: AnimType.scale,
+      dialogType: DialogType.warning,
+      body: Center(
         child: Text(
-          'You Will Log Out!',
-          style: TextStyle(fontStyle: FontStyle.italic),
+          LocaleKeys.logOut_Warning.tr(),
+          style: const TextStyle(fontStyle: FontStyle.italic),
         ),
       ),
       btnCancelOnPress: () {},
-      btnCancelText: 'Cancel',
-      btnOkText: " Countinue",
+      btnCancelText: LocaleKeys.cancle.tr(),
+      btnOkText: LocaleKeys.ok.tr(),
       btnOkOnPress: () {
         BlocProvider.of<AuthCubit>(context).logOut();
         context.read<ThemesCubit>().changeTheme(0);

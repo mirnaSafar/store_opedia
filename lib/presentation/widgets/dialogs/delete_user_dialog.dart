@@ -1,41 +1,43 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/logic/cubites/cubit/auth_cubit.dart';
 import 'package:shopesapp/logic/cubites/cubit/auth_state.dart';
 import 'package:shopesapp/logic/cubites/user/delete_user_cubit.dart';
+import 'package:shopesapp/presentation/shared/colors.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 import '../../shared/custom_widgets/custom_text.dart';
 
 void showDeleteAlert(BuildContext context) {
   AwesomeDialog(
-      btnOkColor: Colors.green,
+      btnOkColor: AppColors.mainRedColor,
+      btnCancelColor: Colors.green,
       context: context,
-      animType: AnimType.SCALE,
-      dialogType: DialogType.WARNING,
+      animType: AnimType.scale,
+      dialogType: DialogType.warning,
       body: Center(
         child: BlocBuilder<AuthCubit, AuthState>(
           builder: (context, state) {
             if (state is UserLoginedIn) {
-              return const CustomText(
-                text:
-                    "You Will Delete Your Account , You Can't Restore Any Thing !",
+              return CustomText(
+                text: LocaleKeys.delete_user_account_alret.tr(),
                 textAlign: TextAlign.justify,
-                bold: true,
               );
             }
-            return const CustomText(
-              text:
-                  "You Will Delete Your Account And All Sotres And Posts , You Can't Restore Any Thing !",
-              bold: true,
+            return CustomText(
+              text: LocaleKeys.delete_owner_account_alret.tr(),
               textAlign: TextAlign.justify,
             );
           },
         ),
       ),
       btnCancelOnPress: () {},
-      btnCancelText: 'Cancel',
-      btnOkText: " Countinue",
+      btnCancelText: LocaleKeys.cancle.tr(),
+      btnOkText: LocaleKeys.countinue.tr(),
       btnOkOnPress: () {
         BlocProvider.of<DeleteUserCubit>(context).deleteUser();
       }).show();
