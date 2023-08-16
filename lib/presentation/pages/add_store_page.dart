@@ -391,7 +391,7 @@ class _EditStoreState extends State<AddStorePage> {
                   },
                   text: 'cancel',
                   color: AppColors.mainWhiteColor,
-                  textColor: Theme.of(context).primaryColor,
+                  textColor: AppColors.mainOrangeColor,
                   borderColor: AppColors.mainOrangeColor,
                 )),
                 70.px,

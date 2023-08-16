@@ -21,7 +21,8 @@ class _LocationSeviceState extends State<LocationSevice> {
 class LocationService {
   Location location = Location();
 
-  Future<LocationData?> getUserCurrentLocation({bool hideLoader = true}) async {
+  Future<LocationData?> getUserCurrentLocation(
+      {bool hideLoader = false}) async {
     LocationData locationData;
 
     if (!await isLocationEnabeld()) {
@@ -32,7 +33,7 @@ class LocationService {
       return null;
     }
 
-    customLoader(const Size(400, 1200));
+    if (!hideLoader) customLoader(const Size(400, 1200));
 
     locationData = await location.getLocation();
 

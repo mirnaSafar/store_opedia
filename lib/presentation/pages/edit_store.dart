@@ -53,7 +53,7 @@ class _EditStoreState extends State<EditStore> {
   int? endTimeHour;
   int? endTimeMinute;
 
-  late LatLng selectedStoreLocation;
+  LatLng? selectedStoreLocation;
   @override
   void initState() {
     timeString = globalSharedPreference.getString("startWorkTime");
@@ -131,8 +131,8 @@ class _EditStoreState extends State<EditStore> {
             path = profile
                 ? value?.path ?? profileSelectedFile?.path ?? profilePath ?? ''
                 : value?.path ?? coverSelectedFile?.path ?? coverPath ?? '');
-        globalSharedPreference.setString(
-            profile ? "shopProfileImage" : "shopCoverImage", path!);
+        // globalSharedPreference.setString(
+        //     profile ? "shopProfileImage" : "shopCoverImage", path!);
         imageFile = File(path!);
         splitPath = path!.split("/").last;
 
@@ -257,10 +257,8 @@ class _EditStoreState extends State<EditStore> {
                               child: (profileSelectedFile == null &&
                                       profilePath != 'url')
                                   ? profileSelectedFile == null
-                                      ? Image.asset(
-                                          'assets/store_placeholder.png',
-                                          fit: BoxFit.contain,
-                                        )
+                                      ? Image.network(globalSharedPreference
+                                          .getString("shopProfileImage")!)
                                       : Image.network(profilePath!)
                                   : null,
                             ),
@@ -400,29 +398,32 @@ class _EditStoreState extends State<EditStore> {
                   suffixIcon: IconButton(
                       onPressed: () async {
                         // LocationService().getCurrentAddressInfo();
-                        LocationData? currentLocation =
-                            await LocationService().getUserCurrentLocation();
-                        if (currentLocation != null) {
-                          selectedStoreLocation = await context.push(
-                            MapPage(
-                              currentLocation: currentLocation,
-                            ),
-                            // '${value?.country ?? ''}-${value?.street ?? ''
-                          );
-                          // storeLocationController.text =
-                          //     selectedStoreLocation.latitude.toString();
+                        LocationData? currentLocation = LocationData.fromMap({
+                          'latitude':
+                              globalSharedPreference.getDouble('latitude'),
+                          'longitude':
+                              globalSharedPreference.getDouble('longitude'),
+                        });
 
-                          LocationService()
-                              .getAddressInfo(LocationData.fromMap({
-                                'latitude': selectedStoreLocation.latitude,
-                                'longitude': selectedStoreLocation.longitude,
-                              }))
-                              .then(
-                                (value) => storeLocationController.text =
-                                    '${value?.country ?? ''}-${value?.street ?? ''}',
-                              );
-                          setState(() {});
-                        }
+                        selectedStoreLocation = await context.push(
+                          MapPage(
+                            currentLocation: currentLocation,
+                          ),
+                          // '${value?.country ?? ''}-${value?.street ?? ''
+                        );
+                        // storeLocationController.text =
+                        //     selectedStoreLocation.latitude.toString();
+
+                        LocationService()
+                            .getAddressInfo(LocationData.fromMap({
+                              'latitude': selectedStoreLocation!.latitude,
+                              'longitude': selectedStoreLocation!.longitude,
+                            }))
+                            .then(
+                              (value) => storeLocationController.text =
+                                  '${value?.country ?? ''}-${value?.street ?? ''}',
+                            );
+                        setState(() {});
                       },
                       icon: const Icon(Icons.location_on))),
 
@@ -431,6 +432,10 @@ class _EditStoreState extends State<EditStore> {
                 Expanded(
                     child: CustomButton(
                   onPressed: () {
+                    setState(() {
+                      profilePath = null;
+                      coverPath = null;
+                    });
                     context.pop();
                   },
                   text: 'cancel',
@@ -477,11 +482,15 @@ class _EditStoreState extends State<EditStore> {
                                     messageType: MessageType.WARNING)
                                 : {
                                     formKey.currentState!.save(),
+                                    globalSharedPreference.setString(
+                                        "shopCoverImage", coverPath!),
+                                    globalSharedPreference.setString(
+                                        "shopProfileImage", profilePath!),
                                     context.read<EditShopCubit>().editShop(
                                         storeCoverImageType:
-                                            storeCoverImageType!,
+                                            storeCoverImageType ?? '',
                                         storeProfileImageType:
-                                            storeProfileImageType!,
+                                            storeProfileImageType ?? '',
                                         shopName: storeNameController.text,
                                         shopDescription:
                                             storeDescriptionController.text,
@@ -492,10 +501,14 @@ class _EditStoreState extends State<EditStore> {
                                         shopCategory:
                                             storeCategoryController.text,
                                         location: storeLocationController.text,
-                                        latitude:
-                                            selectedStoreLocation.latitude,
-                                        longitude:
-                                            selectedStoreLocation.longitude,
+                                        latitude: selectedStoreLocation
+                                                ?.latitude ??
+                                            globalSharedPreference
+                                                .getDouble("latitude")!,
+                                        longitude: selectedStoreLocation
+                                                ?.longitude ??
+                                            globalSharedPreference
+                                                .getDouble("longitude")!,
                                         opening:
                                             storeStartWorkTimecontroller.text,
                                         closing:

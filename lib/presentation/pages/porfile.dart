@@ -86,7 +86,7 @@ class _ProfilePageState extends State<ProfilePage> {
         btnOkText: " Countinue",
         btnOkOnPress: () {
           BlocProvider.of<UpdateUserCubit>(context).updateUser(
-              id: globalSharedPreference.getString("ID")!,
+              id: globalSharedPreference.getString("ID") ?? '0',
               name: getUserName(),
               password: getPassword(),
               phoneNumber: getPhoneNumber());

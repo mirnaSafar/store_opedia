@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:flutter/material.dart';
 import 'package:shopesapp/data/repositories/shared_preferences_repository.dart';
 import 'package:shopesapp/data/repositories/shop_repository.dart';
 
@@ -22,8 +21,7 @@ class RateShopCubit extends Cubit<RateShopState> {
   }) async {
     Map<String, dynamic>? response = await ShopRepository()
         .sendShopRating(userID: userID, shopID: shopId, rateValue: newRate);
-    if (response == null ||
-        response["message"] == "You cannot rate your store") {
+    if (response == null) {
       CustomToast.showMessage(
           context: context,
           size: size,
@@ -32,7 +30,7 @@ class RateShopCubit extends Cubit<RateShopState> {
 
       emit(RateShopFailed(rate: ratevalue!));
     } else if (response["message"] == "Done") {
-      ratevalue = response["ratingNumber"];
+      ratevalue = double.parse(response["ratingNumber"].toString());
       CustomToast.showMessage(
           context: context,
           size: size,
@@ -44,23 +42,23 @@ class RateShopCubit extends Cubit<RateShopState> {
     }
   }
 
-  Future sendRating({
-    required String ownerID,
-    required String shopID,
-    required double rateValue,
-  }) async {
-    Map<String, dynamic>? response = await ShopRepository()
-        .sendShopRating(userID: ownerID, shopID: shopID, rateValue: rateValue);
-    if (response == null ||
-        response["message"] == "You cannot rate your store") {
-      const ScaffoldMessenger(child: Text('Something went wrong!'));
-    } else if (response["message"] == "Done") {
-      ratevalue = response["ratingNumber"];
-      SharedPreferencesRepository.setStoreRate(
-          ownerId: ownerID, shopId: shopID, rate: rateValue);
-      emit(RateShopState(rate: rateValue));
-    }
-  }
+  // Future sendRating({
+  //   required String ownerID,
+  //   required String shopID,
+  //   required double rateValue,
+  // }) async {
+  //   Map<String, dynamic>? response = await ShopRepository()
+  //       .sendShopRating(userID: ownerID, shopID: shopID, rateValue: rateValue);
+  //   if (response == null ||
+  //       response["message"] == "You cannot rate your store") {
+  //     const ScaffoldMessenger(child: Text('Something went wrong!'));
+  //   } else if (response["message"] == "Done") {
+  //     ratevalue = response["ratingNumber"];
+  //     SharedPreferencesRepository.setStoreRate(
+  //         ownerId: ownerID, shopId: shopID, rate: rateValue);
+  //     emit(RateShopState(rate: rateValue));
+  //   }
+  // }
 
   double getShopRating({required ownerId, required shopId}) {
     return SharedPreferencesRepository.getStoreRate(

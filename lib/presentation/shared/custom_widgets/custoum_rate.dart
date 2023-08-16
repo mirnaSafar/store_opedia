@@ -53,9 +53,9 @@ class _CustomRateState extends State<CustomRate> {
           context.read<RateShopCubit>().setShopRating(
                 context: context,
                 newRate: response.rating,
-                shopId: globalSharedPreference.getString("shopID")!,
+                shopId: widget.store!.shopID,
                 size: size,
-                userID: globalSharedPreference.getString("ID")!,
+                userID: globalSharedPreference.getString("ID"),
               );
         });
 
@@ -85,7 +85,7 @@ class _CustomRateState extends State<CustomRate> {
                     builder: (context, state) {
                       return CustomText(
                         text: widget.post == null
-                            ? context.read<RateShopCubit>().ratevalue.toString()
+                            ? widget.store!.rate.toString()
                             : context
                                 .read<RatePostCubit>()
                                 .getPostRating(

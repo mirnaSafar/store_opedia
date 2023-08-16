@@ -1,8 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:shopesapp/data/models/shop.dart';
+import 'package:shopesapp/logic/cubites/shop/store_cubit.dart';
+import 'package:shopesapp/main.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 
 import '../location_service.dart';
@@ -22,13 +26,13 @@ class MapPageState extends State<MapPage> {
       Completer<GoogleMapController>();
 
   @override
-  void initState() {
+  initState() {
     initalCameraPosition = CameraPosition(
       target: LatLng(widget.currentLocation.latitude ?? 37.43296265331129,
           widget.currentLocation.longitude ?? -122.08832357078792),
-      zoom: 14.4746,
+      zoom: 7.4746,
     );
-
+    // loadcustomIcon();
     selectedLocation = LatLng(
         widget.currentLocation.latitude ?? 37.43296265331129,
         widget.currentLocation.longitude ?? -122.08832357078792);
@@ -42,19 +46,24 @@ class MapPageState extends State<MapPage> {
               '${value?.administrativeArea ?? ''}-${value?.street ?? ''}',
         );
     markers.add(Marker(
+        icon: customIcon ?? BitmapDescriptor.defaultMarker,
         markerId: const MarkerId('Current'),
         position: LatLng(widget.currentLocation.latitude ?? 37.43296265331129,
             widget.currentLocation.longitude ?? -122.08832357078792)));
-    // BlocProvider.of<FilterCubit>(context)
-    //     .filterPostsWithLocation(location: selectedLocationAddress);
-    // List<dynamic> shops = BlocProvider.of<FilterCubit>(context).filteredPosts;
+    BlocProvider.of<StoreCubit>(context).locationFilterStores(
+      id: globalSharedPreference.getString("ID") ?? '0',
+      longitude: selectedLocation.longitude,
+      latitude: selectedLocation.latitude,
+    );
+    List<dynamic> shops = BlocProvider.of<StoreCubit>(context).shops;
 
-    // for (var element in shops) {
-    //   markers.add(Marker(
-    //       markerId: MarkerId(element.ownerID + element.shopID),
-    //       position: LatLng(element.latitude ?? 37.43296265331129,
-    //           element.longitude ?? -122.08832357078792)));
-    // }
+    for (var element in shops) {
+      element = Shop.fromMap(element);
+      markers.add(Marker(
+          markerId: MarkerId(element.ownerID + element.shopID),
+          position: LatLng(element.latitude ?? 37.43296265331129,
+              element.longitude ?? -122.08832357078792)));
+    }
     super.initState();
   }
 
@@ -62,7 +71,14 @@ class MapPageState extends State<MapPage> {
 
   late LatLng selectedLocation;
   String selectedLocationAddress = '';
+  Future<void> loadcustomIcon() async {
+    setState(() async {
+      customIcon = await BitmapDescriptor.fromAssetImage(
+          const ImageConfiguration(), 'assets/map-marker.png');
+    });
+  }
 
+  BitmapDescriptor? customIcon;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,19 +92,26 @@ class MapPageState extends State<MapPage> {
         },
         markers: markers,
         onTap: (latlong) {
-          setState(() {
+          setState(() async {
             selectedLocation = latlong;
             changeStoreLoaction();
             markers.add(Marker(
+                // icon: await customIcon,
                 markerId: const MarkerId('Current'),
                 position: LatLng(latlong.latitude, latlong.longitude)));
           });
         },
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.pop(selectedLocation),
-        label: Text(selectedLocationAddress),
-        icon: const Icon(Icons.directions_boat),
+      floatingActionButton: Padding(
+        padding: const EdgeInsetsDirectional.only(start: 20.0),
+        child: Align(
+          alignment: AlignmentDirectional.bottomStart,
+          child: FloatingActionButton.extended(
+            onPressed: () => context.pop(selectedLocation),
+            label: Text(selectedLocationAddress),
+            icon: const Icon(Icons.directions_boat),
+          ),
+        ),
       ),
     );
   }

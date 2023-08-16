@@ -176,7 +176,10 @@ class _CategoriesPageState extends State<CategoriesPage> {
                 )
               ],
             ),
-            Icon(categoryIcon(element)),
+            Padding(
+              padding: const EdgeInsetsDirectional.only(end: 15.0, bottom: 25),
+              child: Icon(categoryIcon(element)),
+            ),
             // Image.asset(
             //   'assets/verified.png',
             //   height: double.infinity,

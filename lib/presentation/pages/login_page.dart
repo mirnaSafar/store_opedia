@@ -6,6 +6,7 @@ import 'package:shopesapp/presentation/pages/privacy%20policies.dart';
 import 'package:shopesapp/presentation/pages/start_sign_up_page.dart';
 import 'package:shopesapp/presentation/pages/switch_store.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
+import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 import '../../data/enums/message_type.dart';
 import '../../data/repositories/shared_preferences_repository.dart';
@@ -160,6 +161,23 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                       isPasswordHidden: isPasswordHidden,
                                       setPassword: setPassword,
                                     ),
+                                    40.ph,
+                                    Align(
+                                      alignment:
+                                          AlignmentDirectional.centerStart,
+                                      child: InkWell(
+                                        onTap: () {
+                                          SharedPreferencesRepository
+                                              .setBrowsingPostsMode(
+                                                  isBrowsingMode: true);
+                                          context.push(const ControlPage());
+                                        },
+                                        child: CustomText(
+                                            textColor: AppColors.mainBlueColor,
+                                            underline: true,
+                                            text: 'continue as visitor'),
+                                      ),
+                                    )
                                   ]),
                             ),
                           ),

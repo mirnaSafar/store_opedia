@@ -208,7 +208,7 @@ class PostsRepository {
     };
 
     try {
-      response = await http.post(Uri.http(ENDPOINT, "show/my/like/$ownerID"),
+      response = await http.post(Uri.http(ENDPOINT, "show/my/Like/$ownerID"),
           body: jsonEncode(requestBody),
           headers: {
             'Content-Type': 'application/json',
@@ -221,6 +221,6 @@ class PostsRepository {
       parsedResult = jsonDecode(response.body);
       return parsedResult;
     }
-    return null;
+    return jsonDecode(response.body);
   }
 }

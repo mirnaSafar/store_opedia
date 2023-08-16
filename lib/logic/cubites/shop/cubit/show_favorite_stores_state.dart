@@ -1,7 +1,7 @@
 part of 'show_favorite_stores_cubit.dart';
 
 class ShowFavoriteStoresState {
-  final List<dynamic> favoriteStores;
+  List<dynamic> favoriteStores;
   ShowFavoriteStoresState({required this.favoriteStores});
 }
 
@@ -15,7 +15,10 @@ class ShowFavoriteStoresFailed extends ShowFavoriteStoresState {
 }
 
 class ShowFavoriteStoresSuccessed extends ShowFavoriteStoresState {
-  ShowFavoriteStoresSuccessed() : super(favoriteStores: []);
+  @override
+  List<dynamic> favoriteStores;
+  ShowFavoriteStoresSuccessed({required this.favoriteStores})
+      : super(favoriteStores: favoriteStores);
 }
 
 class NoFavoriteStores extends ShowFavoriteStoresState {

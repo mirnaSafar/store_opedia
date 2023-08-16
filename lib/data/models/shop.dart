@@ -73,6 +73,8 @@ class Shop {
       "is_active": isActive,
       "latitude": latitude,
       "longitude": longitude,
+      "isFollow": isFollow,
+      "isFavorite": isFavorit,
     };
   }
 
@@ -98,29 +100,34 @@ class Shop {
       isActive: map["is_active"] as bool,
       latitude: map["latitude"] as double,
       longitude: map["longitude"] as double,
+      isFavorit: map["isFav"],
+      isFollow: map["isFollow"],
     );
   }
 
   factory Shop.from(Shop oldShop) {
     return Shop(
-        shopCategory: oldShop.shopCategory,
-        location: oldShop.location,
-        startWorkTime: oldShop.startWorkTime,
-        endWorkTime: oldShop.endWorkTime,
-        ownerID: oldShop.ownerID,
-        ownerEmail: oldShop.ownerEmail,
-        ownerPhoneNumber: oldShop.ownerPhoneNumber,
-        shopID: oldShop.shopID,
-        shopName: oldShop.shopName,
-        ownerName: oldShop.ownerName,
-        shopCoverImage: oldShop.shopCoverImage,
-        shopDescription: oldShop.shopDescription,
-        shopPhoneNumber: oldShop.ownerPhoneNumber,
-        shopProfileImage: oldShop.shopProfileImage,
-        socialUrl: oldShop.socialUrl,
-        isActive: oldShop.isActive,
-        latitude: oldShop.latitude,
-        longitude: oldShop.longitude);
+      shopCategory: oldShop.shopCategory,
+      location: oldShop.location,
+      startWorkTime: oldShop.startWorkTime,
+      endWorkTime: oldShop.endWorkTime,
+      ownerID: oldShop.ownerID,
+      ownerEmail: oldShop.ownerEmail,
+      ownerPhoneNumber: oldShop.ownerPhoneNumber,
+      shopID: oldShop.shopID,
+      shopName: oldShop.shopName,
+      ownerName: oldShop.ownerName,
+      shopCoverImage: oldShop.shopCoverImage,
+      shopDescription: oldShop.shopDescription,
+      shopPhoneNumber: oldShop.ownerPhoneNumber,
+      shopProfileImage: oldShop.shopProfileImage,
+      socialUrl: oldShop.socialUrl,
+      isActive: oldShop.isActive,
+      latitude: oldShop.latitude,
+      longitude: oldShop.longitude,
+      isFavorit: oldShop.isFavorit,
+      isFollow: oldShop.isFollow,
+    );
   }
   String toJson() => json.encode(toMap());
 

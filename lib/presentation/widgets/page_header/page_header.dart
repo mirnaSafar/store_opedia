@@ -8,7 +8,6 @@ import 'package:shopesapp/data/enums/message_type.dart';
 import 'package:shopesapp/logic/cubites/post/filter_cubit.dart';
 import 'package:shopesapp/presentation/location_service.dart';
 import 'package:shopesapp/presentation/pages/categories_page/categories_page.dart';
-import 'package:shopesapp/presentation/pages/suggested_stores.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_divider.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_sort_row.dart';
@@ -78,7 +77,6 @@ class _PageHeaderState extends State<PageHeader> {
                           context: context);
                       context.pop();
 
-                      context.push(const SuggestedStoresView());
                       BotToast.closeAllLoading();
                     }
                   },
@@ -150,7 +148,7 @@ class _PageHeaderState extends State<PageHeader> {
                           messageType: MessageType.SUCCESS,
                           context: context);
                       context.pop();
-                      context.push(const SuggestedStoresView());
+
                       BotToast.closeAllLoading();
                     }
                   },
@@ -201,7 +199,7 @@ class _PageHeaderState extends State<PageHeader> {
                           messageType: MessageType.SUCCESS,
                           context: context);
                       context.pop();
-                      context.push(const SuggestedStoresView());
+
                       BotToast.closeAllLoading();
                     }
                   },
@@ -249,7 +247,7 @@ class _PageHeaderState extends State<PageHeader> {
                           messageType: MessageType.SUCCESS,
                           context: context);
                       context.pop();
-                      context.push(const SuggestedStoresView());
+
                       BotToast.closeAllLoading();
                     }
                   },
@@ -328,7 +326,6 @@ class _PageHeaderState extends State<PageHeader> {
                                   context: context);
                               context.pop();
 
-                              context.push(const SuggestedStoresView());
                               BotToast.closeAllLoading();
                             }
                           },
@@ -415,7 +412,6 @@ class _PageHeaderState extends State<PageHeader> {
                                   context: context);
                               context.pop();
 
-                              context.push(const SuggestedStoresView());
                               BotToast.closeAllLoading();
                             }
                           },

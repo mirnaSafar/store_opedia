@@ -16,7 +16,6 @@ import 'package:shopesapp/presentation/shared/custom_widgets/custom_toast.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/user_input.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/presentation/shared/utils.dart';
-import '../../shared/validation_functions.dart';
 
 class AddPostPage extends StatefulWidget {
   const AddPostPage({Key? key}) : super(key: key);
@@ -196,7 +195,8 @@ class _AddPostPageState extends State<AddPostPage> {
                       context
                           .read<PostsCubit>()
                           .getOwnerPosts(
-                            ownerID: globalSharedPreference.getString("ID")!,
+                            ownerID:
+                                globalSharedPreference.getString("ID") ?? '0',
                             shopID: globalSharedPreference.getString("shopID")!,
                           )
                           .then((value) => context.pop());

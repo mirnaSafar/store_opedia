@@ -2,21 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shopesapp/data/models/post.dart';
+import 'package:shopesapp/data/models/shop.dart';
 import 'package:shopesapp/logic/cubites/post/post_favorite_cubit.dart';
-import 'package:shopesapp/logic/cubites/post/rate_shop_cubit.dart';
 import 'package:shopesapp/main.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_divider.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
-import 'package:shopesapp/presentation/shared/custom_widgets/custoum_rate.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/presentation/shared/utils.dart';
 
+import '../../../data/repositories/shared_preferences_repository.dart';
 import '../../../logic/cubites/post/cubit/toggle_post_favorite_cubit.dart';
+import '../dialogs/browsing_alert_dialog.dart';
 
 class ProductInfo extends StatefulWidget {
-  const ProductInfo({Key? key, required this.post}) : super(key: key);
+  const ProductInfo({Key? key, required this.post, this.shop})
+      : super(key: key);
   final Post post;
+  final Shop? shop;
   @override
   State<ProductInfo> createState() => _ProductInfoState();
 }
@@ -40,14 +43,20 @@ class _ProductInfoState extends State<ProductInfo> {
             children: [
               20.px,
               CircleAvatar(
-                radius: w * 0.065,
-                backgroundColor: AppColors.mainTextColor,
-                // child: Image.asset('assets/verified.png', fit: BoxFit.cover),
-              ),
+                  radius: w * 0.065,
+                  backgroundColor: AppColors.mainTextColor,
+                  child: ClipOval(
+                      child: widget.shop?.shopProfileImage == 'url'
+                          ? Image.asset(
+                              'assets/store_placeholder.png',
+                              fit: BoxFit.fill,
+                            )
+                          : Image.network(widget.shop?.shopProfileImage ??
+                              widget.post.shopProfileImage!))),
               10.px,
               CustomText(
-                text: globalSharedPreference.getString('shopName') ??
-                    '', // bold: true,
+                text: widget.shop?.shopName ??
+                    widget.post.shopName!, // bold: true,
               ),
               // CustomText(
               //   text: 'clothes',
@@ -59,7 +68,7 @@ class _ProductInfoState extends State<ProductInfo> {
             ],
           ),
           20.ph,
-          Container(
+          SizedBox(
             height: h / 5,
             // color: AppColors.mainBlackColor,
             child: Image.network(widget.post.photos),
@@ -76,17 +85,21 @@ class _ProductInfoState extends State<ProductInfo> {
                       context.read<PostFavoriteCubit>();
                   return IconButton(
                       onPressed: () {
-                        postFavorite.isPostFavorite(widget.post)
-                            ? {
-                                postFavorite.removeFromFavorites(widget.post),
-                              }
-                            : postFavorite.addToFavorites(widget.post);
-                        context
-                            .read<TogglePostFavoriteCubit>()
-                            .toggolePostFavorite(
-                                postID: widget.post.postID,
-                                userID:
-                                    globalSharedPreference.getString("ID")!);
+                        if (!SharedPreferencesRepository
+                            .getBrowsingPostsMode()) {
+                          postFavorite.isPostFavorite(widget.post)
+                              ? postFavorite.removeFromFavorites(widget.post)
+                              : postFavorite.addToFavorites(widget.post);
+
+                          context
+                              .read<TogglePostFavoriteCubit>()
+                              .toggolePostFavorite(
+                                  postID: widget.post.postID,
+                                  userID:
+                                      globalSharedPreference.getString("ID")!);
+                        } else {
+                          showBrowsingDialogAlert(context);
+                        }
                       },
                       icon: !postFavorite.isPostFavorite(widget.post)
                           ? const Icon(Icons.favorite_border_outlined)
@@ -131,9 +144,7 @@ class _ProductInfoState extends State<ProductInfo> {
                     ),
                     20.px,
                     CustomText(
-                      text: widget.post.category ??
-                          globalSharedPreference.getString("shopCategory") ??
-                          '',
+                      text: widget.shop?.shopCategory ?? widget.post.category!,
                       textColor: AppColors.secondaryFontColor,
                     )
                   ],
@@ -153,20 +164,26 @@ class _ProductInfoState extends State<ProductInfo> {
                   ],
                 ),
                 20.ph,
-                Row(
-                  children: [
-                    Icon(
-                      Icons.short_text_rounded,
-                      color: AppColors.secondaryFontColor,
-                    ),
-                    20.px,
-                    CustomText(
-                      text: widget.post.description,
-                      textColor: AppColors.secondaryFontColor,
-                    )
-                  ],
+                Visibility(
+                  visible: widget.post.description!.isNotEmpty,
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.short_text_rounded,
+                        color: AppColors.secondaryFontColor,
+                      ),
+                      20.px,
+                      Expanded(
+                        child: CustomText(
+                          text: widget.post.description! ?? '',
+                          textColor: AppColors.secondaryFontColor,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-                20.ph,
+                Visibility(
+                    visible: widget.post.description!.isNotEmpty, child: 20.ph),
                 Row(
                   children: [
                     Icon(
@@ -175,7 +192,7 @@ class _ProductInfoState extends State<ProductInfo> {
                     ),
                     20.px,
                     CustomText(
-                      text: globalSharedPreference.getString('location') ?? '',
+                      text: widget.shop?.location ?? widget.post.location!,
                       textColor: AppColors.secondaryFontColor,
                     )
                   ],
@@ -279,6 +296,6 @@ Uri emailLaunchUri(Post post) => Uri(
       path: '${globalSharedPreference.getString('email')}',
       query: encodeQueryParameters(<String, String>{
         'subject':
-            '${globalSharedPreference.getString('shopName')}\nproduct title: ${post.title}\ndescription: ${post.description}',
+            '${globalSharedPreference.getString('shopName')}\nproduct title: ${post.title}\ndescription!?: ${post.description!}',
       }),
     );

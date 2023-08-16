@@ -9,7 +9,6 @@ import 'package:shopesapp/presentation/pages/store_page.dart';
 import 'package:shopesapp/presentation/pages/home_page.dart';
 import 'package:shopesapp/presentation/pages/suggested_stores.dart';
 import 'package:shopesapp/presentation/pages/user_store.dart';
-import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/widgets/bottom_navigation_bar/bottom_navigation_bar.dart';
 import '../../data/enums/bottom_navigation.dart';
 import '../../data/models/shop.dart';
@@ -109,7 +108,8 @@ class _ControlPageState extends State<ControlPage> {
                                 endWorkTime: globalSharedPreference
                                     .getString("endWorkTime")!,
                                 ownerID:
-                                    globalSharedPreference.getString("ID")!,
+                                    globalSharedPreference.getString("ID") ??
+                                        '0',
                                 ownerEmail:
                                     globalSharedPreference.getString("email")!,
                                 ownerPhoneNumber: globalSharedPreference

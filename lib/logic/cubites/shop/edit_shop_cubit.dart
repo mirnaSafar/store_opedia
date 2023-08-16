@@ -44,8 +44,8 @@ class EditShopCubit extends Cubit<EditShopState> {
       shopPhoneNumber: shopPhoneNumber,
       facebook: facebook,
       insta: insta,
-      latitude: globalSharedPreference.getDouble("latitude")!,
-      longitude: globalSharedPreference.getDouble("longitude")!,
+      latitude: latitude,
+      longitude: longitude,
       storeCoverImageType: storeCoverImageType,
       storeProfileImageType: storeProfileImageType,
     );
@@ -71,8 +71,8 @@ class EditShopCubit extends Cubit<EditShopState> {
         shopID: globalSharedPreference.getString("shopID")!,
         shopName: shopName,
         ownerName: globalSharedPreference.getString("name")!,
-        longitude: globalSharedPreference.getDouble("longitude")!,
-        latitude: globalSharedPreference.getDouble("latitude")!,
+        longitude: longitude,
+        latitude: latitude,
       ));
       GetOwnerShopsCubit().getOwnerShopsRequest(ownerID: '', message: 'all');
 

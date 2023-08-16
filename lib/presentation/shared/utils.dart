@@ -20,7 +20,7 @@ bool validPassword(String password) {
 }
 
 bool isName(String name) {
-  RegExp nameExp = RegExp(r'^[a-zA-Z\s]{2,15}$');
+  RegExp nameExp = RegExp(r'^[a-zA-Z\d\s]{2,15}$');
   return nameExp.hasMatch(name);
 }
 

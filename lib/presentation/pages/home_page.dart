@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/logic/cubites/post/filter_cubit.dart';
-import 'package:shopesapp/presentation/shared/custom_widgets/custom_divider.dart';
 import 'package:shopesapp/presentation/widgets/page_header/page_header.dart';
 import 'package:shopesapp/presentation/widgets/product/product_post.dart';
 import 'package:shopesapp/presentation/widgets/switch_shop/error.dart';
@@ -86,11 +85,29 @@ class _HomePageState extends State<HomePage> {
                             itemCount: postsList.length,
                             separatorBuilder:
                                 (BuildContext context, int index) {
-                              return const CustomDivider();
+                              return Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: size.height * 0.01),
+                                  child: const Divider(
+                                    thickness: 7,
+                                  ));
                             },
                             itemBuilder: (BuildContext context, int index) {
                               return ProductPost(
                                 post: Post.fromMap(postsList[index]),
+                                // shop: Shop.fromJson(
+                                //     BlocProvider.of<FollowingCubit>(context)
+                                //         .updatedFollowedShops
+                                //         .firstWhere(
+                                //           (element) =>
+                                //               Post.fromMap(postsList[index])
+                                //                       .ownerID ==
+                                //                   Shop.fromJson(element)
+                                //                       .ownerID &&
+                                //               Post.fromMap(postsList[index])
+                                //                       .shopeID ==
+                                //                   Shop.fromJson(element).shopID,
+                                //         )),
                               );
                             },
                           );

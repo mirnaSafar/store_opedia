@@ -6,7 +6,7 @@ class Post {
   String? shopeID;
   String postID;
   String title;
-  String description;
+  String? description;
   String photos;
   String? category;
   String? ownerID;
@@ -15,10 +15,17 @@ class Post {
   String price;
   int? rate;
   bool? isFavorit;
+  String? shopProfileImage;
+  String? shopCoverImage;
+  String? shopCategory;
+  String? shopName;
+  String? location;
+  double? latitude;
+  double? longitude;
 
   Post(
       {required this.title,
-      required this.description,
+      this.description = '',
       required this.category,
       required this.ownerID,
       required this.ownerName,
@@ -28,7 +35,14 @@ class Post {
       required this.shopeID,
       this.isFavorit = false,
       this.rate = 0,
-      required this.postID});
+      required this.postID,
+      this.shopCategory,
+      this.shopCoverImage,
+      this.shopName,
+      this.shopProfileImage,
+      this.location,
+      this.latitude,
+      this.longitude});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -42,6 +56,14 @@ class Post {
       'ownerPhoneNumber': ownerPhoneNumber,
       'price': price,
       'photos': photos,
+      'shopName': shopName,
+      'shopCategory': shopCategory,
+      'shopProfileImage': shopProfileImage,
+      'shopCoverImage': shopCoverImage,
+      'location': location,
+      'latitude': latitude,
+      'longitude': longitude,
+      'isFavorit': isFavorit
     };
   }
 
@@ -56,24 +78,41 @@ class Post {
         price: post.price,
         photos: post.photos,
         shopeID: post.shopeID,
-        postID: post.postID);
+        postID: post.postID,
+        shopName: post.shopName,
+        shopCategory: post.shopCategory,
+        shopProfileImage: post.shopProfileImage,
+        shopCoverImage: post.shopCoverImage,
+        location: post.location,
+        latitude: post.latitude,
+        longitude: post.longitude,
+        isFavorit: post.isFavorit);
   }
 
   factory Post.fromMap(Map<String, dynamic> map) {
     return Post(
-        title: map['title'],
-        description: map['description'],
-        category: map['category'] ??
-            globalSharedPreference.getString("shopCategory") ??
-            '',
-        ownerID: map['ownerID'] ?? globalSharedPreference.getString('ID'),
-        ownerName: map['ownerName'] ?? globalSharedPreference.getString("name"),
-        ownerPhoneNumber: map['ownerPhoneNumber'] ??
-            globalSharedPreference.getString("phoneNumber"),
-        price: map['price'],
-        photos: map['photos'],
-        shopeID: map['shopeID'] ?? globalSharedPreference.getString('shopID'),
-        postID: map['postID']);
+      title: map['title'],
+      description: map['description'],
+      category: map['category'] ??
+          globalSharedPreference.getString("shopCategory") ??
+          '',
+      ownerID: map['ownerID'] ?? globalSharedPreference.getString('ID'),
+      ownerName: map['ownerName'] ?? globalSharedPreference.getString("name"),
+      ownerPhoneNumber: map['ownerPhoneNumber'] ??
+          globalSharedPreference.getString("phoneNumber"),
+      price: map['price'],
+      photos: map['photos'],
+      shopeID: map['shopeID'] ?? globalSharedPreference.getString('shopID'),
+      postID: map['postID'],
+      shopName: map['shopName'],
+      shopCategory: map['shopCategory'],
+      shopProfileImage: map['shopProfileImage'],
+      shopCoverImage: map['shopCoverImage'],
+      location: map['location'],
+      latitude: map['latitude'],
+      longitude: map['longitude'],
+      isFavorit: map["isLike"],
+    );
   }
 
   String toJson() => json.encode(toMap());

@@ -21,7 +21,7 @@ class ToggoleFollowShopCubit extends Cubit<ToggoleFollowShopState> {
           ? "Failed to Follow this Shop , Check your Internet Connection"
           : response["message"]));
     } else {
-      const ScaffoldMessenger(child: Text('Rated Successfuly!'));
+      // const ScaffoldMessenger(child: Text('Rated Successfuly!'));
       emit(SucceedToggoleFollowShop(message: response["message"]));
     }
   }

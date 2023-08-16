@@ -20,8 +20,8 @@ class ShowFavoriteStoresCubit extends Cubit<ShowFavoriteStoresState> {
     }
     if (response != null && response['message'] == 'Done') {
       favoriteStores = response['favs'] as List<dynamic>;
-      // emit(ShowFavoriteStoresState(favoriteStores: favoriteStores));
-      emit(ShowFavoriteStoresSuccessed());
+      ShowFavoriteStoresState(favoriteStores: favoriteStores);
+      emit(ShowFavoriteStoresSuccessed(favoriteStores: favoriteStores));
     } else if (response != null &&
         response['message'] == 'You dont have any favourite stores yet') {
       emit(NoFavoriteStores());

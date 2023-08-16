@@ -29,9 +29,8 @@ class _ContactUsState extends State<ContactUs> {
   String? savedMessage;
   @override
   void initState() {
-    context
-        .read<GetCahtMessagesCubit>()
-        .getChatMessages(ownerID: globalSharedPreference.getString("ID")!);
+    context.read<GetCahtMessagesCubit>().getChatMessages(
+        ownerID: globalSharedPreference.getString("ID") ?? '0');
     isMessageSelected = false;
     globalSharedPreference.setBool("isMessageSelected", false);
     super.initState();
@@ -255,11 +254,11 @@ class _ContactUsState extends State<ContactUs> {
                                 "messageType", messageTypes[0]);
                           });
                         },
-                        child: const Text("Error"),
                         style: ElevatedButton.styleFrom(
                             backgroundColor: messageColor[0],
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30))),
+                        child: const Text("Error"),
                       ),
                       ElevatedButton(
                         onPressed: () {
@@ -268,11 +267,11 @@ class _ContactUsState extends State<ContactUs> {
                           globalSharedPreference.setString(
                               "messageType", messageTypes[1]);
                         },
-                        child: const Text("Suggestion"),
                         style: ElevatedButton.styleFrom(
                             backgroundColor: messageColor[1],
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30))),
+                        child: const Text("Suggestion"),
                       ),
                       ElevatedButton(
                         onPressed: () {
@@ -281,11 +280,11 @@ class _ContactUsState extends State<ContactUs> {
                           globalSharedPreference.setString(
                               "messageType", messageTypes[2]);
                         },
-                        child: const Text("Guidance"),
                         style: ElevatedButton.styleFrom(
                             backgroundColor: messageColor[2],
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30))),
+                        child: const Text("Guidance"),
                       ),
                       ElevatedButton(
                         onPressed: () {
@@ -294,11 +293,11 @@ class _ContactUsState extends State<ContactUs> {
                           globalSharedPreference.setString(
                               "messageType", messageTypes[3]);
                         },
-                        child: const Text("Others"),
                         style: ElevatedButton.styleFrom(
                             backgroundColor: messageColor[3],
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30))),
+                        child: const Text("Others"),
                       ),
                     ],
                   ),
