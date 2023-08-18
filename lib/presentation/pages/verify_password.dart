@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -5,10 +6,10 @@ import 'package:shopesapp/logic/cubites/cubit/verify_password_cubit.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/presentation/widgets/edit_profile/password_form_field.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 import '../../data/enums/message_type.dart';
 import '../../logic/cubites/cubit/profile_cubit.dart';
-import '../shared/custom_widgets/custom_button.dart';
 import '../shared/custom_widgets/custom_toast.dart';
 
 class VerifyPassword extends StatefulWidget {
@@ -50,20 +51,34 @@ class _VerifyPasswordState extends State<VerifyPassword> {
             Row(
               children: [
                 Expanded(
-                    child: CustomButton(
-                  onPressed: () {
-                    context.pop();
-                    CustomToast.showMessage(
-                        context: context,
-                        size: size,
-                        message: "You Have to write the Password First !",
-                        messageType: MessageType.INFO);
-                  },
-                  text: 'cancel',
-                  color: AppColors.mainWhiteColor,
-                  textColor: Theme.of(context).colorScheme.primary,
-                  borderColor: Theme.of(context).colorScheme.primary,
-                )),
+                  child: ElevatedButton(
+                      onPressed: () {
+                        CustomToast.showMessage(
+                            context: context,
+                            size: size,
+                            message: LocaleKeys
+                                .you_have_to_write_the_password_first
+                                .tr(),
+                            messageType: MessageType.INFO);
+                        context.pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 15,
+                          ),
+                          backgroundColor: AppColors.mainWhiteColor,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30)),
+                          side: BorderSide(
+                            color: Theme.of(context).colorScheme.primary,
+                          )),
+                      child: Text(
+                        LocaleKeys.cancle.tr(),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      )),
+                ),
                 (size.width * 0.08).px,
                 Expanded(
                   child: BlocConsumer<VerifyPasswordCubit, VerifyPasswordState>(
@@ -78,7 +93,7 @@ class _VerifyPasswordState extends State<VerifyPassword> {
                         CustomToast.showMessage(
                             context: context,
                             size: size,
-                            message: "Verify Password Succeed",
+                            message: LocaleKeys.verify_password_succeed.tr(),
                             messageType: MessageType.SUCCESS);
                         BlocProvider.of<ProfileCubit>(context).setVerifiy(true);
                         context.pop();
@@ -94,17 +109,14 @@ class _VerifyPasswordState extends State<VerifyPassword> {
                                 ? CustomToast.showMessage(
                                     context: context,
                                     size: size,
-                                    message:
-                                        "You Have to write the Password First !",
+                                    message: LocaleKeys
+                                        .you_have_to_write_the_password_first
+                                        .tr(),
                                     messageType: MessageType.INFO)
                                 : context
                                     .read<VerifyPasswordCubit>()
                                     .verifyPassword(password: getPassword()!);
                           },
-                          child: Text(
-                            "Verify",
-                            style: TextStyle(color: AppColors.mainWhiteColor),
-                          ),
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(
                               vertical: 15,
@@ -112,6 +124,10 @@ class _VerifyPasswordState extends State<VerifyPassword> {
                             backgroundColor: Colors.green[700],
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30)),
+                          ),
+                          child: Text(
+                            LocaleKeys.verify.tr(),
+                            style: TextStyle(color: AppColors.mainWhiteColor),
                           ));
                     },
                   ),

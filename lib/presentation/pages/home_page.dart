@@ -1,16 +1,26 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/logic/cubites/post/filter_cubit.dart';
-import 'package:shopesapp/presentation/widgets/page_header/page_header.dart';
-import 'package:shopesapp/presentation/widgets/product/product_post.dart';
+import 'package:shopesapp/logic/cubites/shop/cubit/search_store_cubit.dart';
+import 'package:shopesapp/presentation/shared/extensions.dart';
+import 'package:shopesapp/presentation/widgets/suggested_store/page_hader.dart';
 import 'package:shopesapp/presentation/widgets/switch_shop/error.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 import '../../data/enums/message_type.dart';
 import '../../data/models/post.dart';
+import '../../data/models/shop.dart';
 import '../../data/repositories/shared_preferences_repository.dart';
 import '../../logic/cubites/cubit/internet_cubit.dart';
+import '../../main.dart';
+import '../shared/custom_widgets/custom_divider.dart';
 import '../shared/custom_widgets/custom_toast.dart';
+import '../shared/custom_widgets/user_input.dart';
 import '../widgets/home/no_Internet.dart';
 import '../widgets/home/no_posts_yet.dart';
+import '../widgets/product/product_post.dart';
+import '../widgets/suggested_store/no_shop_yet.dart';
+import '../widgets/suggested_store/suggested_store.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -20,6 +30,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  TextEditingController searchController = TextEditingController();
   List<dynamic> postsList = [];
   @override
   void initState() {
@@ -56,70 +67,116 @@ class _HomePageState extends State<HomePage> {
 
             return ListView(
               children: [
-                const Padding(
-                  padding: EdgeInsets.only(left: 20, right: 20, bottom: 30),
-                  child: PageHeader(),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+                  child: Column(
+                    children: [
+                      const PageHeader(
+                        homePage: true,
+                      ),
+                      UserInput(
+                        onChanged: (value) {
+                          BlocProvider.of<SearchStoreCubit>(context)
+                              .searchStore(
+                                  ownerID:
+                                      globalSharedPreference.getString("ID") ??
+                                          '0',
+                                  search: value);
+                        },
+                        text: LocaleKeys.search.tr(),
+                        prefixIcon: const Icon(Icons.search),
+                        controller: searchController,
+                      ),
+                    ],
+                  ),
                 ),
-                (SharedPreferencesRepository.getBrowsingPostsMode())
-                    ? buildError(size)
-                    : BlocBuilder<FilterCubit, FilterState>(
+                30.ph,
+                searchController.text.isNotEmpty
+                    ? BlocBuilder<SearchStoreCubit, SearchStoreState>(
                         builder: (context, state) {
-                        if (state is FilterProgress) {
+                        if (state is SearchStoreProgress) {
                           return const Center(
                               child: CircularProgressIndicator());
-                        } else if (state is NoPostYet) {
-                          //  print("selected");
-                          return buildNoPostsYet(size,
-                              "NO Posts Yet , Follow Stores to Show Posts");
-                        } else if (state is DontFollowStoreYet) {
-                          //  print("selected");
-                          return buildNoPostsYet(
-                              size, "You dont have any followed store yet");
-                        } else if (state is FilteredSuccessfully) {
-                          postsList = BlocProvider.of<FilterCubit>(context)
-                              .filteredPosts;
+                        } else if (state is NoSearchResult) {
+                          return buildNoShopsYet(size);
+                        } else if (state is SearchStoreSuccessed) {
+                          // searchStoreResult = context.read<SearchStoreCubit>().searchResult;
 
                           return ListView.separated(
                             physics: const NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
-                            itemCount: postsList.length,
+                            itemCount: state.searchResult.length,
                             separatorBuilder:
                                 (BuildContext context, int index) {
-                              return Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: size.height * 0.01),
-                                  child: const Divider(
-                                    thickness: 7,
-                                  ));
+                              return const CustomDivider();
                             },
                             itemBuilder: (BuildContext context, int index) {
-                              return ProductPost(
-                                post: Post.fromMap(postsList[index]),
-                                // shop: Shop.fromJson(
-                                //     BlocProvider.of<FollowingCubit>(context)
-                                //         .updatedFollowedShops
-                                //         .firstWhere(
-                                //           (element) =>
-                                //               Post.fromMap(postsList[index])
-                                //                       .ownerID ==
-                                //                   Shop.fromJson(element)
-                                //                       .ownerID &&
-                                //               Post.fromMap(postsList[index])
-                                //                       .shopeID ==
-                                //                   Shop.fromJson(element).shopID,
-                                //         )),
+                              return SuggestedStore(
+                                shop: Shop.fromMap(state.searchResult[index]),
                               );
                             },
                           );
                         }
-                        /*    if (!SharedPreferencesRepository
-                            .getBrowsingPostsMode()) {
-                          return buildNoPostsYet(
-                              "You Can't Follow Store Yet \n Pleas Create one now or login  befor",
-                              size);
-                        }*/
                         return buildError(size);
-                      }),
+                      })
+                    : (SharedPreferencesRepository.getBrowsingPostsMode())
+                        ?
+                        // buildError(size)
+                        Center(
+                            child: buildNoPostsYet(
+                              size,
+                              "Create account or login to follow stores and see posts",
+                            ),
+                          )
+                        : BlocBuilder<FilterCubit, FilterState>(
+                            builder: (context, state) {
+                            if (state is FilterProgress) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            } else if (state is NoPostYet) {
+                              //  print("selected");
+                              return buildNoPostsYet(size,
+                                  LocaleKeys.no_posts_yet_follow_alert.tr());
+                            } else if (state is DontFollowStoreYet) {
+                              //  print("selected");
+                              return buildNoPostsYet(
+                                  size,
+                                  LocaleKeys
+                                      .you_dont_have_any_followed_store_yet
+                                      .tr());
+                            } else if (state is FilteredSuccessfully) {
+                              postsList = BlocProvider.of<FilterCubit>(context)
+                                  .filteredPosts;
+                              //  print(postsList);
+                              return ListView.separated(
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                itemCount: postsList.length,
+                                separatorBuilder:
+                                    (BuildContext context, int index) {
+                                  return Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: size.height * 0.01),
+                                      child: const Divider(
+                                        thickness: 7,
+                                      ));
+                                },
+                                itemBuilder: (BuildContext context, int index) {
+                                  return ProductPost(
+                                    post: Post.fromMap(postsList[index]),
+                                  );
+                                },
+                              );
+                            }
+                            // if (SharedPreferencesRepository
+                            //     .getBrowsingPostsMode()) {
+                            //   return buildNoPostsYet(
+                            //       "You Can't Follow Store Yet \n Pleas Create one now or login  befor",
+                            //       size);
+                            // }
+                            return buildError(size);
+                          }),
               ],
             );
           },

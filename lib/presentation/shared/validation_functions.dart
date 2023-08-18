@@ -1,62 +1,64 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:shopesapp/presentation/shared/utils.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 confirmPassword(value, password) {
   if (value!.isNotEmpty) {
-    if (!validPassword(value)) return 'invalid password';
-    return password != value ? 'not match' : null;
+    if (!validPassword(value)) return LocaleKeys.invalid_password.tr();
+    return password != value ? LocaleKeys.not_match.tr() : null;
   } else {
-    return 'enter your password';
+    return LocaleKeys.enter_your_password.tr();
   }
 }
 
 String? passValidator(value) {
   if (value!.isNotEmpty) {
     if (!validPassword(value)) {
-      return 'invalid password';
+      return LocaleKeys.invalid_password.tr();
     }
     return null;
   } else {
-    return 'enter your password';
+    return LocaleKeys.enter_your_password.tr();
   }
 }
 
 String? numberValidator(value, String? warningMessage) {
   if (value!.isNotEmpty) {
     if (!isMobileNumber(value)) {
-      return 'invalid number';
+      return LocaleKeys.invalid_number.tr();
     }
     return null;
   } else {
-    return warningMessage ?? 'enter your number';
+    return warningMessage ?? LocaleKeys.enter_your_number.tr();
   }
 }
 
 emailValidator(String? value, String? warningMessage) {
   if (value!.isNotEmpty) {
     if (!isEmail(value)) {
-      return 'invalid email';
+      return LocaleKeys.invalid_email.tr();
     }
     return null;
   } else {
-    return warningMessage ?? 'enter your email';
+    return warningMessage ?? LocaleKeys.enter_your_email.tr();
   }
 }
 
 nameValidator(String? value, String? warningMessage) {
   if (value!.isNotEmpty) {
     if (!isName(value)) {
-      return 'invalid name';
+      return LocaleKeys.invalid_name.tr();
     }
     return null;
   } else {
-    return warningMessage ?? 'enter your name';
+    return warningMessage ?? LocaleKeys.enter_your_name.tr();
   }
 }
 
 editNameValidator(String? value) {
   if (value!.isNotEmpty) {
     if (!isName(value)) {
-      return 'invalid name';
+      return LocaleKeys.invalid_name.tr();
     }
   }
   return null;
@@ -65,7 +67,7 @@ editNameValidator(String? value) {
 String? editNumberValidator(value) {
   if (value!.isNotEmpty) {
     if (!isMobileNumber(value)) {
-      return 'invalid number';
+      return LocaleKeys.invalid_number.tr();
     }
   }
   return null;

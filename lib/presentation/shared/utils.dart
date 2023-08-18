@@ -1,10 +1,12 @@
 import 'package:bot_toast/bot_toast.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shopesapp/data/enums/file_type.dart';
 import 'package:shopesapp/data/enums/message_type.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_toast.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 bool isEmail(String value) {
@@ -40,13 +42,13 @@ Future cLaunchUrl(Uri url) async {
   if (await canLaunchUrl(url)) {
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
       CustomToast.showMessage(
-          message: 'Cant lunch url',
+          message: LocaleKeys.cant_lunch_url.tr(),
           messageType: MessageType.REJECTED,
           size: const Size(400, 100));
     }
   } else {
     CustomToast.showMessage(
-        message: 'app not installed',
+        message: LocaleKeys.app_not_installed.tr(),
         messageType: MessageType.REJECTED,
         size: const Size(400, 100));
   }

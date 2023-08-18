@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:shopesapp/constant/switch_to_arabic.dart';
 import 'package:shopesapp/data/models/post.dart';
-import 'package:shopesapp/data/models/shop.dart';
 import 'package:shopesapp/logic/cubites/post/post_favorite_cubit.dart';
 import 'package:shopesapp/main.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
@@ -16,10 +16,9 @@ import '../../../logic/cubites/post/cubit/toggle_post_favorite_cubit.dart';
 import '../dialogs/browsing_alert_dialog.dart';
 
 class ProductInfo extends StatefulWidget {
-  const ProductInfo({Key? key, required this.post, this.shop})
-      : super(key: key);
+  const ProductInfo({Key? key, required this.post}) : super(key: key);
   final Post post;
-  final Shop? shop;
+
   @override
   State<ProductInfo> createState() => _ProductInfoState();
 }
@@ -34,7 +33,7 @@ class _ProductInfoState extends State<ProductInfo> {
       //  backgroundColor: AppColors.mainWhiteColor,
       appBar: AppBar(
         elevation: 0,
-        leading: const BackButton(color: Colors.black),
+        leading: BackButton(color: Theme.of(context).primaryColorDark),
         backgroundColor: Colors.transparent,
       ),
       body: ListView(
@@ -43,21 +42,20 @@ class _ProductInfoState extends State<ProductInfo> {
             children: [
               20.px,
               CircleAvatar(
-                  radius: w * 0.065,
-                  backgroundColor: AppColors.mainTextColor,
-                  child: ClipOval(
-                      child: widget.shop?.shopProfileImage == 'url'
-                          ? Image.asset(
-                              'assets/store_placeholder.png',
-                              fit: BoxFit.fill,
-                            )
-                          : Image.network(widget.shop?.shopProfileImage ??
-                              widget.post.shopProfileImage!))),
-              10.px,
-              CustomText(
-                text: widget.shop?.shopName ??
-                    widget.post.shopName!, // bold: true,
+                radius: w * 0.07,
+                backgroundColor: AppColors.mainTextColor,
+                backgroundImage: widget.post.shopProfileImage == 'url'
+                    ? const AssetImage(
+                        'assets/profile_photo.jpg',
+                      )
+                    : NetworkImage(widget.post.shopProfileImage!)
+                        as ImageProvider,
+                // child: ClipOval(
+                //     child: Image.network(widget.post.shopProfileImage))
               ),
+              10.px,
+              CustomText(text: widget.post.shopName! // bold: true,
+                  ),
               // CustomText(
               //   text: 'clothes',
               //   fontSize: w * 0.03,
@@ -96,12 +94,13 @@ class _ProductInfoState extends State<ProductInfo> {
                               .toggolePostFavorite(
                                   postID: widget.post.postID,
                                   userID:
-                                      globalSharedPreference.getString("ID")!);
+                                      globalSharedPreference.getString("ID")!)
+                              .then((value) => null);
                         } else {
                           showBrowsingDialogAlert(context);
                         }
                       },
-                      icon: !postFavorite.isPostFavorite(widget.post)
+                      icon: !widget.post.isFavorit!
                           ? const Icon(Icons.favorite_border_outlined)
                           : Icon(
                               Icons.favorite,
@@ -144,7 +143,9 @@ class _ProductInfoState extends State<ProductInfo> {
                     ),
                     20.px,
                     CustomText(
-                      text: widget.shop?.shopCategory ?? widget.post.category!,
+                      text: globalSharedPreference.getBool("isArabic") == false
+                          ? widget.post.shopCategory!
+                          : switchCategoryToArabic(widget.post.shopCategory!),
                       textColor: AppColors.secondaryFontColor,
                     )
                   ],
@@ -175,7 +176,7 @@ class _ProductInfoState extends State<ProductInfo> {
                       20.px,
                       Expanded(
                         child: CustomText(
-                          text: widget.post.description! ?? '',
+                          text: widget.post.description!,
                           textColor: AppColors.secondaryFontColor,
                         ),
                       )
@@ -192,13 +193,17 @@ class _ProductInfoState extends State<ProductInfo> {
                     ),
                     20.px,
                     CustomText(
-                      text: widget.shop?.location ?? widget.post.location!,
+                      text: globalSharedPreference.getBool("isArabic") == false
+                          ? widget.post.location!
+                          : switchLocationToArabic(widget.post.location!),
                       textColor: AppColors.secondaryFontColor,
                     )
                   ],
                 ),
                 Align(
-                  alignment: Alignment.bottomRight,
+                  alignment: globalSharedPreference.getBool("isArabic") == false
+                      ? Alignment.bottomRight
+                      : Alignment.bottomLeft,
                   child: InkWell(
                     onTap: () => showDialog(
                       context: context,
@@ -206,7 +211,7 @@ class _ProductInfoState extends State<ProductInfo> {
                     ),
                     child: Icon(
                       Icons.question_mark_rounded,
-                      color: AppColors.mainOrangeColor,
+                      color: Theme.of(context).colorScheme.primary,
                       size: w * 0.15,
                     ),
                   ),
@@ -224,9 +229,13 @@ class _ProductInfoState extends State<ProductInfo> {
       shadowColor: AppColors.mainBlackColor,
       // backgroundColor: AppColors.mainBlueColor,
       surfaceTintColor: Colors.transparent,
-      alignment: Alignment.bottomRight,
+      alignment: globalSharedPreference.getBool("isArabic") == false
+          ? Alignment.bottomRight
+          : Alignment.bottomLeft,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-      insetPadding: const EdgeInsets.only(bottom: 250, right: 36, left: 315),
+      insetPadding: globalSharedPreference.getBool("isArabic") == false
+          ? const EdgeInsets.only(bottom: 250, right: 36, left: 315)
+          : const EdgeInsets.only(bottom: 250, right: 315, left: 36),
       clipBehavior: Clip.hardEdge,
       child: SizedBox(
         // color: AppColors.mainBlueColor,
@@ -254,9 +263,8 @@ class _ProductInfoState extends State<ProductInfo> {
               ),
               40.ph,
               InkWell(
-                onTap: () => cLaunchUrl(Uri(
-                  path:
-                      'whatsapp://send?phone=${globalSharedPreference.getString("shopPhoneNumber")}',
+                onTap: () => cLaunchUrl(Uri.parse(
+                  'https://wa.me/${globalSharedPreference.getString("shopPhoneNumber")}',
                 )),
                 child: SvgPicture.asset(
                   'assets/whatsapp-svgrepo-com.svg',

@@ -1,4 +1,6 @@
 import 'package:bloc/bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 import '../../../../data/repositories/shop_repository.dart';
 
@@ -14,7 +16,7 @@ class ToggoleFavoriteShopCubit extends Cubit<ToggoleFavoriteShopState> {
         .toggoleFavoriteShop(shopID: shopID, ownerID: ownerID);
     if (response == null || response["message"] == "Access Denied") {
       emit(FailedToggoleFavoriteShop(response == null
-          ? "Failed to favorite this Shop , Check your Internet Connection"
+          ? LocaleKeys.fav_store_failed.tr()
           : response["message"]));
     } else {
       emit(SucceedToggoleFavoriteShop(message: response["message"]));

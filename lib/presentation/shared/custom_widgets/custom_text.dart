@@ -23,6 +23,7 @@ class CustomText extends StatelessWidget {
     return Text(text,
         textAlign: textAlign ?? TextAlign.start,
         style: TextStyle(
+          overflow: TextOverflow.fade,
           // height: 1.5,
           fontWeight: bold == true ? FontWeight.bold : FontWeight.normal,
           fontSize: fontSize ?? 16,

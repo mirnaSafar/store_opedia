@@ -1,6 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -16,7 +19,9 @@ import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_button.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/user_input.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
+import '../../constant/switch_to_english.dart';
 import '../../data/enums/file_type.dart';
 import '../../logic/cubites/shop/add_shop_cubit.dart';
 
@@ -128,10 +133,12 @@ class _EditStoreState extends State<AddStorePage> {
         child: Scaffold(
       //   backgroundColor: AppColors.mainWhiteColor,
       appBar: AppBar(
-        leading: const BackButton(color: Colors.black),
-        backgroundColor: AppColors.mainWhiteColor,
+        leading: BackButton(
+          color: Theme.of(context).primaryColorDark,
+        ),
+        // backgroundColor: AppColors.mainWhiteColor,
         title: CustomText(
-          text: 'Add Store',
+          text: LocaleKeys.add_store.tr(),
           fontSize: w * 0.05,
           // textColor: AppColors.mainWhiteColor,
         ),
@@ -167,7 +174,7 @@ class _EditStoreState extends State<AddStorePage> {
                                 ),
                               )
                             : Image.asset(
-                                'assets/store_cover_placeholder.jpg',
+                                'assets/cover_photo.jpg',
                                 fit: BoxFit.contain,
                               ),
                       )
@@ -218,16 +225,21 @@ class _EditStoreState extends State<AddStorePage> {
                                 radius: w * 0.11,
                                 backgroundImage: profileSelectedFile != null
                                     ? FileImage(File(profileSelectedFile!.path))
-                                    : null,
-                                child: ClipOval(
-                                  child: profileSelectedFile == null ||
-                                          profileSelectedFile!.path.isEmpty
-                                      ? Image.asset(
-                                          'assets/store_placeholder.png',
-                                          fit: BoxFit.contain,
-                                        )
-                                      : null,
-                                ),
+                                    : profileSelectedFile == null ||
+                                            profileSelectedFile!.path.isEmpty
+                                        ? const AssetImage(
+                                            'assets/profile_photo.jpg',
+                                          ) as ImageProvider
+                                        : null,
+                                // child: ClipOval(
+                                //   child: profileSelectedFile == null ||
+                                //           profileSelectedFile!.path.isEmpty
+                                //       ? Image.asset(
+                                //           'assets/store_placeholder.png',
+                                //           fit: BoxFit.contain,
+                                //         )
+                                //       : null,
+                                // ),
                               ),
                             )),
                         Padding(
@@ -259,8 +271,29 @@ class _EditStoreState extends State<AddStorePage> {
                   ),
                 ],
               ),
-              UserInput(
-                  text: 'Store Category',
+              Row(
+                children: [
+                  Expanded(
+                    child: UserInput(
+                      enabled: false,
+                      text: LocaleKeys.store_category.tr(),
+                      controller: storeCategoryController,
+                    ),
+                  ),
+                  IconButton(
+                      onPressed: () async {
+                        await context.push(const SignUpCategoriesPage()).then(
+                            (value) => storeCategoryController.text = value);
+                        setState(() {});
+                      },
+                      icon: Icon(
+                        Icons.comment,
+                        color: Theme.of(context).colorScheme.primary,
+                      ))
+                ],
+              ),
+              /*     UserInput(
+                  text: LocaleKeys.store_category.tr(),
                   controller: storeCategoryController,
                   suffixIcon: IconButton(
                       onPressed: () async {
@@ -268,27 +301,27 @@ class _EditStoreState extends State<AddStorePage> {
                             (value) => storeCategoryController.text = value);
                         setState(() {});
                       },
-                      icon: const Icon(Icons.comment))),
+                      icon: const Icon(Icons.comment))),*/
               UserInput(
-                text: 'Store name',
-                controller: storeNameController,
-                //   validator: (name) => nameValidator(name, 'enter store name')
-                // return null;
-              ),
+                  text: LocaleKeys.store_name.tr(),
+                  controller: storeNameController,
+                  validator: (name) => nameValidator(name, 'enter store name')
+                  // return null;
+                  ),
               UserInput(
-                text: 'Store description',
+                text: LocaleKeys.store_description.tr(),
                 controller: storeDescriptionController,
               ),
               UserInput(
-                  text: 'Store number',
+                  text: LocaleKeys.store_phoneNumber.tr(),
                   controller: storeNumberController,
-                  validator: (number) =>
-                      numberValidator(number, 'enter store number')
+                  validator: (number) => numberValidator(
+                      number, LocaleKeys.enter_store_number.tr())
                   // return null;
                   ),
               30.ph,
               CustomText(
-                text: 'Store Work Time',
+                text: LocaleKeys.work_Time.tr(),
                 textColor: AppColors.secondaryFontColor,
               ),
               Padding(
@@ -320,7 +353,7 @@ class _EditStoreState extends State<AddStorePage> {
                     Padding(
                       padding: const EdgeInsets.only(top: 15.0),
                       child: CustomText(
-                        text: 'to',
+                        text: LocaleKeys.to.tr(),
                         textColor: AppColors.secondaryFontColor,
                       ),
                     ),
@@ -347,14 +380,21 @@ class _EditStoreState extends State<AddStorePage> {
                   ],
                 ),
               ),
-              UserInput(
-                  text: 'Store Location',
-                  controller: storeLocationController,
-                  suffixIcon: IconButton(
+              Row(
+                children: [
+                  Expanded(
+                    child: UserInput(
+                      enabled: false,
+                      text: LocaleKeys.location.tr(),
+                      controller: storeLocationController,
+                    ),
+                  ),
+                  IconButton(
                       onPressed: () async {
                         LocationData? currentLocation =
                             await LocationService().getUserCurrentLocation();
                         if (currentLocation != null) {
+                          // ignore: use_build_context_synchronously
                           selectedStoreLocation = await context.push(
                             MapPage(
                               currentLocation: currentLocation,
@@ -373,13 +413,22 @@ class _EditStoreState extends State<AddStorePage> {
                           setState(() {});
                         }
                       },
-                      icon: const Icon(Icons.location_on))),
+                      icon: Icon(
+                        Icons.location_on,
+                        color: Theme.of(context).colorScheme.primary,
+                      ))
+                ],
+              ),
+              /*  UserInput(
+                  text: LocaleKeys.location.tr(),
+                  controller: storeLocationController,
+                  suffixIcon: ),*/
               UserInput(
-                text: 'instagram account',
+                text: LocaleKeys.instagram_Account.tr(),
                 controller: storeInstagramController,
               ),
               UserInput(
-                text: 'facebook account',
+                text: LocaleKeys.facebook_Account.tr(),
                 controller: storeFacebookController,
               ),
               30.ph,
@@ -389,10 +438,10 @@ class _EditStoreState extends State<AddStorePage> {
                   onPressed: () {
                     context.pop();
                   },
-                  text: 'cancel',
+                  text: LocaleKeys.cancle.tr(),
                   color: AppColors.mainWhiteColor,
-                  textColor: AppColors.mainOrangeColor,
-                  borderColor: AppColors.mainOrangeColor,
+                  textColor: Theme.of(context).colorScheme.primary,
+                  borderColor: Theme.of(context).colorScheme.primary,
                 )),
                 70.px,
                 Expanded(
@@ -404,7 +453,8 @@ class _EditStoreState extends State<AddStorePage> {
                           CustomToast.showMessage(
                               context: context,
                               size: size,
-                              message: 'Store created successfully!',
+                              message:
+                                  LocaleKeys.store_created_successfully.tr(),
                               messageType: MessageType.SUCCESS);
                           if (globalSharedPreference.getString("mode") ==
                               "user") {
@@ -426,22 +476,23 @@ class _EditStoreState extends State<AddStorePage> {
                           );
                         }
                         return CustomButton(
-                            text: 'Create',
+                            text: LocaleKeys.create.tr(),
                             textColor: AppColors.mainWhiteColor,
                             onPressed: () {
                               !formKey.currentState!.validate()
                                   ? CustomToast.showMessage(
                                       context: context,
                                       size: size,
-                                      message: 'invalid information',
+                                      message:
+                                          LocaleKeys.invalid_information.tr(),
                                       messageType: MessageType.WARNING)
                                   : {
                                       formKey.currentState!.save(),
                                       context.read<AddShopCubit>().addShop(
                                           storeCoverImageType:
-                                              storeCoverImageType!,
+                                              storeCoverImageType ?? '',
                                           storeProfileImageType:
-                                              storeProfileImageType!,
+                                              storeProfileImageType ?? '',
                                           shopName: storeNameController.text,
                                           shopDescription:
                                               storeDescriptionController.text,
@@ -449,7 +500,12 @@ class _EditStoreState extends State<AddStorePage> {
                                               imageProfileBase64 ?? 'url',
                                           shopCoverImage:
                                               imageCoverBase64 ?? 'url',
-                                          shopCategory: "shop",
+                                          shopCategory: globalSharedPreference
+                                                      .getBool("isArabic") ==
+                                                  false
+                                              ? storeCategoryController.text
+                                              : switchCategoryToEnglish(
+                                                  storeCategoryController.text),
                                           location:
                                               storeLocationController.text,
                                           latitude:
@@ -506,11 +562,11 @@ class _EditStoreState extends State<AddStorePage> {
                       children: [
                         Icon(
                           Icons.camera_alt_rounded,
-                          color: AppColors.mainOrangeColor,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                         40.px,
-                        const CustomText(
-                          text: 'Camera',
+                        CustomText(
+                          text: LocaleKeys.camera.tr(),
                           fontSize: 20,
                         )
                       ],
@@ -532,11 +588,11 @@ class _EditStoreState extends State<AddStorePage> {
                       children: [
                         Icon(
                           Icons.image,
-                          color: AppColors.mainOrangeColor,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                         40.px,
-                        const CustomText(
-                          text: 'Gallery',
+                        CustomText(
+                          text: LocaleKeys.gallery.tr(),
                           fontSize: 20,
                         )
                       ],

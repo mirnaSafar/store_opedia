@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/data/models/shop.dart';
@@ -7,6 +8,7 @@ import 'package:shopesapp/presentation/shared/custom_widgets/custom_divider.dart
 import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/presentation/widgets/suggested_store/page_hader.dart';
 import 'package:shopesapp/presentation/widgets/suggested_store/suggested_store.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 import '../../data/enums/filter_type.dart';
 import '../../logic/cubites/shop/cubit/search_store_cubit.dart';
 import '../../main.dart';
@@ -64,7 +66,10 @@ class SuggestedStoresViewState extends State<SuggestedStoresView> {
               id: globalSharedPreference.getString("ID") ?? '0', type: 'old');
           break;
         case FilterType.CATEGORY:
-          // TODO: Handle this case.
+          context.read<StoreCubit>().categoryFilterStores(
+                category: widget.category ?? '',
+                id: globalSharedPreference.getString("ID") ?? '0',
+              );
           break;
         case FilterType.CITY:
           context.read<StoreCubit>().cilyFilterStores(
@@ -161,7 +166,7 @@ class SuggestedStoresViewState extends State<SuggestedStoresView> {
                                         '0',
                                     search: value);
                           },
-                          text: 'Search',
+                          text: LocaleKeys.search.tr(),
                           prefixIcon: const Icon(Icons.search),
                           controller: searchController,
                         ),

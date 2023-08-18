@@ -1,6 +1,8 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shopesapp/constant/switch_to_arabic.dart';
 import 'package:shopesapp/data/models/shop.dart';
 import 'package:shopesapp/data/repositories/shared_preferences_repository.dart';
 import 'package:shopesapp/logic/cubites/post/posts_cubit.dart';
@@ -22,6 +24,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:shopesapp/presentation/widgets/dialogs/awosem_dialog.dart';
 import 'package:shopesapp/presentation/widgets/product/product_post.dart';
 import 'package:shopesapp/presentation/widgets/switch_shop/error.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 import '../../main.dart';
 import '../widgets/dialogs/browsing_alert_dialog.dart';
@@ -41,8 +44,31 @@ class StorePage extends StatefulWidget {
 }
 
 class _StorePageState extends State<StorePage> {
+  @override
+  void initState() {
+    context.read<PostsCubit>().getOwnerPosts(
+        visitorID: SharedPreferencesRepository.getBrowsingPostsMode()
+            ? '0'
+            : globalSharedPreference.getString("ID"),
+        ownerID: widget.shop!.ownerID,
+        shopID: widget.shop!.shopID);
+    super.initState();
+  }
+
   void updateStoreState() {
-    setState(() {});
+    setState(() {
+      context.read<WorkTimeCubit>().testOpenTime(
+          openTime: globalSharedPreference.getString("startWorkTime"),
+          closeTime: globalSharedPreference.getString("endWorkTime"));
+      context.read<GetOwnerShopsCubit>().getOwnerShopsRequest(
+          ownerID: globalSharedPreference.getString('ID'), message: 'all');
+      context.read<PostsCubit>().getOwnerPosts(
+          visitorID: SharedPreferencesRepository.getBrowsingPostsMode()
+              ? '0'
+              : globalSharedPreference.getString("ID"),
+          ownerID: globalSharedPreference.getString('ID'),
+          shopID: globalSharedPreference.getString('shopID'));
+    });
   }
 
   List<dynamic> postsList = [];
@@ -60,482 +86,468 @@ class _StorePageState extends State<StorePage> {
     final w = MediaQuery.of(context).size.width;
     final h = MediaQuery.of(context).size.height;
     return Scaffold(
-        backgroundColor: AppColors.mainWhiteColor,
+        // backgroundColor: AppColors.mainWhiteColor,
         body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding:
-                    EdgeInsetsDirectional.only(start: w * 0.06, end: w * 0.01),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Stack(
-                        children: [
-                          SizedBox(
-                            height: h / 5,
-                            width: w,
-                            child: ClipRRect(
-                                borderRadius: BorderRadius.circular(w * 0.05),
-                                child: widget.shop!.shopCoverImage != 'url'
-                                    ? Image.network(
-                                        widget.shop!.shopCoverImage!)
-                                    : const Image(
-                                        image: AssetImage(
-                                            'assets/store_cover_placeholder.jpg'))),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                              top: h * 0.15,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsetsDirectional.only(start: w * 0.06, end: w * 0.01),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Stack(
+                children: [
+                  SizedBox(
+                    height: h / 5,
+                    width: w,
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(w * 0.05),
+                        child: widget.shop!.shopCoverImage != 'url'
+                            ? Image.network(widget.shop!.shopCoverImage!)
+                            : const Image(
+                                image: AssetImage('assets/cover_photo.jpg'))),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                      top: h * 0.15,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Stack(
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: AppColors.mainWhiteColor,
+                              radius: w * 0.12,
+                              child: CircleAvatar(
+                                radius: w * 0.11,
+                                backgroundColor: AppColors.mainTextColor,
+                                backgroundImage:
+                                    widget.shop!.shopProfileImage == 'url'
+                                        ? const AssetImage(
+                                            'assets/profile_photo.jpg',
+                                          )
+                                        : NetworkImage(
+                                                widget.shop!.shopProfileImage!)
+                                            as ImageProvider,
+                              ),
                             ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Stack(
-                                  children: [
-                                    CircleAvatar(
-                                      backgroundColor: AppColors.mainWhiteColor,
-                                      radius: w * 0.12,
-                                      child: CircleAvatar(
-                                          radius: w * 0.11,
+                            BlocBuilder<WorkTimeCubit, WorkTimeState>(
+                              builder: (context, state) {
+                                return Visibility(
+                                  visible: state.isOpen == true &&
+                                      widget.shop?.isActive == true,
+                                  child: Padding(
+                                    padding: EdgeInsetsDirectional.only(
+                                        start: w * 0.2, top: w * 0.16),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        CircleAvatar(
+                                          radius: w * 0.025,
                                           backgroundColor:
-                                              AppColors.mainTextColor,
-                                          child: ClipOval(
-                                              child: widget.shop!
-                                                          .shopProfileImage ==
-                                                      'url'
-                                                  ? Image.asset(
-                                                      'assets/store_placeholder.png',
-                                                      fit: BoxFit.fill,
-                                                    )
-                                                  : Image.network(widget.shop!
-                                                      .shopProfileImage!))),
-                                    ),
-                                    BlocBuilder<WorkTimeCubit, WorkTimeState>(
-                                      builder: (context, state) {
-                                        return Visibility(
-                                          visible: state.isOpen == true &&
-                                              widget.shop?.isActive == true,
-                                          child: Padding(
-                                            padding: EdgeInsetsDirectional.only(
-                                                start: w * 0.2, top: w * 0.16),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                CircleAvatar(
-                                                  radius: w * 0.025,
-                                                  backgroundColor:
-                                                      AppColors.mainWhiteColor,
-                                                  child: CircleAvatar(
-                                                    radius: w * 0.02,
-                                                    backgroundColor:
-                                                        Colors.green,
-                                                  ),
-                                                ),
-                                                2.px,
-                                                CustomText(
-                                                  text: 'Open now',
-                                                  textColor: Colors.green,
-                                                  fontSize: w * 0.03,
-                                                )
-                                              ],
-                                            ),
+                                              AppColors.mainWhiteColor,
+                                          child: CircleAvatar(
+                                            radius: w * 0.02,
+                                            backgroundColor: Colors.green,
                                           ),
-                                        );
-                                      },
-                                    ),
-                                    BlocBuilder<WorkTimeCubit, WorkTimeState>(
-                                      builder: (context, state) {
-                                        return Visibility(
-                                          visible: state.isOpen != true &&
-                                              widget.shop?.isActive == true,
-                                          child: Padding(
-                                            padding: EdgeInsetsDirectional.only(
-                                                start: w * 0.2, top: w * 0.16),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                CircleAvatar(
-                                                  radius: w * 0.025,
-                                                  backgroundColor:
-                                                      AppColors.mainWhiteColor,
-                                                  child: CircleAvatar(
-                                                    radius: w * 0.02,
-                                                    backgroundColor: Colors.red,
-                                                  ),
-                                                ),
-                                                2.px,
-                                                CustomText(
-                                                  text: 'Close now',
-                                                  textColor: Colors.red,
-                                                  fontSize: w * 0.03,
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                    Visibility(
-                                      visible: widget.shop?.isActive == false,
-                                      child: Padding(
-                                        padding: EdgeInsetsDirectional.only(
-                                            start: w * 0.2, top: w * 0.16),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            CircleAvatar(
-                                              radius: w * 0.025,
-                                              backgroundColor:
-                                                  AppColors.mainWhiteColor,
-                                              child: CircleAvatar(
-                                                radius: w * 0.02,
-                                                backgroundColor:
-                                                    Colors.blueGrey,
-                                              ),
-                                            ),
-                                            2.px,
-                                            CustomText(
-                                              text: 'Deactivated Now',
-                                              textColor: Colors.blueGrey,
-                                              fontSize: w * 0.03,
-                                            )
-                                          ],
                                         ),
-                                      ),
+                                        2.px,
+                                        CustomText(
+                                          text: LocaleKeys.open_now.tr(),
+                                          textColor: Colors.green,
+                                          fontSize: w * 0.03,
+                                        )
+                                      ],
                                     ),
-                                  ],
-                                ),
-                                Padding(
-                                  padding: EdgeInsetsDirectional.only(
-                                      start: w * 0.01),
-                                  child: Row(
-                                    children: [
-                                      CustomText(
-                                        text: widget.shop!.shopName,
-                                        bold: true,
-                                        fontSize: w * 0.05,
-                                        textColor:
-                                            Theme.of(context).primaryColorDark,
-                                      ),
-                                      10.px,
-                                      BlocBuilder<RateShopCubit, RateShopState>(
-                                        builder: (context, state) {
-                                          if (state is RateShopSucceded) {
-                                            return CustomRate(
-                                              rateValue: state.rate,
-                                              store: widget.shop!,
-                                              enableRate: true,
-                                            );
-                                          }
-                                          return CustomRate(
-                                            rateValue: widget.shop!.rate,
-                                            store: widget.shop!,
-                                            enableRate: true,
-                                          );
-                                        },
-                                      ),
-                                    ],
                                   ),
-                                )
-                              ],
+                                );
+                              },
                             ),
-                          )
-                        ],
-                      ),
-                      10.ph,
-                      Stack(
-                        alignment: AlignmentDirectional.topEnd,
-                        children: [
-                          CustomPaint(
-                              painter: profilePainter(),
+                            BlocBuilder<WorkTimeCubit, WorkTimeState>(
+                              builder: (context, state) {
+                                return Visibility(
+                                  visible: state.isOpen != true &&
+                                      widget.shop?.isActive == true,
+                                  child: Padding(
+                                    padding: EdgeInsetsDirectional.only(
+                                        start: w * 0.2, top: w * 0.16),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        CircleAvatar(
+                                          radius: w * 0.025,
+                                          backgroundColor:
+                                              AppColors.mainWhiteColor,
+                                          child: CircleAvatar(
+                                            radius: w * 0.02,
+                                            backgroundColor: Colors.red,
+                                          ),
+                                        ),
+                                        2.px,
+                                        CustomText(
+                                          text: LocaleKeys.close_now.tr(),
+                                          textColor: Colors.red,
+                                          fontSize: w * 0.03,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            Visibility(
+                              visible: widget.shop?.isActive == false,
                               child: Padding(
                                 padding: EdgeInsetsDirectional.only(
-                                  start: w / 2,
-                                ),
-                                child: SizedBox(
-                                  width: w / 4,
-                                  height: h * 0.34,
-                                ),
-                              )),
-                          // FloatingActionButton(
-                          //     onPressed: () {
-                          //       context.push(const EditStore());
-                          //     },
-                          //     backgroundColor: AppColors.mainOrangeColor,
-                          //     child: const svgIcon(Icons.edit)),
-                          Visibility(
-                              visible: widget.profileDisplay ?? false,
-                              child: Positioned(
-                                  right: w * 0.06,
-                                  bottom: w * 0,
-                                  child: _getFAB())),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              0.ph,
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.tag,
-                                    color: Colors.grey.shade300,
-                                  ),
-                                  10.px,
-                                  CustomText(
-                                    text: widget.shop!.shopCategory,
-                                    // fontSize: 18,
-                                    textColor: AppColors.secondaryFontColor,
-                                  ),
-                                ],
-                              ),
-                              15.ph,
-                              Visibility(
-                                visible:
-                                    widget.shop!.shopDescription!.isNotEmpty,
-                                child: CustomText(
-                                    textColor:
-                                        Theme.of(context).primaryColorDark,
-                                    fontSize: 15,
-                                    text: widget.shop!.shopDescription ??
-                                        'basic description about the \nstore and its major'),
-                              ),
-                              20.ph,
-                              Row(
-                                children: [
-                                  BlocBuilder<ShopFollwersCounterCubit,
-                                      ShopFollwersCounterState>(
-                                    builder: (context, state) {
-                                      return CustomText(
-                                        text:
-                                            '${widget.shop!.followesNumber} Followers',
-                                        textColor: AppColors.mainBlueColor,
-                                      );
-                                    },
-                                  ),
-                                  70.px,
-                                  BlocBuilder<FollowingCubit, FollowingState>(
-                                    builder: (context, state) {
-                                      var followingCubit =
-                                          context.read<FollowingCubit>();
-                                      var shop = SharedPreferencesRepository
-                                              .getSavedShop(widget.shop!) ??
-                                          widget.shop!;
-                                      return InkWell(
-                                        onTap: () {
-                                          // context
-                                          //     .pushRepalceme((const FavouritePage()));
-                                          if (!SharedPreferencesRepository
-                                              .getBrowsingPostsMode()) {
-                                            !widget.shop!.isFollow!
-                                                ? {
-                                                    context
-                                                        .read<
-                                                            ShopFollwersCounterCubit>()
-                                                        .incrementFollowers(
-                                                            shop),
-                                                    followingCubit.follow(shop),
-                                                  }
-                                                : {
-                                                    context
-                                                        .read<
-                                                            ShopFollwersCounterCubit>()
-                                                        .decrementFollowers(
-                                                            shop),
-                                                    followingCubit
-                                                        .unFollow(shop),
-                                                  };
-                                            BlocProvider.of<
-                                                        ToggoleFollowShopCubit>(
-                                                    context)
-                                                .toggoleFolowShop(
-                                                    shopID: widget.shop!.shopID,
-                                                    ownerID:
-                                                        globalSharedPreference
-                                                                .getString(
-                                                                    "ID") ??
-                                                            '0');
-                                          } else {
-                                            showBrowsingDialogAlert(context);
-                                          }
-                                        },
-                                        child: Visibility(
-                                          visible: !widget.profileDisplay!,
-                                          child: CustomText(
-                                            text:
-                                                // followingCubit
-                                                //             .getShopFollowingState(shop) ||
-                                                widget.shop!.isFollow!
-                                                    ? 'Following'
-                                                    : 'Follow',
-                                            textColor: AppColors.mainBlueColor,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
-                              const CustomDivider(),
-                              CustomIconTextRow(
-                                  textColor: Theme.of(context).primaryColorDark,
-                                  svgIcon: 'clock-square-svgrepo-com',
-                                  // svgIcon: Icons.alarm,
-                                  text: widget.shop!.isActive == true
-                                      ? '$startWorkTime - $endtWorkTime'
-                                      : "---  - ---"),
-                              20.ph,
-                              Visibility(
-                                visible: widget.shop!.shopPhoneNumber != null,
-                                child: Column(
+                                    start: w * 0.2, top: w * 0.16),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    CustomIconTextRow(
-                                        textColor:
-                                            Theme.of(context).primaryColorDark,
-                                        svgIcon: 'phone-svgrepo-com',
-                                        text: widget.shop!.isActive == true
-                                            ? "${widget.shop!.shopPhoneNumber}"
-                                            : "------------"),
-                                    20.ph,
-                                  ],
-                                ),
-                              ),
-                              CustomIconTextRow(
-                                  textColor: Theme.of(context).primaryColorDark,
-                                  // svgIcon: Icons.email,
-                                  svgIcon: 'mail-svgrepo-com',
-                                  text: widget.shop!.ownerEmail),
-                              20.ph,
-                              CustomIconTextRow(
-                                  textColor: Theme.of(context).primaryColorDark,
-                                  svgIcon: 'map-point-wave-svgrepo-com',
-                                  text: widget.shop!.location),
-                              const CustomDivider(),
-                              Visibility(
-                                visible: widget.shop!.socialUrl!.isNotEmpty &&
-                                    (widget.shop!.socialUrl![0].length != 0 ||
-                                        widget.shop!.socialUrl![1].length != 0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
+                                    CircleAvatar(
+                                      radius: w * 0.025,
+                                      backgroundColor: AppColors.mainWhiteColor,
+                                      child: CircleAvatar(
+                                        radius: w * 0.02,
+                                        backgroundColor: Colors.blueGrey,
+                                      ),
+                                    ),
+                                    2.px,
                                     CustomText(
-                                      text: 'Social accounts',
-                                      textColor:
-                                          Theme.of(context).primaryColorDark,
-                                      fontSize: w * 0.04,
-                                      bold: true,
-                                    ),
-                                    30.ph,
-                                    Visibility(
-                                      visible: widget
-                                              .shop!.socialUrl!.isNotEmpty &&
-                                          widget.shop!.socialUrl![0].length !=
-                                              0,
-                                      child: CustomIconTextRow(
-                                          textColor: Theme.of(context)
-                                              .primaryColorDark,
-                                          svgIcon:
-                                              'instagram-2-1-logo-svgrepo-com',
-                                          text:
-                                              widget.shop!.socialUrl!.isNotEmpty
-                                                  ? widget.shop!.socialUrl![0]
-                                                  : ''),
-                                    ),
-                                    20.ph,
-                                    Visibility(
-                                      visible: widget
-                                              .shop!.socialUrl!.isNotEmpty &&
-                                          widget.shop!.socialUrl![1].length !=
-                                              0,
-                                      child: CustomIconTextRow(
-                                          textColor: Theme.of(context)
-                                              .primaryColorDark,
-                                          svgIcon:
-                                              'facebook-3-logo-svgrepo-com',
-                                          text:
-                                              widget.shop!.socialUrl!.isNotEmpty
-                                                  ? widget.shop!.socialUrl![1]
-                                                  : ''),
-                                    ),
-                                    const CustomDivider(),
+                                      text: LocaleKeys.deactive_now.tr(),
+                                      textColor: Colors.blueGrey,
+                                      fontSize: w * 0.03,
+                                    )
                                   ],
                                 ),
                               ),
-                              20.ph,
-                              Visibility(
-                                visible: ownerShpos.length > 1,
-                                child: CustomText(
-                                  text: 'Related Stores',
-                                  textColor: Theme.of(context).primaryColorDark,
-                                  fontSize: w * 0.04,
-                                  bold: true,
-                                ),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: EdgeInsetsDirectional.only(start: w * 0.01),
+                          child: Row(
+                            children: [
+                              CustomText(
+                                text: widget.shop!.shopName,
+                                bold: true,
+                                fontSize: w * 0.05,
+                                textColor: Theme.of(context).primaryColorDark,
+                              ),
+                              10.px,
+                              BlocBuilder<RateShopCubit, RateShopState>(
+                                builder: (context, state) {
+                                  if (state is RateShopSucceded) {
+                                    return CustomRate(
+                                      rateValue: state.rate,
+                                      store: widget.shop!,
+                                      enableRate: true,
+                                    );
+                                  }
+                                  return CustomRate(
+                                    rateValue: widget.shop!.rate,
+                                    store: widget.shop!,
+                                    enableRate: true,
+                                  );
+                                },
                               ),
                             ],
                           ),
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
+              10.ph,
+              Stack(
+                alignment: AlignmentDirectional.topEnd,
+                children: [
+                  Visibility(
+                    visible:
+                        globalSharedPreference.getBool("isDarkMode") == false &&
+                            globalSharedPreference.getBool("isArabic") == false,
+                    child: CustomPaint(
+                        painter: profilePainter(),
+                        child: Padding(
+                          padding: EdgeInsetsDirectional.only(
+                            start: w / 2,
+                          ),
+                          child: SizedBox(
+                            width: w / 4,
+                            height: h * 0.34,
+                          ),
+                        )),
+                  ),
+                  // FloatingActionButton(
+                  //     onPressed: () {
+                  //       context.push(const EditStore());
+                  //     },
+                  //     backgroundColor: AppColors.mainOrangeColor,
+                  //     child: const svgIcon(Icons.edit)),
+                  globalSharedPreference.getBool("isArabic") == false
+                      ? Visibility(
+                          visible: widget.profileDisplay ?? false,
+                          child: Positioned(
+                              right: w * 0.06, bottom: w * 0, child: _getFAB()))
+                      : Visibility(
+                          visible: widget.profileDisplay ?? false,
+                          child: Positioned(
+                              left: w * 0.095,
+                              bottom: w * 0,
+                              child: _getFAB())),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      0.ph,
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.tag,
+                            color: Colors.grey.shade300,
+                          ),
+                          10.px,
+                          CustomText(
+                            text: globalSharedPreference.getBool("isArabic") ==
+                                    false
+                                ? widget.shop!.shopCategory
+                                : switchCategoryToArabic(
+                                    widget.shop!.shopCategory),
+                            textColor: AppColors.secondaryFontColor,
+                          ),
                         ],
                       ),
-                    ]),
-              ),
-              Visibility(
-                visible: ownerShpos.length > 1,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    20.ph,
-                    SizedBox(
-                      height: h / 6,
-                      child:
-                          BlocConsumer<GetOwnerShopsCubit, GetOwnerShopsState>(
-                        listener: (context, state) {
-                          if (state is GetOwnerShopsFiled) {
-                            buildAwsomeDialog(context, "Failed",
-                                    state.message.toUpperCase(), "OK",
-                                    type: DialogType.ERROR)
-                                .show();
-                          } else if (state is GetOwnerShopsSucceed) {}
-                        },
-                        builder: (context, state) {
-                          if (state is GetOwnerShopsProgress) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          } else if (state is GetOwnerShopsSucceed) {
-                            ownerShpos =
-                                BlocProvider.of<GetOwnerShopsCubit>(context)
-                                    .ownerShops;
-
-                            return Padding(
-                              padding:
-                                  EdgeInsetsDirectional.only(start: w * 0.04),
-                              child: ListView.separated(
-                                shrinkWrap: true,
-                                // physics: const NeverScrollableScrollPhysics(),
-                                scrollDirection: Axis.horizontal,
-                                itemCount: ownerShpos.length,
-                                separatorBuilder:
-                                    (BuildContext context, int index) {
-                                  return 20.px;
+                      15.ph,
+                      Visibility(
+                        visible: widget.shop!.shopDescription!.isNotEmpty,
+                        child: CustomText(
+                            textColor: Theme.of(context).primaryColorDark,
+                            fontSize: 15,
+                            text: widget.shop!.shopDescription ??
+                                LocaleKeys.defult_description.tr()),
+                      ),
+                      20.ph,
+                      Row(
+                        children: [
+                          BlocBuilder<ShopFollwersCounterCubit,
+                              ShopFollwersCounterState>(
+                            builder: (context, state) {
+                              return CustomText(
+                                text:
+                                    '${widget.shop!.followesNumber} ${LocaleKeys.followers.tr()}',
+                                textColor: AppColors.mainBlueColor,
+                              );
+                            },
+                          ),
+                          70.px,
+                          BlocBuilder<FollowingCubit, FollowingState>(
+                            builder: (context, state) {
+                              var followingCubit =
+                                  context.read<FollowingCubit>();
+                              var shop =
+                                  SharedPreferencesRepository.getSavedShop(
+                                          widget.shop!) ??
+                                      widget.shop!;
+                              return InkWell(
+                                onTap: () {
+                                  // context
+                                  //     .pushRepalceme((const FavouritePage()));
+                                  if (!SharedPreferencesRepository
+                                      .getBrowsingPostsMode()) {
+                                    !widget.shop!.isFollow!
+                                        ? {
+                                            context
+                                                .read<
+                                                    ShopFollwersCounterCubit>()
+                                                .incrementFollowers(shop),
+                                            followingCubit.follow(shop),
+                                          }
+                                        : {
+                                            context
+                                                .read<
+                                                    ShopFollwersCounterCubit>()
+                                                .decrementFollowers(shop),
+                                            followingCubit.unFollow(shop),
+                                          };
+                                    BlocProvider.of<ToggoleFollowShopCubit>(
+                                            context)
+                                        .toggoleFolowShop(
+                                            shopID: widget.shop!.shopID,
+                                            ownerID: globalSharedPreference
+                                                    .getString("ID") ??
+                                                '0');
+                                  } else {
+                                    showBrowsingDialogAlert(context);
+                                  }
                                 },
-                                itemBuilder: (BuildContext context, int index) {
-                                  if (ownerShpos[index]['shopID'] !=
-                                      widget.shop!.shopID) {
-                                    return Column(
+                                child: Visibility(
+                                  visible: !widget.profileDisplay!,
+                                  child: CustomText(
+                                    text:
+                                        // followingCubit
+                                        //             .getShopFollowingState(shop) ||
+                                        widget.shop!.isFollow!
+                                            ? LocaleKeys.following.tr()
+                                            : LocaleKeys.follow.tr(),
+                                    textColor: AppColors.mainBlueColor,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                      const CustomDivider(),
+                      CustomIconTextRow(
+                          textColor: Theme.of(context).primaryColorDark,
+                          svgIcon: 'clock-square-svgrepo-com',
+                          // svgIcon: Icons.alarm,
+                          text: widget.shop!.isActive == true
+                              ? '$startWorkTime - $endtWorkTime'
+                              : "---  - ---"),
+                      20.ph,
+                      Visibility(
+                        visible: widget.shop!.shopPhoneNumber != null,
+                        child: Column(
+                          children: [
+                            CustomIconTextRow(
+                                textColor: Theme.of(context).primaryColorDark,
+                                svgIcon: 'phone-svgrepo-com',
+                                text: widget.shop!.isActive == true
+                                    ? "${widget.shop!.shopPhoneNumber}"
+                                    : "------------"),
+                            20.ph,
+                          ],
+                        ),
+                      ),
+                      CustomIconTextRow(
+                          textColor: Theme.of(context).primaryColorDark,
+                          // svgIcon: Icons.email,
+                          svgIcon: 'mail-svgrepo-com',
+                          text: widget.shop!.ownerEmail),
+                      20.ph,
+                      CustomIconTextRow(
+                        textColor: Theme.of(context).primaryColorDark,
+                        svgIcon: 'map-point-wave-svgrepo-com',
+                        text:
+                            globalSharedPreference.getBool("isArabic") == false
+                                ? widget.shop!.location
+                                : switchLocationToArabic(widget.shop!.location),
+                      ),
+                      const CustomDivider(),
+                      Visibility(
+                        visible: widget.shop!.socialUrl!.isNotEmpty &&
+                            (widget.shop!.socialUrl![0].length != 0 ||
+                                widget.shop!.socialUrl![1].length != 0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomText(
+                              text: LocaleKeys.social_Account.tr(),
+                              textColor: Theme.of(context).primaryColorDark,
+                              fontSize: w * 0.04,
+                              bold: true,
+                            ),
+                            30.ph,
+                            Visibility(
+                              visible: widget.shop!.socialUrl!.isNotEmpty &&
+                                  widget.shop!.socialUrl![0].length != 0,
+                              child: CustomIconTextRow(
+                                  textColor: Theme.of(context).primaryColorDark,
+                                  svgIcon: 'instagram-2-1-logo-svgrepo-com',
+                                  text: widget.shop!.socialUrl!.isNotEmpty
+                                      ? widget.shop!.socialUrl![0]
+                                      : ''),
+                            ),
+                            20.ph,
+                            Visibility(
+                              visible: widget.shop!.socialUrl!.isNotEmpty &&
+                                  widget.shop!.socialUrl![1].length != 0,
+                              child: CustomIconTextRow(
+                                  textColor: Theme.of(context).primaryColorDark,
+                                  svgIcon: 'facebook-3-logo-svgrepo-com',
+                                  text: widget.shop!.socialUrl!.isNotEmpty
+                                      ? widget.shop!.socialUrl![1]
+                                      : ''),
+                            ),
+                            const CustomDivider(),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ]),
+          ),
+          BlocConsumer<GetOwnerShopsCubit, GetOwnerShopsState>(
+            listener: (context, state) {
+              if (state is GetOwnerShopsFiled) {
+                buildAwsomeDialog(context, LocaleKeys.faild.tr(),
+                        state.message.toUpperCase(), LocaleKeys.ok.tr(),
+                        type: DialogType.error)
+                    .show();
+              } else if (state is GetOwnerShopsSucceed) {}
+            },
+            builder: (context, state) {
+              if (state is GetOwnerShopsProgress) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (state is GetOwnerShopsSucceed) {
+                ownerShpos =
+                    BlocProvider.of<GetOwnerShopsCubit>(context).ownerShops;
+
+                return Visibility(
+                  visible: ownerShpos.length > 1,
+                  child: SizedBox(
+                    height: h / 4,
+                    child: Padding(
+                      padding: EdgeInsetsDirectional.only(start: w * 0.04),
+                      child: Column(
+                        children: [
+                          20.ph,
+                          CustomText(
+                            text: LocaleKeys.related_stores.tr(),
+                            textColor: Theme.of(context).primaryColorDark,
+                            fontSize: w * 0.04,
+                            bold: true,
+                          ),
+                          20.ph,
+                          Expanded(
+                            child: ListView.separated(
+                              shrinkWrap: true,
+                              // physics: const NeverScrollableScrollPhysics(),
+                              scrollDirection: Axis.horizontal,
+                              itemCount: ownerShpos.length,
+                              separatorBuilder:
+                                  (BuildContext context, int index) {
+                                return 20.px;
+                              },
+                              itemBuilder: (BuildContext context, int index) {
+                                if (ownerShpos[index]['shopID'] !=
+                                    widget.shop!.shopID) {
+                                  return InkWell(
+                                    // onTap: () => {
+                                    //   context.push(StorePage(
+                                    //     p
+                                    //     shop: Shop.fromMap(ownerShpos[index]),
+                                    //   ))
+                                    // },
+                                    child: Column(
                                       children: [
                                         CircleAvatar(
                                             radius: w * 0.1,
                                             backgroundColor:
                                                 AppColors.mainTextColor,
-                                            backgroundImage: NetworkImage(
-                                                ownerShpos[index]
+                                            backgroundImage: ownerShpos[index]
+                                                        ["shopProfileImage"] ==
+                                                    'url'
+                                                ? const AssetImage(
+                                                    'assets/profile_photo.jpg',
+                                                  ) as ImageProvider
+                                                : NetworkImage(ownerShpos[index]
                                                     ["shopProfileImage"]),
-                                            // FileImage(File(
-                                            //     ownerShpos[index][
-                                            //                 "shopProfileImage"] !=
-                                            //             'url'
-                                            //         ? ownerShpos[index]
-                                            //             ["shopProfileImage"]
-                                            //         : '')),
                                             child: ownerShpos[index]
                                                         ["shopProfileImage"] ==
                                                     'url'
@@ -553,109 +565,94 @@ class _StorePageState extends State<StorePage> {
                                               .primaryColorDark,
                                         )
                                       ],
-                                    );
-                                  }
-                                  return Column(
-                                    children: [
-                                      CircleAvatar(
-                                          radius: w * 0.1,
-                                          backgroundColor:
-                                              AppColors.mainTextColor,
-                                          backgroundImage: NetworkImage(
-                                              ownerShpos[index]
-                                                  ["shopProfileImage"]),
-                                          child:
-                                              widget.shop!.shopProfileImage ==
-                                                      'url'
-                                                  ? ClipOval(
-                                                      child: Image.asset(
-                                                        'assets/store_placeholder.png',
-                                                        fit: BoxFit.fill,
-                                                      ),
-                                                    )
-                                                  : null),
-                                      5.ph,
-                                      CustomText(
-                                        text: widget.shop!.shopName,
-                                        textColor:
-                                            Theme.of(context).primaryColorDark,
-                                      )
-                                    ],
+                                    ),
                                   );
-                                },
-                              ),
-                            );
-                          }
-                          return buildError(size);
-                        },
+                                }
+                                return Container();
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-              ),
-              Visibility(
-                // visible: ownerShpos.isNotEmpty,
-                child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: h * 0.01),
-                    child: const Divider(
-                      thickness: 7,
-                    )),
-              ),
-              BlocConsumer<PostsCubit, PostsState>(
-                listener: (context, state) {
-                  if (state is ErrorFetchingPosts) {
-                    buildAwsomeDialog(context, "Failed",
-                            state.message.toUpperCase(), "OK",
-                            type: DialogType.ERROR)
-                        .show();
-                  } else if (state is PostsFetchedSuccessfully) {}
-                },
-                builder: (context, state) {
-                  if (state is FeatchingPostsProgress) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  } else if (state is NoPostsYet) {
-                    return Center(child: buildNoPostsYet(size, "No Posts Yet"));
-                  } else if (state is PostsFetchedSuccessfully) {
-                    postsList = BlocProvider.of<PostsCubit>(context).ownerPosts;
-
-                    return ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: postsList.length,
-                      separatorBuilder: (context, index) => Padding(
-                          padding: EdgeInsets.symmetric(vertical: h * 0.01),
-                          child: const Divider(
-                            thickness: 7,
-                          )),
-                      itemBuilder: (BuildContext context, int index) {
-                        return ProductPost(
-                          post: postsList[index],
-                          shop: widget.shop!,
-                          profileDisplay: widget.profileDisplay ?? false,
-                        );
-                      },
-                    );
-                  }
-                  return buildError(size);
-                },
-              ),
-              50.ph,
-            ],
+                  ),
+                );
+              }
+              return buildError(size);
+            },
           ),
-        ));
+          Visibility(
+            // visible: ownerShpos.isNotEmpty,
+            child: Padding(
+                padding: EdgeInsets.symmetric(vertical: h * 0.001),
+                child: const Divider(
+                  thickness: 7,
+                )),
+          ),
+          Visibility(
+            visible: !SharedPreferencesRepository.getBrowsingPostsMode(),
+            child: BlocConsumer<PostsCubit, PostsState>(
+              listener: (context, state) {
+                if (state is ErrorFetchingPosts) {
+                  buildAwsomeDialog(context, LocaleKeys.faild.tr(),
+                          state.message.toUpperCase(), LocaleKeys.ok.tr(),
+                          type: DialogType.error)
+                      .show();
+                } else if (state is PostsFetchedSuccessfully) {}
+              },
+              builder: (context, state) {
+                if (state is FeatchingPostsProgress) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (state is NoPostsYet) {
+                  return Center(
+                      child: buildNoPostsYet(
+                          size, LocaleKeys.no_posts_yet_follow_alert.tr()));
+                } else if (state is PostsFetchedSuccessfully) {
+                  postsList = BlocProvider.of<PostsCubit>(context).ownerPosts;
+                  //print(postsList);
+
+                  return ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: postsList.length,
+                    separatorBuilder: (context, index) => Padding(
+                        padding: EdgeInsets.symmetric(vertical: h * 0.01),
+                        child: const Divider(
+                          thickness: 7,
+                        )),
+                    itemBuilder: (BuildContext context, int index) {
+                      //  print(postsList);
+                      return ProductPost(
+                        post: postsList[index],
+                        profileDisplay: widget.profileDisplay ?? false,
+                      );
+                    },
+                  );
+                }
+                return buildError(size);
+              },
+            ),
+          ),
+          50.ph,
+        ],
+      ),
+    ));
   }
 
   Widget _getFAB() {
     return SpeedDial(
-      animatedIcon: AnimatedIcons.view_list,
+      direction: globalSharedPreference.getBool("isArabic") == true
+          ? SpeedDialDirection.right
+          : SpeedDialDirection.up,
+      animatedIcon: AnimatedIcons.list_view,
       animatedIconTheme:
           IconThemeData(size: 22, color: AppColors.mainWhiteColor),
       backgroundColor: Theme.of(context).colorScheme.primary,
       visible: true,
       curve: Curves.easeIn,
-      childMargin: const EdgeInsets.only(bottom: 30),
+      childMargin: const EdgeInsets.only(bottom: 30, left: 10),
       spacing: 10,
       spaceBetweenChildren: 5,
       children: [
@@ -664,7 +661,7 @@ class _StorePageState extends State<StorePage> {
           onTap: () {
             context.push(const AddPostPage());
           },
-          label: 'Add new post',
+          label: LocaleKeys.add_Post.tr(),
           labelStyle: TextStyle(
             fontWeight: FontWeight.w500,
             color: AppColors.mainWhiteColor,
@@ -678,7 +675,7 @@ class _StorePageState extends State<StorePage> {
             context.push(EditStore(function: updateStoreState));
             // setState(() {});
           },
-          label: 'Edit store information',
+          label: LocaleKeys.edit_stroe_informations.tr(),
           labelStyle: TextStyle(
             fontWeight: FontWeight.w500,
             color: AppColors.mainWhiteColor,

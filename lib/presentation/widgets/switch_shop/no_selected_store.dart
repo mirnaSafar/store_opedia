@@ -1,7 +1,9 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:shopesapp/presentation/pages/switch_store.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_button.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 import '../../shared/colors.dart';
 import '../../shared/custom_widgets/custom_text.dart';
@@ -24,8 +26,8 @@ Widget noSelectedShop(var size, BuildContext context) {
               SizedBox(
                 height: size.height * 0.02,
               ),
-              const CustomText(
-                text: "You didn't Select Any Shop Yet ",
+              CustomText(
+                text: LocaleKeys.you_didnt_select_any_shop_yet.tr(),
                 bold: true,
                 fontSize: 20,
               ),
@@ -35,7 +37,7 @@ Widget noSelectedShop(var size, BuildContext context) {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: size.height * 0.1),
                 child: CustomButton(
-                  text: "Select Store",
+                  text: LocaleKeys.select_store.tr(),
                   onPressed: () => context.push(const SwitchStore()),
                 ),
               )

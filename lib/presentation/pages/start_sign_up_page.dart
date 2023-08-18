@@ -1,8 +1,10 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:shopesapp/presentation/pages/owner_signup.dart';
 import 'package:shopesapp/presentation/pages/user_sign_up.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 class StartSignupPage extends StatefulWidget {
   const StartSignupPage({
@@ -28,7 +30,7 @@ class _StartSignupPageState extends State<StartSignupPage> {
             width: size.width,
             height: size.height,
             decoration: BoxDecoration(
-              color: AppColors.mainOrangeColor,
+              color: Theme.of(context).colorScheme.primary,
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
@@ -55,7 +57,7 @@ class _StartSignupPageState extends State<StartSignupPage> {
                           children: [
                             30.ph,
                             Text(
-                              "Sign Up As",
+                              LocaleKeys.sign_up_as.tr(),
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 18,
@@ -70,32 +72,29 @@ class _StartSignupPageState extends State<StartSignupPage> {
                                     context.push(const UserSignUp());
                                     // context.pop();
                                   },
-                                  child: Text(
-                                    "Client",
-                                    style: TextStyle(
-                                        color: AppColors.mainWhiteColor),
-                                  ),
                                   style: ElevatedButton.styleFrom(
                                       // padding: EdgeInsets.symmetric(
                                       //     vertical: 15, horizontal: 75),
                                       backgroundColor:
-                                          AppColors.mainOrangeColor,
+                                          Theme.of(context).colorScheme.primary,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(30)),
                                       side: BorderSide(
-                                          color: AppColors.mainOrangeColor))),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary)),
+                                  child: Text(
+                                    LocaleKeys.client.tr(),
+                                    style: TextStyle(
+                                        color: AppColors.mainWhiteColor),
+                                  )),
                             ),
                             20.ph,
                             ElevatedButton(
                                 onPressed: () {
                                   context.push(const OwnerSignUp());
                                 },
-                                child: Text(
-                                  "Store Owner",
-                                  style: TextStyle(
-                                      color: AppColors.mainOrangeColor),
-                                ),
                                 style: ElevatedButton.styleFrom(
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 15, horizontal: 60),
@@ -104,7 +103,16 @@ class _StartSignupPageState extends State<StartSignupPage> {
                                         borderRadius:
                                             BorderRadius.circular(30)),
                                     side: BorderSide(
-                                        color: AppColors.mainOrangeColor))),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary)),
+                                child: Text(
+                                  LocaleKeys.store_owner.tr(),
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary),
+                                )),
                           ],
                         ),
                       ),

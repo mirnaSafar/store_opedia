@@ -1,16 +1,21 @@
 import 'package:bot_toast/bot_toast.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/logic/cubites/post/filter_cubit.dart';
+import 'package:shopesapp/logic/cubites/shop/store_cubit.dart';
 import 'package:shopesapp/presentation/pages/suggested_stores.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/presentation/shared/fonts.dart';
 import 'package:shopesapp/presentation/shared/utils.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 import '../../../constant/categories.dart';
+import '../../../data/enums/filter_type.dart';
 import '../../../data/enums/message_type.dart';
+import '../../../main.dart';
 import '../../shared/custom_widgets/custom_toast.dart';
 
 class CategoriesPage extends StatefulWidget {
@@ -43,10 +48,12 @@ class _CategoriesPageState extends State<CategoriesPage> {
             borderRadius: const BorderRadius.all(
               Radius.circular(20),
             ),
-            color: AppColors.mainWhiteColor,
+            //  color: AppColors.mainWhiteColor,
             boxShadow: [
               BoxShadow(
-                  color: AppColors.mainBlackColor.withAlpha(100),
+                  color: globalSharedPreference.getBool("isDarkMode") == false
+                      ? AppColors.mainBlackColor.withAlpha(100)
+                      : AppColors.mainBlackColor.withAlpha(75),
                   blurRadius: 10)
             ]),
         child: Padding(
@@ -82,7 +89,9 @@ class _CategoriesPageState extends State<CategoriesPage> {
                               } else if (state is FilteredSuccessfully) {
                                 CustomToast.showMessage(
                                     size: const Size(300, 100),
-                                    message: '',
+                                    message: LocaleKeys
+                                        .filter_applay_successfully
+                                        .tr(),
                                     messageType: MessageType.SUCCESS,
                                     context: context);
                                 context.pop();
@@ -100,12 +109,20 @@ class _CategoriesPageState extends State<CategoriesPage> {
                               return InkWell(
                                   onTap: () {
                                     context
-                                        .read<FilterCubit>()
-                                        .filterPostsWithCategory(
-                                            category: element);
+                                        .read<StoreCubit>()
+                                        .categoryFilterStores(
+                                          category: element,
+                                          id: globalSharedPreference
+                                                  .getString("ID") ??
+                                              '0',
+                                        );
+                                    context.push(SuggestedStoresView(
+                                      filter: FilterType.CATEGORY,
+                                      category: element,
+                                    ));
                                   },
                                   child: CustomText(
-                                    text: 'Done',
+                                    text: LocaleKeys.done.tr(),
                                     textColor: AppColors.secondaryFontColor,
                                     // bold: true,
                                   ));
@@ -123,19 +140,21 @@ class _CategoriesPageState extends State<CategoriesPage> {
                               setCurrentCategories = currentCategories;
                               CustomToast.showMessage(
                                   size: const Size(400, 100),
-                                  message: 'fetched',
+                                  message: LocaleKeys.filter_applay_successfully
+                                      .tr(),
                                   context: context);
                             }
                             if (state is NoSubCategories) {
                               CustomToast.showMessage(
                                   size: const Size(300, 100),
-                                  message: 'No sub categories',
+                                  message: LocaleKeys.no_sub_categories.tr(),
                                   context: context);
                             }
                             if (state is FilterFailed) {
                               CustomToast.showMessage(
                                 size: const Size(300, 100),
-                                message: 'failed fetch the categories',
+                                message:
+                                    LocaleKeys.failed_fetch_the_categories.tr(),
                                 messageType: MessageType.REJECTED,
                                 context: context,
                               );
@@ -161,7 +180,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                             category: element);
                                   },
                                   child: CustomText(
-                                    text: 'Sub-categories',
+                                    text: LocaleKeys.sub_categories.tr(),
                                     textColor: AppColors.secondaryFontColor,
                                     // bold: true,
                                   ),
@@ -237,7 +256,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                         child: Container(
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(25),
-                              color: AppColors.mainOrangeColor),
+                              color: Theme.of(context).colorScheme.primary),
                           width: w * 0.4,
                           // margin: const EdgeInsets.only(right: 20),
                           height: h * 0.25,
@@ -274,10 +293,11 @@ class _CategoriesPageState extends State<CategoriesPage> {
 
     return SafeArea(
       child: Scaffold(
-        backgroundColor: AppColors.mainWhiteColor,
+        //  backgroundColor: AppColors.mainWhiteColor,
         appBar: AppBar(
+          iconTheme: const IconThemeData(color: Colors.black),
           elevation: 0,
-          backgroundColor: AppColors.mainWhiteColor,
+          backgroundColor: Colors.transparent,
         ),
         body: BlocProvider(
           create: (context) => FilterCubit(),
@@ -290,19 +310,19 @@ class _CategoriesPageState extends State<CategoriesPage> {
 
                 CustomToast.showMessage(
                     size: const Size(300, 100),
-                    message: 'fetched',
+                    message: LocaleKeys.fetched.tr(),
                     context: context);
               }
               if (state is NoSubCategories) {
                 CustomToast.showMessage(
                     size: const Size(300, 100),
-                    message: 'No sub categories',
+                    message: LocaleKeys.no_sub_categories.tr(),
                     context: context);
               }
               if (state is FilterFailed) {
                 CustomToast.showMessage(
                   size: const Size(300, 100),
-                  message: 'failed fetch the categories',
+                  message: LocaleKeys.failed_fetch_the_categories.tr(),
                   messageType: MessageType.REJECTED,
                   context: context,
                 );
@@ -318,7 +338,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                     Padding(
                       padding: EdgeInsetsDirectional.only(start: w * 0.15),
                       child: CustomText(
-                        text: 'Main Categories',
+                        text: LocaleKeys.main_Categories.tr(),
                         textColor: AppColors.secondaryFontColor,
                         bold: true,
                         fontSize: w * 0.05,
@@ -342,14 +362,15 @@ class _CategoriesPageState extends State<CategoriesPage> {
                           return const Center(
                               child: CircularProgressIndicator());
                         } else if (state is FilterFailed) {
-                          return const Center(
+                          return Center(
                             child: CustomText(
-                                text:
-                                    'failed to fetch subcategories,please try again '),
+                                text: LocaleKeys
+                                    .failed_to_fetch_subcategories_please_try_again
+                                    .tr()),
                           );
                         } else if (state is NoSubCategories) {
-                          const Center(
-                            child: Text('no sub categories '),
+                          Center(
+                            child: Text(LocaleKeys.no_sub_categories.tr()),
                           );
                         }
                         return Expanded(

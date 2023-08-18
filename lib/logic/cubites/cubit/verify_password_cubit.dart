@@ -1,6 +1,9 @@
 import 'package:bloc/bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:shopesapp/data/repositories/auth_repository.dart';
 import 'package:shopesapp/main.dart';
+
+import '../../../translation/locale_keys.g.dart';
 
 part 'verify_password_state.dart';
 
@@ -15,10 +18,11 @@ class VerifyPasswordCubit extends Cubit<VerifyPasswordState> {
     String? response =
         await AuthRepository().verifyPassword(password: password, id: id);
 
-    if (response == null || response == "MisMatched") {
+    if (response == null) {
       emit(VerifyPasswordFailed(
-          message: response ??
-              "Failed to Verify the Password , Check your internet connection"));
+          message: LocaleKeys.failed_verify_password.tr()));
+    } else if (response == "MisMatched") {
+      emit(VerifyPasswordFailed(message: LocaleKeys.misMatched.tr()));
     } else {
       emit(VerifyPasswordSucceed());
     }

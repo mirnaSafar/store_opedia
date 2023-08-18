@@ -8,7 +8,6 @@ import 'package:shopesapp/presentation/pages/settings.dart';
 import 'package:shopesapp/presentation/pages/store_page.dart';
 import 'package:shopesapp/presentation/pages/home_page.dart';
 import 'package:shopesapp/presentation/pages/suggested_stores.dart';
-import 'package:shopesapp/presentation/pages/user_store.dart';
 import 'package:shopesapp/presentation/widgets/bottom_navigation_bar/bottom_navigation_bar.dart';
 import '../../data/enums/bottom_navigation.dart';
 import '../../data/models/shop.dart';
@@ -64,7 +63,7 @@ class _ControlPageState extends State<ControlPage> {
               const HomePage(),
               const FavouritePage(),
               (SharedPreferencesRepository.getBrowsingPostsMode())
-                  ? browsingModeProfile(size)
+                  ? browsingModeProfile(size, "brwosing")
                   : BlocBuilder<AuthCubit, AuthState>(
                       builder: (context, state) {
                         if (state is UserLoginedIn ||
@@ -75,7 +74,7 @@ class _ControlPageState extends State<ControlPage> {
                                       .getString("currentShop") ==
                                   "noShop"
                               ? noSelectedShop(size, context)
-                              : const UserStore();
+                              : browsingModeProfile(size, "userMode");
                         }
                         {
                           context.read<WorkTimeCubit>().testOpenTime(
@@ -90,6 +89,10 @@ class _ControlPageState extends State<ControlPage> {
                                       globalSharedPreference.getString('ID'),
                                   message: 'all');
                           context.read<PostsCubit>().getOwnerPosts(
+                              visitorID: SharedPreferencesRepository
+                                      .getBrowsingPostsMode()
+                                  ? '0'
+                                  : globalSharedPreference.getString("ID"),
                               ownerID: globalSharedPreference.getString('ID'),
                               shopID:
                                   globalSharedPreference.getString('shopID'));

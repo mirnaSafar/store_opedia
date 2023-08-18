@@ -120,4 +120,30 @@ class StoreCubit extends Cubit<StoreState> {
       emit(ErrorFetchingShops(message: response["message"]));
     }
   }
+
+  Future categoryFilterStores({
+    required String id,
+    required String category,
+  }) async {
+    emit(FeatchingShopsProgress());
+    //print("start");
+    Map<String, dynamic>? response;
+
+    response =
+        await ShopRepository().categoryFilterStores(id: id, category: category);
+
+    if (response == null) {
+      emit(ErrorFetchingShops(
+          message:
+              "Failed to Get the Stores , Check your internet connection"));
+    } else if (response["message"] != "Done") {
+      emit(NoShopsYet());
+    } else if (response["message"] == "Done") {
+      // print(response["stores"]);
+      shops = response["stores"];
+      emit(FeatchingShopsSucceed());
+    } else {
+      emit(ErrorFetchingShops(message: response["message"]));
+    }
+  }
 }

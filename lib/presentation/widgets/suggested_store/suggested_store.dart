@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:location/location.dart';
@@ -18,7 +19,9 @@ import 'package:shopesapp/presentation/shared/custom_widgets/custom_icon_text.da
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custoum_rate.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
+import '../../../constant/switch_to_arabic.dart';
 import '../../../data/models/shop.dart';
 import '../../../logic/cubites/shop/cubit/toggole_follow_shop_cubit.dart';
 import '../../../logic/cubites/shop/shop_follwers_counter_cubit.dart';
@@ -57,15 +60,14 @@ class _SuggestedStoreState extends State<SuggestedStore> {
       child: Row(
         children: [
           CircleAvatar(
-              radius: w * 0.12,
-              backgroundColor: AppColors.mainBlueColor,
-              child: ClipOval(
-                  child: widget.shop.shopProfileImage == 'url'
-                      ? Image.asset(
-                          'assets/store_placeholder.png',
-                          fit: BoxFit.fill,
-                        )
-                      : Image.network(widget.shop.shopProfileImage!))),
+            radius: w * 0.12,
+            backgroundColor: AppColors.mainBlueColor,
+            backgroundImage: widget.shop.shopProfileImage == 'url'
+                ? const AssetImage(
+                    'assets/profile_photo.jpg',
+                  )
+                : NetworkImage(widget.shop.shopProfileImage!) as ImageProvider,
+          ),
           20.px,
           Column(
             mainAxisSize: MainAxisSize.max,
@@ -103,12 +105,15 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                         InkWell(
                                           onTap: () {
                                             context.pop();
-                                            context
-                                                .read<PostsCubit>()
-                                                .getOwnerPosts(
-                                                    ownerID:
-                                                        widget.shop.ownerID,
-                                                    shopID: widget.shop.shopID);
+                                            context.read<PostsCubit>().getOwnerPosts(
+                                                ownerID: widget.shop.ownerID,
+                                                shopID: widget.shop.shopID,
+                                                visitorID:
+                                                    SharedPreferencesRepository
+                                                            .getBrowsingPostsMode()
+                                                        ? '0'
+                                                        : globalSharedPreference
+                                                            .getString("ID"));
                                             context
                                                 .read<WorkTimeCubit>()
                                                 .testOpenTime(
@@ -130,10 +135,13 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                               // svgIcon:
                                               //     'instagram-1-svgrepo-com',
                                               fontSize: w * 0.04,
-                                              iconColor:
-                                                  AppColors.mainBlackColor,
+                                              iconColor: Theme.of(context)
+                                                  .primaryColorDark,
                                               icon: Icons.storefront,
-                                              text: 'View Profile'),
+                                              textColor: Theme.of(context)
+                                                  .primaryColorDark,
+                                              text:
+                                                  LocaleKeys.view_Profile.tr()),
                                         ),
                                         BlocBuilder<FavoriteCubit,
                                             FavoriteState>(
@@ -146,13 +154,13 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                                 onTap: () {
                                                   if (!SharedPreferencesRepository
                                                       .getBrowsingPostsMode()) {
-                                                    // !read.isShopFavorite(
-                                                    //         widget.shop)
-                                                    //     ? read.addToFavorites(
-                                                    //         widget.shop)
-                                                    //     : read
-                                                    //         .removeFromFavorites(
-                                                    //             widget.shop);
+                                                    !read.isShopFavorite(
+                                                            widget.shop)
+                                                        ? read.addToFavorites(
+                                                            widget.shop)
+                                                        : read
+                                                            .removeFromFavorites(
+                                                                widget.shop);
                                                     BlocProvider.of<
                                                                 ToggoleFavoriteShopCubit>(
                                                             context)
@@ -162,10 +170,11 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                                             ownerID: globalSharedPreference
                                                                     .getString(
                                                                         "ID") ??
-                                                                '0');
-                                                    context
-                                                        .read<StoreCubit>()
-                                                        .getAllStores();
+                                                                '0')
+                                                        .then((value) => context
+                                                            .read<StoreCubit>()
+                                                            .getAllStores());
+
                                                     context
                                                         .read<
                                                             ShowFavoriteStoresCubit>()
@@ -174,9 +183,10 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                                                     .getString(
                                                                         "ID") ??
                                                                 '0');
-                                                    // context.pop();
-                                                  } else {
                                                     context.pop();
+                                                  } else {
+                                                    // context.pop();
+
                                                     Future.delayed(
                                                         const Duration(
                                                             seconds: 1),
@@ -184,19 +194,25 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                                             showBrowsingDialogAlert(
                                                                 context));
                                                   }
-                                                  context.pop();
+                                                  // context.pop();
                                                 },
                                                 child: CustomIconTextRow(
                                                     fontSize: w * 0.04,
-                                                    iconColor: AppColors
-                                                        .mainBlackColor,
+                                                    iconColor: Theme.of(context)
+                                                        .primaryColorDark,
+                                                    textColor: Theme.of(context)
+                                                        .primaryColorDark,
                                                     icon: Icons.star,
                                                     text:
                                                         // !read.isShopFavorite(
                                                         //         shop)
                                                         !widget.shop.isFavorit!
-                                                            ? 'Add to favorites'
-                                                            : 'Remove From Favorites'),
+                                                            ? LocaleKeys
+                                                                .add_to_Favorites
+                                                                .tr()
+                                                            : LocaleKeys
+                                                                .remove_from_fav
+                                                                .tr()),
                                               ),
                                             );
                                           },
@@ -238,13 +254,13 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                                               globalSharedPreference
                                                                       .getString(
                                                                           "ID") ??
-                                                                  '0');
+                                                                  '0')
+                                                      .then((value) => context
+                                                          .read<StoreCubit>()
+                                                          .getAllStores());
                                                   context.pop();
-                                                  context
-                                                      .read<StoreCubit>()
-                                                      .getAllStores();
                                                 } else {
-                                                  context.pop();
+                                                  // context.pop();
                                                   Future.delayed(
                                                       const Duration(
                                                           seconds: 1),
@@ -256,8 +272,10 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                               },
                                               child: CustomIconTextRow(
                                                   fontSize: w * 0.04,
-                                                  iconColor:
-                                                      AppColors.mainBlackColor,
+                                                  iconColor: Theme.of(context)
+                                                      .primaryColorDark,
+                                                  textColor: Theme.of(context)
+                                                      .primaryColorDark,
                                                   icon: Icons
                                                       .person_add_alt_1_rounded,
                                                   text:
@@ -265,8 +283,8 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                                       //         .getShopFollowingState(
                                                       //             widget.shop)
                                                       widget.shop.isFollow!
-                                                          ? 'UnFollow ${widget.shop.shopName}'
-                                                          : 'Follow  ${widget.shop.shopName}'),
+                                                          ? '${LocaleKeys.un_follow.tr()} ${widget.shop.shopName}'
+                                                          : '${LocaleKeys.follow.tr()} ${widget.shop.shopName}'),
                                             );
                                           },
                                         )
@@ -302,9 +320,17 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                       },
                       icon: Icon(Icons.location_on, size: w * 0.04)),
 
-                  CustomText(
-                    text: widget.shop.location,
-                    fontSize: w * 0.035,
+                  SingleChildScrollView(
+                    child: SizedBox(
+                      width: w / 8,
+                      child: CustomText(
+                        text:
+                            globalSharedPreference.getBool("isArabic") == false
+                                ? widget.shop.location
+                                : switchLocationToArabic(widget.shop.location),
+                        fontSize: w * 0.031,
+                      ),
+                    ),
                   ),
                   // 20.px,
                   IconButton(
@@ -333,8 +359,10 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                                   MainAxisAlignment
                                                       .spaceBetween,
                                               children: [
-                                                const CustomText(
-                                                  text: 'Stores Category',
+                                                CustomText(
+                                                  text: LocaleKeys
+                                                      .store_category
+                                                      .tr(),
                                                   bold: true,
                                                 ),
                                                 IconButton(
@@ -348,9 +376,15 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                             const Divider(),
                                             10.ph,
                                             CustomText(
-                                              text: widget.shop.shopCategory,
+                                              text: globalSharedPreference
+                                                          .getBool(
+                                                              "isArabic") ==
+                                                      false
+                                                  ? widget.shop.shopCategory
+                                                  : switchCategoryToArabic(
+                                                      widget.shop.shopCategory),
                                               textColor:
-                                                  AppColors.secondaryFontColor,
+                                                  AppColors.mainBlackColor,
                                             ),
                                           ],
                                         ),
@@ -362,8 +396,8 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                       icon: Icon(Icons.comment, size: w * 0.04)),
 
                   CustomText(
-                    text: 'category',
-                    fontSize: w * 0.035,
+                    text: LocaleKeys.category.tr(),
+                    fontSize: w * 0.031,
                   ),
                 ],
               ),

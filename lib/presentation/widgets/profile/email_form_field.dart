@@ -1,4 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 class ProfileEmailFormField extends StatelessWidget {
   const ProfileEmailFormField({Key? key, required this.email})
@@ -10,7 +12,7 @@ class ProfileEmailFormField extends StatelessWidget {
       initialValue: email,
       enabled: false,
       decoration: InputDecoration(
-        labelText: 'Email',
+        labelText: LocaleKeys.email.tr(),
         prefixIcon: Icon(
           Icons.mail,
           color: Theme.of(context).colorScheme.primary,

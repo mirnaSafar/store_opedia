@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 
-<key>CFBundleURLTypes</key>
+<!-- <key>CFBundleURLTypes</key>
 <array>
     <dict>
         <key>CFBundleURLSchemes</key>
@@ -11,7 +11,11 @@
             <string>whatsapp</string>
         </array>
     </dict>
-</array>
+</array> -->
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+        <string>whatsapp</string>
+    </array>
 
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>

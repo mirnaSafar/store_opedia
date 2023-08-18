@@ -1,9 +1,11 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:shopesapp/main.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 import '../../../logic/cubites/shop/active_shop_cubit.dart';
 import '../../../logic/cubites/shop/deactivate_shop_cubit.dart';
@@ -15,18 +17,18 @@ void showAlertDialog(BuildContext context, var shop) {
   AwesomeDialog(
       btnOkColor: Colors.green,
       context: context,
-      animType: AnimType.SCALE,
-      dialogType: DialogType.INFO_REVERSED,
-      body: const Center(
+      animType: AnimType.scale,
+      dialogType: DialogType.infoReverse,
+      body: Center(
           child: CustomText(
-        text: "Start the App with This Store?",
+        text: LocaleKeys.work_on_the_app_with_this_stroe.tr(),
         fontSize: 16,
       )),
       btnCancelOnPress: () {},
-      btnCancelText: 'Cancel',
-      btnOkText: " Countinue",
+      btnCancelText: LocaleKeys.cancle.tr(),
+      btnOkText: LocaleKeys.countinue.tr(),
       btnOkOnPress: () {
-        context.read<SwitchShopCubit>().swithShop(shop: shop);
+        context.read<SwitchShopCubit>().swithShop(repoShop: shop);
       }).show();
 }
 
@@ -35,22 +37,18 @@ void deleteShopAlert(BuildContext context, var shopID, bool isLastShop) {
       btnOkColor: AppColors.mainRedColor,
       btnCancelColor: Colors.green,
       context: context,
-      animType: AnimType.SCALE,
-      dialogType: DialogType.INFO_REVERSED,
+      animType: AnimType.scale,
+      dialogType: DialogType.infoReverse,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Center(
             child: isLastShop == false
-                ? const CustomText(
-                    text:
-                        "You Will Delete This Shop  and It's Posts You Can't Restore  it !")
-                : const CustomText(
-                    text:
-                        "You Will Delete This Shop  and It's Posts You Can't Restore  Any Thing ,  You Will Lose Owner power And become Normal User !")),
+                ? CustomText(text: LocaleKeys.single_store_delete.tr())
+                : CustomText(text: LocaleKeys.last_stroe_delete.tr())),
       ),
       btnCancelOnPress: () {},
-      btnCancelText: 'Cancel',
-      btnOkText: " Countinue",
+      btnCancelText: LocaleKeys.cancle.tr(),
+      btnOkText: LocaleKeys.countinue.tr(),
       btnOkOnPress: () {
         context.read<DeleteShopCubit>().deleteShop(shopID: shopID);
       }).show();
@@ -61,18 +59,16 @@ void deactivatedShopAlert(BuildContext context, var shopID) {
       btnOkColor: AppColors.mainRedColor,
       btnCancelColor: Colors.green,
       context: context,
-      animType: AnimType.SCALE,
-      dialogType: DialogType.INFO_REVERSED,
-      body: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10),
+      animType: AnimType.scale,
+      dialogType: DialogType.infoReverse,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Center(
-            child: CustomText(
-                text:
-                    "You Will Deactivate This Shop  and You can't manage it's posts!")),
+            child: CustomText(text: LocaleKeys.deactivate_stroe_alert.tr())),
       ),
       btnCancelOnPress: () {},
-      btnCancelText: 'Cancel',
-      btnOkText: " Countinue",
+      btnCancelText: LocaleKeys.cancle.tr(),
+      btnOkText: LocaleKeys.countinue.tr(),
       btnOkOnPress: () {
         context.read<DeactivateShopCubit>().deactivateShop(
               shopID: shopID,
@@ -85,16 +81,16 @@ void activeShopAlert(BuildContext context, var shopID) {
   AwesomeDialog(
       btnOkColor: Colors.green,
       context: context,
-      animType: AnimType.SCALE,
-      dialogType: DialogType.INFO_REVERSED,
-      body: const Center(
+      animType: AnimType.scale,
+      dialogType: DialogType.infoReverse,
+      body: Center(
           child: CustomText(
-        text: " Activate This Store?, You Can Manage it's Posts again!",
+        text: LocaleKeys.active_store_alert.tr(),
         fontSize: 16,
       )),
       btnCancelOnPress: () {},
-      btnCancelText: 'Cancel',
-      btnOkText: " Countinue",
+      btnCancelText: LocaleKeys.cancle.tr(),
+      btnOkText: LocaleKeys.countinue.tr(),
       btnOkOnPress: () {
         context.read<ActiveShopCubit>().activeShop(
               shopID: shopID,
@@ -107,15 +103,14 @@ void cantDeactivatedShop(BuildContext context) {
   AwesomeDialog(
           btnOkColor: Colors.green,
           context: context,
-          animType: AnimType.SCALE,
-          dialogType: DialogType.INFO,
-          body: const Center(
+          animType: AnimType.scale,
+          dialogType: DialogType.info,
+          body: Center(
               child: CustomText(
-            text:
-                " You Can't Deactive The Last Shop , Because you Must have at least one active store !",
+            text: LocaleKeys.last_store_deactiveate.tr(),
             fontSize: 16,
           )),
-          btnOkText: " OK",
+          btnOkText: LocaleKeys.ok.tr(),
           btnOkOnPress: () {})
       .show();
 }

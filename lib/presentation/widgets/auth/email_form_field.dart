@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 class CreateEmailFormField extends StatelessWidget {
   const CreateEmailFormField({Key? key, required this.setEmail})
@@ -11,11 +13,11 @@ class CreateEmailFormField extends StatelessWidget {
     return TextFormField(
       decoration: InputDecoration(
         filled: true,
-        fillColor: const Color.fromRGBO(242, 242, 242, 1),
-        labelText: '  Email',
+        // fillColor: const Color.fromRGBO(242, 242, 242, 1),
+        labelText: LocaleKeys.email.tr(),
         labelStyle: TextStyle(
           color: AppColors.mainTextColor,
-          fontSize: 20,
+          fontSize: 16,
         ),
         border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
@@ -27,7 +29,7 @@ class CreateEmailFormField extends StatelessWidget {
             value.isEmpty ||
             !RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
                 .hasMatch(value)) {
-          return 'Enter a valid email.';
+          return LocaleKeys.invalid_email.tr();
         }
         return null;
       },

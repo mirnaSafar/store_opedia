@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/data/models/post.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 import '../../../data/repositories/posts_repository.dart';
 
@@ -15,6 +17,7 @@ class PostsCubit extends Cubit<PostsState> {
 
   void setOwnerPost({required var posts}) {
     ownerPosts.clear();
+    // print(ownerPosts);
     for (var element in posts) {
       ownerPosts.add(Post.fromMap(element));
     }
@@ -54,14 +57,17 @@ class PostsCubit extends Cubit<PostsState> {
   Future getOwnerPosts({
     required String? ownerID,
     required String? shopID,
+    required String? visitorID,
   }) async {
     emit(FeatchingPostsProgress());
     Map<String, dynamic>? response = await PostsRepository().getShopPosts(
       ownerID: ownerID!,
       shopID: shopID!,
+      visitorID: visitorID!,
     );
     if (response!["message"] == "Done") {
       newestPosts = response["posts"] as List;
+      print(newestPosts);
       if (newestPosts.isEmpty) {
         emit(NoPostsYet());
       } else {
@@ -79,8 +85,7 @@ class PostsCubit extends Cubit<PostsState> {
     emit(FeatchingPostsProgress());
     Map<String, dynamic>? response = await PostsRepository().getAllPosts();
     if (response == null) {
-      emit(ErrorFetchingPosts(
-          message: "Failed to Get the Posts , Check your internet connection"));
+      emit(ErrorFetchingPosts(message: LocaleKeys.get_posts_failed.tr()));
     } else if (response["message"] == "You dont have any followed store yet") {
       emit(NoPostsYet());
     } else if (response["message"] == "Done") {

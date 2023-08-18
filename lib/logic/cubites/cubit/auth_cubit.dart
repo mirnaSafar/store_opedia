@@ -1,9 +1,11 @@
 import 'dart:core';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/data/repositories/auth_repository.dart';
 import 'package:shopesapp/logic/cubites/cubit/auth_state.dart';
 import 'package:shopesapp/main.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 import '../../../data/models/shop.dart';
 import '../../../data/models/user.dart';
 import '../../../data/repositories/shared_preferences_repository.dart';
@@ -22,10 +24,12 @@ class AuthCubit extends Cubit<AuthState> {
     Map<String, dynamic>? response = await AuthRepository()
         .userSignUp(userName, email, password, phoneNumber);
 
-    if (response == null || response["message"] != "User was Created") {
-      emit(AuthFailed(response == null
-          ? "Signup Failed  Check your internet connection"
-          : response["message"]));
+    if (response == null) {
+      emit(AuthFailed(LocaleKeys.sign_up_failed.tr()));
+    } else if (response["message"] == "UserName Already Exists") {
+      emit(AuthFailed(LocaleKeys.user_name_already_exists.tr()));
+    } else if (response["message"] == "Email Already Exists") {
+      emit(AuthFailed(LocaleKeys.email_already_exists.tr()));
     } else {
       user = User.fromMap(response);
 
@@ -68,9 +72,13 @@ class AuthCubit extends Cubit<AuthState> {
       longitude: longitude,
     );
     if (response == null) {
-      emit(AuthFailed("Signup Failed Check your internet connection"));
-    } else if (response["message"] != "Owner was Created") {
-      emit(AuthFailed(response["message"]));
+      emit(AuthFailed(LocaleKeys.sign_up_failed.tr()));
+    } else if (response["message"] == "UserName Already Exists") {
+      emit(AuthFailed(LocaleKeys.user_name_already_exists.tr()));
+    } else if (response["message"] == "Email Already Exists") {
+      emit(AuthFailed(LocaleKeys.email_already_exists.tr()));
+    } else if (response["message"] == 'Invalid Values') {
+      emit(AuthFailed(LocaleKeys.invalid_values.tr()));
     } else {
       emit(OwnerSignedUp());
       shop = Shop.fromMap(response);
@@ -87,11 +95,9 @@ class AuthCubit extends Cubit<AuthState> {
         await AuthRepository().login(email: email, password: password);
 
     if (response == null) {
-      emit(AuthFailed("Login Failed Check your internet connection"));
-    }
-    if (response!["message"] != "user auth succeded" &&
-        response["message"] != "owner auth succeded") {
-      emit(AuthFailed(response['message']));
+      emit(AuthFailed(LocaleKeys.log_in_failed.tr()));
+    } else if (response["message"] == 'Invalid Email Or Password') {
+      emit(AuthFailed(LocaleKeys.invalid_email_or_password.tr()));
     } else if (response["message"] == "user auth succeded") {
       user = User.fromMap(response);
 
@@ -121,18 +127,6 @@ class AuthCubit extends Cubit<AuthState> {
 
     globalSharedPreference.setString("mode", "user");
     globalSharedPreference.setString("currentShop", "shopDeleted");
-    /*  globalSharedPreference.remove("shopPhoneNumber");
-    globalSharedPreference.remove("shopProfileImage");
-    globalSharedPreference.remove("shopCoverImage");
-    globalSharedPreference.remove("numberOfFollowers");
-    globalSharedPreference.remove("socialUrl");
-    globalSharedPreference.remove("rate");
-    globalSharedPreference.remove("shopDescription");
-    globalSharedPreference.remove("shopCategory");
-    globalSharedPreference.remove("location");
-    globalSharedPreference.remove("startWorkTime");
-    globalSharedPreference.remove("endWorkTime");*/
-
     emit(UserLoginedIn());
   }
 

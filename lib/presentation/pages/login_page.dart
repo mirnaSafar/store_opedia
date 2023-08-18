@@ -1,4 +1,5 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/presentation/pages/control_page.dart';
@@ -8,10 +9,12 @@ import 'package:shopesapp/presentation/pages/switch_store.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 import '../../data/enums/message_type.dart';
 import '../../data/repositories/shared_preferences_repository.dart';
 import '../../logic/cubites/cubit/auth_cubit.dart';
 import '../../logic/cubites/cubit/auth_state.dart';
+import '../../main.dart';
 import '../shared/custom_widgets/custom_toast.dart';
 import '../widgets/auth/email_form_field.dart';
 import '../widgets/auth/password_form_field.dart';
@@ -29,6 +32,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   var isPasswordHidden = true;
+  bool isArabic = false;
   late String _email;
 
   late String _password;
@@ -50,6 +54,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   }
 
   @override
+  void initState() {
+    isArabic = globalSharedPreference.getBool("isArabic") ?? false;
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final w = MediaQuery.of(context).size.width;
     final h = MediaQuery.of(context).size.height;
@@ -57,30 +67,29 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is UserLoginedIn) {
-          //Error
-          /*    CustomToast.showMessage(
+          CustomToast.showMessage(
               context: context,
               size: size,
-              message: "Login Successfuly",
-              messageType: MessageType.SUCCESS);*/
+              message: LocaleKeys.login_success.tr(),
+              messageType: MessageType.SUCCESS);
           context.pushRepalceme(const ControlPage());
         } else if (state is OwnerWillSelectStore) {
           CustomToast.showMessage(
               context: context,
               size: size,
-              message: "AUTH SUCCEEDED",
+              message: LocaleKeys.auth_SUCCEDED.tr(),
               messageType: MessageType.SUCCESS);
           context.push(const SwitchStore());
         } else if (state is AuthFailed) {
-          buildAwsomeDialog(
-                  context, "Failed", state.message.toUpperCase(), "Cancel",
-                  type: DialogType.ERROR)
+          buildAwsomeDialog(context, LocaleKeys.faild.tr(),
+                  state.message.toUpperCase(), LocaleKeys.cancle.tr(),
+                  type: DialogType.error)
               .show();
         }
       },
       child: SafeArea(
         child: Scaffold(
-            backgroundColor: AppColors.mainOrangeColor,
+            backgroundColor: Theme.of(context).colorScheme.primary,
             body: Form(
                 key: _formKey,
                 child: SingleChildScrollView(
@@ -99,7 +108,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   EdgeInsets.symmetric(horizontal: w * 0.06),
                               height: h / 1.3,
                               decoration: BoxDecoration(
-                                  color: AppColors.mainWhiteColor,
+                                  color: Theme.of(context).primaryColorLight,
                                   borderRadius: const BorderRadius.only(
                                     topLeft: Radius.circular(20),
                                     topRight: Radius.circular(20),
@@ -109,53 +118,54 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   children: [
                                     SizedBox(
                                         height: 160,
-                                        child:
-                                            //    SvgPicture.asset(
-                                            //       'assets/sign-in-02.svg'),
-                                            // ),
-
-                                            Image.asset(
-                                                'assets/sign_image.jpg')),
-                                    const Padding(
-                                      padding:
-                                          EdgeInsets.only(right: 220, top: 20),
+                                        child: Image.asset(
+                                            'assets/sign_image.jpg')),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          right: 220, top: 20),
                                       child: Text(
-                                        "Welcome",
+                                        LocaleKeys.welcome.tr(),
                                         style: TextStyle(
-                                            fontSize: 25,
+                                            fontSize: w * 0.055,
                                             fontWeight: FontWeight.bold),
                                       ),
                                     ),
-                                    const SizedBox(
-                                      height: 30.0,
+                                    SizedBox(
+                                      height: h * 0.05,
                                     ),
                                     Text(
-                                      "By signing in you are agreeing with",
+                                      LocaleKeys
+                                          .by_singing_in_you_are_agreeing_with
+                                          .tr(),
                                       style: TextStyle(
                                           fontSize: 16,
                                           color: AppColors.secondaryFontColor),
                                     ),
-                                    const SizedBox(
-                                      height: 10.0,
+                                    SizedBox(
+                                      height: h * 0.005,
                                     ),
                                     InkWell(
                                       child: Text(
-                                        "Terms and privacy policy",
+                                        LocaleKeys.terms_and_privacy_policy
+                                            .tr(),
                                         style: TextStyle(
-                                            color: AppColors.mainOrangeColor),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                        ),
                                       ),
                                       onTap: () {
                                         context.push(const PrivacyPlicies());
                                       },
                                     ),
-                                    const SizedBox(
-                                      height: 40.0,
+                                    SizedBox(
+                                      height: h * 0.05,
                                     ),
                                     CreateEmailFormField(
                                       setEmail: setEmail,
                                     ),
-                                    const SizedBox(
-                                      height: 20.0,
+                                    SizedBox(
+                                      height: h * 0.009,
                                     ),
                                     CreatePasswordFormField(
                                       isPasswordHidden: isPasswordHidden,
@@ -167,6 +177,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                           AlignmentDirectional.centerStart,
                                       child: InkWell(
                                         onTap: () {
+                                          globalSharedPreference.clear();
+
                                           SharedPreferencesRepository
                                               .setBrowsingPostsMode(
                                                   isBrowsingMode: true);
@@ -175,9 +187,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                         child: CustomText(
                                             textColor: AppColors.mainBlueColor,
                                             underline: true,
-                                            text: 'continue as visitor'),
+                                            text: LocaleKeys.continue_as_visitor
+                                                .tr()),
                                       ),
-                                    )
+                                    ),
                                   ]),
                             ),
                           ),
@@ -188,93 +201,135 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             clipper: MyClipper(),
                             child: Container(
                               decoration: BoxDecoration(
-                                  color: AppColors.mainWhiteColor,
+                                  color: Theme.of(context).primaryColorLight,
                                   borderRadius: const BorderRadius.only(
                                       bottomLeft: Radius.circular(20),
                                       bottomRight: Radius.circular(20))),
                               height: h / 1.3,
                               width: MediaQuery.of(context).size.width,
                               child: Padding(
-                                padding: EdgeInsets.only(top: h / 1.55),
+                                padding: EdgeInsets.only(top: h / 1.6),
                                 child: Column(
                                   children: [
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 30),
-                                      child: Row(
+                                      child: Column(
                                         children: [
-                                          Expanded(
-                                            child: BlocBuilder<AuthCubit,
-                                                AuthState>(
-                                              builder: (context, state) {
-                                                if (state is AuthProgress) {
-                                                  return const Center(
-                                                    child:
-                                                        CircularProgressIndicator(),
-                                                  );
-                                                }
-                                                return ElevatedButton(
-                                                  style: ElevatedButton.styleFrom(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          vertical: 15),
-                                                      backgroundColor:
-                                                          Theme.of(context)
-                                                              .colorScheme
-                                                              .primary,
-                                                      shape:
-                                                          RoundedRectangleBorder(
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: BlocBuilder<AuthCubit,
+                                                    AuthState>(
+                                                  builder: (context, state) {
+                                                    if (state is AuthProgress) {
+                                                      return const Center(
+                                                        child:
+                                                            CircularProgressIndicator(),
+                                                      );
+                                                    }
+                                                    return ElevatedButton(
+                                                      style: ElevatedButton.styleFrom(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .symmetric(
+                                                                  vertical: 15),
+                                                          backgroundColor:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .primary,
+                                                          shape: RoundedRectangleBorder(
                                                               borderRadius:
                                                                   BorderRadius
                                                                       .circular(
                                                                           30))),
-                                                  onPressed: () => {
-                                                    _submitForm(context),
+                                                      onPressed: () => {
+                                                        _submitForm(context),
+                                                      },
+                                                      child: Text(
+                                                        LocaleKeys.login.tr(),
+                                                        style: TextStyle(
+                                                          color: AppColors
+                                                              .mainWhiteColor,
+                                                        ),
+                                                      ),
+                                                    );
                                                   },
-                                                  child: const Text(
-                                                    'Login',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                          40.px,
-                                          Expanded(
-                                            child: ElevatedButton(
-                                                onPressed: () {
-                                                  context.push(
-                                                      const StartSignupPage());
-                                                },
-                                                style: ElevatedButton.styleFrom(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                      vertical: 15,
-                                                    ),
-                                                    backgroundColor: AppColors
-                                                        .mainWhiteColor,
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        30)),
-                                                    side: BorderSide(
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .primary,
+                                                ),
+                                              ),
+                                              40.px,
+                                              Expanded(
+                                                child: ElevatedButton(
+                                                    onPressed: () {
+                                                      context.push(
+                                                          const StartSignupPage());
+                                                    },
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                              vertical: 15,
+                                                            ),
+                                                            backgroundColor:
+                                                                AppColors
+                                                                    .mainWhiteColor,
+                                                            shape: RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            30)),
+                                                            side: BorderSide(
+                                                              color: Theme.of(
+                                                                      context)
+                                                                  .colorScheme
+                                                                  .primary,
+                                                            )),
+                                                    child: Text(
+                                                      LocaleKeys.register.tr(),
+                                                      style: TextStyle(
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .primary,
+                                                      ),
                                                     )),
-                                                child: Text(
-                                                  "Register",
-                                                  style: TextStyle(
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .primary,
-                                                  ),
-                                                )),
-                                          )
+                                              )
+                                            ],
+                                          ),
+                                          SwitchListTile(
+                                            title: Text(LocaleKeys
+                                                .arabic_language
+                                                .tr()),
+                                            value: isArabic,
+                                            onChanged: (bool value) async {
+                                              setState(() {
+                                                isArabic = !isArabic;
+                                              });
+                                              value == true
+                                                  ? {
+                                                      await context.setLocale(
+                                                          const Locale('ar')),
+                                                      globalSharedPreference
+                                                          .setBool(
+                                                              "isArabic", true),
+                                                      globalSharedPreference
+                                                          .setString(
+                                                              "currentLanguage",
+                                                              "ar")
+                                                    }
+                                                  : {
+                                                      await context.setLocale(
+                                                          const Locale('en')),
+                                                      globalSharedPreference
+                                                          .setBool("isArabic",
+                                                              false),
+                                                      globalSharedPreference
+                                                          .setString(
+                                                              "currentLanguage",
+                                                              "en")
+                                                    };
+                                            },
+                                          ),
                                         ],
                                       ),
                                     ),

@@ -1,4 +1,5 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -16,6 +17,7 @@ import 'package:shopesapp/presentation/shared/custom_widgets/user_input.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/presentation/widgets/auth/confirm_form_field.dart';
 import 'package:shopesapp/presentation/widgets/auth/phoneNumber_form_field.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 import '../../constant/clipper.dart';
 import '../../data/enums/message_type.dart';
 import '../../logic/cubites/cubit/auth_state.dart';
@@ -127,7 +129,7 @@ class _UserSignUpState extends State<OwnerSignUp>
                 color: Theme.of(context).colorScheme.primary,
                 child: Center(
                   child: Text(
-                    'Owner SignUp',
+                    LocaleKeys.owner_sign_up.tr(),
                     style: GoogleFonts.indieFlower(
                         textStyle: Theme.of(context).textTheme.headlineMedium,
                         fontSize: 48,
@@ -172,19 +174,27 @@ class _UserSignUpState extends State<OwnerSignUp>
                     ),
                     CreatePhoneNumberFormField(setPhoneNumber: setPhoneNumber),
                     UserInput(
-                      text: 'Store Name',
+                      text: LocaleKeys.store_name.tr(),
                       controller: _storeNameController,
                     ),
-                    UserInput(
-                        text: 'Store Location',
-                        controller: storeLocationController,
-                        suffixIcon: IconButton(
+                    Row(
+                      children: [
+                        Expanded(
+                          child: UserInput(
+                            enabled: false,
+                            text: LocaleKeys.store_Location.tr(),
+                            //  enabled: false,
+                            controller: storeLocationController,
+                          ),
+                        ),
+                        IconButton(
                             onPressed: () async {
                               // LocationService().getCurrentAddressInfo();
                               LocationData? currentLocation =
                                   await LocationService()
                                       .getUserCurrentLocation();
                               if (currentLocation != null) {
+                                // ignore: use_build_context_synchronously
                                 selectedStoreLocation = await context.push(
                                   MapPage(
                                     currentLocation: currentLocation,
@@ -205,15 +215,26 @@ class _UserSignUpState extends State<OwnerSignUp>
                                 setState(() {});
                               }
                             },
-                            icon: const Icon(Icons.location_on))),
-                    UserInput(
-                      text: 'Store Number',
-                      controller: _storeNumberController,
+                            icon: Icon(
+                              Icons.location_on,
+                              color: Theme.of(context).colorScheme.primary,
+                            ))
+                      ],
                     ),
                     UserInput(
-                        text: 'Store Category',
-                        controller: storeCategoryController,
-                        suffixIcon: IconButton(
+                      text: LocaleKeys.store_phoneNumber.tr(),
+                      controller: _storeNumberController,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: UserInput(
+                            enabled: false,
+                            text: LocaleKeys.store_category.tr(),
+                            controller: storeCategoryController,
+                          ),
+                        ),
+                        IconButton(
                             onPressed: () async {
                               await context
                                   .push(const SignUpCategoriesPage())
@@ -221,10 +242,15 @@ class _UserSignUpState extends State<OwnerSignUp>
                                       storeCategoryController.text = value);
                               setState(() {});
                             },
-                            icon: const Icon(Icons.comment))),
+                            icon: Icon(
+                              Icons.comment,
+                              color: Theme.of(context).colorScheme.primary,
+                            ))
+                      ],
+                    ),
                     30.ph,
                     CustomText(
-                      text: 'Store Work Time',
+                      text: LocaleKeys.work_Time.tr(),
                       textColor: AppColors.secondaryFontColor,
                     ),
                     Padding(
@@ -256,7 +282,7 @@ class _UserSignUpState extends State<OwnerSignUp>
                           Padding(
                             padding: const EdgeInsets.only(top: 15.0),
                             child: CustomText(
-                              text: 'to',
+                              text: LocaleKeys.to.tr(),
                               textColor: AppColors.secondaryFontColor,
                             ),
                           ),
@@ -290,13 +316,16 @@ class _UserSignUpState extends State<OwnerSignUp>
                           CustomToast.showMessage(
                               context: context,
                               size: size,
-                              message: "Sign UP Successfuly",
+                              message: LocaleKeys.sign_up_success.tr(),
                               messageType: MessageType.SUCCESS);
                           context.pushRepalceme(const ControlPage());
                         } else if (state is AuthFailed) {
-                          await buildAwsomeDialog(context, "Faild",
-                                  state.message.toUpperCase(), "Cancle",
-                                  type: DialogType.ERROR)
+                          await buildAwsomeDialog(
+                                  context,
+                                  LocaleKeys.faild.tr(),
+                                  state.message.toUpperCase(),
+                                  LocaleKeys.cancle.tr(),
+                                  type: DialogType.error)
                               .show();
                         }
                       },
@@ -313,7 +342,7 @@ class _UserSignUpState extends State<OwnerSignUp>
                               onPressed: () {
                                 _submitForm(context);
                               },
-                              text: 'Signup',
+                              text: LocaleKeys.sign_up.tr(),
                             );
                           },
                         );

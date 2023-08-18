@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 class CreateUserNameFormField extends StatelessWidget {
   const CreateUserNameFormField({Key? key, required this.setUserName})
@@ -11,8 +13,8 @@ class CreateUserNameFormField extends StatelessWidget {
         readOnly: false,
         decoration: InputDecoration(
           filled: true,
-          fillColor: const Color.fromRGBO(242, 242, 242, 1),
-          labelText: '   User Name',
+          //   fillColor: const Color.fromRGBO(242, 242, 242, 1),
+          labelText: LocaleKeys.user_name.tr(),
           labelStyle: TextStyle(fontSize: 20, color: AppColors.mainTextColor),
           border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30),

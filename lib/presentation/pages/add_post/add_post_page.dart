@@ -1,6 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,6 +19,10 @@ import 'package:shopesapp/presentation/shared/custom_widgets/custom_toast.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/user_input.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/presentation/shared/utils.dart';
+
+import '../../../data/repositories/shared_preferences_repository.dart';
+import '../../../translation/locale_keys.g.dart';
+import '../../shared/validation_functions.dart';
 
 class AddPostPage extends StatefulWidget {
   const AddPostPage({Key? key}) : super(key: key);
@@ -86,12 +93,13 @@ class _AddPostPageState extends State<AddPostPage> {
           child: ListView(children: [
             Center(
                 child: CustomText(
-              text: 'Add Post',
+              text: LocaleKeys.add_Post.tr(),
               fontSize: w * 0.07,
-              textColor: AppColors.primaryFontColor,
+              textColor: Theme.of(context).primaryColorDark,
             )),
             (w * 0.04).ph,
-            const Center(child: CustomText(text: 'Add your post details')),
+            Center(
+                child: CustomText(text: LocaleKeys.add_your_post_details.tr())),
             (w * 0.06).ph,
             Center(
               child: Stack(
@@ -152,21 +160,33 @@ class _AddPostPageState extends State<AddPostPage> {
                 ],
               ),
             ),
+            20.ph,
+            CustomText(
+              text: selectedFile == null ? 'required' : '',
+              textColor: AppColors.mainRedColor,
+              fontSize: 12,
+            ),
             SizedBox(
               height: w * 0.04,
             ),
             UserInput(
               controller: addPostNameController,
-              text: 'Product name',
-              //   validator: (name) => nameValidator(name, 'Enter product name'),
+              text: LocaleKeys.product_Name.tr(),
+              validator: (name) => nameValidator(name, 'Enter product name'),
             ),
             UserInput(
-              text: 'Product Description',
+              text: LocaleKeys.product_Description.tr(),
               controller: addPostDescriptionController,
+              validator: (p0) {
+                return p0!.isEmpty ? 'required' : '';
+              },
             ),
             UserInput(
-              text: 'Product price',
+              text: LocaleKeys.product_price.tr(),
               controller: addPostPriceController,
+              validator: (p0) {
+                return p0!.isEmpty ? 'required' : '';
+              },
             ),
             (w * 0.1).ph,
             Row(children: [
@@ -175,7 +195,7 @@ class _AddPostPageState extends State<AddPostPage> {
                 onPressed: () {
                   context.pop();
                 },
-                text: 'cancel',
+                text: LocaleKeys.cancle.tr(),
                 color: AppColors.mainWhiteColor,
                 textColor: Theme.of(context).colorScheme.primary,
                 borderColor: Theme.of(context).colorScheme.primary,
@@ -190,11 +210,15 @@ class _AddPostPageState extends State<AddPostPage> {
                       CustomToast.showMessage(
                           context: context,
                           size: size,
-                          message: "Post Added Successfully",
+                          message: LocaleKeys.add_Post_Successfully.tr(),
                           messageType: MessageType.SUCCESS);
                       context
                           .read<PostsCubit>()
                           .getOwnerPosts(
+                            visitorID: SharedPreferencesRepository
+                                    .getBrowsingPostsMode()
+                                ? '0'
+                                : globalSharedPreference.getString("ID"),
                             ownerID:
                                 globalSharedPreference.getString("ID") ?? '0',
                             shopID: globalSharedPreference.getString("shopID")!,
@@ -206,7 +230,6 @@ class _AddPostPageState extends State<AddPostPage> {
                           size: size,
                           message: state.message,
                           messageType: MessageType.REJECTED);
-                      // context.pop();
                     }
                   },
                   builder: (context, state) {
@@ -223,7 +246,8 @@ class _AddPostPageState extends State<AddPostPage> {
                             ? CustomToast.showMessage(
                                 context: context,
                                 size: size,
-                                message: 'Please check required fields',
+                                message: LocaleKeys.please_check_required_fields
+                                    .tr(),
                                 messageType: MessageType.REJECTED)
                             : {
                                 formKey.currentState!.save(),
@@ -241,7 +265,7 @@ class _AddPostPageState extends State<AddPostPage> {
                               };
                         // ).then((value) => context.pop());
                       },
-                      text: 'post',
+                      text: LocaleKeys.post.tr(),
                       textColor: AppColors.mainWhiteColor,
                     );
                   },
@@ -287,7 +311,7 @@ class _AddPostPageState extends State<AddPostPage> {
                             ),
                             (MediaQuery.of(context).size.width * 0.08).px,
                             CustomText(
-                              text: 'Camera',
+                              text: LocaleKeys.camera.tr(),
                               fontSize:
                                   (MediaQuery.of(context).size.width * 0.04),
                             )
@@ -308,11 +332,11 @@ class _AddPostPageState extends State<AddPostPage> {
                           children: [
                             Icon(
                               Icons.image,
-                              color: AppColors.mainOrangeColor,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                             (MediaQuery.of(context).size.width * 0.08).px,
                             CustomText(
-                              text: 'Gallery',
+                              text: LocaleKeys.gallery.tr(),
                               fontSize:
                                   (MediaQuery.of(context).size.width * 0.04),
                             )

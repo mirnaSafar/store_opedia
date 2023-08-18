@@ -1,7 +1,9 @@
 import 'package:bloc/bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:meta/meta.dart';
 import 'package:shopesapp/logic/cubites/shop/get_owner_shops_cubit.dart';
 import 'package:shopesapp/main.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 import '../../../../data/repositories/shop_repository.dart';
 
@@ -18,9 +20,7 @@ class DeleteShopCubit extends Cubit<DeleteShopState> {
         await ShopRepository().deleteShop(shopID: shopID, ownerID: ownerID!);
 
     if (response == "Failed") {
-      emit(DeleteShopFailed(
-          message:
-              "Failed to delete the Shop , Check your internet connection"));
+      emit(DeleteShopFailed(message: LocaleKeys.delete_store_failed.tr()));
     } else {
       emit(DeleteShopSucceed());
     }

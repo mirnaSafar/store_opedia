@@ -1,4 +1,6 @@
 import 'package:bloc/bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 import '../../../../data/repositories/user_repository.dart';
 
@@ -19,8 +21,7 @@ class ContactUsCubit extends Cubit<ContactUsState> {
         .contactUS(id: id, type: type, description: description, photo: "");
 
     if (response == "Failed") {
-      emit(ContactUsFailed(
-          message: "Failed to ContactUs , Check your internet connection"));
+      emit(ContactUsFailed(message: LocaleKeys.failed_to_contact_with_Us.tr()));
     } else {
       emit(ContactUsSucceed());
     }

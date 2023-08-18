@@ -1,4 +1,5 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,6 +8,7 @@ import 'package:shopesapp/presentation/pages/control_page.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/presentation/widgets/auth/confirm_form_field.dart';
 import 'package:shopesapp/presentation/widgets/auth/phoneNumber_form_field.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 import '../../constant/clipper.dart';
 import '../../data/enums/message_type.dart';
 import '../../logic/cubites/cubit/auth_state.dart';
@@ -73,13 +75,13 @@ class _UserSignUpState extends State<UserSignUp> with TickerProviderStateMixin {
           CustomToast.showMessage(
               context: context,
               size: size,
-              message: "Sign UP Successfully",
+              message: LocaleKeys.sign_up_success.tr(),
               messageType: MessageType.SUCCESS);
           context.pushRepalceme(const ControlPage());
         } else if (state is AuthFailed) {
-          buildAwsomeDialog(
-                  context, "Failed", state.message.toUpperCase(), "Cancle",
-                  type: DialogType.ERROR)
+          buildAwsomeDialog(context, LocaleKeys.faild.tr(),
+                  state.message.toUpperCase(), LocaleKeys.cancle.tr(),
+                  type: DialogType.error)
               .show();
         }
       },
@@ -97,7 +99,7 @@ class _UserSignUpState extends State<UserSignUp> with TickerProviderStateMixin {
                   color: Theme.of(context).colorScheme.primary,
                   child: Center(
                     child: Text(
-                      'User SignUp',
+                      LocaleKeys.user_sign_up.tr(),
                       style: GoogleFonts.indieFlower(
                           textStyle: Theme.of(context).textTheme.headlineMedium,
                           fontSize: 48,
@@ -108,8 +110,8 @@ class _UserSignUpState extends State<UserSignUp> with TickerProviderStateMixin {
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 20.0,
+              SizedBox(
+                height: size.height * 0.02,
               ),
               Padding(
                 padding: const EdgeInsets.all(10.0),
@@ -117,30 +119,30 @@ class _UserSignUpState extends State<UserSignUp> with TickerProviderStateMixin {
                   CreateEmailFormField(
                     setEmail: setEmail,
                   ),
-                  const SizedBox(
-                    height: 20.0,
+                  SizedBox(
+                    height: size.height * 0.02,
                   ),
                   CreatePasswordFormField(
                     isPasswordHidden: isPasswordHidden,
                     setPassword: setPassword,
                   ),
-                  const SizedBox(
-                    height: 20.0,
+                  SizedBox(
+                    height: size.height * 0.02,
                   ),
                   CreateConfirmPasswordFormField(
                     getPassword: getPassword,
                     isConfiermPasswordHidden: isConfiermPasswordHidden,
                   ),
-                  const SizedBox(
-                    height: 30.0,
+                  SizedBox(
+                    height: size.height * 0.02,
                   ),
                   CreateUserNameFormField(setUserName: setUserName),
-                  const SizedBox(
-                    height: 30.0,
+                  SizedBox(
+                    height: size.height * 0.02,
                   ),
                   CreatePhoneNumberFormField(setPhoneNumber: setPhoneNumber),
-                  const SizedBox(
-                    height: 20.0,
+                  SizedBox(
+                    height: size.height * 0.02,
                   ),
                   BlocBuilder<AuthCubit, AuthState>(
                     builder: (context, state) {
@@ -153,12 +155,9 @@ class _UserSignUpState extends State<UserSignUp> with TickerProviderStateMixin {
                         onPressed: () {
                           _submitForm(context);
                         },
-                        text: 'Signup',
+                        text: LocaleKeys.sign_up.tr(),
                       );
                     },
-                  ),
-                  const SizedBox(
-                    height: 15.0,
                   ),
                 ]),
               )

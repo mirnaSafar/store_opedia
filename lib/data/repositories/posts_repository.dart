@@ -29,12 +29,14 @@ class PostsRepository {
   Future<Map<String, dynamic>?> getShopPosts({
     required String shopID,
     required String ownerID,
+    required String visitorID,
   }) async {
     http.Response response;
     Map<String, dynamic> parsedResult;
     Map<String, dynamic> requestBody = {
       "id": ownerID,
       "shopID": shopID,
+      'visitor': visitorID
     };
     try {
       response = await http.post(
@@ -48,6 +50,7 @@ class PostsRepository {
     }
     if (response.statusCode == 200) {
       parsedResult = jsonDecode(response.body);
+      print(parsedResult);
       return parsedResult;
     }
     return null;
@@ -136,7 +139,7 @@ class PostsRepository {
         'Content-Type': 'application/json',
       },
     );
-    print(response.statusCode);
+    // print(response.statusCode);
     if (response.statusCode == 200) {
       return "Success";
     }
@@ -151,7 +154,7 @@ class PostsRepository {
     Map<String, dynamic> requestBody = {
       "id": userID,
     };
-    print(requestBody);
+    // print(requestBody);
     try {
       response = await http.post(
           Uri.http(ENDPOINT, "/show/posts/followedStores/$userID"),
@@ -165,7 +168,7 @@ class PostsRepository {
     }
     if (response.statusCode == 200) {
       parsedResult = jsonDecode(response.body);
-      print(parsedResult);
+      //  print(parsedResult);
       return parsedResult;
     }
     return null;
@@ -181,7 +184,7 @@ class PostsRepository {
       "id": userID,
       "postID": postID,
     };
-    print(requestBody);
+    //  print(requestBody);
     try {
       response = await http.post(Uri.http(ENDPOINT, "/like/$userID/$postID"),
           body: jsonEncode(requestBody),
@@ -191,7 +194,7 @@ class PostsRepository {
     } catch (e) {
       return null;
     }
-    print(response.statusCode);
+    //  print(response.statusCode);
     if (response.statusCode == 200) {
       parsedResult = jsonDecode(response.body);
       return parsedResult;

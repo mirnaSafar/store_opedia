@@ -29,17 +29,17 @@ class WorkTimeCubit extends Cubit<WorkTimeState> {
   void testOpenTime(
       {required String? openTime, required String? closeTime}) async {
     if (openTime != null && closeTime != null) {
-      TimeOfDay _startTime = timeConvert(openTime);
+      TimeOfDay startTime = timeConvert(openTime);
 
-      TimeOfDay _endTime = timeConvert(closeTime);
+      TimeOfDay endTime = timeConvert(closeTime);
 
       DateTime now = DateTime.now();
-      DateTime _startDateTime = DateTime(
-          now.year, now.month, now.day, _startTime.hour, _startTime.minute);
+      DateTime startDateTime = DateTime(
+          now.year, now.month, now.day, startTime.hour, startTime.minute);
 
-      DateTime _endDateTime = DateTime(
-          now.year, now.month, now.day, _endTime.hour, _endTime.minute);
-      if (now.isAfter(_startDateTime) && now.isBefore(_endDateTime)) {
+      DateTime endDateTime =
+          DateTime(now.year, now.month, now.day, endTime.hour, endTime.minute);
+      if (now.isAfter(startDateTime) && now.isBefore(endDateTime)) {
         //    print("open");
         emit(WorkTimeState(isOpen: true));
       } else {

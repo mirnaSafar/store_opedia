@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'dart:convert';
 
+import 'package:shopesapp/main.dart';
+
 part 'themes_state.dart';
 
 class ThemesCubit extends Cubit<ThemesState> with HydratedMixin {
@@ -11,6 +13,11 @@ class ThemesCubit extends Cubit<ThemesState> with HydratedMixin {
   void getStoredTheme() async {}
   void changeTheme(int index) {
     _index = index;
+    if (index == 2) {
+      globalSharedPreference.setBool("isDarkMode", true);
+    } else {
+      globalSharedPreference.setBool("isDarkMode", false);
+    }
     emit(ThemesState(themeIndex: index));
   }
 

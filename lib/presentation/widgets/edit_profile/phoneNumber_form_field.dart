@@ -1,4 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 class EditPhoneNumberFormField extends StatelessWidget {
   final Function setPhoneNumber;
@@ -15,14 +17,14 @@ class EditPhoneNumberFormField extends StatelessWidget {
         //controller: _phoneNumberController,
         keyboardType: TextInputType.phone,
         decoration: InputDecoration(
-          labelText: 'Enter your phone number',
+          labelText: LocaleKeys.phone_number.tr(),
           labelStyle: TextStyle(
               fontSize: 20, color: Theme.of(context).colorScheme.onSurface),
           prefixIcon: Icon(
             Icons.phone,
             color: Theme.of(context).colorScheme.primary,
           ),
-          helperText: 'Phone number must start with 09',
+          //  helperText: 'Phone number must start with 09',
           helperStyle: const TextStyle(fontSize: 15),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),

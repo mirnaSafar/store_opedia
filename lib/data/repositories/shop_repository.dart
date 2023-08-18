@@ -16,7 +16,7 @@ class ShopRepository {
       "shopID": shopID,
       "value": rateValue,
     };
-    print(requestBody);
+    //  print(requestBody);
     try {
       response = await http.post(Uri.http(ENDPOINT, "rate/$userID/$shopID"),
           body: jsonEncode(requestBody),
@@ -29,7 +29,7 @@ class ShopRepository {
     }
     if (response.statusCode == 200 || response.statusCode == 400) {
       parsedResult = jsonDecode(response.body);
-      print(parsedResult);
+      //  print(parsedResult);
       return parsedResult;
     }
     return null;
@@ -163,7 +163,7 @@ class ShopRepository {
     return "Failed";
   }
 
-  Future<String> editShop({
+  Future<dynamic> editShop({
     required String ownerID,
     required String shopID,
     required String shopName,
@@ -210,7 +210,7 @@ class ShopRepository {
       return "Faild";
     }
     if (response.statusCode == 200) {
-      return "Success";
+      return jsonDecode(response.body);
     }
     return "Faild";
   }
@@ -265,7 +265,7 @@ class ShopRepository {
       "id": id,
       "type": type,
     };
-    print(requestBody);
+    // print(requestBody);
     try {
       response = await http.post(Uri.http(ENDPOINT, "/filters/$id"),
           body: jsonEncode(requestBody),
@@ -276,7 +276,7 @@ class ShopRepository {
     } catch (e) {
       return null;
     }
-    print(response.statusCode);
+//    print(response.statusCode);
     if (response.statusCode == 200) {
       parsedResult = jsonDecode(response.body);
       //  print(parsedResult);
@@ -296,7 +296,7 @@ class ShopRepository {
       "longitude": longitude.toString(),
       "latitude": latitude.toString(),
     };
-    print(requestBody);
+    // print(requestBody);
     try {
       response = await http.post(
           Uri.http(ENDPOINT, "/filters/nearestStores/$id"),
@@ -308,7 +308,7 @@ class ShopRepository {
     } catch (e) {
       return null;
     }
-    print(response.statusCode);
+    //  print(response.statusCode);
     if (response.statusCode == 200) {
       parsedResult = jsonDecode(response.body);
       //  print(parsedResult);
@@ -327,7 +327,7 @@ class ShopRepository {
       "id": id,
       "address": address,
     };
-    print(requestBody);
+    //  print(requestBody);
     try {
       response = await http.post(
           Uri.http(ENDPOINT, "/filters/stores/location/$id"),
@@ -339,7 +339,38 @@ class ShopRepository {
     } catch (e) {
       return null;
     }
-    print(response.statusCode);
+    //   print(response.statusCode);
+    if (response.statusCode == 200) {
+      parsedResult = jsonDecode(response.body);
+      //  print(parsedResult);
+      return parsedResult;
+    }
+    return null;
+  }
+
+  Future<Map<String, dynamic>?> categoryFilterStores({
+    required String id,
+    required String category,
+  }) async {
+    http.Response response;
+    Map<String, dynamic> parsedResult;
+    Map<String, dynamic> requestBody = {
+      "id": id,
+      "category": category,
+    };
+    //  print(requestBody);
+    try {
+      response = await http.post(
+          Uri.http(ENDPOINT, "/show/stores/categories/$id"),
+          body: jsonEncode(requestBody),
+          headers: {
+            'Content-Type': 'application/json',
+          });
+      //   print(response.statusCode);
+    } catch (e) {
+      return null;
+    }
+    //   print(response.statusCode);
     if (response.statusCode == 200) {
       parsedResult = jsonDecode(response.body);
       //  print(parsedResult);
@@ -382,7 +413,7 @@ class ShopRepository {
       "id": userID,
       "shopId": shopID,
     };
-    print(requestBody);
+    //   print(requestBody);
     try {
       response = await http.post(Uri.http(ENDPOINT, "/follow/$userID/$shopID"),
           body: jsonEncode(requestBody),
@@ -396,7 +427,7 @@ class ShopRepository {
 
     if (response.statusCode == 200) {
       parsedResult = jsonDecode(response.body);
-      print(parsedResult);
+      //  print(parsedResult);
       return parsedResult;
     }
     return null;

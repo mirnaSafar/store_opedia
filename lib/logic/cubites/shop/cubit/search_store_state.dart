@@ -1,3 +1,5 @@
+// ignore_for_file: overridden_fields
+
 part of 'search_store_cubit.dart';
 
 class SearchStoreState {

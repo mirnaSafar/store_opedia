@@ -12,6 +12,7 @@ import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/presentation/widgets/settings/theme.picker.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 import '../../../constant/enums.dart';
 import '../../../main.dart';
 import '../../pages/edit_store.dart';
@@ -23,7 +24,7 @@ import 'logOut_alert_dialog.dart';
 import 'icon_widget.dart';
 
 Widget buildProfile(BuildContext context) => SimpleSettingsTile(
-      title: "My Account",
+      title: LocaleKeys.pofile.tr(),
       leading: iconWidget(
           icon: Icons.person, color: const Color.fromARGB(255, 169, 141, 245)),
       onTap: () {
@@ -37,20 +38,20 @@ Widget buildProfile(BuildContext context) => SimpleSettingsTile(
     );
 
 Widget buildLogout(BuildContext context) => SimpleSettingsTile(
-      title: "LogOut",
+      title: LocaleKeys.logout.tr(),
       leading: iconWidget(icon: Icons.logout, color: Colors.grey),
       onTap: () {
-        Settings.clearCache();
+        //Settings.clearCache();
         showLogOutAlertDialog(context);
       },
     );
 Widget buildLogin(BuildContext context) => SimpleSettingsTile(
-      title: "Login",
+      title: LocaleKeys.login.tr(),
       leading: iconWidget(icon: Icons.login, color: Colors.grey),
       child: const LoginPage(),
     );
 Widget buildCreateAccount(BuildContext context) => SimpleSettingsTile(
-      title: "Create Account",
+      title: LocaleKeys.create_account.tr(),
       leading: iconWidget(
           icon: Icons.add_circle_outline_outlined,
           color: const Color.fromARGB(255, 52, 82, 134)),
@@ -58,56 +59,64 @@ Widget buildCreateAccount(BuildContext context) => SimpleSettingsTile(
     );
 
 Widget buildDeleteAccount(BuildContext context) => SimpleSettingsTile(
-      title: "Delete Account",
+      title: LocaleKeys.delete_account.tr(),
       leading: iconWidget(icon: Icons.delete, color: Colors.red),
       onTap: () => showDeleteAlert(context),
     );
 
 Widget buildLanguage(BuildContext context) => SwitchSettingsTile(
-      title: "Arabic Language",
+      title: LocaleKeys.arabic_language.tr(),
       settingKey: KeyLanguage,
       leading: iconWidget(icon: Icons.translate, color: Colors.blueAccent),
       onChange: (value) async {
         value == true
-            ? await context.setLocale(const Locale('ar'))
-            : await context.setLocale(const Locale('en'));
+            ? {
+                await context.setLocale(const Locale('ar')),
+                globalSharedPreference.setBool("isArabic", true),
+                globalSharedPreference.setString("currentLanguage", "ar")
+              }
+            : {
+                await context.setLocale(const Locale('en')),
+                globalSharedPreference.setBool("isArabic", false),
+                globalSharedPreference.setString("currentLanguage", "en")
+              };
       },
     );
 
 Widget buildThemes(BuildContext context) => SimpleSettingsTile(
-      title: "Themes",
+      title: LocaleKeys.themes.tr(),
       leading: iconWidget(icon: Icons.color_lens, color: Colors.pink),
       onTap: () => showThemePicker(context),
     );
 
 Widget buildPrivacy(BuildContext context) => SimpleSettingsTile(
-      title: "Privacy & Policies",
+      title: LocaleKeys.privacy_and_policies.tr(),
       leading: iconWidget(icon: Icons.lock, color: Colors.amber),
       child: const PrivacyPlicies(),
     );
 
 Widget buildeAddNewSotre(BuildContext context) => SimpleSettingsTile(
-      title: "Add store",
+      title: LocaleKeys.add_store.tr(),
       leading: iconWidget(icon: Icons.add, color: AppColors.mainRedColor),
       child: const AddStorePage(),
     );
 
 Widget buildeEdeitMySotre(BuildContext context, var size) => SimpleSettingsTile(
-      title: "Edit store information",
+      title: LocaleKeys.edit_stroe_informations.tr(),
       leading: iconWidget(icon: Icons.edit, color: Colors.orange),
       child: globalSharedPreference.getString("currentShop") == "noShop"
           ? noSelectedShop(size, context)
           : EditStore(),
     );
 Widget buildSwitchSotre(BuildContext context) => SimpleSettingsTile(
-      title: "Switch to another Store",
+      title: LocaleKeys.swithc_to_another_store.tr(),
       leading:
           iconWidget(icon: Icons.compare_arrows_rounded, color: Colors.green),
       child: const SwitchStore(),
     );
 
 Widget buildSwitchUserAccount(BuildContext context) => SimpleSettingsTile(
-    title: "Add Store and Switch to Owner Account",
+    title: LocaleKeys.switch_to_owner_account.tr(),
     leading: iconWidget(icon: Icons.add, color: Colors.green),
     onTap: () {
       if (SharedPreferencesRepository.getBrowsingPostsMode()) {
@@ -119,14 +128,14 @@ Widget buildSwitchUserAccount(BuildContext context) => SimpleSettingsTile(
         : null);
 
 Widget buildAbout(BuildContext context) => ExpandableSettingsTile(
-      title: "About",
+      title: LocaleKeys.about.tr(),
       leading: iconWidget(
         icon: Icons.info_outline,
         color: AppColors.mainBlueColor,
       ),
       children: <Widget>[
         CustomText(
-          text: "Version 0.1",
+          text: LocaleKeys.version.tr(),
           textColor: Theme.of(context).primaryColorDark,
         ),
         10.ph,
@@ -135,7 +144,7 @@ Widget buildAbout(BuildContext context) => ExpandableSettingsTile(
 
 Widget buildContactUs(BuildContext context, Size size) {
   return SimpleSettingsTile(
-    title: "Contact Us",
+    title: LocaleKeys.contact_us.tr(),
     leading: iconWidget(icon: Icons.email, color: AppColors.mainOrangeColor),
     onTap: () {
       if (SharedPreferencesRepository.getBrowsingPostsMode()) {

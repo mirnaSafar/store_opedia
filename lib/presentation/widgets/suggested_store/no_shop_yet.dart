@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 import '../../shared/custom_widgets/custom_text.dart';
 
@@ -20,8 +22,8 @@ Widget buildNoShopsYet(var size) {
             SizedBox(
               height: size.height * 0.02,
             ),
-            const CustomText(
-              text: "NO Shops Yet",
+            CustomText(
+              text: LocaleKeys.no_stores_to_show.tr(),
               fontSize: 25,
             )
           ],

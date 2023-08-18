@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 import '../../shared/custom_widgets/custom_text.dart';
 
@@ -20,9 +22,9 @@ Widget buildNoMessagesYet(var size) {
             SizedBox(
               height: size.height * 0.02,
             ),
-            const Center(
+            Center(
               child: CustomText(
-                text: "No Messages Yet",
+                text: LocaleKeys.no_message_yet.tr(),
                 fontSize: 25,
               ),
             )

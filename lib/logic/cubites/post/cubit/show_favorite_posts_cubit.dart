@@ -1,5 +1,7 @@
 import 'package:bloc/bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:shopesapp/data/repositories/posts_repository.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 part 'show_favorite_posts_state.dart';
 
@@ -14,7 +16,7 @@ class ShowFavoritePostsCubit extends Cubit<ShowFavoritePostsState> {
     } catch (e) {
       emit(ShowFavoritePostsFailed(
           message: response == null
-              ? "Faild Filter , Check your internet connection"
+              ? LocaleKeys.filter_repo_failed.tr()
               : response["message"]));
     }
     if (response != null && response['message'] == 'Done') {

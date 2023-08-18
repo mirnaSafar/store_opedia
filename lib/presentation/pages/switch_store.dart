@@ -1,12 +1,13 @@
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_divider.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 import '../../logic/cubites/shop/get_owner_shops_cubit.dart';
 import '../../main.dart';
 import '../widgets/dialogs/awosem_dialog.dart';
 import '../widgets/switch_shop/error.dart';
-import '../widgets/switch_shop/no_deactivated_shops.dart';
 import '../widgets/switch_shop/shop_item.dart';
 
 class SwitchStore extends StatefulWidget {
@@ -31,7 +32,7 @@ class _SwitchStoreState extends State<SwitchStore> {
     var size = MediaQuery.of(context).size;
     return Scaffold(
         appBar: AppBar(
-          title: const Text("My Shops"),
+          title: Text(LocaleKeys.my_stroes.tr()),
           centerTitle: true,
         ),
         body: Padding(
@@ -39,9 +40,9 @@ class _SwitchStoreState extends State<SwitchStore> {
           child: BlocConsumer<GetOwnerShopsCubit, GetOwnerShopsState>(
             listener: (context, state) {
               if (state is GetOwnerShopsFiled) {
-                buildAwsomeDialog(
-                        context, "Failed", state.message.toUpperCase(), "OK",
-                        type: DialogType.ERROR)
+                buildAwsomeDialog(context, LocaleKeys.faild.tr(),
+                        state.message.toUpperCase(), LocaleKeys.ok.tr(),
+                        type: DialogType.error)
                     .show();
               } else if (state is GetOwnerShopsSucceed) {}
             },
@@ -53,14 +54,15 @@ class _SwitchStoreState extends State<SwitchStore> {
               } else if (state is GetOwnerShopsSucceed) {
                 ownerShpos =
                     BlocProvider.of<GetOwnerShopsCubit>(context).ownerShops;
-                print(ownerShpos);
+                //  print(ownerShpos);
                 if (ownerShpos.length == 1) {
                   isLastShop = true;
                 }
-                if (ownerShpos.isEmpty) {
+                /* DEAD CODE  
+               if (ownerShpos.isEmpty) {
                   return buildNoShopItems(
                       size, "You Don't Have  any Activated Shops Yet !");
-                }
+                }*/
 
                 return ListView.separated(
                     itemBuilder: (context, index) {

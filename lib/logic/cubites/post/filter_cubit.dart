@@ -1,6 +1,8 @@
 import 'package:bloc/bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:shopesapp/data/repositories/filter_repository.dart';
 import 'package:shopesapp/data/repositories/posts_repository.dart';
+import 'package:shopesapp/translation/locale_keys.g.dart';
 
 part 'filter_state.dart';
 
@@ -21,7 +23,7 @@ class FilterCubit extends Cubit<FilterState> {
     } catch (e) {
       emit(FilterFailed(
           message: response == null
-              ? "Faild Filter , Check your internet connection"
+              ? LocaleKeys.filter_repo_failed.tr()
               : response["message"]));
     }
     // if (response == null) emit(FilterFailed(message: 'Failed'));
@@ -44,7 +46,7 @@ class FilterCubit extends Cubit<FilterState> {
     } else {
       emit(FilterFailed(
           message: response == null
-              ? "Faild Filter , Check your internet connection"
+              ? LocaleKeys.filter_repo_failed.tr()
               : response["message"]));
     }
   }
@@ -63,7 +65,7 @@ class FilterCubit extends Cubit<FilterState> {
     } catch (e) {
       emit(FilterFailed(
           message: response == null
-              ? "Faild Filter , Check your internet connection"
+              ? LocaleKeys.filter_repo_failed.tr()
               : response["message"]));
     }
     if (response != null && response["message"] == "Success") {
@@ -77,7 +79,7 @@ class FilterCubit extends Cubit<FilterState> {
     } else {
       emit(FilterFailed(
           message: response == null
-              ? "Faild Filter , Check your internet connection"
+              ? LocaleKeys.filter_repo_failed.tr()
               : response["message"]));
     }
   }
@@ -93,7 +95,7 @@ class FilterCubit extends Cubit<FilterState> {
     } catch (e) {
       emit(FilterFailed(
           message: response == null
-              ? "Faild Filter , Check your internet connection"
+              ? LocaleKeys.filter_repo_failed.tr()
               : response["message"]));
     }
     // if (response == null) emit(FilterFailed(message: 'Failed'));
@@ -108,7 +110,7 @@ class FilterCubit extends Cubit<FilterState> {
     } else {
       emit(FilterFailed(
           message: response == null
-              ? "Faild Filter , Check your internet connection"
+              ? LocaleKeys.filter_repo_failed.tr()
               : response["message"]));
     }
   }
@@ -127,7 +129,7 @@ class FilterCubit extends Cubit<FilterState> {
     } catch (e) {
       emit(FilterFailed(
           message: response == null
-              ? "Faild Filter , Check your internet connection"
+              ? LocaleKeys.filter_repo_failed.tr()
               : response["message"]));
     }
     if (response != null && response["message"] == "Success") {
@@ -141,7 +143,7 @@ class FilterCubit extends Cubit<FilterState> {
     } else {
       emit(FilterFailed(
           message: response == null
-              ? "Faild Filter , Check your internet connection"
+              ? LocaleKeys.filter_repo_failed.tr()
               : response["message"]));
     }
   }
@@ -156,14 +158,13 @@ class FilterCubit extends Cubit<FilterState> {
     } catch (e) {
       emit(FilterFailed(
           message: response == null
-              ? "Faild Filter , Check your internet connection"
+              ? LocaleKeys.filter_repo_failed.tr()
               : response["message"]));
     }
     // if (response == null) emit(FilterFailed(message: 'Failed'));
 
     if (response == null) {
-      emit(FilterFailed(
-          message: "Failed to Get the Posts , Check your internet connection"));
+      emit(FilterFailed(message: LocaleKeys.get_posts_failed.tr()));
     } else if (response["message"] == "You dont have any followed store yet") {
       emit(DontFollowStoreYet());
     } else if (response["message"] == "You dont have any post to show  yet") {
