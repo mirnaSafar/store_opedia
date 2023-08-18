@@ -31,6 +31,6 @@ void showLogOutAlertDialog(BuildContext context) {
         BlocProvider.of<AuthCubit>(context).logOut();
         context.read<ThemesCubit>().changeTheme(0);
         context.pushRepalceme(const LoginPage());
-        //   globalSharedPreference.setBool("isArabic", false);
+        globalSharedPreference.setBool("isArabic", false);
       }).show();
 }

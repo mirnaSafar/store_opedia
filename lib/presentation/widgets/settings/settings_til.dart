@@ -66,7 +66,7 @@ Widget buildDeleteAccount(BuildContext context) => SimpleSettingsTile(
 
 Widget buildLanguage(BuildContext context) => SwitchSettingsTile(
       title: LocaleKeys.arabic_language.tr(),
-      defaultValue: globalSharedPreference.getBool("isArabic")!,
+      defaultValue: globalSharedPreference.getBool("isArabic") ?? false,
       settingKey: KeyLanguage,
       leading: iconWidget(icon: Icons.translate, color: Colors.blueAccent),
       onChange: (value) async {
