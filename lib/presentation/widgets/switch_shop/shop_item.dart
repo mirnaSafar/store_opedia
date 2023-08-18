@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -31,19 +29,25 @@ Widget buildShopItem(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CircleAvatar(
-              radius: size.width * 0.12,
-              backgroundColor: AppColors.mainTextColor,
-              child: shop["shopProfileImage"] == 'url'
-                  ? ClipOval(
-                      child: Image.asset(
-                        'assets/store_placeholder.png',
-                        fit: BoxFit.fill,
-                      ),
-                    )
-                  : Image.network(
-                      shop["shopProfileImage"],
-                      fit: BoxFit.fill,
-                    )),
+            radius: size.width * 0.12,
+            backgroundColor: AppColors.mainTextColor,
+            backgroundImage: shop["shopProfileImage"] == 'url'
+                ? const AssetImage(
+                    'assets/profile_photo.jpg',
+                  )
+                : NetworkImage(shop["shopProfileImage"]!) as ImageProvider,
+            // child: shop["shopProfileImage"] == 'url'
+            //     ? ClipOval(
+            //         child: Image.asset(
+            //           'assets/store_placeholder.png',
+            //           fit: BoxFit.fill,
+            //         ),
+            //       )
+            //     : Image.network(
+            //         shop["shopProfileImage"],
+            //         fit: BoxFit.fill,
+            //       )
+          ),
           15.px,
           Expanded(
             flex: 2,

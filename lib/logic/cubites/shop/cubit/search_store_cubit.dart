@@ -23,7 +23,9 @@ class SearchStoreCubit extends Cubit<SearchStoreState> {
     if (response != null && response['message'] == 'Done') {
       searchResult = response['stores'] as List<dynamic>;
       SearchStoreState(searchResult: searchResult);
-      emit(SearchStoreSuccessed(searchResult: searchResult));
+      searchResult.isEmpty
+          ? emit(NoSearchResult())
+          : emit(SearchStoreSuccessed(searchResult: searchResult));
     } else if (response != null && response['message'] == '') {
       emit(NoSearchResult());
     }

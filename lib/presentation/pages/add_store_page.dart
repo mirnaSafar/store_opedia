@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, duplicate_ignore
 
 import 'dart:convert';
 import 'dart:io';
@@ -21,8 +21,8 @@ import 'package:shopesapp/presentation/shared/custom_widgets/user_input.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/translation/locale_keys.g.dart';
 
-import '../../constant/switch_to_arabic.dart';
 import '../../constant/switch_to_english.dart';
+import '../../constant/translate_time.dart';
 import '../../data/enums/file_type.dart';
 import '../../logic/cubites/shop/add_shop_cubit.dart';
 
@@ -54,11 +54,16 @@ class _EditStoreState extends State<AddStorePage> {
   TextEditingController storeEndWorkTimeController = TextEditingController();
 
   late LatLng selectedStoreLocation;
-
   @override
   void initState() {
-    storeStartWorkTimecontroller.text = "08:00 AM";
-    storeEndWorkTimeController.text = "08:00 PM";
+    storeStartWorkTimecontroller.text =
+        globalSharedPreference.getBool("isArabic") == false
+            ? "08:00 AM"
+            : "08:00 ص";
+    storeEndWorkTimeController.text =
+        globalSharedPreference.getBool("isArabic") == false
+            ? "08:00 PM"
+            : "08:00 م";
     super.initState();
   }
 
@@ -132,16 +137,14 @@ class _EditStoreState extends State<AddStorePage> {
     final size = MediaQuery.of(context).size;
     return SafeArea(
         child: Scaffold(
-      //   backgroundColor: AppColors.mainWhiteColor,
       appBar: AppBar(
         leading: BackButton(
-          color: Theme.of(context).primaryColorDark,
+          color: AppColors.mainWhiteColor,
         ),
-        // backgroundColor: AppColors.mainWhiteColor,
         title: CustomText(
           text: LocaleKeys.add_store.tr(),
           fontSize: w * 0.05,
-          // textColor: AppColors.mainWhiteColor,
+          textColor: AppColors.mainWhiteColor,
         ),
         elevation: 0,
       ),
@@ -153,9 +156,6 @@ class _EditStoreState extends State<AddStorePage> {
             child: Column(children: [
               (w * 0.02).ph,
               Stack(
-                // fit: StackFit.expand,
-                // alignment: AlignmentDirectional.bottomEnd,
-
                 children: [
                   Wrap(
                     children: [
@@ -226,16 +226,12 @@ class _EditStoreState extends State<AddStorePage> {
                                 radius: w * 0.11,
                                 backgroundImage: profileSelectedFile != null
                                     ? FileImage(File(profileSelectedFile!.path))
-                                    : null,
-                                child: ClipOval(
-                                  child: profileSelectedFile == null ||
-                                          profileSelectedFile!.path.isEmpty
-                                      ? Image.asset(
-                                          'assets/store_placeholder.png',
-                                          fit: BoxFit.contain,
-                                        )
-                                      : null,
-                                ),
+                                    : profileSelectedFile == null ||
+                                            profileSelectedFile!.path.isEmpty
+                                        ? const AssetImage(
+                                            'assets/store_placeholder.png',
+                                          ) as ImageProvider
+                                        : null,
                               ),
                             )),
                         Padding(
@@ -288,22 +284,13 @@ class _EditStoreState extends State<AddStorePage> {
                       ))
                 ],
               ),
-              /*     UserInput(
-                  text: LocaleKeys.store_category.tr(),
-                  controller: storeCategoryController,
-                  suffixIcon: IconButton(
-                      onPressed: () async {
-                        await context.push(const SignUpCategoriesPage()).then(
-                            (value) => storeCategoryController.text = value);
-                        setState(() {});
-                      },
-                      icon: const Icon(Icons.comment))),*/
               UserInput(
-                text: LocaleKeys.store_name.tr(),
-                controller: storeNameController,
-                //   validator: (name) => nameValidator(name, 'enter store name')
-                // return null;
-              ),
+                  text: LocaleKeys.store_name.tr(),
+                  controller: storeNameController,
+                  validator: (name) =>
+                      nameValidator(name, LocaleKeys.enter_store_name.tr())
+                  // return null;
+                  ),
               UserInput(
                 text: LocaleKeys.store_description.tr(),
                 controller: storeDescriptionController,
@@ -318,7 +305,7 @@ class _EditStoreState extends State<AddStorePage> {
               30.ph,
               CustomText(
                 text: LocaleKeys.work_Time.tr(),
-                textColor: AppColors.secondaryFontColor,
+                textColor: Theme.of(context).hintColor,
               ),
               Padding(
                 padding:
@@ -350,7 +337,7 @@ class _EditStoreState extends State<AddStorePage> {
                       padding: const EdgeInsets.only(top: 15.0),
                       child: CustomText(
                         text: LocaleKeys.to.tr(),
-                        textColor: AppColors.secondaryFontColor,
+                        textColor: Theme.of(context).hintColor,
                       ),
                     ),
                     SizedBox(
@@ -415,10 +402,6 @@ class _EditStoreState extends State<AddStorePage> {
                       ))
                 ],
               ),
-              /*  UserInput(
-                  text: LocaleKeys.location.tr(),
-                  controller: storeLocationController,
-                  suffixIcon: ),*/
               UserInput(
                 text: LocaleKeys.instagram_Account.tr(),
                 controller: storeInstagramController,
@@ -486,9 +469,9 @@ class _EditStoreState extends State<AddStorePage> {
                                       formKey.currentState!.save(),
                                       context.read<AddShopCubit>().addShop(
                                           storeCoverImageType:
-                                              storeCoverImageType!,
+                                              storeCoverImageType ?? '',
                                           storeProfileImageType:
-                                              storeProfileImageType!,
+                                              storeProfileImageType ?? '',
                                           shopName: storeNameController.text,
                                           shopDescription:
                                               storeDescriptionController.text,
@@ -508,16 +491,16 @@ class _EditStoreState extends State<AddStorePage> {
                                               selectedStoreLocation.latitude,
                                           longitude:
                                               selectedStoreLocation.longitude,
-                                          closing:
-                                              storeEndWorkTimeController.text,
-                                          opening:
-                                              storeStartWorkTimecontroller.text,
-                                          shopPhoneNumber:
-                                              storeNumberController.text,
-                                          instagramAccount:
-                                              storeInstagramController.text,
-                                          facebookAccount:
-                                              storeFacebookController.text),
+                                          opening: globalSharedPreference
+                                                      .getBool("isArabic") ==
+                                                  false
+                                              ? storeStartWorkTimecontroller
+                                                  .text
+                                              : translateTimetoEnglish(storeStartWorkTimecontroller.text),
+                                          closing: globalSharedPreference.getBool("isArabic") == false ? storeEndWorkTimeController.text : translateTimetoEnglish(storeEndWorkTimeController.text),
+                                          shopPhoneNumber: storeNumberController.text,
+                                          instagramAccount: storeInstagramController.text,
+                                          facebookAccount: storeFacebookController.text),
                                     };
                             });
                       },

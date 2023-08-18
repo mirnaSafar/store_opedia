@@ -77,17 +77,10 @@ class AuthRepository {
     } catch (e) {
       return null;
     }
-    //  print(response.statusCode);
+
     if (response.statusCode == 201) {
       Map<String, dynamic> parsedResult = jsonDecode(response.body);
-      //  print(parsedResult);
-      /*BlocListener<OwnerCubit, OwnerState>(
-        listener: (context, state) {
-          Owner owner = Owner.fromMap(requestBody);
-          OwnerCubit(owner: owner);
-        },
-      );*/
-      //  print(parsedResult);
+
       return parsedResult;
     }
     return null;

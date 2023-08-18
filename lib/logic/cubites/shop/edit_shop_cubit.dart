@@ -30,7 +30,7 @@ class EditShopCubit extends Cubit<EditShopState> {
     required String storeCoverImageType,
   }) async {
     emit(EditShopProgress());
-    String response = await ShopRepository().editShop(
+    dynamic response = await ShopRepository().editShop(
       ownerID: globalSharedPreference.getString("ID")!,
       shopID: globalSharedPreference.getString("shopID")!,
       shopName: shopName,
@@ -50,16 +50,16 @@ class EditShopCubit extends Cubit<EditShopState> {
       storeProfileImageType: storeProfileImageType,
     );
 
-    if (response == "Failed") {
+    if (response == "Faild") {
       emit(EditShopFailed(
           message: "Failed to edit the Shop , Check your internet connection"));
     } else {
       AuthRepository().saveOwnerAndShop(
           shop: Shop(
-        shopCoverImage: shopCoverImage,
+        shopCoverImage: response['shopCoverImage'],
         shopDescription: shopDescription,
         shopPhoneNumber: shopPhoneNumber,
-        shopProfileImage: shopProfileImage,
+        shopProfileImage: response['shopProfileImage'],
         socialUrl: [insta ?? '', facebook ?? ''],
         shopCategory: shopCategory,
         location: location,

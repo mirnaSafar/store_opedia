@@ -18,7 +18,7 @@ class ToggoleFollowShopCubit extends Cubit<ToggoleFollowShopState> {
       ScaffoldMessenger(
           child: Text(response == null
               ? LocaleKeys.follow_store_failed.tr()
-              : response["message"]));
+              : LocaleKeys.access_denied.tr()));
       emit(FailedToggoleFollowShop(response == null
           ? LocaleKeys.follow_store_failed.tr()
           : response["message"]));

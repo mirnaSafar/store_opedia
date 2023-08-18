@@ -60,15 +60,14 @@ class _SuggestedStoreState extends State<SuggestedStore> {
       child: Row(
         children: [
           CircleAvatar(
-              radius: w * 0.12,
-              backgroundColor: AppColors.mainBlueColor,
-              child: ClipOval(
-                  child: widget.shop.shopProfileImage == 'url'
-                      ? Image.asset(
-                          'assets/store_placeholder.png',
-                          fit: BoxFit.fill,
-                        )
-                      : Image.network(widget.shop.shopProfileImage!))),
+            radius: w * 0.12,
+            backgroundColor: AppColors.mainBlueColor,
+            backgroundImage: widget.shop.shopProfileImage == 'url'
+                ? const AssetImage(
+                    'assets/profile_photo.jpg',
+                  )
+                : NetworkImage(widget.shop.shopProfileImage!) as ImageProvider,
+          ),
           20.px,
           Column(
             mainAxisSize: MainAxisSize.max,
@@ -180,7 +179,7 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                                                     .getString(
                                                                         "ID") ??
                                                                 '0');
-                                                    context.pop();
+                                                    // context.pop();
                                                   } else {
                                                     context.pop();
                                                     Future.delayed(
@@ -280,7 +279,7 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                                       //             widget.shop)
                                                       widget.shop.isFollow!
                                                           ? '${LocaleKeys.un_follow.tr()} ${widget.shop.shopName}'
-                                                          : '${LocaleKeys.follow.tr()}${widget.shop.shopName}'),
+                                                          : '${LocaleKeys.follow.tr()} ${widget.shop.shopName}'),
                                             );
                                           },
                                         )
@@ -320,7 +319,7 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                     text: globalSharedPreference.getBool("isArabic") == false
                         ? widget.shop.location
                         : switchLocationToArabic(widget.shop.location),
-                    fontSize: w * 0.035,
+                    fontSize: w * 0.031,
                   ),
                   // 20.px,
                   IconButton(
@@ -374,7 +373,7 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                                   : switchCategoryToArabic(
                                                       widget.shop.shopCategory),
                                               textColor:
-                                                  AppColors.mainWhiteColor,
+                                                  Theme.of(context).hintColor,
                                             ),
                                           ],
                                         ),
@@ -387,7 +386,7 @@ class _SuggestedStoreState extends State<SuggestedStore> {
 
                   CustomText(
                     text: LocaleKeys.category.tr(),
-                    fontSize: w * 0.035,
+                    fontSize: w * 0.031,
                   ),
                 ],
               ),

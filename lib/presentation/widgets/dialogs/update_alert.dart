@@ -10,9 +10,9 @@ import '../../../main.dart';
 
 void showUpdateAlert({
   required BuildContext context,
-  required TextEditingController userName,
-  required TextEditingController password,
-  required TextEditingController phoneNumber,
+  required String userName,
+  required String password,
+  required String phoneNumber,
 }) {
   AwesomeDialog(
       btnOkColor: Colors.green,
@@ -30,9 +30,10 @@ void showUpdateAlert({
       btnOkText: LocaleKeys.countinue.tr(),
       btnOkOnPress: () {
         BlocProvider.of<UpdateUserCubit>(context).updateUser(
-            id: globalSharedPreference.getString("ID")!,
-            name: userName.text,
-            password: password.text,
-            phoneNumber: phoneNumber.text);
+          id: globalSharedPreference.getString("ID")!,
+          name: userName,
+          password: password,
+          phoneNumber: phoneNumber,
+        );
       }).show();
 }

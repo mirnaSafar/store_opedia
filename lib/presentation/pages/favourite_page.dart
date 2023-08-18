@@ -118,7 +118,12 @@ class _FavouritePageState extends State<FavouritePage> {
                                       .length,
                                   separatorBuilder:
                                       (BuildContext context, int index) {
-                                    return const CustomDivider();
+                                    return Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: size.height * 0.01),
+                                        child: const Divider(
+                                          thickness: 7,
+                                        ));
                                   },
                                   itemBuilder:
                                       (BuildContext context, int index) {

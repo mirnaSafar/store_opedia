@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import 'package:shopesapp/data/enums/bottom_navigation.dart';
+
 import 'package:shopesapp/translation/locale_keys.g.dart';
 
 import '../../../main.dart';
@@ -38,9 +39,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
               child: Container(
                 width: size.width,
                 height: size.height * 0.09,
-                color: globalSharedPreference.getBool("isDarkMode") == false
-                    ? Colors.white
-                    : const Color.fromARGB(244, 43, 42, 42),
+                color: Theme.of(context).primaryColorLight,
               ),
             ),
           ),

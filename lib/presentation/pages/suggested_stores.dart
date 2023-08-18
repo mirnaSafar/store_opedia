@@ -10,9 +10,11 @@ import 'package:shopesapp/presentation/widgets/suggested_store/page_hader.dart';
 import 'package:shopesapp/presentation/widgets/suggested_store/suggested_store.dart';
 import 'package:shopesapp/translation/locale_keys.g.dart';
 import '../../data/enums/filter_type.dart';
+import '../../data/repositories/shared_preferences_repository.dart';
 import '../../logic/cubites/shop/cubit/search_store_cubit.dart';
 import '../../main.dart';
 import '../shared/custom_widgets/user_input.dart';
+import '../widgets/home/no_posts_yet.dart';
 import '../widgets/suggested_store/no_shop_yet.dart';
 import '../widgets/switch_shop/error.dart';
 
@@ -66,7 +68,10 @@ class SuggestedStoresViewState extends State<SuggestedStoresView> {
               id: globalSharedPreference.getString("ID") ?? '0', type: 'old');
           break;
         case FilterType.CATEGORY:
-          // TODO: Handle this case.
+          context.read<StoreCubit>().categoryFilterStores(
+                category: widget.category ?? '',
+                id: globalSharedPreference.getString("ID") ?? '0',
+              );
           break;
         case FilterType.CITY:
           context.read<StoreCubit>().cilyFilterStores(
@@ -86,7 +91,6 @@ class SuggestedStoresViewState extends State<SuggestedStoresView> {
 
           break;
       }
-      // context.read<StoreCubit>().getAllStores();
     }
 
     super.initState();
@@ -131,7 +135,6 @@ class SuggestedStoresViewState extends State<SuggestedStoresView> {
 
           break;
       }
-      // context.read<StoreCubit>().getAllStores();
     }
   }
 
@@ -231,6 +234,11 @@ class SuggestedStoresViewState extends State<SuggestedStoresView> {
                                       );
                                     },
                                   );
+                          }
+                          if (!SharedPreferencesRepository
+                              .getBrowsingPostsMode()) {
+                            return buildNoPostsYet(
+                                LocaleKeys.browsing_mode_home.tr(), size);
                           }
                           return buildError(size);
                         }),

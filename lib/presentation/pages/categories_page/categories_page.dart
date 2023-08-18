@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/logic/cubites/post/filter_cubit.dart';
+import 'package:shopesapp/logic/cubites/shop/store_cubit.dart';
 import 'package:shopesapp/presentation/pages/suggested_stores.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
@@ -12,6 +13,7 @@ import 'package:shopesapp/presentation/shared/utils.dart';
 import 'package:shopesapp/translation/locale_keys.g.dart';
 
 import '../../../constant/categories.dart';
+import '../../../data/enums/filter_type.dart';
 import '../../../data/enums/message_type.dart';
 import '../../../main.dart';
 import '../../shared/custom_widgets/custom_toast.dart';
@@ -46,12 +48,13 @@ class _CategoriesPageState extends State<CategoriesPage> {
             borderRadius: const BorderRadius.all(
               Radius.circular(20),
             ),
-            //  color: AppColors.mainWhiteColor,
+            color: AppColors.mainWhiteColor,
             boxShadow: [
               BoxShadow(
-                  color: globalSharedPreference.getBool("isDarkMode") == false
+                  color: AppColors.mainBlackColor.withAlpha(100),
+                  /*  color: globalSharedPreference.getBool("isDarkMode") == false
                       ? AppColors.mainBlackColor.withAlpha(100)
-                      : AppColors.mainBlackColor.withAlpha(75),
+                      : AppColors.mainBlackColor.withAlpha(75),*/
                   blurRadius: 10)
             ]),
         child: Padding(
@@ -65,6 +68,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                 CustomText(
                   text: element,
                   fontSize: 25,
+                  textColor: AppColors.mainBlackColor,
                   bold: true,
                 ),
                 Padding(
@@ -107,13 +111,21 @@ class _CategoriesPageState extends State<CategoriesPage> {
                               return InkWell(
                                   onTap: () {
                                     context
-                                        .read<FilterCubit>()
-                                        .filterPostsWithCategory(
-                                            category: element);
+                                        .read<StoreCubit>()
+                                        .categoryFilterStores(
+                                          category: element,
+                                          id: globalSharedPreference
+                                                  .getString("ID") ??
+                                              '0',
+                                        );
+                                    context.push(SuggestedStoresView(
+                                      filter: FilterType.CATEGORY,
+                                      category: element,
+                                    ));
                                   },
                                   child: CustomText(
                                     text: LocaleKeys.done.tr(),
-                                    textColor: AppColors.secondaryFontColor,
+                                    textColor: Theme.of(context).hintColor,
                                     // bold: true,
                                   ));
                             },
@@ -171,7 +183,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                                   },
                                   child: CustomText(
                                     text: LocaleKeys.sub_categories.tr(),
-                                    textColor: AppColors.secondaryFontColor,
+                                    textColor: Theme.of(context).hintColor,
                                     // bold: true,
                                   ),
                                 );
@@ -187,7 +199,10 @@ class _CategoriesPageState extends State<CategoriesPage> {
             ),
             Padding(
               padding: const EdgeInsetsDirectional.only(end: 15.0, bottom: 25),
-              child: Icon(categoryIcon(element)),
+              child: Icon(
+                categoryIcon(element),
+                color: AppColors.mainBlackColor,
+              ),
             ),
             // Image.asset(
             //   'assets/verified.png',
@@ -285,8 +300,9 @@ class _CategoriesPageState extends State<CategoriesPage> {
       child: Scaffold(
         //  backgroundColor: AppColors.mainWhiteColor,
         appBar: AppBar(
+          iconTheme: IconThemeData(color: Theme.of(context).primaryColorDark),
           elevation: 0,
-          //  backgroundColor: AppColors.mainWhiteColor,
+          backgroundColor: Colors.transparent,
         ),
         body: BlocProvider(
           create: (context) => FilterCubit(),
@@ -328,7 +344,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                       padding: EdgeInsetsDirectional.only(start: w * 0.15),
                       child: CustomText(
                         text: LocaleKeys.main_Categories.tr(),
-                        textColor: AppColors.secondaryFontColor,
+                        textColor: Theme.of(context).hintColor,
                         bold: true,
                         fontSize: w * 0.05,
                       ),

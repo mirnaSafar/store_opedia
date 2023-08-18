@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:location/location.dart';
 import 'package:shopesapp/data/enums/message_type.dart';
-import 'package:shopesapp/data/models/shop.dart';
 import 'package:shopesapp/logic/cubites/post/cubit/show_favorite_posts_cubit.dart';
 import 'package:shopesapp/logic/cubites/post/cubit/toggle_post_favorite_cubit.dart';
 import 'package:shopesapp/logic/cubites/post/delete_post_cubit.dart';
@@ -21,6 +20,7 @@ import 'package:shopesapp/translation/locale_keys.g.dart';
 import '../../../constant/switch_to_arabic.dart';
 import '../../../data/repositories/shared_preferences_repository.dart';
 import '../../../logic/cubites/post/filter_cubit.dart';
+import '../../../logic/cubites/post/posts_cubit.dart';
 import '../../../logic/cubites/shop/cubit/show_favorite_stores_cubit.dart';
 import '../../pages/map_page.dart';
 import '../../shared/custom_widgets/custom_text.dart';
@@ -29,11 +29,9 @@ import '../dialogs/browsing_alert_dialog.dart';
 // ignore: must_be_immutable
 class ProductPost extends StatefulWidget {
   final dynamic post;
-  Shop? shop;
 
   bool? profileDisplay;
-  ProductPost(
-      {Key? key, required this.post, this.profileDisplay = false, this.shop})
+  ProductPost({Key? key, required this.post, this.profileDisplay = false})
       : super(key: key);
 
   @override
@@ -103,6 +101,11 @@ class _ProductPostState extends State<ProductPost> {
                                         .tr(),
                                     context: context,
                                     messageType: MessageType.SUCCESS);
+                                context.read<PostsCubit>().getOwnerPosts(
+                                    ownerID:
+                                        globalSharedPreference.getString('ID'),
+                                    shopID: globalSharedPreference
+                                        .getString('shopID'));
                                 context.pop();
                               }
                             },
@@ -152,10 +155,17 @@ class _ProductPostState extends State<ProductPost> {
               Row(
                 children: [
                   CircleAvatar(
-                      radius: w * 0.07,
-                      backgroundColor: AppColors.mainTextColor,
-                      child: ClipOval(
-                          child: Image.network(widget.post.shopProfileImage))),
+                    radius: w * 0.07,
+                    backgroundColor: AppColors.mainTextColor,
+                    backgroundImage: widget.post.shopProfileImage == 'url'
+                        ? const AssetImage(
+                            'assets/profile_photo.jpg',
+                          )
+                        : NetworkImage(widget.post.shopProfileImage!)
+                            as ImageProvider,
+                    // child: ClipOval(
+                    //     child: Image.network(widget.post.shopProfileImage))
+                  ),
                   10.px,
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -164,13 +174,14 @@ class _ProductPostState extends State<ProductPost> {
                         text: widget.post.shopName,
                         bold: true,
                       ),
+                      5.ph,
                       CustomText(
                         text: globalSharedPreference.getBool("isArabic") ==
                                 false
                             ? widget.post.shopCategory
                             : switchCategoryToArabic(widget.post.shopCategory),
-                        fontSize: w * 0.033,
-                        textColor: AppColors.secondaryFontColor,
+                        fontSize: w * 0.03,
+                        textColor: Theme.of(context).hintColor,
                       ),
                     ],
                   )
@@ -268,8 +279,9 @@ class _ProductPostState extends State<ProductPost> {
                   ),
                   10.px,
                   InkWell(
-                      onTap: () => context.push(
-                          ProductInfo(post: widget.post, shop: widget.shop)),
+                      onTap: () => context.push(ProductInfo(
+                            post: widget.post,
+                          )),
                       child: const Icon(Icons.info_outline)),
                 ],
               ),

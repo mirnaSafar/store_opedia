@@ -17,7 +17,7 @@ class CreateEmailFormField extends StatelessWidget {
         labelText: LocaleKeys.email.tr(),
         labelStyle: TextStyle(
           color: AppColors.mainTextColor,
-          fontSize: 20,
+          fontSize: 16,
         ),
         border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),

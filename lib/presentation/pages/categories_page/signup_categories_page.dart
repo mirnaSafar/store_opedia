@@ -95,7 +95,7 @@ class _SignUpCategoriesPageState extends State<SignUpCategoriesPage> {
                                   offset: const Offset(0, 2),
                                   blurRadius: 8)
                             ],
-                            //   color: AppColors.mainWhiteColor,
+                            color: AppColors.mainWhiteColor,
                             borderRadius: BorderRadius.circular(30),
                           ),
                           child: Padding(
@@ -103,6 +103,7 @@ class _SignUpCategoriesPageState extends State<SignUpCategoriesPage> {
                                 vertical: size.height * 0.032,
                                 horizontal: size.height * 0.05),
                             child: CustomText(
+                              textColor: AppColors.mainBlackColor,
                               text: categories[index],
                               bold: true,
                               fontSize: size.width * 0.05,
@@ -119,7 +120,12 @@ class _SignUpCategoriesPageState extends State<SignUpCategoriesPage> {
                         backgroundColor: AppColors.mainBlackColor,
                         // backgroundImage:
                         //     const AssetImage('assets/images.jpg'),
-                        child: Icon(categoryIcon(categories[index])),
+                        child: Icon(
+                          categoryIcon(
+                            categories[index],
+                          ),
+                          color: AppColors.mainWhiteColor,
+                        ),
                       ),
                     ),
                     Positioned(

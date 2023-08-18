@@ -38,15 +38,18 @@ class _VerifyPasswordState extends State<VerifyPassword> {
             SizedBox(
               height: size.height / 400,
             ),
+            SizedBox(
+              height: size.height * 0.009,
+            ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: size.width * 0.02),
+              padding: EdgeInsets.symmetric(horizontal: size.width * 0.009),
               child: EditPasswordFormField(
                   setPassword: setPassword,
                   isPasswordHidden: true,
                   password: ""),
             ),
             SizedBox(
-              height: size.height * 0.02,
+              height: size.height * 0.04,
             ),
             Row(
               children: [

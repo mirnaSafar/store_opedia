@@ -1,5 +1,3 @@
-// ignore_for_file: unrelated_type_equality_checks
-
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +26,7 @@ import 'package:shopesapp/presentation/widgets/product/product_post.dart';
 import 'package:shopesapp/presentation/widgets/switch_shop/error.dart';
 import 'package:shopesapp/translation/locale_keys.g.dart';
 
+import '../../constant/translate_time.dart';
 import '../../main.dart';
 import '../widgets/dialogs/browsing_alert_dialog.dart';
 import '../widgets/home/no_posts_yet.dart';
@@ -46,8 +45,27 @@ class StorePage extends StatefulWidget {
 }
 
 class _StorePageState extends State<StorePage> {
+  @override
+  void initState() {
+    context.read<PostsCubit>().getOwnerPosts(
+        ownerID: widget.shop!.ownerID, shopID: widget.shop!.shopID);
+    super.initState();
+  }
+
   void updateStoreState() {
-    setState(() {});
+    setState(() {
+      context.read<WorkTimeCubit>().testOpenTime(
+          openTime: globalSharedPreference.getString("startWorkTime"),
+          closeTime: globalSharedPreference.getString("endWorkTime"));
+      context.read<GetOwnerShopsCubit>().getOwnerShopsRequest(
+          ownerID: globalSharedPreference.getString('ID'), message: 'all');
+      context.read<PostsCubit>().getOwnerPosts(
+          ownerID: globalSharedPreference.getString('ID'),
+          shopID: globalSharedPreference.getString('shopID'));
+      context.read<PostsCubit>().getOwnerPosts(
+          ownerID: globalSharedPreference.getString('ID'),
+          shopID: globalSharedPreference.getString('shopID'));
+    });
   }
 
   List<dynamic> postsList = [];
@@ -59,6 +77,8 @@ class _StorePageState extends State<StorePage> {
     String startWorkTime = "${splitStartTime[0]}:${splitStartTime[1]}";
     List<String> splitEndWorkTime = widget.shop!.endWorkTime.split(":");
     String endtWorkTime = "${splitEndWorkTime[0]}:${splitEndWorkTime[1]}";
+    String arabicStartWorkTime = translateTimetoArabic(startWorkTime);
+    String arabicEndWorkTime = translateTimetoArabic(endtWorkTime);
 
     var size = MediaQuery.of(context).size;
 
@@ -84,8 +104,7 @@ class _StorePageState extends State<StorePage> {
                         child: widget.shop!.shopCoverImage != 'url'
                             ? Image.network(widget.shop!.shopCoverImage!)
                             : const Image(
-                                image: AssetImage(
-                                    'assets/store_cover_placeholder.jpg'))),
+                                image: AssetImage('assets/cover_photo.jpg'))),
                   ),
                   Padding(
                     padding: EdgeInsets.only(
@@ -100,17 +119,17 @@ class _StorePageState extends State<StorePage> {
                               backgroundColor: AppColors.mainWhiteColor,
                               radius: w * 0.12,
                               child: CircleAvatar(
-                                  radius: w * 0.11,
-                                  backgroundColor: AppColors.mainTextColor,
-                                  child: ClipOval(
-                                      child: widget.shop!.shopProfileImage ==
-                                              'url'
-                                          ? Image.asset(
-                                              'assets/store_placeholder.png',
-                                              fit: BoxFit.fill,
-                                            )
-                                          : Image.network(
-                                              widget.shop!.shopProfileImage!))),
+                                radius: w * 0.11,
+                                backgroundColor: AppColors.mainTextColor,
+                                backgroundImage:
+                                    widget.shop!.shopProfileImage == 'url'
+                                        ? const AssetImage(
+                                            'assets/profile_photo.jpg',
+                                          )
+                                        : NetworkImage(
+                                                widget.shop!.shopProfileImage!)
+                                            as ImageProvider,
+                              ),
                             ),
                             BlocBuilder<WorkTimeCubit, WorkTimeState>(
                               builder: (context, state) {
@@ -245,7 +264,8 @@ class _StorePageState extends State<StorePage> {
                 children: [
                   Visibility(
                     visible:
-                        globalSharedPreference.getBool("isDarkMode") == false,
+                        globalSharedPreference.getBool("isDarkMode") == false &&
+                            globalSharedPreference.getBool("isArabic") == false,
                     child: CustomPaint(
                         painter: profilePainter(),
                         child: Padding(
@@ -292,7 +312,11 @@ class _StorePageState extends State<StorePage> {
                                 ? widget.shop!.shopCategory
                                 : switchCategoryToArabic(
                                     widget.shop!.shopCategory),
-                            textColor: AppColors.secondaryFontColor,
+                            /*  textColor:
+                                globalSharedPreference.getBool("isDarkMode")!
+                                    ? AppColors.secondaryDarkFontColor
+                                    : AppColors.secondaryFontColor,*/
+                            textColor: Theme.of(context).hintColor,
                           ),
                         ],
                       ),
@@ -313,7 +337,7 @@ class _StorePageState extends State<StorePage> {
                             builder: (context, state) {
                               return CustomText(
                                 text:
-                                    '${widget.shop!.followesNumber}${LocaleKeys.followers.tr()}',
+                                    '${widget.shop!.followesNumber} ${LocaleKeys.followers.tr()}',
                                 textColor: AppColors.mainBlueColor,
                               );
                             },
@@ -329,8 +353,6 @@ class _StorePageState extends State<StorePage> {
                                       widget.shop!;
                               return InkWell(
                                 onTap: () {
-                                  // context
-                                  //     .pushRepalceme((const FavouritePage()));
                                   if (!SharedPreferencesRepository
                                       .getBrowsingPostsMode()) {
                                     !widget.shop!.isFollow!
@@ -362,12 +384,9 @@ class _StorePageState extends State<StorePage> {
                                 child: Visibility(
                                   visible: !widget.profileDisplay!,
                                   child: CustomText(
-                                    text:
-                                        // followingCubit
-                                        //             .getShopFollowingState(shop) ||
-                                        widget.shop!.isFollow!
-                                            ? LocaleKeys.following.tr()
-                                            : LocaleKeys.follow.tr(),
+                                    text: widget.shop!.isFollow!
+                                        ? LocaleKeys.following.tr()
+                                        : LocaleKeys.follow.tr(),
                                     textColor: AppColors.mainBlueColor,
                                   ),
                                 ),
@@ -377,13 +396,24 @@ class _StorePageState extends State<StorePage> {
                         ],
                       ),
                       const CustomDivider(),
-                      CustomIconTextRow(
+                      Visibility(
+                        visible: widget.shop!.isActive == true,
+                        child: CustomIconTextRow(
                           textColor: Theme.of(context).primaryColorDark,
                           svgIcon: 'clock-square-svgrepo-com',
-                          // svgIcon: Icons.alarm,
-                          text: widget.shop!.isActive == true
+                          text: globalSharedPreference.getBool("isArabic") ==
+                                  false
                               ? '$startWorkTime - $endtWorkTime'
-                              : "---  - ---"),
+                              : '$arabicStartWorkTime - $arabicEndWorkTime',
+                        ),
+                      ),
+                      Visibility(
+                        visible: widget.shop!.isActive == false,
+                        child: CustomIconTextRow(
+                            textColor: Theme.of(context).primaryColorDark,
+                            svgIcon: 'clock-square-svgrepo-com',
+                            text: "---  - ---"),
+                      ),
                       20.ph,
                       Visibility(
                         visible: widget.shop!.shopPhoneNumber != null,
@@ -401,7 +431,6 @@ class _StorePageState extends State<StorePage> {
                       ),
                       CustomIconTextRow(
                           textColor: Theme.of(context).primaryColorDark,
-                          // svgIcon: Icons.email,
                           svgIcon: 'mail-svgrepo-com',
                           text: widget.shop!.ownerEmail),
                       20.ph,
@@ -453,138 +482,109 @@ class _StorePageState extends State<StorePage> {
                           ],
                         ),
                       ),
-                      20.ph,
-                      Visibility(
-                        visible: ownerShpos.length > 1,
-                        child: CustomText(
-                          text: LocaleKeys.related_stores.tr(),
-                          textColor: Theme.of(context).primaryColorDark,
-                          fontSize: w * 0.04,
-                          bold: true,
-                        ),
-                      ),
                     ],
                   ),
                 ],
               ),
             ]),
           ),
-          Visibility(
-            visible: ownerShpos.length > 1,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                20.ph,
-                SizedBox(
-                  height: h / 6,
-                  child: BlocConsumer<GetOwnerShopsCubit, GetOwnerShopsState>(
-                    listener: (context, state) {
-                      if (state is GetOwnerShopsFiled) {
-                        buildAwsomeDialog(context, LocaleKeys.faild.tr(),
-                                state.message.toUpperCase(), LocaleKeys.ok.tr(),
-                                type: DialogType.error)
-                            .show();
-                      } else if (state is GetOwnerShopsSucceed) {}
-                    },
-                    builder: (context, state) {
-                      if (state is GetOwnerShopsProgress) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      } else if (state is GetOwnerShopsSucceed) {
-                        ownerShpos =
-                            BlocProvider.of<GetOwnerShopsCubit>(context)
-                                .ownerShops;
+          BlocConsumer<GetOwnerShopsCubit, GetOwnerShopsState>(
+            listener: (context, state) {
+              if (state is GetOwnerShopsFiled) {
+                buildAwsomeDialog(context, LocaleKeys.faild.tr(),
+                        state.message.toUpperCase(), LocaleKeys.ok.tr(),
+                        type: DialogType.error)
+                    .show();
+              } else if (state is GetOwnerShopsSucceed) {}
+            },
+            builder: (context, state) {
+              if (state is GetOwnerShopsProgress) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (state is GetOwnerShopsSucceed) {
+                ownerShpos =
+                    BlocProvider.of<GetOwnerShopsCubit>(context).ownerShops;
 
-                        return Padding(
-                          padding: EdgeInsetsDirectional.only(start: w * 0.04),
-                          child: ListView.separated(
-                            shrinkWrap: true,
-                            // physics: const NeverScrollableScrollPhysics(),
-                            scrollDirection: Axis.horizontal,
-                            itemCount: ownerShpos.length,
-                            separatorBuilder:
-                                (BuildContext context, int index) {
-                              return 20.px;
-                            },
-                            itemBuilder: (BuildContext context, int index) {
-                              if (ownerShpos[index]['shopID'] !=
-                                  widget.shop!.shopID) {
-                                return Column(
-                                  children: [
-                                    CircleAvatar(
-                                        radius: w * 0.1,
-                                        backgroundColor:
-                                            AppColors.mainTextColor,
-                                        backgroundImage: NetworkImage(
-                                            ownerShpos[index]
-                                                ["shopProfileImage"]),
-                                        // FileImage(File(
-                                        //     ownerShpos[index][
-                                        //                 "shopProfileImage"] !=
-                                        //             'url'
-                                        //         ? ownerShpos[index]
-                                        //             ["shopProfileImage"]
-                                        //         : '')),
-                                        child: ownerShpos[index]
-                                                    ["shopProfileImage"] ==
-                                                'url'
-                                            ? ClipOval(
-                                                child: Image.asset(
-                                                  'assets/store_placeholder.png',
-                                                  fit: BoxFit.fill,
-                                                ),
-                                              )
-                                            : null),
-                                    5.ph,
-                                    CustomText(
-                                      text: ownerShpos[index]['shopName'],
-                                      textColor:
-                                          Theme.of(context).primaryColorDark,
-                                    )
-                                  ],
-                                );
-                              }
-                              return Column(
-                                children: [
-                                  CircleAvatar(
-                                      radius: w * 0.1,
-                                      backgroundColor: AppColors.mainTextColor,
-                                      backgroundImage: NetworkImage(
-                                          ownerShpos[index]
-                                              ["shopProfileImage"]),
-                                      child:
-                                          widget.shop!.shopProfileImage == 'url'
-                                              ? ClipOval(
-                                                  child: Image.asset(
-                                                    'assets/store_placeholder.png',
-                                                    fit: BoxFit.fill,
-                                                  ),
-                                                )
-                                              : null),
-                                  5.ph,
-                                  CustomText(
-                                    text: widget.shop!.shopName,
-                                    textColor:
-                                        Theme.of(context).primaryColorDark,
-                                  )
-                                ],
-                              );
-                            },
+                return Visibility(
+                  visible: ownerShpos.length > 1,
+                  child: SizedBox(
+                    height: h / 4,
+                    child: Padding(
+                      padding: EdgeInsetsDirectional.only(start: w * 0.04),
+                      child: Column(
+                        children: [
+                          20.ph,
+                          CustomText(
+                            text: LocaleKeys.related_stores.tr(),
+                            textColor: Theme.of(context).primaryColorDark,
+                            fontSize: w * 0.04,
+                            bold: true,
                           ),
-                        );
-                      }
-                      return buildError(size);
-                    },
+                          20.ph,
+                          Expanded(
+                            child: ListView.separated(
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              itemCount: ownerShpos.length,
+                              separatorBuilder:
+                                  (BuildContext context, int index) {
+                                return 20.px;
+                              },
+                              itemBuilder: (BuildContext context, int index) {
+                                if (ownerShpos[index]['shopID'] !=
+                                    widget.shop!.shopID) {
+                                  return InkWell(
+                                    child: Column(
+                                      children: [
+                                        CircleAvatar(
+                                            radius: w * 0.1,
+                                            backgroundColor:
+                                                AppColors.mainTextColor,
+                                            backgroundImage: ownerShpos[index]
+                                                        ["shopProfileImage"] ==
+                                                    'url'
+                                                ? const AssetImage(
+                                                    'assets/profile_photo.jpg',
+                                                  ) as ImageProvider
+                                                : NetworkImage(ownerShpos[index]
+                                                    ["shopProfileImage"]),
+                                            child: ownerShpos[index]
+                                                        ["shopProfileImage"] ==
+                                                    'url'
+                                                ? ClipOval(
+                                                    child: Image.asset(
+                                                      'assets/store_placeholder.png',
+                                                      fit: BoxFit.fill,
+                                                    ),
+                                                  )
+                                                : null),
+                                        5.ph,
+                                        CustomText(
+                                          text: ownerShpos[index]['shopName'],
+                                          textColor: Theme.of(context)
+                                              .primaryColorDark,
+                                        )
+                                      ],
+                                    ),
+                                  );
+                                }
+                                return Container();
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              ],
-            ),
+                );
+              }
+              return buildError(size);
+            },
           ),
           Visibility(
-            // visible: ownerShpos.isNotEmpty,
             child: Padding(
-                padding: EdgeInsets.symmetric(vertical: h * 0.01),
+                padding: EdgeInsets.symmetric(vertical: h * 0.001),
                 child: const Divider(
                   thickness: 7,
                 )),
@@ -609,8 +609,6 @@ class _StorePageState extends State<StorePage> {
                         size, LocaleKeys.no_posts_yet_follow_alert.tr()));
               } else if (state is PostsFetchedSuccessfully) {
                 postsList = BlocProvider.of<PostsCubit>(context).ownerPosts;
-                //print(postsList);
-
                 return ListView.separated(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -621,10 +619,8 @@ class _StorePageState extends State<StorePage> {
                         thickness: 7,
                       )),
                   itemBuilder: (BuildContext context, int index) {
-                    //  print(postsList);
                     return ProductPost(
                       post: postsList[index],
-                      shop: widget.shop!,
                       profileDisplay: widget.profileDisplay ?? false,
                     );
                   },
@@ -641,13 +637,16 @@ class _StorePageState extends State<StorePage> {
 
   Widget _getFAB() {
     return SpeedDial(
+      direction: globalSharedPreference.getBool("isArabic")!
+          ? SpeedDialDirection.right
+          : SpeedDialDirection.up,
       animatedIcon: AnimatedIcons.list_view,
       animatedIconTheme:
           IconThemeData(size: 22, color: AppColors.mainWhiteColor),
       backgroundColor: Theme.of(context).colorScheme.primary,
       visible: true,
       curve: Curves.easeIn,
-      childMargin: const EdgeInsets.only(bottom: 30),
+      childMargin: const EdgeInsets.only(bottom: 30, left: 10),
       spacing: 10,
       spaceBetweenChildren: 5,
       children: [
@@ -668,7 +667,6 @@ class _StorePageState extends State<StorePage> {
           child: const Icon(Icons.edit),
           onTap: () {
             context.push(EditStore(function: updateStoreState));
-            // setState(() {});
           },
           label: LocaleKeys.edit_stroe_informations.tr(),
           labelStyle: TextStyle(
@@ -683,7 +681,6 @@ class _StorePageState extends State<StorePage> {
   }
 }
 
-// ignore: camel_case_types
 class profilePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
@@ -697,7 +694,6 @@ class profilePainter extends CustomPainter {
         end: Alignment.bottomCenter,
         colors: [
           Colors.blueGrey.shade200,
-          // Colors.blueGrey.shade50,
           AppColors.mainWhiteColor,
         ],
       ).createShader(rect);

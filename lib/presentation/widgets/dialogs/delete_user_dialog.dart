@@ -25,12 +25,12 @@ void showDeleteAlert(BuildContext context) {
             if (state is UserLoginedIn) {
               return CustomText(
                 text: LocaleKeys.delete_user_account_alret.tr(),
-                textAlign: TextAlign.justify,
+                textAlign: TextAlign.center,
               );
             }
             return CustomText(
               text: LocaleKeys.delete_owner_account_alret.tr(),
-              textAlign: TextAlign.justify,
+              textAlign: TextAlign.center,
             );
           },
         ),

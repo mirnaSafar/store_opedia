@@ -55,7 +55,7 @@ class _UserInputState extends State<UserInput> {
                   )
                 : widget.suffixIcon,
             contentPadding:
-                EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.w),
+                EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.w),
             hintText: widget.text,
             hintStyle: const TextStyle(
               color: Color.fromRGBO(182, 183, 183, 1),

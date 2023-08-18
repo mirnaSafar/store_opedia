@@ -19,17 +19,15 @@ import 'package:shopesapp/presentation/shared/custom_widgets/custom_sort_row.dar
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_toast.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
-import 'package:shopesapp/presentation/shared/utils.dart';
 import 'package:shopesapp/translation/locale_keys.g.dart';
 
 import '../../../constant/categories.dart';
-import '../../../logic/cubites/post/filter_cubit.dart';
 import '../../../main.dart';
 import '../../pages/map_page.dart';
 
 class PageHeader extends StatefulWidget {
-  const PageHeader({Key? key}) : super(key: key);
-
+  const PageHeader({Key? key, this.homePage = false}) : super(key: key);
+  final bool? homePage;
   @override
   State<PageHeader> createState() => _PageHeaderState();
 }
@@ -93,13 +91,14 @@ class _PageHeaderState extends State<PageHeader> {
                         // selectedSortIcon = Icons.location_city;
                         setIcon('assets/location-1-svgrepo-com.svg');
                       });
-                      CustomToast.showMessage(
-                          size: size,
-                          message: LocaleKeys.filter_applay_successfully.tr(),
-                          messageType: MessageType.SUCCESS,
-                          context: context);
-                      context.pop();
-                      context.pop();
+                      // CustomToast.showMessage(
+                      //     size: size,
+                      //     message: LocaleKeys.filter_applay_successfully.tr(),
+                      //     messageType: MessageType.SUCCESS,
+                      //     context: context);
+                      !widget.homePage! ? context.pop() : null;
+
+                      // context.pop();
 
                       //
                       // BotToast.closeAllLoading();
@@ -107,12 +106,16 @@ class _PageHeaderState extends State<PageHeader> {
                   },
                   builder: (context, state) {
                     if (state is FeatchingShopsProgress) {
+                      !widget.homePage! ? context.pop() : null;
+
                       // customLoader(size);
                     }
                     return InkWell(
                       onTap: () async {
                         LocationData? currentLocation = await LocationService()
                             .getUserCurrentLocation(hideLoader: true);
+                        context.pop();
+
                         context.read<StoreCubit>().locationFilterStores(
                               id: globalSharedPreference.getString("ID") ?? '0',
                               longitude: currentLocation?.longitude ??
@@ -198,23 +201,34 @@ class _PageHeaderState extends State<PageHeader> {
                       //     message: "Filter Succeed",
                       //     messageType: MessageType.SUCCESS,
                       //     context: context);
-                      context.pop();
-                      context.pop();
+                      !widget.homePage! ? context.pop() : null;
+                      // context.pop();
 
                       // BotToast.closeAllLoading();
                     }
                   },
                   builder: (context, state) {
                     if (state is FeatchingShopsProgress) {
+                      !widget.homePage! ? context.pop() : null;
+
                       // customLoader(size);
                     }
                     return InkWell(
                       onTap: () {
-                        context.push(
-                            const SuggestedStoresView(filter: FilterType.RATE));
+                        context.pop();
                         context.read<StoreCubit>().filterStores(
                             id: globalSharedPreference.getString("ID") ?? '0',
                             type: 'rate');
+                        context.push(
+                            const SuggestedStoresView(filter: FilterType.RATE));
+                        // BottomNavigationBarWidget(
+                        //   bottomNavigationEnum: BottomNavigationEnum.STORES,
+                        //   onTap: (BottomNavigationEnum bottomNavigationEnum,
+                        //       int index) {
+                        //     bottomNavigationEnum = BottomNavigationEnum.STORES;
+                        //     index = 1;
+                        //   },
+                        // );
                       },
                       child: CustomSortRow(
                         title: LocaleKeys.rate.tr(),
@@ -251,23 +265,28 @@ class _PageHeaderState extends State<PageHeader> {
                     } else if (state is FeatchingShopsSucceed) {
                       setIcon(null);
 
-                      CustomToast.showMessage(
-                          size: size,
-                          message: LocaleKeys.filter_applay_successfully.tr(),
-                          messageType: MessageType.SUCCESS,
-                          context: context);
-                      context.pop();
-                      context.pop();
+                      // CustomToast.showMessage(
+                      //     size: size,
+                      //     message: LocaleKeys.filter_applay_successfully.tr(),
+                      //     messageType: MessageType.SUCCESS,
+                      //     context: context);
+                      !widget.homePage! ? context.pop() : null;
+
+                      // context.pop();
 
                       // BotToast.closeAllLoading();
                     }
                   },
                   builder: (context, state) {
                     if (state is FeatchingShopsProgress) {
+                      !widget.homePage! ? context.pop() : null;
+
                       // customLoader(size);
                     }
                     return InkWell(
                       onTap: () {
+                        context.pop();
+
                         context.read<StoreCubit>().filterStores(
                             id: globalSharedPreference.getString("ID") ?? '0',
                             type: 'old');
@@ -306,23 +325,27 @@ class _PageHeaderState extends State<PageHeader> {
                       BotToast.closeAllLoading();
                     } else if (state is FeatchingShopsSucceed) {
                       setIcon(null);
-                      CustomToast.showMessage(
-                          size: size,
-                          message: LocaleKeys.filter_applay_successfully.tr(),
-                          messageType: MessageType.SUCCESS,
-                          context: context);
-                      context.pop();
-                      context.pop();
+                      // CustomToast.showMessage(
+                      //     size: size,
+                      //     message: LocaleKeys.filter_applay_successfully.tr(),
+                      //     messageType: MessageType.SUCCESS,
+                      //     context: context);
+                      !widget.homePage! ? context.pop() : null;
+
+                      // context.pop();
 
                       // BotToast.closeAllLoading();
                     }
                   },
                   builder: (context, state) {
                     if (state is FeatchingShopsProgress) {
+                      !widget.homePage! ? context.pop() : null;
+
                       // customLoader(size);
                     }
                     return InkWell(
                       onTap: () {
+                        context.pop();
                         context.read<StoreCubit>().filterStores(
                             id: globalSharedPreference.getString("ID") ?? '0',
                             type: 'new');
@@ -332,7 +355,7 @@ class _PageHeaderState extends State<PageHeader> {
                       child: CustomSortRow(
                         title: LocaleKeys.newest.tr(),
                         subtitle:
-                            LocaleKeys.nearest_Stores_will_be_seen_first.tr(),
+                            LocaleKeys.newest_Stores_will_be_seen_first.tr(),
                       ),
                     );
                   },
@@ -369,7 +392,9 @@ class _PageHeaderState extends State<PageHeader> {
                       text: LocaleKeys
                           .click_here_to_Identify_your_request_more_specifically
                           .tr(),
-                      textColor: AppColors.secondaryFontColor,
+                      textColor: globalSharedPreference.getBool("isDarkMode")!
+                          ? AppColors.secondaryDarkFontColor
+                          : AppColors.secondaryFontColor,
                     )),
                 10.ph,
                 ListView.separated(
@@ -399,28 +424,38 @@ class _PageHeaderState extends State<PageHeader> {
                                   context: context);
                               BotToast.closeAllLoading();
                             } else if (state is FeatchingShopsSucceed) {
-                              CustomToast.showMessage(
-                                  size: size,
-                                  message: LocaleKeys.filter_applay_successfully
-                                      .tr(),
-                                  messageType: MessageType.SUCCESS,
-                                  context: context);
-                              context.pop();
+                              // CustomToast.showMessage(
+                              //     size: size,
+                              //     message: LocaleKeys.filter_applay_successfully
+                              //         .tr(),
+                              //     messageType: MessageType.SUCCESS,
+                              //     context: context);
+                              !widget.homePage! ? context.pop() : null;
 
                               BotToast.closeAllLoading();
                             }
                           },
                           builder: (context, state) {
                             if (state is FeatchingShopsProgress) {
-                              context.pop();
-                              customLoader(size);
+                              !widget.homePage! ? context.pop() : null;
+
+                              // customLoader(size);
                             }
                             return InkWell(
                                 onTap: () {
+                                  context.pop();
                                   context
-                                      .read<FilterCubit>()
-                                      .filterPostsWithCategory(
-                                          category: categories[index]);
+                                      .read<StoreCubit>()
+                                      .categoryFilterStores(
+                                        category: categories[index],
+                                        id: globalSharedPreference
+                                                .getString("ID") ??
+                                            '0',
+                                      );
+                                  context.push(SuggestedStoresView(
+                                    filter: FilterType.CATEGORY,
+                                    category: categories[index],
+                                  ));
                                 },
                                 child: CustomSortRow(
                                   title: categories[index],
@@ -443,7 +478,9 @@ class _PageHeaderState extends State<PageHeader> {
 
     Widget cityDialog() {
       return Dialog(
-        alignment: Alignment.topRight,
+        alignment: globalSharedPreference.getBool("isArabic") == false
+            ? Alignment.topRight
+            : Alignment.topLeft,
         insetPadding: EdgeInsets.only(top: h * 0.08),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: SizedBox(
@@ -460,7 +497,7 @@ class _PageHeaderState extends State<PageHeader> {
                   child: CustomText(
                     text: LocaleKeys.choose_a_city.tr(),
                     bold: true,
-                    textColor: AppColors.secondaryFontColor,
+                    textColor: Theme.of(context).hintColor,
                   ),
                 ),
                 ListView.separated(
@@ -486,7 +523,8 @@ class _PageHeaderState extends State<PageHeader> {
                               //     message: 'filtered successfully',
                               //     messageType: MessageType.SUCCESS,
                               //     context: context);
-                              context.pop();
+                              !widget.homePage! ? context.pop() : null;
+
                               // context.pop();
 
                               // BotToast.closeAllLoading();
@@ -494,7 +532,8 @@ class _PageHeaderState extends State<PageHeader> {
                           },
                           builder: (context, state) {
                             if (state is FeatchingShopsProgress) {
-                              context.pop();
+                              !widget.homePage! ? context.pop() : null;
+
                               // customLoader(size);
                             }
                             return InkWell(

@@ -15,7 +15,7 @@ class PrivacyPlicies extends StatelessWidget {
         centerTitle: true,
       ),
       body: Padding(
-        padding: EdgeInsets.all(height * 0.0002),
+        padding: EdgeInsets.all(height * 0.02),
         child: SingleChildScrollView(
           child: Column(
             children: [
@@ -28,7 +28,7 @@ class PrivacyPlicies extends StatelessWidget {
                         style: const TextStyle(fontSize: 16.0),
                       ),
                   separatorBuilder: (context, index) =>
-                      SizedBox(height: height * 0.009),
+                      SizedBox(height: height * 0.02),
                   itemCount: privacy_policies.length),
               SizedBox(height: height * 0.2),
               ElevatedButton(

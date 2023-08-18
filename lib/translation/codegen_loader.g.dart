@@ -135,7 +135,7 @@ class CodegenLoader extends AssetLoader {
     "privacy_3":
         "3-كن حذراً : لايمكنك تغيير البريد الإلكتروني الذي قمت التسجيل به",
     "privacy_4": "4-المنشورات يجب أن تكون عن المتجر الخاص بك وإلا سيتم حذفها",
-    "privacy_5": "5-أي إساءة لأي مستخدم آخر ستحذف حسابك مباشرة",
+    "privacy_5": "5-أي إساءة لأي مستخدم آخر سيحذف حسابك مباشرة",
     "privacy_6": "6-نتمنى لك رحلة رائعة ضمن تطبيقنا",
     "select_the_theme": "أختر الثمة ",
     "user_sign_up": " حساب مستخدم",
@@ -313,7 +313,14 @@ class CodegenLoader extends AssetLoader {
     "invalid_email_or_password": "خطأ في البريد الإلكتروني أو كلمة السر",
     "misMatched": "غير متطابقة",
     "failed_verify_password":
-        "فشل في  التحقق من كلمة المرور  , تحقق من إتصالك بالإنترنت"
+        "فشل في  التحقق من كلمة المرور  , تحقق من إتصالك بالإنترنت",
+    "access_denied": "تم الرفض",
+    "change_store_state": "فشل في تغيير حالة المتجر , تحقق من إتصالك بالإنترنت",
+    "no_internet": "لايوجد إنترنت",
+    "required_filed": "مطلوب",
+    "no_search_result": "لايوجد نتائج للبحث",
+    "browsing_mode_home":
+        "لايمكنك مشاهدة منشورات المتاجر الآن \n  من فضلك قم بتسجيل الدخول أو إنشاء حساب جديد"
   };
   static const Map<String, dynamic> en = {
     "add_POST_PAGE_START_TAG": "ADD POST PAGE TAG",
@@ -515,6 +522,9 @@ class CodegenLoader extends AssetLoader {
     "no_posts_yet_follow_alert": "NO Posts Yet !",
     "you_dont_have_any_followed_store_yet":
         "\tYou dont have any followed store yet \n Follow Stores to Show Posts",
+    "open_now": " Open Now",
+    "close_now": " Close Now",
+    "deactive_now": "Deactive Now",
     "related_stores": "Related Stores",
     "defult_description": "basic description about the \nstore and its major",
     "edit_post": "Edit Post",
@@ -524,6 +534,7 @@ class CodegenLoader extends AssetLoader {
     "post_has_been_deleted_successfully": "Post has been deleted successfully",
     "category": "category",
     "un_follow": "UnFollow",
+    "follow": "Follow",
     "remove_from_fav": "Remove From Favorites",
     "admin": "Admin",
     "no_message_yet": "No Message Yet",
@@ -627,7 +638,15 @@ class CodegenLoader extends AssetLoader {
     "invalid_email_or_password": "Invalid Email Or Password",
     "misMatched": "MisMatched",
     "failed_verify_password":
-        "Failed to Verify the Password , Check your internet connection"
+        "Failed to Verify the Password , Check your internet connection",
+    "access_denied": "Access Denied",
+    "change_store_state":
+        "Failed to Change Store State's, Check your Internet Connection",
+    "no_internet": "NO INTERNET",
+    "required_filed": "required",
+    "no_search_result": "No search result",
+    "browsing_mode_home":
+        "You Can't watch Stroes Posts Now \n Pleas Create one now or login  befor"
   };
   static const Map<String, Map<String, dynamic>> mapLocales = {
     "ar": ar,

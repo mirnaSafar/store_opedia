@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/translation/locale_keys.g.dart';
 
-import '../../shared/validation_functions.dart';
-
 // ignore: must_be_immutable
 class CreatePasswordFormField extends StatefulWidget {
   CreatePasswordFormField(
@@ -27,7 +25,7 @@ class _CreatePasswordFormFieldState extends State<CreatePasswordFormField> {
           filled: true,
           //  fillColor: const Color.fromRGBO(242, 242, 242, 1),
           labelText: LocaleKeys.password.tr(),
-          labelStyle: TextStyle(fontSize: 20, color: AppColors.mainTextColor),
+          labelStyle: TextStyle(fontSize: 16, color: AppColors.mainTextColor),
           border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30),
               borderSide: BorderSide.none),

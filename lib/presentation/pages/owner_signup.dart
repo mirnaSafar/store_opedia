@@ -21,6 +21,7 @@ import 'package:shopesapp/translation/locale_keys.g.dart';
 import '../../constant/clipper.dart';
 import '../../data/enums/message_type.dart';
 import '../../logic/cubites/cubit/auth_state.dart';
+import '../../main.dart';
 import '../shared/custom_widgets/custom_toast.dart';
 import '../widgets/auth/email_form_field.dart';
 import '../widgets/auth/password_form_field.dart';
@@ -140,38 +141,28 @@ class _UserSignUpState extends State<OwnerSignUp>
                 ),
               ),
             ),
-            const SizedBox(
-              height: 20.0,
-            ),
+            (size.height * 0.005).ph,
             Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: EdgeInsets.all((size.height * 0.02)),
               child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     CreateEmailFormField(
                       setEmail: setEmail,
                     ),
-                    const SizedBox(
-                      height: 20.0,
-                    ),
+                    (size.height * 0.02).ph,
                     CreatePasswordFormField(
                       isPasswordHidden: isPasswordHidden,
                       setPassword: setPassword,
                     ),
-                    const SizedBox(
-                      height: 20.0,
-                    ),
+                    (size.height * 0.02).ph,
                     CreateConfirmPasswordFormField(
                       getPassword: getPassword,
                       isConfiermPasswordHidden: isConfiermPasswordHidden,
                     ),
-                    const SizedBox(
-                      height: 30.0,
-                    ),
+                    (size.height * 0.02).ph,
                     CreateUserNameFormField(setUserName: setOwnerName),
-                    const SizedBox(
-                      height: 30.0,
-                    ),
+                    (size.height * 0.02).ph,
                     CreatePhoneNumberFormField(setPhoneNumber: setPhoneNumber),
                     UserInput(
                       text: LocaleKeys.store_name.tr(),
@@ -248,11 +239,10 @@ class _UserSignUpState extends State<OwnerSignUp>
                             ))
                       ],
                     ),
-                    30.ph,
+                    (size.height * 0.02).ph,
                     CustomText(
-                      text: LocaleKeys.work_Time.tr(),
-                      textColor: AppColors.secondaryFontColor,
-                    ),
+                        text: LocaleKeys.work_Time.tr(),
+                        textColor: Theme.of(context).hintColor),
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 30.0, vertical: 10),
@@ -283,7 +273,7 @@ class _UserSignUpState extends State<OwnerSignUp>
                             padding: const EdgeInsets.only(top: 15.0),
                             child: CustomText(
                               text: LocaleKeys.to.tr(),
-                              textColor: AppColors.secondaryFontColor,
+                              textColor: Theme.of(context).hintColor,
                             ),
                           ),
                           SizedBox(
@@ -309,7 +299,7 @@ class _UserSignUpState extends State<OwnerSignUp>
                         ],
                       ),
                     ),
-                    30.ph,
+                    (size.height * 0.005).ph,
                     BlocConsumer<AuthCubit, AuthState>(
                       listener: (context, state) async {
                         if (state is OwnerSignedUp) {

@@ -90,9 +90,11 @@ class PostsRepository {
     http.Response response;
     Map<String, dynamic> requestBody = {
       "id": ownerID, //ownerID
+      "postID": postID,
+      "shopID": shopID,
       "name": name,
       "description": description,
-      "photos": photos ?? "noProductImage",
+      "photos": photos,
       "price": price,
       "postImageType": postImageType,
     };
@@ -103,6 +105,7 @@ class PostsRepository {
         'Content-Type': 'application/json',
       },
     );
+
     if (response.statusCode == 200) {
       return "Success";
     }

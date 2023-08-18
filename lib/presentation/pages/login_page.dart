@@ -97,8 +97,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 10, vertical: 10),
                     child: Stack(
-                      // fit: StackFit.expand,
-                      // alignment: Alignment.bottomCenter,
                       children: [
                         ClipPath(
                           clipper: firstClipper(),
@@ -125,8 +123,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                           right: 220, top: 20),
                                       child: Text(
                                         LocaleKeys.welcome.tr(),
-                                        style: const TextStyle(
-                                            fontSize: 25,
+                                        style: TextStyle(
+                                            fontSize: w * 0.055,
                                             fontWeight: FontWeight.bold),
                                       ),
                                     ),
@@ -138,8 +136,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                           .by_singing_in_you_are_agreeing_with
                                           .tr(),
                                       style: TextStyle(
-                                          fontSize: 16,
-                                          color: AppColors.secondaryFontColor),
+                                        fontSize: 16,
+                                        color: Theme.of(context).hintColor,
+                                      ),
                                     ),
                                     SizedBox(
                                       height: h * 0.005,
@@ -206,7 +205,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               height: h / 1.3,
                               width: MediaQuery.of(context).size.width,
                               child: Padding(
-                                padding: EdgeInsets.only(top: h / 1.55),
+                                padding: EdgeInsets.only(top: h / 1.6),
                                 child: Column(
                                   children: [
                                     Padding(
@@ -310,10 +309,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                                       globalSharedPreference
                                                           .setBool(
                                                               "isArabic", true),
-                                                      globalSharedPreference
-                                                          .setString(
-                                                              "currentLanguage",
-                                                              "ar")
                                                     }
                                                   : {
                                                       await context.setLocale(
@@ -321,10 +316,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                                       globalSharedPreference
                                                           .setBool("isArabic",
                                                               false),
-                                                      globalSharedPreference
-                                                          .setString(
-                                                              "currentLanguage",
-                                                              "en")
                                                     };
                                             },
                                           ),

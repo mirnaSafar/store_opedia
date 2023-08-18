@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shopesapp/constant/switch_to_arabic.dart';
 import 'package:shopesapp/data/models/post.dart';
-import 'package:shopesapp/data/models/shop.dart';
 import 'package:shopesapp/logic/cubites/post/post_favorite_cubit.dart';
 import 'package:shopesapp/main.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
@@ -17,10 +16,9 @@ import '../../../logic/cubites/post/cubit/toggle_post_favorite_cubit.dart';
 import '../dialogs/browsing_alert_dialog.dart';
 
 class ProductInfo extends StatefulWidget {
-  const ProductInfo({Key? key, required this.post, this.shop})
-      : super(key: key);
+  const ProductInfo({Key? key, required this.post}) : super(key: key);
   final Post post;
-  final Shop? shop;
+
   @override
   State<ProductInfo> createState() => _ProductInfoState();
 }
@@ -44,15 +42,17 @@ class _ProductInfoState extends State<ProductInfo> {
             children: [
               20.px,
               CircleAvatar(
-                  radius: w * 0.065,
-                  backgroundColor: AppColors.mainTextColor,
-                  child: ClipOval(
-                      child: widget.post.shopProfileImage == 'url'
-                          ? Image.asset(
-                              'assets/store_placeholder.png',
-                              fit: BoxFit.fill,
-                            )
-                          : Image.network(widget.post.shopProfileImage!))),
+                radius: w * 0.07,
+                backgroundColor: AppColors.mainTextColor,
+                backgroundImage: widget.post.shopProfileImage == 'url'
+                    ? const AssetImage(
+                        'assets/profile_photo.jpg',
+                      )
+                    : NetworkImage(widget.post.shopProfileImage!)
+                        as ImageProvider,
+                // child: ClipOval(
+                //     child: Image.network(widget.post.shopProfileImage))
+              ),
               10.px,
               CustomText(text: widget.post.shopName! // bold: true,
                   ),
@@ -145,7 +145,7 @@ class _ProductInfoState extends State<ProductInfo> {
                       text: globalSharedPreference.getBool("isArabic") == false
                           ? widget.post.shopCategory!
                           : switchCategoryToArabic(widget.post.shopCategory!),
-                      textColor: AppColors.secondaryFontColor,
+                      textColor: Theme.of(context).hintColor,
                     )
                   ],
                 ),
@@ -159,7 +159,7 @@ class _ProductInfoState extends State<ProductInfo> {
                     20.px,
                     CustomText(
                       text: widget.post.price,
-                      textColor: AppColors.secondaryFontColor,
+                      textColor: Theme.of(context).hintColor,
                     )
                   ],
                 ),
@@ -170,13 +170,13 @@ class _ProductInfoState extends State<ProductInfo> {
                     children: [
                       Icon(
                         Icons.short_text_rounded,
-                        color: AppColors.secondaryFontColor,
+                        color: Theme.of(context).hintColor,
                       ),
                       20.px,
                       Expanded(
                         child: CustomText(
                           text: widget.post.description!,
-                          textColor: AppColors.secondaryFontColor,
+                          textColor: Theme.of(context).hintColor,
                         ),
                       )
                     ],
@@ -195,7 +195,9 @@ class _ProductInfoState extends State<ProductInfo> {
                       text: globalSharedPreference.getBool("isArabic") == false
                           ? widget.post.location!
                           : switchLocationToArabic(widget.post.location!),
-                      textColor: AppColors.secondaryFontColor,
+                      textColor: globalSharedPreference.getBool("isDarkMode")!
+                          ? AppColors.secondaryDarkFontColor
+                          : AppColors.secondaryFontColor,
                     )
                   ],
                 ),

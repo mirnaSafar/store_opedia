@@ -21,6 +21,7 @@ import 'package:shopesapp/presentation/shared/fonts.dart';
 import 'package:shopesapp/presentation/shared/utils.dart';
 import 'package:shopesapp/translation/locale_keys.g.dart';
 
+import '../../logic/cubites/post/posts_cubit.dart';
 import '../../logic/cubites/post/update_post_cubit.dart';
 import '../shared/validation_functions.dart';
 
@@ -86,6 +87,13 @@ class _EditPostPageState extends State<EditPostPage> {
   TextEditingController updatePostNameController = TextEditingController();
   TextEditingController updatePostDescriptionController =
       TextEditingController();
+  @override
+  void initState() {
+    updatePostNameController.text = widget.post.title;
+    updatePostPriceController.text = widget.post.price;
+    updatePostDescriptionController.text = widget.post.description!;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +105,7 @@ class _EditPostPageState extends State<EditPostPage> {
       // backgroundColor: AppColors.mainWhiteColor,
       appBar: AppBar(
         elevation: 0,
-        leading: const BackButton(color: Colors.black),
+        leading: BackButton(color: Theme.of(context).primaryColorDark),
         backgroundColor: Colors.transparent,
         title: CustomText(text: LocaleKeys.edit_post.tr()),
       ),
@@ -109,10 +117,9 @@ class _EditPostPageState extends State<EditPostPage> {
           child: ListView(children: [
             Center(
                 child: CustomText(
-              text: LocaleKeys.edit_post.tr(),
-              fontSize: AppFonts.primaryFontSize,
-              textColor: AppColors.primaryFontColor,
-            )),
+                    text: LocaleKeys.edit_post.tr(),
+                    fontSize: AppFonts.primaryFontSize,
+                    textColor: Theme.of(context).primaryColorDark)),
             (w * 0.02).ph,
             Center(
                 child:
@@ -208,7 +215,9 @@ class _EditPostPageState extends State<EditPostPage> {
                           message: LocaleKeys.post_edited_successfully.tr(),
                           messageType: MessageType.SUCCESS,
                           context: context);
-
+                      context.read<PostsCubit>().getOwnerPosts(
+                          ownerID: globalSharedPreference.getString('ID'),
+                          shopID: globalSharedPreference.getString('shopID'));
                       context.pop();
                     } else if (state is UpdatePostFailed) {
                       CustomToast.showMessage(
@@ -237,14 +246,12 @@ class _EditPostPageState extends State<EditPostPage> {
                                       name: updatePostNameController.text,
                                       description:
                                           updatePostDescriptionController.text,
-                                      photos: imageBase64 ?? 'noImage',
-                                      category: globalSharedPreference
-                                              .getString("shopCategory") ??
-                                          '',
+                                      photos: imageBase64 ?? 'url',
+                                      category: widget.post.category!,
                                       price: updatePostPriceController.text,
                                       postID: widget.post.postID,
                                       shopID: widget.post.shopeID!,
-                                      postImageType: postImageType!,
+                                      postImageType: postImageType ?? "",
                                     )
                               };
                       },
