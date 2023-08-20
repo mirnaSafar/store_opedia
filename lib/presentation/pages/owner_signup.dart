@@ -67,8 +67,14 @@ class _UserSignUpState extends State<OwnerSignUp>
 
   @override
   void initState() {
-    storeStartWorkTimecontroller.text = "08:00 AM";
-    storeEndWorkTimeController.text = "08:00 PM";
+    storeStartWorkTimecontroller.text =
+        globalSharedPreference.getBool("isArabic") == false
+            ? "08:00 AM"
+            : "08:00 ص";
+    storeEndWorkTimeController.text =
+        globalSharedPreference.getBool("isArabic") == false
+            ? "08:00 PM"
+            : "08:00 م";
     super.initState();
   }
 

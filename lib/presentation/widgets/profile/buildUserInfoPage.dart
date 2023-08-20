@@ -36,7 +36,7 @@ Widget buildUserInfoPage({
           const ProfilePasswordFormField(password: "123456789"),
           (size.height * 0.005).ph,
           ProfilePhoneNumberFormField(phoneNmber: oldPhoneNumber),
-          (size.height * 0.005).ph,
+          (size.height * 0.1).ph,
           Row(
             children: [
               Expanded(

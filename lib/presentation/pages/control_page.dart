@@ -83,6 +83,9 @@ class _ControlPageState extends State<ControlPage> {
                                   .getString("startWorkTime"),
                               closeTime: globalSharedPreference
                                   .getString("endWorkTime"));
+                          context.read<GetShopsCubit>().getShop(
+                                globalSharedPreference.getString('shopID')!,
+                              );
                           context
                               .read<GetShopsCubit>()
                               .getShop(

@@ -49,7 +49,7 @@ class _VerifyPasswordState extends State<VerifyPassword> {
                   password: ""),
             ),
             SizedBox(
-              height: size.height * 0.04,
+              height: size.height * 0.1,
             ),
             Row(
               children: [

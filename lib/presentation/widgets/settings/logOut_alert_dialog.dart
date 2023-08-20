@@ -27,10 +27,11 @@ void showLogOutAlertDialog(BuildContext context) {
       btnCancelOnPress: () {},
       btnCancelText: LocaleKeys.cancle.tr(),
       btnOkText: LocaleKeys.countinue.tr(),
-      btnOkOnPress: () {
+      btnOkOnPress: () async {
         BlocProvider.of<AuthCubit>(context).logOut();
         context.read<ThemesCubit>().changeTheme(0);
         context.pushRepalceme(const LoginPage());
-        //   globalSharedPreference.setBool("isArabic", false);
+        await context.setLocale(const Locale('en'));
+        globalSharedPreference.setBool("isArabic", false);
       }).show();
 }

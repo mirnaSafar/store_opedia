@@ -320,7 +320,8 @@ class CodegenLoader extends AssetLoader {
     "required_filed": "مطلوب",
     "no_search_result": "لايوجد نتائج للبحث",
     "browsing_mode_home":
-        "لايمكنك مشاهدة منشورات المتاجر الآن \n  من فضلك قم بتسجيل الدخول أو إنشاء حساب جديد"
+        "لايمكنك مشاهدة منشورات المتاجر الآن \n  من فضلك قم بتسجيل الدخول أو إنشاء حساب جديد",
+    "selecte_message_type": "أختر نوع الرسالة",
   };
   static const Map<String, dynamic> en = {
     "add_POST_PAGE_START_TAG": "ADD POST PAGE TAG",
@@ -646,7 +647,8 @@ class CodegenLoader extends AssetLoader {
     "required_filed": "required",
     "no_search_result": "No search result",
     "browsing_mode_home":
-        "You Can't watch Stroes Posts Now \n Pleas Create one now or login  befor"
+        "You Can't watch Stroes Posts Now \n Pleas Create one now or login  befor",
+    "selecte_message_type": "Select Message Type :"
   };
   static const Map<String, Map<String, dynamic>> mapLocales = {
     "ar": ar,

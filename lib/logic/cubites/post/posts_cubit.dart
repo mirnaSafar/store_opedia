@@ -67,7 +67,7 @@ class PostsCubit extends Cubit<PostsState> {
     );
     if (response!["message"] == "Done") {
       newestPosts = response["posts"] as List;
-      print(newestPosts);
+      //    print(newestPosts);
       if (newestPosts.isEmpty) {
         emit(NoPostsYet());
       } else {

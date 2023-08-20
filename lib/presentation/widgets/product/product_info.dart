@@ -267,7 +267,7 @@ class _ProductInfoState extends State<ProductInfo> {
               40.ph,
               InkWell(
                 onTap: () => cLaunchUrl(Uri.parse(
-                  'https://wa.me/${globalSharedPreference.getString("shopPhoneNumber")}',
+                  'https://wa.me/${widget.post.ownerPhoneNumber}',
                 )),
                 child: SvgPicture.asset(
                   'assets/whatsapp-svgrepo-com.svg',
