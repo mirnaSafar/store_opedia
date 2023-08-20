@@ -3,7 +3,7 @@ import 'package:shopesapp/presentation/shared/colors.dart';
 
 import '../../shared/custom_widgets/custom_text.dart';
 
-Widget buildNoPostsYet(var size, var text) {
+Widget buildNoPostsYet(var size, String text) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
@@ -23,6 +23,7 @@ Widget buildNoPostsYet(var size, var text) {
               height: size.height * 0.02,
             ),
             CustomText(
+              textAlign: TextAlign.center,
               text: text,
               fontSize: 20,
             ),

@@ -217,7 +217,7 @@ class _EditPostPageState extends State<EditPostPage> {
                           context: context);
                       context.read<PostsCubit>().getOwnerPosts(
                           ownerID: globalSharedPreference.getString('ID'),
-                          shopID: globalSharedPreference.getString('shopID'));
+                          shopID: widget.post.shopeID);
                       context.pop();
                     } else if (state is UpdatePostFailed) {
                       CustomToast.showMessage(

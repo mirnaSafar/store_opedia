@@ -1,6 +1,8 @@
 import 'package:bloc/bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../../../../data/repositories/user_repository.dart';
+import '../../../translation/locale_keys.g.dart';
 
 part 'contact_us_state.dart';
 
@@ -11,16 +13,21 @@ class ContactUsCubit extends Cubit<ContactUsState> {
     required String id,
     required String type,
     required String description,
-    //   required String? photo,
+    required String? photo,
+    required String? imageType,
   }) async {
     emit(ContactUsProgress());
 
-    String? response = await UserRepository()
-        .contactUS(id: id, type: type, description: description, photo: "");
+    String? response = await UserRepository().contactUS(
+      id: id,
+      type: type,
+      description: description,
+      photo: photo,
+      imageType: imageType,
+    );
 
     if (response == "Failed") {
-      emit(ContactUsFailed(
-          message: "Failed to ContactUs , Check your internet connection"));
+      emit(ContactUsFailed(message: LocaleKeys.failed_to_contact_with_Us.tr()));
     } else {
       emit(ContactUsSucceed());
     }

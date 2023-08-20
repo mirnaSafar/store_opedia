@@ -38,7 +38,9 @@ class _SignUpCategoriesPageState extends State<SignUpCategoriesPage> {
         child:
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           CustomText(
-            text: LocaleKeys.select_a_category.tr(),
+            text: selectedCategory.isEmpty
+                ? LocaleKeys.select_a_category.tr()
+                : selectedCategory,
             fontSize: 24,
             textColor: AppColors.mainTextColor,
           ),

@@ -22,6 +22,44 @@ List<String> categories = [
   LocaleKeys.variants.tr(),
 ];
 
+List<String> categoriesEnglish = [
+  "Estates",
+  "Vehicles",
+  "Fashion & Beauty",
+  "Mobiles",
+  "Furniturs",
+  "Computers",
+  "Gifts",
+  "Babies stuff",
+  "Motorcycles",
+  "Sport",
+  "Pharmacies",
+  "Services",
+  "Malls",
+  "Resturant",
+  "Cafe",
+  "Variants",
+];
+
+List<String> categoriesArabic = [
+  "عقارات",
+  "مركبات",
+  "موضة و جمال",
+  "موبايلات",
+  "مفروشات",
+  "حواسيب",
+  "هدايا",
+  "مستلزمات أطفال",
+  "دراجات",
+  "رياضة",
+  "صيدليات",
+  "خدمات",
+  "محلات",
+  "مطاعم",
+  "مقاهي",
+  "منوعة",
+];
+
 IconData? categoryIcon(String category) {
   switch (category) {
     case "عقارات":

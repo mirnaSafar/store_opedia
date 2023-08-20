@@ -1,30 +1,61 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shopesapp/data/enums/message_color.dart';
 
+import '../../../main.dart';
 import '../../shared/colors.dart';
 import '../../shared/custom_widgets/custom_text.dart';
 
 Widget userMessage(var size, var message) => Align(
-      alignment: AlignmentDirectional.centerEnd,
+      alignment: globalSharedPreference.getBool("isArabic") == false
+          ? AlignmentDirectional.centerEnd
+          : AlignmentDirectional.centerStart,
       child: Container(
         padding: EdgeInsets.all((size.width * 0.05)),
         decoration: BoxDecoration(
             color: testMessageColor(message),
-            borderRadius: BorderRadiusDirectional.only(
-              bottomStart: Radius.circular(
-                (size.width * 0.08),
+            borderRadius: globalSharedPreference.getBool("isArabic") == false
+                ? BorderRadiusDirectional.only(
+                    bottomStart: Radius.circular(
+                      (size.width * 0.08),
+                    ),
+                    topEnd: Radius.circular(
+                      (size.width * 0.08),
+                    ),
+                    topStart: Radius.circular(
+                      (size.width * 0.08),
+                    ),
+                  )
+                : BorderRadiusDirectional.only(
+                    bottomEnd: Radius.circular(
+                      (size.width * 0.08),
+                    ),
+                    topEnd: Radius.circular(
+                      (size.width * 0.08),
+                    ),
+                    topStart: Radius.circular(
+                      (size.width * 0.08),
+                    ),
+                  )),
+        child: Column(
+          children: [
+            /*  Visibility(
+              visible: message["photo"] != null,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(size.width * 0.05),
+                child: Image.network(
+                  message["photo"],
+                  fit: BoxFit.contain,
+                ),
               ),
-              topEnd: Radius.circular(
-                (size.width * 0.08),
-              ),
-              topStart: Radius.circular(
-                (size.width * 0.08),
-              ),
-            )),
-        child: CustomText(
-          text: message["description"],
-          textColor: AppColors.mainWhiteColor,
+            ),*/
+            CustomText(
+              text: message["description"],
+              textColor: AppColors.mainWhiteColor,
+            ),
+          ],
         ),
       ),
     );

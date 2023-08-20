@@ -121,7 +121,10 @@ class _HomePageState extends State<HomePage> {
                         );
                       })
                     : (SharedPreferencesRepository.getBrowsingPostsMode())
-                        ? buildError(size)
+                        ? Center(
+                            child: buildNoPostsYet(
+                                size, LocaleKeys.browsing_mode_home.tr()),
+                          )
                         : BlocBuilder<FilterCubit, FilterState>(
                             builder: (context, state) {
                             if (state is FilterProgress) {
@@ -162,6 +165,12 @@ class _HomePageState extends State<HomePage> {
                                 },
                               );
                             }
+                            // if (SharedPreferencesRepository
+                            //     .getBrowsingPostsMode()) {
+                            //   return buildNoPostsYet(
+                            //       "You Can't Follow Store Yet \n Pleas Create one now or login  befor",
+                            //       size);
+                            // }
                             /*  if (!SharedPreferencesRepository
                                 .getBrowsingPostsMode()) {
                               return buildNoPostsYet(

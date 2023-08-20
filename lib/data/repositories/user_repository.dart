@@ -52,13 +52,18 @@ class UserRepository {
     required String type,
     required String description,
     required String? photo,
+    required String? imageType,
   }) async {
     http.Response response;
     Map<String, dynamic> requestBody = {
       "id": id,
       "type": type,
       "description": description,
-      "photo": photo ?? "noImage"
+      "photo": photo,
+      "creation_date": DateTime.now().toString(),
+      "reply": " ",
+      "reply_date": " ",
+      "imageType": imageType,
     };
     //   print(requestBody);
     response = await http.post(

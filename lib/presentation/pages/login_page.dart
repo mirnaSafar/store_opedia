@@ -176,9 +176,13 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                           AlignmentDirectional.centerStart,
                                       child: InkWell(
                                         onTap: () {
+                                          globalSharedPreference.clear();
+
                                           SharedPreferencesRepository
                                               .setBrowsingPostsMode(
                                                   isBrowsingMode: true);
+                                          globalSharedPreference.setString(
+                                              "ID", '0');
                                           context.push(const ControlPage());
                                         },
                                         child: CustomText(

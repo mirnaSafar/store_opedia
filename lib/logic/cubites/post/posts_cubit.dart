@@ -57,15 +57,17 @@ class PostsCubit extends Cubit<PostsState> {
   Future getOwnerPosts({
     required String? ownerID,
     required String? shopID,
+    // required String? visitorID,
   }) async {
     emit(FeatchingPostsProgress());
     Map<String, dynamic>? response = await PostsRepository().getShopPosts(
       ownerID: ownerID!,
       shopID: shopID!,
+      // visitorID: visitorID!,
     );
     if (response!["message"] == "Done") {
       newestPosts = response["posts"] as List;
-      print(newestPosts);
+      //    print(newestPosts);
       if (newestPosts.isEmpty) {
         emit(NoPostsYet());
       } else {

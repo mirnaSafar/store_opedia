@@ -401,7 +401,9 @@ class _PageHeaderState extends State<PageHeader> {
                   physics: const NeverScrollableScrollPhysics(),
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
-                  itemCount: categories.length,
+                  itemCount: globalSharedPreference.getBool("isArabic") == false
+                      ? categoriesEnglish.length
+                      : categoriesArabic.length,
                   separatorBuilder: (BuildContext context, int index) {
                     return BlocProvider(
                         create: (context) => StoreCubit(),
@@ -447,19 +449,35 @@ class _PageHeaderState extends State<PageHeader> {
                                   context
                                       .read<StoreCubit>()
                                       .categoryFilterStores(
-                                        category: categories[index],
+                                        category: globalSharedPreference
+                                                    .getBool("isArabic") ==
+                                                false
+                                            ? categoriesEnglish[index]
+                                            : categoriesArabic[index],
                                         id: globalSharedPreference
                                                 .getString("ID") ??
                                             '0',
                                       );
                                   context.push(SuggestedStoresView(
                                     filter: FilterType.CATEGORY,
-                                    category: categories[index],
+                                    category: globalSharedPreference
+                                                .getBool("isArabic") ==
+                                            false
+                                        ? categoriesEnglish[index]
+                                        : categoriesArabic[index],
                                   ));
                                 },
                                 child: CustomSortRow(
-                                  title: categories[index],
-                                  icon: categoryIcon(categories[index]),
+                                  title: globalSharedPreference
+                                              .getBool("isArabic") ==
+                                          false
+                                      ? categoriesEnglish[index]
+                                      : categoriesArabic[index],
+                                  icon: categoryIcon(globalSharedPreference
+                                              .getBool("isArabic") ==
+                                          false
+                                      ? categoriesEnglish[index]
+                                      : categoriesArabic[index]),
                                 ));
                           },
                         ));
@@ -503,7 +521,9 @@ class _PageHeaderState extends State<PageHeader> {
                 ListView.separated(
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
-                  itemCount: cities.length,
+                  itemCount: globalSharedPreference.getBool("isArabic") == false
+                      ? citisEnglish.length
+                      : citiesArabic.length,
                   separatorBuilder: (BuildContext context, int index) {
                     return BlocProvider(
                         create: (context) => StoreCubit(),
@@ -542,19 +562,32 @@ class _PageHeaderState extends State<PageHeader> {
                                 context.push(SuggestedStoresView(
                                   key: key,
                                   filter: FilterType.CITY,
-                                  city: cities[index],
+                                  city: globalSharedPreference
+                                              .getBool("isArabic") ==
+                                          false
+                                      ? citisEnglish[index]
+                                      : citiesArabic[index],
                                 ));
 
                                 context.read<StoreCubit>().cilyFilterStores(
                                     id: globalSharedPreference
                                             .getString("ID") ??
                                         '0',
-                                    address: cities[index]);
+                                    address: globalSharedPreference
+                                                .getBool("isArabic") ==
+                                            false
+                                        ? citisEnglish[index]
+                                        : citiesArabic[index]);
                               },
                               child: Padding(
                                 padding:
                                     EdgeInsetsDirectional.only(start: w * 0.06),
-                                child: CustomText(text: cities[index]),
+                                child: CustomText(
+                                    text: globalSharedPreference
+                                                .getBool("isArabic") ==
+                                            false
+                                        ? citisEnglish[index]
+                                        : citiesArabic[index]),
                               ),
                             );
                           },

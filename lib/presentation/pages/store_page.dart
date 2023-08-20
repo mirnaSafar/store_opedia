@@ -9,6 +9,7 @@ import 'package:shopesapp/logic/cubites/post/posts_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/cubit/toggole_follow_shop_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/following_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/get_owner_shops_cubit.dart';
+import 'package:shopesapp/logic/cubites/shop/get_shops_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/rate_shop_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/shop_follwers_counter_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/work_time_cubit.dart';
@@ -38,7 +39,7 @@ class StorePage extends StatefulWidget {
     this.shop,
     this.profileDisplay = false,
   }) : super(key: key);
-  Shop? shop;
+  dynamic shop;
   bool? profileDisplay;
   @override
   State<StorePage> createState() => _StorePageState();
@@ -48,7 +49,9 @@ class _StorePageState extends State<StorePage> {
   @override
   void initState() {
     context.read<PostsCubit>().getOwnerPosts(
-        ownerID: widget.shop!.ownerID, shopID: widget.shop!.shopID);
+        ownerID: globalSharedPreference.getString('ID'),
+        shopID: widget.shop!.shopID);
+    context.read<GetShopsCubit>().getShop(widget.shop!.shopID);
     super.initState();
   }
 
@@ -61,16 +64,15 @@ class _StorePageState extends State<StorePage> {
           ownerID: globalSharedPreference.getString('ID'), message: 'all');
       context.read<PostsCubit>().getOwnerPosts(
           ownerID: globalSharedPreference.getString('ID'),
-          shopID: globalSharedPreference.getString('shopID'));
-      context.read<PostsCubit>().getOwnerPosts(
-          ownerID: globalSharedPreference.getString('ID'),
-          shopID: globalSharedPreference.getString('shopID'));
+          shopID: widget.shop!.shopID);
+      widget.shop =
+          context.read<GetShopsCubit>().getShop(widget.shop!.shopID) as Shop;
     });
   }
 
   List<dynamic> postsList = [];
   List<dynamic> ownerShpos = [];
-
+  int? followesNumber;
   @override
   Widget build(BuildContext context) {
     List<String> splitStartTime = widget.shop!.startWorkTime.split(":");
@@ -323,21 +325,30 @@ class _StorePageState extends State<StorePage> {
                       15.ph,
                       Visibility(
                         visible: widget.shop!.shopDescription!.isNotEmpty,
-                        child: CustomText(
-                            textColor: Theme.of(context).primaryColorDark,
-                            fontSize: 15,
-                            text: widget.shop!.shopDescription ??
-                                LocaleKeys.defult_description.tr()),
+                        child: Padding(
+                          padding: EdgeInsetsDirectional.only(end: w * 0.08),
+                          child: CustomText(
+                              textColor: Theme.of(context).primaryColorDark,
+                              fontSize: 15,
+                              text: widget.shop!.shopDescription ??
+                                  LocaleKeys.defult_description.tr()),
+                        ),
                       ),
                       20.ph,
                       Row(
                         children: [
-                          BlocBuilder<ShopFollwersCounterCubit,
-                              ShopFollwersCounterState>(
+                          BlocBuilder<GetShopsCubit, GetShopsState>(
                             builder: (context, state) {
+                              int? followesNumber;
+                              if (state is GetShopsSucceed) {
+                                followesNumber =
+                                    BlocProvider.of<GetShopsCubit>(context)
+                                        .shop!
+                                        .followesNumber!;
+                              }
                               return CustomText(
                                 text:
-                                    '${widget.shop!.followesNumber} ${LocaleKeys.followers.tr()}',
+                                    '${followesNumber ?? widget.shop!.followesNumber} ${LocaleKeys.followers.tr()}',
                                 textColor: AppColors.mainBlueColor,
                               );
                             },
@@ -376,7 +387,12 @@ class _StorePageState extends State<StorePage> {
                                             shopID: widget.shop!.shopID,
                                             ownerID: globalSharedPreference
                                                     .getString("ID") ??
-                                                '0');
+                                                '0')
+                                        .then(
+                                          (value) => context
+                                              .read<GetShopsCubit>()
+                                              .getShop(widget.shop!.shopID),
+                                        );
                                   } else {
                                     showBrowsingDialogAlert(context);
                                   }
@@ -525,6 +541,7 @@ class _StorePageState extends State<StorePage> {
                           Expanded(
                             child: ListView.separated(
                               shrinkWrap: true,
+                              // physics: const NeverScrollableScrollPhysics(),
                               scrollDirection: Axis.horizontal,
                               itemCount: ownerShpos.length,
                               separatorBuilder:
@@ -535,6 +552,12 @@ class _StorePageState extends State<StorePage> {
                                 if (ownerShpos[index]['shopID'] !=
                                     widget.shop!.shopID) {
                                   return InkWell(
+                                    // onTap: () => {
+                                    //   context.push(StorePage(
+                                    //     p
+                                    //     shop: Shop.fromMap(ownerShpos[index]),
+                                    //   ))
+                                    // },
                                     child: Column(
                                       children: [
                                         CircleAvatar(
@@ -583,51 +606,58 @@ class _StorePageState extends State<StorePage> {
             },
           ),
           Visibility(
+            // visible: ownerShpos.isNotEmpty,
             child: Padding(
                 padding: EdgeInsets.symmetric(vertical: h * 0.001),
                 child: const Divider(
                   thickness: 7,
                 )),
           ),
-          BlocConsumer<PostsCubit, PostsState>(
-            listener: (context, state) {
-              if (state is ErrorFetchingPosts) {
-                buildAwsomeDialog(context, LocaleKeys.faild.tr(),
-                        state.message.toUpperCase(), LocaleKeys.ok.tr(),
-                        type: DialogType.error)
-                    .show();
-              } else if (state is PostsFetchedSuccessfully) {}
-            },
-            builder: (context, state) {
-              if (state is FeatchingPostsProgress) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (state is NoPostsYet) {
-                return Center(
-                    child: buildNoPostsYet(
-                        size, LocaleKeys.no_posts_yet_follow_alert.tr()));
-              } else if (state is PostsFetchedSuccessfully) {
-                postsList = BlocProvider.of<PostsCubit>(context).ownerPosts;
-                return ListView.separated(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: postsList.length,
-                  separatorBuilder: (context, index) => Padding(
-                      padding: EdgeInsets.symmetric(vertical: h * 0.01),
-                      child: const Divider(
-                        thickness: 7,
-                      )),
-                  itemBuilder: (BuildContext context, int index) {
-                    return ProductPost(
-                      post: postsList[index],
-                      profileDisplay: widget.profileDisplay ?? false,
-                    );
-                  },
-                );
-              }
-              return buildError(size);
-            },
+          Visibility(
+            visible: !SharedPreferencesRepository.getBrowsingPostsMode(),
+            child: BlocConsumer<PostsCubit, PostsState>(
+              listener: (context, state) {
+                if (state is ErrorFetchingPosts) {
+                  buildAwsomeDialog(context, LocaleKeys.faild.tr(),
+                          state.message.toUpperCase(), LocaleKeys.ok.tr(),
+                          type: DialogType.error)
+                      .show();
+                } else if (state is PostsFetchedSuccessfully) {}
+              },
+              builder: (context, state) {
+                if (state is FeatchingPostsProgress) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (state is NoPostsYet) {
+                  return Center(
+                      child: buildNoPostsYet(
+                          size, LocaleKeys.no_posts_yet_follow_alert.tr()));
+                } else if (state is PostsFetchedSuccessfully) {
+                  postsList = BlocProvider.of<PostsCubit>(context).ownerPosts;
+                  //print(postsList);
+
+                  return ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: postsList.length,
+                    separatorBuilder: (context, index) => Padding(
+                        padding: EdgeInsets.symmetric(vertical: h * 0.01),
+                        child: const Divider(
+                          thickness: 7,
+                        )),
+                    itemBuilder: (BuildContext context, int index) {
+                      //  print(postsList);
+                      return ProductPost(
+                        post: postsList[index],
+                        profileDisplay: widget.profileDisplay ?? false,
+                      );
+                    },
+                  );
+                }
+                return buildError(size);
+              },
+            ),
           ),
           50.ph,
         ],
@@ -637,7 +667,7 @@ class _StorePageState extends State<StorePage> {
 
   Widget _getFAB() {
     return SpeedDial(
-      direction: globalSharedPreference.getBool("isArabic")!
+      direction: globalSharedPreference.getBool("isArabic") == true
           ? SpeedDialDirection.right
           : SpeedDialDirection.up,
       animatedIcon: AnimatedIcons.list_view,

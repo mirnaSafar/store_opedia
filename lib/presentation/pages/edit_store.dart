@@ -387,8 +387,8 @@ class _EditStoreState extends State<EditStore> {
                               setState(() {
                                 storeEndWorkTimeController.text =
                                     value!.format(context);
-                               // print(translateTimetoEnglish(
-                               //s     storeEndWorkTimeController.text));
+                                // print(translateTimetoEnglish(
+                                //s     storeEndWorkTimeController.text));
                               });
                             });
                           },
@@ -581,14 +581,15 @@ class _EditStoreState extends State<EditStore> {
                                               ownerID: globalSharedPreference
                                                   .getString('ID'),
                                               message: 'all');
+
                                       context.read<PostsCubit>().getOwnerPosts(
                                           ownerID: globalSharedPreference
                                               .getString('ID'),
-                                          shopID: globalSharedPreference
-                                              .getString('shopID'));
-                                      context.read<PostsCubit>().getOwnerPosts(
-                                          ownerID: globalSharedPreference
-                                              .getString('ID'),
+                                          // visitorID: SharedPreferencesRepository
+                                          //         .getBrowsingPostsMode()
+                                          //     ? '0'
+                                          //     : globalSharedPreference
+                                          //         .getString("ID"),
                                           shopID: globalSharedPreference
                                               .getString('shopID'));
                                       context.push(StorePage(

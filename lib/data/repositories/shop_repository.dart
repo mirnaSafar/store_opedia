@@ -86,6 +86,29 @@ class ShopRepository {
     return null;
   }
 
+  Future<Map<String, dynamic>?> getShop({required String? shopID}) async {
+    http.Response response;
+    Map<String, dynamic> parsedResult;
+    Map<String, dynamic> requestBody = {
+      "shopID": shopID,
+    };
+    try {
+      response = await http.post(Uri.http(ENDPOINT, "/store/details/$shopID"),
+          body: jsonEncode(requestBody),
+          headers: {
+            'Content-Type': 'application/json',
+          });
+    } catch (e) {
+      return null;
+    }
+    if (response.statusCode == 200) {
+      parsedResult = jsonDecode(response.body);
+      return parsedResult;
+    }
+
+    return null;
+  }
+
   Future<String> addShop({
     required String? facebookAccount,
     required String? instagramAccount,

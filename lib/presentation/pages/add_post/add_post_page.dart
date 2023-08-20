@@ -215,6 +215,10 @@ class _AddPostPageState extends State<AddPostPage> {
                       context
                           .read<PostsCubit>()
                           .getOwnerPosts(
+                            // visitorID: SharedPreferencesRepository
+                            //         .getBrowsingPostsMode()
+                            //     ? '0'
+                            //     : globalSharedPreference.getString("ID"),
                             ownerID:
                                 globalSharedPreference.getString("ID") ?? '0',
                             shopID: globalSharedPreference.getString("shopID")!,

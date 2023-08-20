@@ -238,7 +238,9 @@ class SuggestedStoresViewState extends State<SuggestedStoresView> {
                           if (!SharedPreferencesRepository
                               .getBrowsingPostsMode()) {
                             return buildNoPostsYet(
-                                LocaleKeys.browsing_mode_home.tr(), size);
+                              size,
+                              LocaleKeys.browsing_mode_home.tr(),
+                            );
                           }
                           return buildError(size);
                         }),

@@ -175,7 +175,7 @@ class _EditStoreState extends State<AddStorePage> {
                                 ),
                               )
                             : Image.asset(
-                                'assets/store_cover_placeholder.jpg',
+                                'assets/cover_photo.jpg',
                                 fit: BoxFit.contain,
                               ),
                       )

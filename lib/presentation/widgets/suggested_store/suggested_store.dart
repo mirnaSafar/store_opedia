@@ -108,9 +108,17 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                             context
                                                 .read<PostsCubit>()
                                                 .getOwnerPosts(
-                                                    ownerID:
-                                                        widget.shop.ownerID,
-                                                    shopID: widget.shop.shopID);
+                                                  ownerID:
+                                                      globalSharedPreference
+                                                          .getString("ID"),
+                                                  shopID: widget.shop.shopID,
+                                                  // visitorID:
+                                                  //     SharedPreferencesRepository
+                                                  //             .getBrowsingPostsMode()
+                                                  //         ? '0'
+                                                  //         : globalSharedPreference
+                                                  //             .getString("ID")
+                                                );
                                             context
                                                 .read<WorkTimeCubit>()
                                                 .testOpenTime(
@@ -151,13 +159,13 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                                 onTap: () {
                                                   if (!SharedPreferencesRepository
                                                       .getBrowsingPostsMode()) {
-                                                    // !read.isShopFavorite(
-                                                    //         widget.shop)
-                                                    //     ? read.addToFavorites(
-                                                    //         widget.shop)
-                                                    //     : read
-                                                    //         .removeFromFavorites(
-                                                    //             widget.shop);
+                                                    !read.isShopFavorite(
+                                                            widget.shop)
+                                                        ? read.addToFavorites(
+                                                            widget.shop)
+                                                        : read
+                                                            .removeFromFavorites(
+                                                                widget.shop);
                                                     BlocProvider.of<
                                                                 ToggoleFavoriteShopCubit>(
                                                             context)
@@ -167,10 +175,11 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                                             ownerID: globalSharedPreference
                                                                     .getString(
                                                                         "ID") ??
-                                                                '0');
-                                                    context
-                                                        .read<StoreCubit>()
-                                                        .getAllStores();
+                                                                '0')
+                                                        .then((value) => context
+                                                            .read<StoreCubit>()
+                                                            .getAllStores());
+
                                                     context
                                                         .read<
                                                             ShowFavoriteStoresCubit>()
@@ -181,7 +190,8 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                                                 '0');
                                                     // context.pop();
                                                   } else {
-                                                    context.pop();
+                                                    // context.pop();
+
                                                     Future.delayed(
                                                         const Duration(
                                                             seconds: 1),
@@ -189,7 +199,7 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                                             showBrowsingDialogAlert(
                                                                 context));
                                                   }
-                                                  context.pop();
+                                                  // context.pop();
                                                 },
                                                 child: CustomIconTextRow(
                                                     fontSize: w * 0.04,
@@ -249,13 +259,13 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                                               globalSharedPreference
                                                                       .getString(
                                                                           "ID") ??
-                                                                  '0');
+                                                                  '0')
+                                                      .then((value) => context
+                                                          .read<StoreCubit>()
+                                                          .getAllStores());
                                                   context.pop();
-                                                  context
-                                                      .read<StoreCubit>()
-                                                      .getAllStores();
                                                 } else {
-                                                  context.pop();
+                                                  // context.pop();
                                                   Future.delayed(
                                                       const Duration(
                                                           seconds: 1),
@@ -315,11 +325,14 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                       },
                       icon: Icon(Icons.location_on, size: w * 0.04)),
 
-                  CustomText(
-                    text: globalSharedPreference.getBool("isArabic") == false
-                        ? widget.shop.location
-                        : switchLocationToArabic(widget.shop.location),
-                    fontSize: w * 0.031,
+                  SizedBox(
+                    width: w / 8,
+                    child: CustomText(
+                      text: globalSharedPreference.getBool("isArabic") == false
+                          ? widget.shop.location
+                          : switchLocationToArabic(widget.shop.location),
+                      fontSize: w * 0.031,
+                    ),
                   ),
                   // 20.px,
                   IconButton(

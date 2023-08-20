@@ -9,13 +9,14 @@ import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_divider.dart';
 import 'package:shopesapp/presentation/shared/custom_widgets/custom_text.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
-import 'package:shopesapp/presentation/widgets/home/no_Internet.dart';
 import 'package:shopesapp/presentation/widgets/suggested_store/suggested_store.dart';
+import 'package:shopesapp/presentation/widgets/switch_shop/error.dart';
 import 'package:shopesapp/translation/locale_keys.g.dart';
 
 import '../../data/models/shop.dart';
 import '../../data/repositories/shared_preferences_repository.dart';
 import '../../logic/cubites/post/cubit/show_favorite_posts_cubit.dart';
+import '../../logic/cubites/shop/favorite_cubit.dart';
 import '../widgets/product/product_post.dart';
 
 class FavouritePage extends StatefulWidget {
@@ -84,27 +85,137 @@ class _FavouritePageState extends State<FavouritePage> {
                           ownerID: globalSharedPreference.getString("ID")!,
                         );
                   },
-                  child: BlocConsumer<ShowFavoritePostsCubit,
-                      ShowFavoritePostsState>(
-                    listener: (context, state) {
-                      if (state is ShowFavoritePostsSuccessed) {
-                        favoritePostsList = state.favoritePosts;
-                        SharedPreferencesRepository.setFavoritePosts(
-                            favoritePostsList: favoritePostsList);
-                      }
-                    },
-                    builder: (context, state) {
-                      return BlocBuilder<ShowFavoritePostsCubit,
+                  child: !SharedPreferencesRepository.getBrowsingPostsMode()
+                      ? BlocConsumer<ShowFavoritePostsCubit,
                           ShowFavoritePostsState>(
+                          listener: (context, state) {
+                            if (state is ShowFavoritePostsSuccessed) {
+                              favoritePostsList = state.favoritePosts;
+                              SharedPreferencesRepository.setFavoritePosts(
+                                  favoritePostsList: favoritePostsList);
+                            }
+                          },
+                          builder: (context, state) {
+                            return BlocBuilder<ShowFavoritePostsCubit,
+                                ShowFavoritePostsState>(
+                              builder: (context, state) {
+                                if (state is ShowFavoritePostsProgress) {
+                                  return const Center(
+                                      child: CircularProgressIndicator());
+                                }
+                                if (state is ShowFavoritePostsSuccessed) {
+                                  favoritePostsList = context
+                                      .read<ShowFavoritePostsCubit>()
+                                      .favoritePosts;
+                                  return SingleChildScrollView(
+                                      child: Column(
+                                    children: [
+                                      40.ph,
+                                      ListView.separated(
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        shrinkWrap: true,
+                                        itemCount: context
+                                            .read<ShowFavoritePostsCubit>()
+                                            .favoritePosts
+                                            .length,
+                                        separatorBuilder:
+                                            (BuildContext context, int index) {
+                                          return Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: size.height * 0.01),
+                                              child: const Divider(
+                                                thickness: 7,
+                                              ));
+                                        },
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          return ProductPost(
+                                              post: Post.fromMap(context
+                                                  .read<
+                                                      ShowFavoritePostsCubit>()
+                                                  .favoritePosts[index]));
+                                        },
+                                      ),
+                                    ],
+                                  ));
+                                }
+                                if (state is NoFavoritePosts) {
+                                  return Center(
+                                    child: CustomText(
+                                        text: LocaleKeys.no_favorite_posts_yet
+                                            .tr()),
+                                  );
+                                }
+                                return Center(
+                                  child: Text(LocaleKeys
+                                      .some_thing_went_wrong_check_your_internet_connection_and_try_again
+                                      .tr()),
+                                );
+                              },
+                            );
+                          },
+                        )
+                      // : BlocBuilder<PostFavoriteCubit, PostFavoriteState>(
+                      //     builder: (context, state) {
+                      //       favoritePostsList = state.favoritePosts;
+                      //       return favoritePostsList.isNotEmpty
+                      //           ? SingleChildScrollView(
+                      //               child: Column(
+                      //               children: [
+                      //                 40.ph,
+                      //                 ListView.separated(
+                      //                   physics:
+                      //                       const NeverScrollableScrollPhysics(),
+                      //                   shrinkWrap: true,
+                      //                   itemCount: favoritePostsList.length,
+                      //                   separatorBuilder:
+                      //                       (BuildContext context, int index) {
+                      //                     return const CustomDivider();
+                      //                   },
+                      //                   itemBuilder:
+                      //                       (BuildContext context, int index) {
+                      //                     return ProductPost(
+                      //                       post: Post.fromJson(
+                      //                           favoritePostsList[index]),
+                      //                     );
+                      //                   },
+                      //                 ),
+                      //               ],
+                      //             ))
+                      //           : const Center(
+                      //               child:
+                      //                   CustomText(text: 'No Favorite Posts Yet'),
+                      //             );
+                      //     },
+                      //   ),
+
+                      // child:
+                      : const Center(
+                          child: CustomText(
+                              text:
+                                  'you can\'t have favorite posts in browsing mode '))),
+
+              RefreshIndicator(
+                onRefresh: () async {
+                  context.read<ShowFavoriteStoresCubit>().showMyFavoriteStores(
+                        ownerID: globalSharedPreference.getString("ID")!,
+                      );
+                },
+                child: !SharedPreferencesRepository.getBrowsingPostsMode()
+                    ? BlocBuilder<ShowFavoriteStoresCubit,
+                        ShowFavoriteStoresState>(
                         builder: (context, state) {
-                          if (state is ShowFavoritePostsProgress) {
+                          if (state is ShowFavoriteStoresProgress) {
                             return const Center(
                                 child: CircularProgressIndicator());
                           }
-                          if (state is ShowFavoritePostsSuccessed) {
-                            favoritePostsList = context
-                                .read<ShowFavoritePostsCubit>()
-                                .favoritePosts;
+
+                          if (state is ShowFavoriteStoresSuccessed) {
+                            favoriteStoresList = state.favoriteStores;
+                            // SharedPreferencesRepository.setFavoriteStores(
+                            //     favoriteShopsList: favoriteStoresList);
+
                             return SingleChildScrollView(
                                 child: Column(
                               children: [
@@ -112,10 +223,7 @@ class _FavouritePageState extends State<FavouritePage> {
                                 ListView.separated(
                                   physics: const NeverScrollableScrollPhysics(),
                                   shrinkWrap: true,
-                                  itemCount: context
-                                      .read<ShowFavoritePostsCubit>()
-                                      .favoritePosts
-                                      .length,
+                                  itemCount: state.favoriteStores.length,
                                   separatorBuilder:
                                       (BuildContext context, int index) {
                                     return Padding(
@@ -127,148 +235,61 @@ class _FavouritePageState extends State<FavouritePage> {
                                   },
                                   itemBuilder:
                                       (BuildContext context, int index) {
-                                    return ProductPost(
-                                        post: Post.fromMap(context
-                                            .read<ShowFavoritePostsCubit>()
-                                            .favoritePosts[index]));
+                                    return SuggestedStore(
+                                        shop: Shop.fromMap(
+                                            state.favoriteStores[index]));
                                   },
                                 ),
                               ],
                             ));
                           }
-                          if (state is NoFavoritePosts) {
+                          if (state is NoFavoriteStores) {
                             return Center(
                               child: CustomText(
-                                  text: LocaleKeys.no_favorite_posts_yet.tr()),
+                                  text: LocaleKeys.no_favorite_stores_yet.tr()),
                             );
                           }
-                          return Center(
-                            child: Text(LocaleKeys
-                                .some_thing_went_wrong_check_your_internet_connection_and_try_again
-                                .tr()),
-                          );
+                          return buildError(size);
                         },
-                      );
-                    },
-                  )
-                  // : BlocBuilder<PostFavoriteCubit, PostFavoriteState>(
-                  //     builder: (context, state) {
-                  //       favoritePostsList = state.favoritePosts;
-                  //       return favoritePostsList.isNotEmpty
-                  //           ? SingleChildScrollView(
-                  //               child: Column(
-                  //               children: [
-                  //                 40.ph,
-                  //                 ListView.separated(
-                  //                   physics:
-                  //                       const NeverScrollableScrollPhysics(),
-                  //                   shrinkWrap: true,
-                  //                   itemCount: favoritePostsList.length,
-                  //                   separatorBuilder:
-                  //                       (BuildContext context, int index) {
-                  //                     return const CustomDivider();
-                  //                   },
-                  //                   itemBuilder:
-                  //                       (BuildContext context, int index) {
-                  //                     return ProductPost(
-                  //                       post: Post.fromJson(
-                  //                           favoritePostsList[index]),
-                  //                     );
-                  //                   },
-                  //                 ),
-                  //               ],
-                  //             ))
-                  //           : const Center(
-                  //               child:
-                  //                   CustomText(text: 'No Favorite Posts Yet'),
-                  //             );
-                  //     },
-                  //   ),
+                      )
+                    : BlocBuilder<FavoriteCubit, FavoriteState>(
+                        builder: (context, state) {
+                          favoriteStoresList = state.favoriteShops;
 
-                  // child:
-                  ),
-
-              RefreshIndicator(onRefresh: () async {
-                context.read<ShowFavoriteStoresCubit>().showMyFavoriteStores(
-                      ownerID: globalSharedPreference.getString("ID")!,
-                    );
-              }, child:
-                      // favoriteStoresList.isEmpty?
-                      BlocBuilder<ShowFavoriteStoresCubit,
-                          ShowFavoriteStoresState>(
-                builder: (context, state) {
-                  if (state is ShowFavoriteStoresProgress) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-
-                  if (state is ShowFavoriteStoresSuccessed) {
-                    favoriteStoresList = state.favoriteStores;
-                    // SharedPreferencesRepository.setFavoriteStores(
-                    //     favoriteShopsList: favoriteStoresList);
-
-                    return SingleChildScrollView(
-                        child: Column(
-                      children: [
-                        40.ph,
-                        ListView.separated(
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: state.favoriteStores.length,
-                          separatorBuilder: (BuildContext context, int index) {
-                            return const CustomDivider();
-                          },
-                          itemBuilder: (BuildContext context, int index) {
-                            return SuggestedStore(
-                                shop:
-                                    Shop.fromMap(state.favoriteStores[index]));
-                          },
-                        ),
-                      ],
-                    ));
-                  }
-                  if (state is NoFavoriteStores) {
-                    return Center(
-                      child: CustomText(
-                          text: LocaleKeys.no_favorite_stores_yet.tr()),
-                    );
-                  }
-                  return Center(child: buildNoInternet(size));
-                },
+                          return favoriteStoresList.isNotEmpty
+                              ? SingleChildScrollView(
+                                  child: Column(
+                                  children: [
+                                    40.ph,
+                                    ListView.separated(
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemCount: favoriteStoresList.length,
+                                      separatorBuilder:
+                                          (BuildContext context, int index) {
+                                        return const CustomDivider();
+                                      },
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        return SuggestedStore(
+                                            shop: Shop.fromJson(
+                                                favoriteStoresList[index]));
+                                      },
+                                    ),
+                                  ],
+                                ))
+                              : const Center(
+                                  child:
+                                      CustomText(text: 'No Favorite Posts Yet'),
+                                );
+                        },
+                      ),
               )
-                  // : BlocBuilder<FavoriteCubit, FavoriteState>(
-                  //     builder: (context, state) {
-                  //       favoriteStoresList = state.favoriteShops;
-
-                  //       return favoriteStoresList.isNotEmpty
-                  //           ? SingleChildScrollView(
-                  //               child: Column(
-                  //               children: [
-                  //                 40.ph,
-                  //                 ListView.separated(
-                  //                   physics:
-                  //                       const NeverScrollableScrollPhysics(),
-                  //                   shrinkWrap: true,
-                  //                   itemCount: favoriteStoresList.length,
-                  //                   separatorBuilder:
-                  //                       (BuildContext context, int index) {
-                  //                     return const CustomDivider();
-                  //                   },
-                  //                   itemBuilder:
-                  //                       (BuildContext context, int index) {
-                  //                     return SuggestedStore(
-                  //                         shop: Shop.fromMap(
-                  //                             favoriteStoresList[index]));
-                  //                   },
-                  //                 ),
-                  //               ],
-                  //             ))
-                  //           : const Center(
-                  //               child:
-                  //                   CustomText(text: 'No Favorite Posts Yet'),
-                  //             );
-                  //     },
-                  //   ),
-                  ),
+              // : const Center(
+              //     child: CustomText(
+              //         text:
+              //             'you can\'t have favorite stores in browsing mode '))),
 
               // Text('data'),
               // Text('data'),

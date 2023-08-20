@@ -139,4 +139,6 @@ class StoreCubit extends Cubit<StoreState> {
       emit(ErrorFetchingShops(message: response["message"]));
     }
   }
+
+
 }

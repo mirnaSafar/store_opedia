@@ -29,12 +29,14 @@ class PostsRepository {
   Future<Map<String, dynamic>?> getShopPosts({
     required String shopID,
     required String ownerID,
+    // required String visitorID,
   }) async {
     http.Response response;
     Map<String, dynamic> parsedResult;
     Map<String, dynamic> requestBody = {
       "id": ownerID,
       "shopID": shopID,
+      // 'visitor': visitorID
     };
     try {
       response = await http.post(

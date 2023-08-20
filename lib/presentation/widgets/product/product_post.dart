@@ -6,7 +6,6 @@ import 'package:shopesapp/data/enums/message_type.dart';
 import 'package:shopesapp/logic/cubites/post/cubit/show_favorite_posts_cubit.dart';
 import 'package:shopesapp/logic/cubites/post/cubit/toggle_post_favorite_cubit.dart';
 import 'package:shopesapp/logic/cubites/post/delete_post_cubit.dart';
-import 'package:shopesapp/logic/cubites/post/post_favorite_cubit.dart';
 import 'package:shopesapp/main.dart';
 import 'package:shopesapp/presentation/pages/edit_post.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
@@ -20,6 +19,7 @@ import 'package:shopesapp/translation/locale_keys.g.dart';
 import '../../../constant/switch_to_arabic.dart';
 import '../../../data/repositories/shared_preferences_repository.dart';
 import '../../../logic/cubites/post/filter_cubit.dart';
+import '../../../logic/cubites/post/post_favorite_cubit.dart';
 import '../../../logic/cubites/post/posts_cubit.dart';
 import '../../../logic/cubites/shop/cubit/show_favorite_stores_cubit.dart';
 import '../../pages/map_page.dart';
@@ -104,8 +104,7 @@ class _ProductPostState extends State<ProductPost> {
                                 context.read<PostsCubit>().getOwnerPosts(
                                     ownerID:
                                         globalSharedPreference.getString('ID'),
-                                    shopID: globalSharedPreference
-                                        .getString('shopID'));
+                                    shopID: widget.post.shopID);
                                 context.pop();
                               }
                             },
@@ -257,19 +256,19 @@ class _ProductPostState extends State<ProductPost> {
                                       postID: widget.post.postID,
                                       userID: globalSharedPreference
                                           .getString("ID")!);
-                              context.read<FilterCubit>().getAllPosts();
-
-                              context
-                                  .read<ShowFavoritePostsCubit>()
-                                  .showMyFavoritePosts(
-                                      ownerID: globalSharedPreference
-                                              .getString("ID") ??
-                                          '0');
+                              context.read<FilterCubit>().getAllPosts().then(
+                                  (value) => context
+                                      .read<ShowFavoritePostsCubit>()
+                                      .showMyFavoritePosts(
+                                          ownerID: globalSharedPreference
+                                                  .getString("ID") ??
+                                              '0'));
                             } else {
                               showBrowsingDialogAlert(context);
                             }
                           },
-                          icon: !widget.post.isFavorit
+                          icon: !postFavorite.isPostFavorite(widget.post) ||
+                                  !widget.post.isFavorit
                               ? const Icon(Icons.favorite_border_outlined)
                               : Icon(
                                   Icons.favorite,

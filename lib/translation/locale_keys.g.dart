@@ -15,6 +15,7 @@ abstract class LocaleKeys {
   static const browsing_mode_home = "browsing_mode_home";
   static const create_account = "create_account";
   static const add_store = "add_store";
+  static const selecte_message_type = "selecte_message_type";
   static const access_denied = "access_denied";
   static const no_internet = "no_internet";
   static const contact_us = "contact_us";

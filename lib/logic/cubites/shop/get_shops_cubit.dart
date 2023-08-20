@@ -37,22 +37,20 @@ class GetShopsCubit extends Cubit<GetShopsState> {
     }
   }
 
-  Future<dynamic> getShop(String shopID) async {
+  Future<Shop?> getShop(String shopID) async {
     emit(GetShopsProgress());
 
-    Map<String, dynamic>? response = await ShopRepository()
-        .getShops(ownerID: globalSharedPreference.getString("ID")!);
-    if (response == null || response["message"] != "Done") {
+    Map<String, dynamic>? response =
+        await ShopRepository().getShop(shopID: shopID);
+    if (response == null) {
       emit(GetShopsFailed(
           message: response == null
               ? LocaleKeys.get_stores_failed.tr()
               : response["message"]));
-    } else if (response["message"] == "Done") {
-      setShops(shops: response["stores"]);
-      shop = _shops
-          .firstWhere((element) => Shop.fromJson(element).shopID == shopID);
+    } else {
+      shop = Shop.fromMap(response);
       emit(GetShopsSucceed());
-      return shop!;
     }
+    return shop;
   }
 }

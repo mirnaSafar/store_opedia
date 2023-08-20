@@ -94,12 +94,13 @@ class _ProductInfoState extends State<ProductInfo> {
                               .toggolePostFavorite(
                                   postID: widget.post.postID,
                                   userID:
-                                      globalSharedPreference.getString("ID")!);
+                                      globalSharedPreference.getString("ID")!)
+                              .then((value) => null);
                         } else {
                           showBrowsingDialogAlert(context);
                         }
                       },
-                      icon: !postFavorite.isPostFavorite(widget.post)
+                      icon: !widget.post.isFavorit!
                           ? const Icon(Icons.favorite_border_outlined)
                           : Icon(
                               Icons.favorite,
@@ -264,9 +265,8 @@ class _ProductInfoState extends State<ProductInfo> {
               ),
               40.ph,
               InkWell(
-                onTap: () => cLaunchUrl(Uri(
-                  path:
-                      'whatsapp://send?phone=${globalSharedPreference.getString("shopPhoneNumber")}',
+                onTap: () => cLaunchUrl(Uri.parse(
+                  'https://wa.me/${globalSharedPreference.getString("shopPhoneNumber")}',
                 )),
                 child: SvgPicture.asset(
                   'assets/whatsapp-svgrepo-com.svg',
