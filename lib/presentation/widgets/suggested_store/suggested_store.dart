@@ -105,15 +105,20 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                         InkWell(
                                           onTap: () {
                                             context.pop();
-                                            context.read<PostsCubit>().getOwnerPosts(
-                                                ownerID: widget.shop.ownerID,
-                                                shopID: widget.shop.shopID,
-                                                visitorID:
-                                                    SharedPreferencesRepository
-                                                            .getBrowsingPostsMode()
-                                                        ? '0'
-                                                        : globalSharedPreference
-                                                            .getString("ID"));
+                                            context
+                                                .read<PostsCubit>()
+                                                .getOwnerPosts(
+                                                  ownerID:
+                                                      globalSharedPreference
+                                                          .getString("ID"),
+                                                  shopID: widget.shop.shopID,
+                                                  // visitorID:
+                                                  //     SharedPreferencesRepository
+                                                  //             .getBrowsingPostsMode()
+                                                  //         ? '0'
+                                                  //         : globalSharedPreference
+                                                  //             .getString("ID")
+                                                );
                                             context
                                                 .read<WorkTimeCubit>()
                                                 .testOpenTime(
@@ -183,7 +188,7 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                                                     .getString(
                                                                         "ID") ??
                                                                 '0');
-                                                    context.pop();
+                                                    // context.pop();
                                                   } else {
                                                     // context.pop();
 
@@ -320,16 +325,13 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                       },
                       icon: Icon(Icons.location_on, size: w * 0.04)),
 
-                  SingleChildScrollView(
-                    child: SizedBox(
-                      width: w / 8,
-                      child: CustomText(
-                        text:
-                            globalSharedPreference.getBool("isArabic") == false
-                                ? widget.shop.location
-                                : switchLocationToArabic(widget.shop.location),
-                        fontSize: w * 0.031,
-                      ),
+                  SizedBox(
+                    width: w / 8,
+                    child: CustomText(
+                      text: globalSharedPreference.getBool("isArabic") == false
+                          ? widget.shop.location
+                          : switchLocationToArabic(widget.shop.location),
+                      fontSize: w * 0.031,
                     ),
                   ),
                   // 20.px,
@@ -384,7 +386,7 @@ class _SuggestedStoreState extends State<SuggestedStore> {
                                                   : switchCategoryToArabic(
                                                       widget.shop.shopCategory),
                                               textColor:
-                                                  AppColors.mainBlackColor,
+                                                  Theme.of(context).hintColor,
                                             ),
                                           ],
                                         ),

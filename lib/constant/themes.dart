@@ -4,6 +4,7 @@ List<ThemeData> themeArray = [
   ThemeData(
     primaryColorDark: const Color.fromRGBO(0, 0, 0, 1),
     primaryColorLight: const Color.fromRGBO(255, 255, 255, 1),
+    hintColor: const Color.fromRGBO(124, 125, 126, 1),
     colorScheme: ColorScheme.fromSwatch(
             accentColor: const Color.fromRGBO(255, 255, 255, 1),
             primarySwatch: mainOrangee,
@@ -15,6 +16,7 @@ List<ThemeData> themeArray = [
   ThemeData(
     primaryColorDark: const Color.fromRGBO(0, 0, 0, 1),
     primaryColorLight: const Color.fromRGBO(255, 255, 255, 1),
+    hintColor: const Color.fromRGBO(124, 125, 126, 1),
     colorScheme: ColorScheme.fromSwatch(
             primarySwatch: orgainalGreen,
             backgroundColor: const Color.fromRGBO(0, 0, 0, 0))
@@ -24,13 +26,14 @@ List<ThemeData> themeArray = [
   ),
   ThemeData(
     primaryColorDark: const Color.fromRGBO(255, 255, 255, 1),
-    primaryColorLight: const Color.fromARGB(255, 46, 45, 45),
+    primaryColorLight: const Color.fromARGB(244, 43, 42, 42),
+    hintColor: const Color.fromARGB(255, 200, 200, 201),
     colorScheme: ColorScheme.fromSwatch(
       accentColor: const Color.fromRGBO(0, 0, 0, 0),
       primarySwatch: Colors.blue,
       brightness: Brightness.dark,
     ).copyWith(
-      secondary: const Color.fromARGB(255, 33, 200, 186),
+      secondary: Colors.blue,
     ),
   ),
 ];

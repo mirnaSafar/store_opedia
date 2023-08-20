@@ -5,6 +5,7 @@ import 'package:shopesapp/logic/cubites/post/filter_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/cubit/search_store_cubit.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/presentation/widgets/suggested_store/page_hader.dart';
+import 'package:shopesapp/presentation/widgets/product/product_post.dart';
 import 'package:shopesapp/presentation/widgets/switch_shop/error.dart';
 import 'package:shopesapp/translation/locale_keys.g.dart';
 import '../../data/enums/message_type.dart';
@@ -18,7 +19,6 @@ import '../shared/custom_widgets/custom_toast.dart';
 import '../shared/custom_widgets/user_input.dart';
 import '../widgets/home/no_Internet.dart';
 import '../widgets/home/no_posts_yet.dart';
-import '../widgets/product/product_post.dart';
 import '../widgets/suggested_store/no_shop_yet.dart';
 import '../widgets/suggested_store/suggested_store.dart';
 
@@ -56,7 +56,7 @@ class _HomePageState extends State<HomePage> {
               CustomToast.showMessage(
                   context: context,
                   size: size,
-                  message: "Interne Disconnected",
+                  message: LocaleKeys.no_internet.tr(),
                   messageType: MessageType.REJECTED);
             }
           },
@@ -101,8 +101,6 @@ class _HomePageState extends State<HomePage> {
                         } else if (state is NoSearchResult) {
                           return buildNoShopsYet(size);
                         } else if (state is SearchStoreSuccessed) {
-                          // searchStoreResult = context.read<SearchStoreCubit>().searchResult;
-
                           return ListView.separated(
                             physics: const NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
@@ -118,16 +116,14 @@ class _HomePageState extends State<HomePage> {
                             },
                           );
                         }
-                        return buildError(size);
+                        return Center(
+                          child: Text(LocaleKeys.no_search_result.tr()),
+                        );
                       })
                     : (SharedPreferencesRepository.getBrowsingPostsMode())
-                        ?
-                        // buildError(size)
-                        Center(
+                        ? Center(
                             child: buildNoPostsYet(
-                              size,
-                              "Create account or login to follow stores and see posts",
-                            ),
+                                size, LocaleKeys.browsing_mode_home.tr()),
                           )
                         : BlocBuilder<FilterCubit, FilterState>(
                             builder: (context, state) {
@@ -175,6 +171,11 @@ class _HomePageState extends State<HomePage> {
                             //       "You Can't Follow Store Yet \n Pleas Create one now or login  befor",
                             //       size);
                             // }
+                            /*  if (!SharedPreferencesRepository
+                                .getBrowsingPostsMode()) {
+                              return buildNoPostsYet(
+                                  LocaleKeys.browsing_mode_home.tr(), size);
+                            }*/
                             return buildError(size);
                           }),
               ],

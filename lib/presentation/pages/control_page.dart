@@ -14,6 +14,7 @@ import '../../data/models/shop.dart';
 import '../../data/repositories/shared_preferences_repository.dart';
 import '../../logic/cubites/post/posts_cubit.dart';
 import '../../logic/cubites/shop/get_owner_shops_cubit.dart';
+import '../../logic/cubites/shop/get_shops_cubit.dart';
 import '../../logic/cubites/shop/work_time_cubit.dart';
 import '../widgets/switch_shop/browsing_mode_profile.dart';
 import '../widgets/switch_shop/no_selected_store.dart';
@@ -83,16 +84,22 @@ class _ControlPageState extends State<ControlPage> {
                               closeTime: globalSharedPreference
                                   .getString("endWorkTime"));
                           context
+                              .read<GetShopsCubit>()
+                              .getShop(
+                                globalSharedPreference.getString('shopID')!,
+                              )
+                              .then((value) => null);
+                          context
                               .read<GetOwnerShopsCubit>()
                               .getOwnerShopsRequest(
                                   ownerID:
                                       globalSharedPreference.getString('ID'),
                                   message: 'all');
                           context.read<PostsCubit>().getOwnerPosts(
-                              visitorID: SharedPreferencesRepository
-                                      .getBrowsingPostsMode()
-                                  ? '0'
-                                  : globalSharedPreference.getString("ID"),
+                              // visitorID: SharedPreferencesRepository
+                              //         .getBrowsingPostsMode()
+                              //     ? '0'
+                              //     : globalSharedPreference.getString("ID"),
                               ownerID: globalSharedPreference.getString('ID'),
                               shopID:
                                   globalSharedPreference.getString('shopID'));
@@ -123,8 +130,10 @@ class _ControlPageState extends State<ControlPage> {
                                     .getString("shopName")!,
                                 ownerName:
                                     globalSharedPreference.getString("name")!,
-                                followesNumber: globalSharedPreference
-                                    .getInt("followesNumber")!,
+                                followesNumber:
+                                    BlocProvider.of<GetShopsCubit>(context)
+                                        .shop!
+                                        .followesNumber!,
                                 rate: globalSharedPreference.getDouble("rate"),
                                 shopCoverImage: globalSharedPreference
                                     .getString("shopCoverImage"),

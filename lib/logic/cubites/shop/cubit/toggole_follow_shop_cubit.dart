@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
 import 'package:shopesapp/data/repositories/shop_repository.dart';
 import 'package:shopesapp/translation/locale_keys.g.dart';
 
@@ -14,6 +15,10 @@ class ToggoleFollowShopCubit extends Cubit<ToggoleFollowShopState> {
     Map<String, dynamic>? response = await ShopRepository()
         .toggoleFollowShop(shopID: shopID, userID: ownerID);
     if (response == null || response["message"] == "Access Denied") {
+      ScaffoldMessenger(
+          child: Text(response == null
+              ? LocaleKeys.follow_store_failed.tr()
+              : LocaleKeys.access_denied.tr()));
       emit(FailedToggoleFollowShop(response == null
           ? LocaleKeys.follow_store_failed.tr()
           : response["message"]));

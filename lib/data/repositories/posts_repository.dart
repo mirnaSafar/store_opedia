@@ -29,14 +29,14 @@ class PostsRepository {
   Future<Map<String, dynamic>?> getShopPosts({
     required String shopID,
     required String ownerID,
-    required String visitorID,
+    // required String visitorID,
   }) async {
     http.Response response;
     Map<String, dynamic> parsedResult;
     Map<String, dynamic> requestBody = {
       "id": ownerID,
       "shopID": shopID,
-      'visitor': visitorID
+      // 'visitor': visitorID
     };
     try {
       response = await http.post(
@@ -92,9 +92,11 @@ class PostsRepository {
     http.Response response;
     Map<String, dynamic> requestBody = {
       "id": ownerID, //ownerID
+      "postID": postID,
+      "shopID": shopID,
       "name": name,
       "description": description,
-      "photos": photos ?? "noProductImage",
+      "photos": photos,
       "price": price,
       "postImageType": postImageType,
     };
@@ -105,6 +107,7 @@ class PostsRepository {
         'Content-Type': 'application/json',
       },
     );
+
     if (response.statusCode == 200) {
       return "Success";
     }

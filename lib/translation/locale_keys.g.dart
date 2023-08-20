@@ -9,9 +9,14 @@ abstract class LocaleKeys {
   static const product_price = 'product_price';
   static const cancel = 'cancel';
   static const continue_as_visitor = "continue_as_visitor";
+  static const required_filed = "required";
+  static const no_search_result = "no_search_result";
   static const post = 'post';
+  static const browsing_mode_home = "browsing_mode_home";
   static const create_account = "create_account";
   static const add_store = "add_store";
+  static const access_denied = "access_denied";
+  static const no_internet = "no_internet";
   static const contact_us = "contact_us";
   static const switch_to_owner_account = "switch_to_owner_account";
   static const countinue = "countinue";

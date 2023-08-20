@@ -1,12 +1,13 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/presentation/widgets/profile/password_form_field.dart';
 import 'package:shopesapp/presentation/widgets/profile/phoneNumber_form_field.dart';
 
+import '../../../translation/locale_keys.g.dart';
 import '../../pages/verify_password.dart';
 import '../../shared/colors.dart';
-import '../../shared/custom_widgets/custom_button.dart';
 import '../../shared/custom_widgets/custom_text.dart';
 import 'email_form_field.dart';
 
@@ -27,92 +28,60 @@ Widget buildUserInfoPage({
             text: oldName,
             fontSize: 25,
           )),
-          (size.width * 0.1).ph,
+          (size.height * 0.05).ph,
           ProfileEmailFormField(
             email: email,
           ),
-          (size.width * 0.1).ph,
+          (size.height * 0.005).ph,
           const ProfilePasswordFormField(password: "123456789"),
-          (size.width * 0.1).ph,
+          (size.height * 0.005).ph,
           ProfilePhoneNumberFormField(phoneNmber: oldPhoneNumber),
-          (size.width * 0.1).ph,
+          (size.height * 0.005).ph,
           Row(
             children: [
               Expanded(
-                  child: CustomButton(
-                onPressed: () {
-                  context.pop();
-                },
-                text: 'cancel',
-                color: AppColors.mainWhiteColor,
-                textColor: Theme.of(context).colorScheme.primary,
-                borderColor: Theme.of(context).colorScheme.primary,
-              )),
+                child: ElevatedButton(
+                    onPressed: () {
+                      context.pop();
+                    },
+                    style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 15,
+                        ),
+                        backgroundColor: AppColors.mainWhiteColor,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30)),
+                        side: BorderSide(
+                          color: Theme.of(context).colorScheme.primary,
+                        )),
+                    child: Text(
+                      LocaleKeys.back.tr(),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    )),
+              ),
               (size.width * 0.08).px,
               Expanded(
-                child: CustomButton(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  onPressed: () {
-                    context.push(const VerifyPassword());
-                  },
-                  text: 'Edit',
-                  textColor: AppColors.mainWhiteColor,
-                ),
-              )
+                child: ElevatedButton(
+                    onPressed: () {
+                      context.push(const VerifyPassword());
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 15,
+                      ),
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30)),
+                    ),
+                    child: Text(
+                      LocaleKeys.edit.tr(),
+                      style: TextStyle(color: AppColors.mainWhiteColor),
+                    )),
+              ),
             ],
-          ),
+          )
         ],
       ));
 }
-/* Container(
-            width: 200.0,
-            decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary,
-                borderRadius: BorderRadius.circular(10.0)),
-            child: MaterialButton(
-              elevation: 10.0,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.edit,
-                    color: Colors.white,
-                  ),
-                  CustomText(
-                    text: "Edit",
-                    textColor: AppColors.mainWhiteColor,
-                  )
-                ],
-              ),
-              onPressed: () {
-                context.push(const VerifyPassword());
-              },
-            ),
-          ),
-          const SizedBox(
-            height: 15.0,
-          ),
-          Container(
-            width: 200.0,
-            decoration: BoxDecoration(
-                color: Colors.grey, borderRadius: BorderRadius.circular(10.0)),
-            child: MaterialButton(
-              elevation: 10.0,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.arrow_back,
-                    color: Colors.white,
-                  ),
-                  CustomText(
-                    text: "Back",
-                    textColor: AppColors.mainWhiteColor,
-                  )
-                ],
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ),*/

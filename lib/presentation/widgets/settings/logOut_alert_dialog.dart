@@ -2,6 +2,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shopesapp/main.dart';
 import 'package:shopesapp/presentation/pages/login_page.dart';
 import 'package:shopesapp/presentation/shared/colors.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
@@ -25,10 +26,11 @@ void showLogOutAlertDialog(BuildContext context) {
       ),
       btnCancelOnPress: () {},
       btnCancelText: LocaleKeys.cancle.tr(),
-      btnOkText: LocaleKeys.ok.tr(),
+      btnOkText: LocaleKeys.countinue.tr(),
       btnOkOnPress: () {
         BlocProvider.of<AuthCubit>(context).logOut();
         context.read<ThemesCubit>().changeTheme(0);
         context.pushRepalceme(const LoginPage());
+        //   globalSharedPreference.setBool("isArabic", false);
       }).show();
 }

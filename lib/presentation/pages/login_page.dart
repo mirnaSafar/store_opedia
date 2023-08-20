@@ -97,8 +97,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 10, vertical: 10),
                     child: Stack(
-                      // fit: StackFit.expand,
-                      // alignment: Alignment.bottomCenter,
                       children: [
                         ClipPath(
                           clipper: firstClipper(),
@@ -138,8 +136,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                           .by_singing_in_you_are_agreeing_with
                                           .tr(),
                                       style: TextStyle(
-                                          fontSize: 16,
-                                          color: AppColors.secondaryFontColor),
+                                        fontSize: 16,
+                                        color: Theme.of(context).hintColor,
+                                      ),
                                     ),
                                     SizedBox(
                                       height: h * 0.005,
@@ -182,6 +181,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                           SharedPreferencesRepository
                                               .setBrowsingPostsMode(
                                                   isBrowsingMode: true);
+                                          globalSharedPreference.setString(
+                                              "ID", '0');
+
+                                          globalSharedPreference.setBool(
+                                              "isArabic", false);
+
                                           context.push(const ControlPage());
                                         },
                                         child: CustomText(
@@ -312,10 +317,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                                       globalSharedPreference
                                                           .setBool(
                                                               "isArabic", true),
-                                                      globalSharedPreference
-                                                          .setString(
-                                                              "currentLanguage",
-                                                              "ar")
                                                     }
                                                   : {
                                                       await context.setLocale(
@@ -323,10 +324,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                                       globalSharedPreference
                                                           .setBool("isArabic",
                                                               false),
-                                                      globalSharedPreference
-                                                          .setString(
-                                                              "currentLanguage",
-                                                              "en")
                                                     };
                                             },
                                           ),

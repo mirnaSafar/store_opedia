@@ -103,208 +103,200 @@ class _ContactUsState extends State<ContactUs> {
               ],
             ),
             const Divider(),
-            SingleChildScrollView(
-              child: Expanded(
-                child: BlocConsumer<GetCahtMessagesCubit, GetCahtMessagesState>(
-                  listener: (context, state) {
-                    if (state is GetCahtMessagesFailed) {
-                      CustomToast.showMessage(
-                          context: context,
-                          size: size,
-                          message: state.message.toUpperCase(),
-                          messageType: MessageType.REJECTED);
+            Expanded(
+              child: BlocConsumer<GetCahtMessagesCubit, GetCahtMessagesState>(
+                listener: (context, state) {
+                  if (state is GetCahtMessagesFailed) {
+                    CustomToast.showMessage(
+                        context: context,
+                        size: size,
+                        message: state.message.toUpperCase(),
+                        messageType: MessageType.REJECTED);
+                  }
+                },
+                builder: (context, state) {
+                  if (state is GetCahtMessagesProgress) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (state is GetCahtMessagesSucceed) {
+                    if (context.read<GetCahtMessagesCubit>().messages.isEmpty) {
+                      return buildNoMessagesYet(size);
                     }
-                  },
-                  builder: (context, state) {
-                    if (state is GetCahtMessagesProgress) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    } else if (state is GetCahtMessagesSucceed) {
-                      if (context
-                          .read<GetCahtMessagesCubit>()
-                          .messages
-                          .isEmpty) {
-                        return buildNoMessagesYet(size);
-                      }
 
-                      messages = context.read<GetCahtMessagesCubit>().messages;
-                      return ListView.separated(
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            if (messages[index]["reply"] != null) {
-                              return Expanded(
-                                  child: adminMessage(size, messages[index]));
-                            }
+                    messages = context.read<GetCahtMessagesCubit>().messages;
+                    return ListView.separated(
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          if (messages[index]["reply"] != null) {
                             return Expanded(
-                                child: userMessage(size, messages[index]));
-                          },
-                          separatorBuilder: (context, index) =>
-                              (size.width * 0.08).px,
-                          itemCount: messages.length);
-                    }
-                    return buildError(size);
-                  },
-                ),
+                                child: adminMessage(size, messages[index]));
+                          }
+                          return Expanded(
+                              child: userMessage(size, messages[index]));
+                        },
+                        separatorBuilder: (context, index) =>
+                            (size.width * 0.08).px,
+                        itemCount: messages.length);
+                  }
+                  return buildError(size);
+                },
               ),
             ),
             const Spacer(),
-            SingleChildScrollView(
-              child: Column(
-                children: [
-                  const Divider(),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: UserInput(
-                          text: LocaleKeys.type_your_message_here.tr(),
-                          controller: messageText,
-                          validator: (message) {
-                            if (message!.isEmpty) {
-                              return LocaleKeys.type_a_right_message.tr();
-                            } else if (message.length > 500) {
-                              return LocaleKeys.message_less_than_500_words
-                                  .tr();
-                            } else if (globalSharedPreference
-                                    .getBool("isMessageSelected") ==
-                                false) {
-                              return LocaleKeys.message_type_required.tr();
-                            }
-                            return null;
-                          },
-                        ),
+            Column(
+              children: [
+                const Divider(),
+                Row(
+                  children: [
+                    Expanded(
+                      child: UserInput(
+                        text: LocaleKeys.type_your_message_here.tr(),
+                        controller: messageText,
+                        validator: (message) {
+                          if (message!.isEmpty) {
+                            return LocaleKeys.type_a_right_message.tr();
+                          } else if (message.length > 500) {
+                            return LocaleKeys.message_less_than_500_words.tr();
+                          } else if (globalSharedPreference
+                                  .getBool("isMessageSelected") ==
+                              false) {
+                            return LocaleKeys.message_type_required.tr();
+                          }
+                          return null;
+                        },
                       ),
-                      BlocProvider(
-                        create: (context) => ContactUsCubit(),
-                        child: BlocConsumer<ContactUsCubit, ContactUsState>(
-                          listener: (context, state) {
-                            if (state is ContactUsSucceed) {
-                              CustomToast.showMessage(
-                                  context: context,
-                                  size: size,
-                                  message:
-                                      LocaleKeys.message_sent_successfuly.tr(),
-                                  messageType: MessageType.SUCCESS);
-                              context.pushRepalceme(const ContactUs());
-                            } else if (state is ContactUsFailed) {
-                              CustomToast.showMessage(
-                                  context: context,
-                                  size: size,
-                                  message: state.message.toUpperCase(),
-                                  messageType: MessageType.REJECTED);
-                            }
-                          },
-                          builder: (context, state) {
-                            if (state is ContactUsProgress) {
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            }
-                            return Padding(
-                              padding: EdgeInsets.all((size.width * 0.0008)),
-                              child: IconButton(
-                                icon: Icon(
-                                  Icons.send,
-                                  color: AppColors.mainBlueColor,
-                                ),
-                                onPressed: () {
-                                  !formKey.currentState!.validate() &&
-                                          globalSharedPreference.getBool(
-                                                  "isMessageSelected") ==
-                                              false
-                                      ? CustomToast.showMessage(
-                                          context: context,
-                                          size: size,
-                                          message: LocaleKeys
-                                              .please_check_required_fields
-                                              .tr(),
-                                          messageType: MessageType.REJECTED)
-                                      : {
-                                          formKey.currentState!.save(),
-                                          context
-                                              .read<ContactUsCubit>()
-                                              .contactUS(
-                                                id: globalSharedPreference
-                                                    .getString("ID")!,
-                                                description: messageText.text,
-                                                type: globalSharedPreference
-                                                        .getString(
-                                                            "messageType") ??
-                                                    "others",
-                                              ),
-                                        };
-                                },
-                              ),
+                    ),
+                    BlocProvider(
+                      create: (context) => ContactUsCubit(),
+                      child: BlocConsumer<ContactUsCubit, ContactUsState>(
+                        listener: (context, state) {
+                          if (state is ContactUsSucceed) {
+                            CustomToast.showMessage(
+                                context: context,
+                                size: size,
+                                message:
+                                    LocaleKeys.message_sent_successfuly.tr(),
+                                messageType: MessageType.SUCCESS);
+                            context.pushRepalceme(const ContactUs());
+                          } else if (state is ContactUsFailed) {
+                            CustomToast.showMessage(
+                                context: context,
+                                size: size,
+                                message: state.message.toUpperCase(),
+                                messageType: MessageType.REJECTED);
+                          }
+                        },
+                        builder: (context, state) {
+                          if (state is ContactUsProgress) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
                             );
-                          },
-                        ),
-                      )
-                    ],
-                  ),
-                  (size.width * 0.0008).ph,
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            globalSharedPreference.setBool(
-                                "isMessageSelected", true);
+                          }
+                          return Padding(
+                            padding: EdgeInsets.all((size.width * 0.0008)),
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.send,
+                                color: AppColors.mainBlueColor,
+                              ),
+                              onPressed: () {
+                                !formKey.currentState!.validate() &&
+                                        globalSharedPreference
+                                                .getBool("isMessageSelected") ==
+                                            false
+                                    ? CustomToast.showMessage(
+                                        context: context,
+                                        size: size,
+                                        message: LocaleKeys
+                                            .please_check_required_fields
+                                            .tr(),
+                                        messageType: MessageType.REJECTED)
+                                    : {
+                                        formKey.currentState!.save(),
+                                        context
+                                            .read<ContactUsCubit>()
+                                            .contactUS(
+                                              id: globalSharedPreference
+                                                  .getString("ID")!,
+                                              description: messageText.text,
+                                              type: globalSharedPreference
+                                                      .getString(
+                                                          "messageType") ??
+                                                  "others",
+                                            ),
+                                      };
+                              },
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                  ],
+                ),
+                (size.width * 0.0008).ph,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          globalSharedPreference.setBool(
+                              "isMessageSelected", true);
 
-                            globalSharedPreference.setString(
-                                "messageType", messageTypes[0]);
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: messageColor[0],
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30))),
-                        child: Text(LocaleKeys.error.tr()),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          globalSharedPreference.setBool(
-                              "isMessageSelected", true);
                           globalSharedPreference.setString(
-                              "messageType", messageTypes[1]);
-                        },
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: messageColor[1],
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30))),
-                        child: Text(LocaleKeys.suggestion.tr()),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          globalSharedPreference.setBool(
-                              "isMessageSelected", true);
-                          globalSharedPreference.setString(
-                              "messageType", messageTypes[2]);
-                        },
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: messageColor[2],
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30))),
-                        child: Text(LocaleKeys.guidance.tr()),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          globalSharedPreference.setBool(
-                              "isMessageSelected", true);
-                          globalSharedPreference.setString(
-                              "messageType", messageTypes[3]);
-                        },
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: messageColor[3],
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30))),
-                        child: Text(LocaleKeys.others.tr()),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            )
+                              "messageType", messageTypes[0]);
+                        });
+                      },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: messageColor[0],
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30))),
+                      child: Text(LocaleKeys.error.tr()),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        globalSharedPreference.setBool(
+                            "isMessageSelected", true);
+                        globalSharedPreference.setString(
+                            "messageType", messageTypes[1]);
+                      },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: messageColor[1],
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30))),
+                      child: Text(LocaleKeys.suggestion.tr()),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        globalSharedPreference.setBool(
+                            "isMessageSelected", true);
+                        globalSharedPreference.setString(
+                            "messageType", messageTypes[2]);
+                      },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: messageColor[2],
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30))),
+                      child: Text(LocaleKeys.guidance.tr()),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        globalSharedPreference.setBool(
+                            "isMessageSelected", true);
+                        globalSharedPreference.setString(
+                            "messageType", messageTypes[3]);
+                      },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: messageColor[3],
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30))),
+                      child: Text(LocaleKeys.others.tr()),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ],
         ),
       ),

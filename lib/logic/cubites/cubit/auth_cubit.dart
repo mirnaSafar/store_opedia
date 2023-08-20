@@ -32,7 +32,12 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthFailed(LocaleKeys.email_already_exists.tr()));
     } else {
       user = User.fromMap(response);
-
+      /*  if (globalSharedPreference.getBool("isDarkMode") == null) {
+        globalSharedPreference.setBool("isDarkMode", false);
+      }*/
+      if (globalSharedPreference.getBool("isArabic") == null) {
+        globalSharedPreference.setBool("isArabic", false);
+      }
       SharedPreferencesRepository.setBrowsingPostsMode(isBrowsingMode: false);
 
       AuthRepository().saveUser(user: user!);
@@ -80,6 +85,12 @@ class AuthCubit extends Cubit<AuthState> {
     } else if (response["message"] == 'Invalid Values') {
       emit(AuthFailed(LocaleKeys.invalid_values.tr()));
     } else {
+      /*  if (globalSharedPreference.getBool("isDarkMode") == null) {
+        globalSharedPreference.setBool("isDarkMode", false);
+      }*/
+      if (globalSharedPreference.getBool("isArabic") == null) {
+        globalSharedPreference.setBool("isArabic", false);
+      }
       emit(OwnerSignedUp());
       shop = Shop.fromMap(response);
       AuthRepository().saveOwnerAndShop(shop: shop!);
@@ -105,6 +116,12 @@ class AuthCubit extends Cubit<AuthState> {
       SharedPreferencesRepository.setBrowsingPostsMode(isBrowsingMode: false);
       emit(UserLoginedIn());
     } else if (response["message"] == "owner auth succeded") {
+      /*  if (globalSharedPreference.getBool("isDarkMode") == null) {
+        globalSharedPreference.setBool("isDarkMode", false);
+      }*/
+      if (globalSharedPreference.getBool("isArabic") == null) {
+        globalSharedPreference.setBool("isArabic", false);
+      }
       String ownerID = response["ownerID"];
 
       saveOwnerID(ownerID: ownerID);

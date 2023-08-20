@@ -94,8 +94,8 @@ class _ProductInfoState extends State<ProductInfo> {
                               .toggolePostFavorite(
                                   postID: widget.post.postID,
                                   userID:
-                                      globalSharedPreference.getString("ID")!)
-                              .then((value) => null);
+                                      globalSharedPreference.getString("ID") ??
+                                          '0');
                         } else {
                           showBrowsingDialogAlert(context);
                         }
@@ -146,7 +146,7 @@ class _ProductInfoState extends State<ProductInfo> {
                       text: globalSharedPreference.getBool("isArabic") == false
                           ? widget.post.shopCategory!
                           : switchCategoryToArabic(widget.post.shopCategory!),
-                      textColor: AppColors.secondaryFontColor,
+                      textColor: Theme.of(context).hintColor,
                     )
                   ],
                 ),
@@ -160,7 +160,7 @@ class _ProductInfoState extends State<ProductInfo> {
                     20.px,
                     CustomText(
                       text: widget.post.price,
-                      textColor: AppColors.secondaryFontColor,
+                      textColor: Theme.of(context).hintColor,
                     )
                   ],
                 ),
@@ -171,13 +171,13 @@ class _ProductInfoState extends State<ProductInfo> {
                     children: [
                       Icon(
                         Icons.short_text_rounded,
-                        color: AppColors.secondaryFontColor,
+                        color: Theme.of(context).hintColor,
                       ),
                       20.px,
                       Expanded(
                         child: CustomText(
                           text: widget.post.description!,
-                          textColor: AppColors.secondaryFontColor,
+                          textColor: Theme.of(context).hintColor,
                         ),
                       )
                     ],
@@ -196,7 +196,10 @@ class _ProductInfoState extends State<ProductInfo> {
                       text: globalSharedPreference.getBool("isArabic") == false
                           ? widget.post.location!
                           : switchLocationToArabic(widget.post.location!),
-                      textColor: AppColors.secondaryFontColor,
+                      textColor:
+                          globalSharedPreference.getBool("isDarkMode") ?? false
+                              ? AppColors.secondaryDarkFontColor
+                              : AppColors.secondaryFontColor,
                     )
                   ],
                 ),

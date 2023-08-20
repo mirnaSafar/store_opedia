@@ -22,6 +22,7 @@ import 'package:shopesapp/logic/cubites/shop/cubit/toggole_favorite_shop_cubit.d
 import 'package:shopesapp/logic/cubites/shop/cubit/toggole_follow_shop_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/favorite_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/following_cubit.dart';
+import 'package:shopesapp/logic/cubites/shop/get_shops_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/rate_shop_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/shop_follwers_counter_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/store_cubit.dart';
@@ -85,6 +86,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => SearchStoreCubit(),
+        ),
+        BlocProvider(
+          create: (context) => GetShopsCubit(),
         ),
         BlocProvider(
           create: (context) => StoreCubit(),

@@ -9,6 +9,7 @@ import 'package:shopesapp/logic/cubites/post/posts_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/cubit/toggole_follow_shop_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/following_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/get_owner_shops_cubit.dart';
+import 'package:shopesapp/logic/cubites/shop/get_shops_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/rate_shop_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/shop_follwers_counter_cubit.dart';
 import 'package:shopesapp/logic/cubites/shop/work_time_cubit.dart';
@@ -26,6 +27,7 @@ import 'package:shopesapp/presentation/widgets/product/product_post.dart';
 import 'package:shopesapp/presentation/widgets/switch_shop/error.dart';
 import 'package:shopesapp/translation/locale_keys.g.dart';
 
+import '../../constant/translate_time.dart';
 import '../../main.dart';
 import '../widgets/dialogs/browsing_alert_dialog.dart';
 import '../widgets/home/no_posts_yet.dart';
@@ -37,7 +39,7 @@ class StorePage extends StatefulWidget {
     this.shop,
     this.profileDisplay = false,
   }) : super(key: key);
-  Shop? shop;
+  dynamic shop;
   bool? profileDisplay;
   @override
   State<StorePage> createState() => _StorePageState();
@@ -47,11 +49,9 @@ class _StorePageState extends State<StorePage> {
   @override
   void initState() {
     context.read<PostsCubit>().getOwnerPosts(
-        visitorID: SharedPreferencesRepository.getBrowsingPostsMode()
-            ? '0'
-            : globalSharedPreference.getString("ID"),
-        ownerID: widget.shop!.ownerID,
+        ownerID: globalSharedPreference.getString('ID'),
         shopID: widget.shop!.shopID);
+    context.read<GetShopsCubit>().getShop(widget.shop!.shopID);
     super.initState();
   }
 
@@ -63,23 +63,24 @@ class _StorePageState extends State<StorePage> {
       context.read<GetOwnerShopsCubit>().getOwnerShopsRequest(
           ownerID: globalSharedPreference.getString('ID'), message: 'all');
       context.read<PostsCubit>().getOwnerPosts(
-          visitorID: SharedPreferencesRepository.getBrowsingPostsMode()
-              ? '0'
-              : globalSharedPreference.getString("ID"),
           ownerID: globalSharedPreference.getString('ID'),
-          shopID: globalSharedPreference.getString('shopID'));
+          shopID: widget.shop!.shopID);
+      widget.shop =
+          context.read<GetShopsCubit>().getShop(widget.shop!.shopID) as Shop;
     });
   }
 
   List<dynamic> postsList = [];
   List<dynamic> ownerShpos = [];
-
+  int? followesNumber;
   @override
   Widget build(BuildContext context) {
     List<String> splitStartTime = widget.shop!.startWorkTime.split(":");
     String startWorkTime = "${splitStartTime[0]}:${splitStartTime[1]}";
     List<String> splitEndWorkTime = widget.shop!.endWorkTime.split(":");
     String endtWorkTime = "${splitEndWorkTime[0]}:${splitEndWorkTime[1]}";
+    String arabicStartWorkTime = translateTimetoArabic(startWorkTime);
+    String arabicEndWorkTime = translateTimetoArabic(endtWorkTime);
 
     var size = MediaQuery.of(context).size;
 
@@ -313,28 +314,41 @@ class _StorePageState extends State<StorePage> {
                                 ? widget.shop!.shopCategory
                                 : switchCategoryToArabic(
                                     widget.shop!.shopCategory),
-                            textColor: AppColors.secondaryFontColor,
+                            /*  textColor:
+                                globalSharedPreference.getBool("isDarkMode")!
+                                    ? AppColors.secondaryDarkFontColor
+                                    : AppColors.secondaryFontColor,*/
+                            textColor: Theme.of(context).hintColor,
                           ),
                         ],
                       ),
                       15.ph,
                       Visibility(
                         visible: widget.shop!.shopDescription!.isNotEmpty,
-                        child: CustomText(
-                            textColor: Theme.of(context).primaryColorDark,
-                            fontSize: 15,
-                            text: widget.shop!.shopDescription ??
-                                LocaleKeys.defult_description.tr()),
+                        child: Padding(
+                          padding: EdgeInsetsDirectional.only(end: w * 0.08),
+                          child: CustomText(
+                              textColor: Theme.of(context).primaryColorDark,
+                              fontSize: 15,
+                              text: widget.shop!.shopDescription ??
+                                  LocaleKeys.defult_description.tr()),
+                        ),
                       ),
                       20.ph,
                       Row(
                         children: [
-                          BlocBuilder<ShopFollwersCounterCubit,
-                              ShopFollwersCounterState>(
+                          BlocBuilder<GetShopsCubit, GetShopsState>(
                             builder: (context, state) {
+                              int? followesNumber;
+                              if (state is GetShopsSucceed) {
+                                followesNumber =
+                                    BlocProvider.of<GetShopsCubit>(context)
+                                        .shop!
+                                        .followesNumber!;
+                              }
                               return CustomText(
                                 text:
-                                    '${widget.shop!.followesNumber} ${LocaleKeys.followers.tr()}',
+                                    '${followesNumber ?? widget.shop!.followesNumber} ${LocaleKeys.followers.tr()}',
                                 textColor: AppColors.mainBlueColor,
                               );
                             },
@@ -350,8 +364,6 @@ class _StorePageState extends State<StorePage> {
                                       widget.shop!;
                               return InkWell(
                                 onTap: () {
-                                  // context
-                                  //     .pushRepalceme((const FavouritePage()));
                                   if (!SharedPreferencesRepository
                                       .getBrowsingPostsMode()) {
                                     !widget.shop!.isFollow!
@@ -375,7 +387,12 @@ class _StorePageState extends State<StorePage> {
                                             shopID: widget.shop!.shopID,
                                             ownerID: globalSharedPreference
                                                     .getString("ID") ??
-                                                '0');
+                                                '0')
+                                        .then(
+                                          (value) => context
+                                              .read<GetShopsCubit>()
+                                              .getShop(widget.shop!.shopID),
+                                        );
                                   } else {
                                     showBrowsingDialogAlert(context);
                                   }
@@ -383,12 +400,9 @@ class _StorePageState extends State<StorePage> {
                                 child: Visibility(
                                   visible: !widget.profileDisplay!,
                                   child: CustomText(
-                                    text:
-                                        // followingCubit
-                                        //             .getShopFollowingState(shop) ||
-                                        widget.shop!.isFollow!
-                                            ? LocaleKeys.following.tr()
-                                            : LocaleKeys.follow.tr(),
+                                    text: widget.shop!.isFollow!
+                                        ? LocaleKeys.following.tr()
+                                        : LocaleKeys.follow.tr(),
                                     textColor: AppColors.mainBlueColor,
                                   ),
                                 ),
@@ -398,13 +412,24 @@ class _StorePageState extends State<StorePage> {
                         ],
                       ),
                       const CustomDivider(),
-                      CustomIconTextRow(
+                      Visibility(
+                        visible: widget.shop!.isActive == true,
+                        child: CustomIconTextRow(
                           textColor: Theme.of(context).primaryColorDark,
                           svgIcon: 'clock-square-svgrepo-com',
-                          // svgIcon: Icons.alarm,
-                          text: widget.shop!.isActive == true
+                          text: globalSharedPreference.getBool("isArabic") ==
+                                  false
                               ? '$startWorkTime - $endtWorkTime'
-                              : "---  - ---"),
+                              : '$arabicStartWorkTime - $arabicEndWorkTime',
+                        ),
+                      ),
+                      Visibility(
+                        visible: widget.shop!.isActive == false,
+                        child: CustomIconTextRow(
+                            textColor: Theme.of(context).primaryColorDark,
+                            svgIcon: 'clock-square-svgrepo-com',
+                            text: "---  - ---"),
+                      ),
                       20.ph,
                       Visibility(
                         visible: widget.shop!.shopPhoneNumber != null,
@@ -422,7 +447,6 @@ class _StorePageState extends State<StorePage> {
                       ),
                       CustomIconTextRow(
                           textColor: Theme.of(context).primaryColorDark,
-                          // svgIcon: Icons.email,
                           svgIcon: 'mail-svgrepo-com',
                           text: widget.shop!.ownerEmail),
                       20.ph,
@@ -673,7 +697,6 @@ class _StorePageState extends State<StorePage> {
           child: const Icon(Icons.edit),
           onTap: () {
             context.push(EditStore(function: updateStoreState));
-            // setState(() {});
           },
           label: LocaleKeys.edit_stroe_informations.tr(),
           labelStyle: TextStyle(
@@ -688,7 +711,6 @@ class _StorePageState extends State<StorePage> {
   }
 }
 
-// ignore: camel_case_types
 class profilePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
@@ -702,7 +724,6 @@ class profilePainter extends CustomPainter {
         end: Alignment.bottomCenter,
         colors: [
           Colors.blueGrey.shade200,
-          // Colors.blueGrey.shade50,
           AppColors.mainWhiteColor,
         ],
       ).createShader(rect);

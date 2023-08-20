@@ -1,7 +1,10 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopesapp/data/models/shop.dart';
 import 'package:shopesapp/data/repositories/shop_repository.dart';
 import 'package:shopesapp/main.dart';
+
+import '../../../translation/locale_keys.g.dart';
 
 part 'store_state.dart';
 
@@ -24,9 +27,7 @@ class StoreCubit extends Cubit<StoreState> {
               : response["message"]));
     }*/
     if (response == null) {
-      emit(ErrorFetchingShops(
-          message:
-              "Failed to Get the Stores , Check your internet connection"));
+      emit(ErrorFetchingShops(message: LocaleKeys.get_stores_failed.tr()));
     } else if (response["message"] != "Done" &&
         response["message"] != "No Stores Yet") {
       emit(NoShopsYet());
@@ -50,9 +51,7 @@ class StoreCubit extends Cubit<StoreState> {
     response = await ShopRepository().filterStores(id: id, type: type);
 
     if (response == null) {
-      emit(ErrorFetchingShops(
-          message:
-              "Failed to Get the Stores , Check your internet connection"));
+      emit(ErrorFetchingShops(message: LocaleKeys.get_stores_failed.tr()));
     } else if (response["message"] != "Done" &&
         response["message"] != "No Stores Yet") {
       emit(NoShopsYet());
@@ -77,9 +76,7 @@ class StoreCubit extends Cubit<StoreState> {
         .locationFilterStores(id: id, latitude: latitude, longitude: longitude);
 
     if (response == null) {
-      emit(ErrorFetchingShops(
-          message:
-              "Failed to Get the Stores , Check your internet connection"));
+      emit(ErrorFetchingShops(message: LocaleKeys.get_stores_failed.tr()));
     } else if (response["message"] != "Done") {
       emit(NoShopsYet());
     } else if (response["message"] == "Done") {
@@ -107,9 +104,7 @@ class StoreCubit extends Cubit<StoreState> {
         await ShopRepository().cityFilterStores(id: id, address: address);
 
     if (response == null) {
-      emit(ErrorFetchingShops(
-          message:
-              "Failed to Get the Stores , Check your internet connection"));
+      emit(ErrorFetchingShops(message: LocaleKeys.get_stores_failed.tr()));
     } else if (response["message"] != "Done") {
       emit(NoShopsYet());
     } else if (response["message"] == "Done") {
@@ -133,9 +128,7 @@ class StoreCubit extends Cubit<StoreState> {
         await ShopRepository().categoryFilterStores(id: id, category: category);
 
     if (response == null) {
-      emit(ErrorFetchingShops(
-          message:
-              "Failed to Get the Stores , Check your internet connection"));
+      emit(ErrorFetchingShops(message: LocaleKeys.get_stores_failed.tr()));
     } else if (response["message"] != "Done") {
       emit(NoShopsYet());
     } else if (response["message"] == "Done") {
@@ -146,4 +139,6 @@ class StoreCubit extends Cubit<StoreState> {
       emit(ErrorFetchingShops(message: response["message"]));
     }
   }
+
+
 }

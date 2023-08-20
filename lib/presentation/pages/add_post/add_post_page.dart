@@ -20,7 +20,6 @@ import 'package:shopesapp/presentation/shared/custom_widgets/user_input.dart';
 import 'package:shopesapp/presentation/shared/extensions.dart';
 import 'package:shopesapp/presentation/shared/utils.dart';
 
-import '../../../data/repositories/shared_preferences_repository.dart';
 import '../../../translation/locale_keys.g.dart';
 import '../../shared/validation_functions.dart';
 
@@ -162,7 +161,7 @@ class _AddPostPageState extends State<AddPostPage> {
             ),
             20.ph,
             CustomText(
-              text: selectedFile == null ? 'required' : '',
+              text: selectedFile == null ? LocaleKeys.required_filed.tr() : '',
               textColor: AppColors.mainRedColor,
               fontSize: 12,
             ),
@@ -172,20 +171,21 @@ class _AddPostPageState extends State<AddPostPage> {
             UserInput(
               controller: addPostNameController,
               text: LocaleKeys.product_Name.tr(),
-              validator: (name) => nameValidator(name, 'Enter product name'),
+              validator: (name) =>
+                  nameValidator(name, LocaleKeys.enter_product_name.tr()),
             ),
             UserInput(
               text: LocaleKeys.product_Description.tr(),
               controller: addPostDescriptionController,
               validator: (p0) {
-                return p0!.isEmpty ? 'required' : '';
+                return p0!.isEmpty ? LocaleKeys.required_filed.tr() : '';
               },
             ),
             UserInput(
               text: LocaleKeys.product_price.tr(),
               controller: addPostPriceController,
               validator: (p0) {
-                return p0!.isEmpty ? 'required' : '';
+                return p0!.isEmpty ? LocaleKeys.required_filed.tr() : '';
               },
             ),
             (w * 0.1).ph,
@@ -215,10 +215,10 @@ class _AddPostPageState extends State<AddPostPage> {
                       context
                           .read<PostsCubit>()
                           .getOwnerPosts(
-                            visitorID: SharedPreferencesRepository
-                                    .getBrowsingPostsMode()
-                                ? '0'
-                                : globalSharedPreference.getString("ID"),
+                            // visitorID: SharedPreferencesRepository
+                            //         .getBrowsingPostsMode()
+                            //     ? '0'
+                            //     : globalSharedPreference.getString("ID"),
                             ownerID:
                                 globalSharedPreference.getString("ID") ?? '0',
                             shopID: globalSharedPreference.getString("shopID")!,

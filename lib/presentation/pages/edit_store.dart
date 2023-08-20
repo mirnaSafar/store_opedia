@@ -21,9 +21,9 @@ import 'package:shopesapp/translation/locale_keys.g.dart';
 
 import '../../constant/switch_to_arabic.dart';
 import '../../constant/switch_to_english.dart';
+import '../../constant/translate_time.dart';
 import '../../data/enums/file_type.dart';
 import '../../data/models/shop.dart';
-import '../../data/repositories/shared_preferences_repository.dart';
 import '../../logic/cubites/post/posts_cubit.dart';
 import '../../logic/cubites/shop/edit_shop_cubit.dart';
 import '../../logic/cubites/shop/get_owner_shops_cubit.dart';
@@ -78,7 +78,7 @@ class _EditStoreState extends State<EditStore> {
     timeDigetes = timeParts![0].split(":");
     endTimeHour = int.parse(timeDigetes![0]);
     endTimeMinute = int.parse(timeDigetes![1]);
-    print(globalSharedPreference.getString("shopCategory"));
+
     storeNameController.text = globalSharedPreference.getString("shopName") ??
         LocaleKeys.store_name.tr();
     storeNumberController.text =
@@ -96,10 +96,19 @@ class _EditStoreState extends State<EditStore> {
             false
         ? globalSharedPreference.getString("location")!
         : switchLocationToArabic(globalSharedPreference.getString("location")!);
+    // print(globalSharedPreference.getString("startWorkTime")!);
     storeStartWorkTimecontroller.text =
-        globalSharedPreference.getString("startWorkTime")!;
+        globalSharedPreference.getBool("isArabic") == false
+            ? globalSharedPreference.getString("startWorkTime")!
+            : translateTimetoArabic(
+                globalSharedPreference.getString("startWorkTime")!);
+
     storeEndWorkTimeController.text =
-        globalSharedPreference.getString("endWorkTime")!;
+        globalSharedPreference.getBool("isArabic") == false
+            ? globalSharedPreference.getString("endWorkTime")!
+            : translateTimetoArabic(
+                globalSharedPreference.getString("endWorkTime")!);
+
     profilePath = globalSharedPreference.getString("shopProfileImage");
     coverPath = globalSharedPreference.getString("shopCoverImage");
 
@@ -149,8 +158,6 @@ class _EditStoreState extends State<EditStore> {
             path = profile
                 ? value?.path ?? profileSelectedFile?.path ?? profilePath ?? ''
                 : value?.path ?? coverSelectedFile?.path ?? coverPath ?? '');
-        // globalSharedPreference.setString(
-        //     profile ? "shopProfileImage" : "shopCoverImage", path!);
         imageFile = File(path!);
         splitPath = path!.split("/").last;
 
@@ -180,9 +187,12 @@ class _EditStoreState extends State<EditStore> {
     return SafeArea(
         child: Scaffold(
       appBar: AppBar(
-        leading: BackButton(color: Theme.of(context).primaryColorDark),
+        leading: BackButton(
+          color: AppColors.mainWhiteColor,
+        ),
         title: CustomText(
           text: LocaleKeys.edit_store.tr(),
+          textColor: AppColors.mainWhiteColor,
           fontSize: w * 0.05,
         ),
         elevation: 0,
@@ -328,7 +338,7 @@ class _EditStoreState extends State<EditStore> {
               30.ph,
               CustomText(
                 text: LocaleKeys.work_Time.tr(),
-                textColor: AppColors.secondaryFontColor,
+                textColor: Theme.of(context).hintColor,
               ),
               Padding(
                 padding:
@@ -361,7 +371,7 @@ class _EditStoreState extends State<EditStore> {
                       padding: const EdgeInsets.only(top: 15.0),
                       child: CustomText(
                         text: LocaleKeys.to.tr(),
-                        textColor: AppColors.secondaryFontColor,
+                        textColor: Theme.of(context).hintColor,
                       ),
                     ),
                     SizedBox(
@@ -377,6 +387,8 @@ class _EditStoreState extends State<EditStore> {
                               setState(() {
                                 storeEndWorkTimeController.text =
                                     value!.format(context);
+                                // print(translateTimetoEnglish(
+                                //s     storeEndWorkTimeController.text));
                               });
                             });
                           },
@@ -540,16 +552,17 @@ class _EditStoreState extends State<EditStore> {
                                             : switchCategoryToEnglish(
                                                 storeCategoryController.text),
                                         location: storeLocationController.text,
-                                        latitude: selectedStoreLocation
-                                                ?.latitude ??
+                                        latitude: selectedStoreLocation?.latitude ??
                                             globalSharedPreference
                                                 .getDouble("latitude")!,
-                                        longitude: selectedStoreLocation
-                                                ?.longitude ??
-                                            globalSharedPreference
-                                                .getDouble("longitude")!,
-                                        opening: storeStartWorkTimecontroller.text,
-                                        closing: storeEndWorkTimeController.text,
+                                        longitude:
+                                            selectedStoreLocation?.longitude ??
+                                                globalSharedPreference
+                                                    .getDouble("longitude")!,
+                                        opening: globalSharedPreference.getBool("isArabic") == false
+                                            ? storeStartWorkTimecontroller.text
+                                            : translateTimetoEnglish(storeStartWorkTimecontroller.text),
+                                        closing: globalSharedPreference.getBool("isArabic") == false ? storeEndWorkTimeController.text : translateTimetoEnglish(storeEndWorkTimeController.text),
                                         shopPhoneNumber: storeNumberController.text,
                                         insta: storeInstagramController.text,
                                         facebook: storeFacebookController.text),
@@ -568,24 +581,15 @@ class _EditStoreState extends State<EditStore> {
                                               ownerID: globalSharedPreference
                                                   .getString('ID'),
                                               message: 'all');
+
                                       context.read<PostsCubit>().getOwnerPosts(
                                           ownerID: globalSharedPreference
                                               .getString('ID'),
-                                          visitorID: SharedPreferencesRepository
-                                                  .getBrowsingPostsMode()
-                                              ? '0'
-                                              : globalSharedPreference
-                                                  .getString("ID"),
-                                          shopID: globalSharedPreference
-                                              .getString('shopID'));
-                                      context.read<PostsCubit>().getOwnerPosts(
-                                          ownerID: globalSharedPreference
-                                              .getString('ID'),
-                                          visitorID: SharedPreferencesRepository
-                                                  .getBrowsingPostsMode()
-                                              ? '0'
-                                              : globalSharedPreference
-                                                  .getString("ID"),
+                                          // visitorID: SharedPreferencesRepository
+                                          //         .getBrowsingPostsMode()
+                                          //     ? '0'
+                                          //     : globalSharedPreference
+                                          //         .getString("ID"),
                                           shopID: globalSharedPreference
                                               .getString('shopID'));
                                       context.push(StorePage(
@@ -688,7 +692,7 @@ class _EditStoreState extends State<EditStore> {
                       children: [
                         Icon(
                           Icons.camera_alt_rounded,
-                          color: AppColors.mainOrangeColor,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                         40.px,
                         CustomText(
@@ -714,7 +718,7 @@ class _EditStoreState extends State<EditStore> {
                       children: [
                         Icon(
                           Icons.image,
-                          color: AppColors.mainOrangeColor,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                         40.px,
                         CustomText(

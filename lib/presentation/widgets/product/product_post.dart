@@ -20,6 +20,7 @@ import '../../../constant/switch_to_arabic.dart';
 import '../../../data/repositories/shared_preferences_repository.dart';
 import '../../../logic/cubites/post/filter_cubit.dart';
 import '../../../logic/cubites/post/post_favorite_cubit.dart';
+import '../../../logic/cubites/post/posts_cubit.dart';
 import '../../../logic/cubites/shop/cubit/show_favorite_stores_cubit.dart';
 import '../../pages/map_page.dart';
 import '../../shared/custom_widgets/custom_text.dart';
@@ -100,6 +101,10 @@ class _ProductPostState extends State<ProductPost> {
                                         .tr(),
                                     context: context,
                                     messageType: MessageType.SUCCESS);
+                                context.read<PostsCubit>().getOwnerPosts(
+                                    ownerID:
+                                        globalSharedPreference.getString('ID'),
+                                    shopID: widget.post.shopID);
                                 context.pop();
                               }
                             },
@@ -175,7 +180,7 @@ class _ProductPostState extends State<ProductPost> {
                             ? widget.post.shopCategory
                             : switchCategoryToArabic(widget.post.shopCategory),
                         fontSize: w * 0.03,
-                        textColor: AppColors.secondaryFontColor,
+                        textColor: Theme.of(context).hintColor,
                       ),
                     ],
                   )

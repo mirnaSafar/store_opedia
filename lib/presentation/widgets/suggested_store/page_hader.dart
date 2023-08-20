@@ -392,7 +392,10 @@ class _PageHeaderState extends State<PageHeader> {
                       text: LocaleKeys
                           .click_here_to_Identify_your_request_more_specifically
                           .tr(),
-                      textColor: AppColors.secondaryFontColor,
+                      textColor:
+                          globalSharedPreference.getBool("isDarkMode") ?? false
+                              ? AppColors.secondaryDarkFontColor
+                              : AppColors.secondaryFontColor,
                     )),
                 10.ph,
                 ListView.separated(
@@ -476,7 +479,9 @@ class _PageHeaderState extends State<PageHeader> {
 
     Widget cityDialog() {
       return Dialog(
-        alignment: Alignment.topRight,
+        alignment: globalSharedPreference.getBool("isArabic") == false
+            ? Alignment.topRight
+            : Alignment.topLeft,
         insetPadding: EdgeInsets.only(top: h * 0.08),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: SizedBox(
@@ -493,7 +498,7 @@ class _PageHeaderState extends State<PageHeader> {
                   child: CustomText(
                     text: LocaleKeys.choose_a_city.tr(),
                     bold: true,
-                    textColor: AppColors.secondaryFontColor,
+                    textColor: Theme.of(context).hintColor,
                   ),
                 ),
                 ListView.separated(

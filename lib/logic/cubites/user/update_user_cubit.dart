@@ -20,11 +20,10 @@ class UpdateUserCubit extends Cubit<UpdateUserState> {
 
     Map<String, dynamic>? response = await UserRepository().updateUser(
         id: id, name: name, password: password, phoneNumber: phoneNumber);
-    if (response == null || response["message"] != "Done") {
-      emit(UpdateUserFailed(
-          message: response == null
-              ? LocaleKeys.update_user_failed.tr()
-              : response["message"]));
+    if (response == null) {
+      emit(UpdateUserFailed(message: LocaleKeys.update_user_failed.tr()));
+    } else if (response["message"] == "UserName Already Exists") {
+      emit(UpdateUserFailed(message: LocaleKeys.user_name_already_exists.tr()));
     } else {
       globalSharedPreference.setString("name", name);
       globalSharedPreference.setString("phoneNumber", phoneNumber);
